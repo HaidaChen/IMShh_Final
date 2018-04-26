@@ -1,0 +1,125 @@
+{
+	"total":11, 
+	"rows":[		
+		{
+			"id":"001",
+			"suppName":"天宇包装",
+			"receiptDate":"2018-02-25",
+			"materialName": "木方",
+			"specification": "0.22*0.013*0.013",
+			"unit": "立方",
+			"amount": 75000,
+			"unitPrice": 1550,
+			"totlemnt": 4322.18,
+			"remark":"111"
+		},
+		{
+			"id":"002",
+			"suppName":"天宇包装",
+			"receiptDate":"2018-02-25",
+			"materialName": "木方",
+			"specification": "0.22*0.03*0.02",
+			"unit": "立方",
+			"amount": 67200,
+			"unitPrice": 1550,
+			"totlemnt": 13749.12,
+			"remark":"111"
+		},
+		{
+			"id":"003",
+			"suppName":"天宇包装",
+			"receiptDate":"2018-02-25",
+			"materialName": "9发底座板",
+			"specification": "0.24*0.24*0.018",
+			"unit": "立方",
+			"amount": 13000,
+			"unitPrice": 1550,
+			"totlemnt": 23400.00,
+			"remark":"111"
+		},			
+		{
+			"id":"004",
+			"suppName":"凯达木业",
+			"receiptDate":"2018-02-25",
+			"materialName": "ART BA3065LM",
+			"specification": "53*26*23.5",
+			"unit": "平方",
+			"amount": 90,
+			"unitPrice": 3.9,
+			"totlemnt": 342.86,
+			"remark":"111"		
+		},
+		{
+			"id":"005",
+			"suppName":"凯达木业",
+			"receiptDate":"2018-02-25",
+			"materialName": "M2292",
+			"specification": "49*29*46.5",
+			"unit": "平方",
+			"amount": 100,
+			"unitPrice": 3.9,
+			"totlemnt": 553.06,
+			"remark":"111"
+		},
+		{
+			"id":"006",
+			"suppName":"凯达木业",
+			"receiptDate":"2018-02-25",
+			"materialName": "RGS2325H",
+			"specification": "48.5*24*46.2",
+			"unit": "平方",
+			"amount": 295,
+			"unitPrice": 3.9,
+			"totlemnt": 1428.99,
+			"remark":"111"
+		},		
+		{
+			"id":"007",
+			"suppName":"同城包装厂",
+			"receiptDate":"2018-02-25",
+			"materialName": "0189内合",
+			"specification": "31*30*22.80CM",
+			"unit": "只",
+			"amount": 1432,
+			"unitPrice": 1.2,
+			"totlemnt": 1718.40,
+			"remark":"111"
+		},
+		{
+			"id":"009",
+			"suppName":"同城包装厂",
+			"receiptDate":"2018-02-25",
+			"materialName": "36发三层围边",
+			"specification": "1.11*0.215*2.2",
+			"unit": "只",
+			"amount": 950,
+			"unitPrice": 0.535,
+			"totlemnt": 508.25,
+			"remark":"111"
+		},
+		{
+			"id":"010",
+			"suppName":"同城包装厂",
+			"receiptDate":"2018-02-25",
+			"materialName": "42发五层有底无盖",
+			"specification": "",
+			"unit": "只",
+			"amount": 1228,
+			"unitPrice": 1.624,
+			"totlemnt": 1994.27,
+			"remark":"111"
+		},
+		{
+			"id":"11",
+			"suppName":"同城包装厂",
+			"receiptDate":"2018-02-25",
+			"materialName": "42发三层围边",
+			"specification": "",
+			"unit": "只",
+			"amount": 838,
+			"unitPrice": 0.75,
+			"totlemnt": 628.50,
+			"remark":"111"
+		}
+	]
+}

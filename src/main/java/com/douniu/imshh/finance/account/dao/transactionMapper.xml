@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.finance.account.dao.ITransactionDao">
+    <resultMap type="Transaction" id="tranmap">
+        <result property="id" column="id"/>
+        <result property="accountId" column="accountNo"/>
+        <result property="tranDate" column="tranDate"/>
+        <result property="tranType" column="tranType"/>
+        <result property="tranAmount" column="tranAmount"/>
+        <result property="balance" column="balance"/>
+        <result property="tranUser" column="tranUser"/>
+        <result property="tranBank" column="tranBank"/>
+        <result property="tranAccountNo" column="tranAccountNo"/>
+        <result property="orderId" column="orderId"/>
+        <result property="purchaseId" column="purchaseId"/>
+        
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    
+    <select id="findById" parameterType="String" resultMap="tranmap">
+        select * from t_transaction where id = #{id}
+    </select>
+    
+    <select id="query" parameterType="Transaction" resultMap="tranmap">
+        select t_transaction.* from t_transaction 
+               left join t_order on t_transaction.orderid = t_order.id 
+               left join t_purchase on t_transaction.purchaseid = t_purchase.id 
+               where t_transaction.status = 1
+        <if test="orderId != null and orderId !=''">
+          and t_order.identify like #{orderId} 
+        </if>
+        <if test="purchaseId != null and purchaseId !=''">
+          and t_purchase.supplierName like #{purchaseId} 
+        </if> 
+        <if test="tranUser != null and tranUser !=''">
+          and tranUser like #{tranUser} 
+        </if>
+        
+        <if test="startDate != null">
+          and tranDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and tranDate &lt;= #{endDate}
+        </if>
+          order by modifydate desc
+          limit #{pageOffset},#{pageSize}
+    </select> 
+    
+    <select id="count" parameterType="Transaction" resultType="int">
+        select count(1) from t_transaction 
+               left join t_order on t_transaction.orderid = t_order.id 
+               left join t_purchase on t_transaction.purchaseid = t_purchase.id 
+               where t_transaction.status = 1
+        <if test="orderId != null and orderId !=''">
+          and t_order.identify like #{orderId} 
+        </if>
+        <if test="purchaseId != null and purchaseId !=''">
+          and t_purchase.supplierName like #{purchaseId} 
+        </if> 
+        <if test="tranUser != null and tranUser !=''">
+          and tranUser like #{tranUser} 
+        </if>
+        
+        <if test="startDate != null">
+          and tranDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and tranDate &lt;= #{endDate}
+        </if>
+    </select>   
+    
+    <select id="findByOrderId" parameterType="String" resultMap="tranmap">
+        select * from t_transaction 
+         where status = 1
+           and orderId = #{orderId} 
+    </select>
+    
+    <select id="findByPurchaseId" parameterType="String" resultMap="tranmap">
+        select * from t_transaction 
+         where status = 1
+           and purchaseId = #{purchaseId} 
+    </select>
+    
+    <insert id="insert" parameterType="Transaction">
+        insert into t_transaction(id, accountNo, tranDate, tranType, tranAmount, balance, tranUser, tranBank, tranAccountNo, orderId, purchaseId, modifydate, remark, status) 
+          values(#{id}, #{accountId}, #{tranDate}, #{tranType}, #{tranAmount}, #{balance}, #{tranUser}, #{tranBank}, #{tranAccountNo}, #{orderId}, #{purchaseId}, sysdate(), #{remark}, #{status})
+    </insert>
+    
+    <update id="update" parameterType="Transaction">
+        update t_transaction set 
+          accountNo = #{accountId},          
+          tranDate = #{tranDate},
+          tranType = #{tranType},
+          tranAmount = #{tranAmount},
+          tranUser = #{tranUser},
+          tranBank = #{tranBank},
+          tranAccountNo = #{tranAccountNo},
+          orderId = #{orderId},
+          purchaseId = #{purchaseId},
+          
+          remark = #{remark},
+          modifydate = sysdate()
+    where id = #{id}
+    </update>
+    
+</mapper>

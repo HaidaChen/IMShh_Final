@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.finance.order.dao.IOrderDao">
+    <resultMap type="Order" id="ordermap">
+        <id property="id" column="id"/>
+        <result property="identify" column="identify"/>
+        <result property="custId" column="custId"/>
+        <result property="custName" column="custName"/>
+        <result property="orderDate" column="orderDate"/>
+        <result property="amount" column="amount"/>
+        <result property="state" column="state"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>        
+    </resultMap>
+    <resultMap type="Order" id="orderdtlmap">
+        <id property="id" column="id"/>
+        <result property="identify" column="identify"/>
+        <result property="custId" column="custId"/>
+        <result property="custName" column="custName"/>
+        <result property="orderDate" column="orderDate"/>
+        <result property="amount" column="amount"/>
+        <result property="state" column="state"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        
+        <collection property="details" ofType="OrderDetail">
+            <id property="id" column="detailid"/>
+	        <result property="orderId" column="orderId"/>
+	        <result property="pdtNo" column="pdtNo"/>
+	        <result property="pdtId" column="pdtId"/>
+	        <result property="pdtName" column="pdtName"/>
+	        <result property="quantity" column="quantity"/>
+	        <result property="priceRMB" column="priceRMB"/>
+	        <result property="priceDollar" column="priceDollar"/>
+	        <result property="totlemnt" column="totlemnt"/>
+	        <result property="progress" column="progress"/>
+	        <result property="remark" column="detailremark"/>
+	        <result property="status" column="status"/>
+        </collection>
+    </resultMap>
+    
+    <select id="findById" parameterType="String" resultMap="orderdtlmap">
+        select * from t_order left join t_orderdetail on t_order.id = t_orderdetail.orderid where t_order.id = #{id}
+    </select>
+    
+    <select id="query" parameterType="Order" resultMap="ordermap">
+        select * from t_Order where status = 1
+        <if test="identify != null and identify !=''">
+          and identify like #{identify}
+        </if>        
+        <if test="custName != null and custName !=''">
+          and custName like #{custName}
+        </if>
+        <if test="startDate != null">
+          and orderDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and orderDate &lt;= #{endDate}
+        </if>
+          order by modifydate desc
+          limit #{pageOffset},#{pageSize}
+    </select> 
+    <select id="queryNoPage" parameterType="Order" resultMap="orderdtlmap">
+        <!-- select t_order.id, identify, custName, orderDate, amount, t_Order.remark, orderId, t_orderdetail.id as detailid, pdtno,content,pdtName, quantity,priceRMB,priceDollar,totlemnt,t_orderdetail.remark as detailremark  from t_Order, t_orderdetail where t_Order.id = t_orderdetail.orderid and t_Order.status = 1 -->
+        select * from t_order left join t_orderdetail on t_order.id = t_orderdetail.orderid where t_Order.status = 1
+        <if test="identify != null and identify !=''">
+          and identify like #{identify}
+        </if>        
+        <if test="custName != null and custName !=''">
+          and custName like #{custName}
+        </if>
+        <if test="startDate != null">
+          and orderDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and orderDate &lt;= #{endDate}
+        </if>
+          order by t_order.modifydate desc
+    </select>
+    <select id="count" parameterType="Order" resultType="int">
+        select count(1) from t_Order where status = 1
+        <if test="identify != null and identify !=''">
+          and identify like #{identify}
+        </if>        
+        <if test="custName != null and custName !=''">
+          and custName like #{custName}
+        </if>
+        <if test="startDate != null">
+          and orderDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and orderDate &lt;= #{endDate}
+        </if> 
+    </select>   
+    <insert id="insert" parameterType="Order">
+        insert into t_Order(id, identify, custid, custName, orderDate, amount, state, modifydate, remark, status) 
+          values(#{id}, #{identify}, #{custId}, #{custName}, #{orderDate}, #{amount}, #{state}, sysdate(), #{remark}, #{status})
+    </insert>
+    
+    <insert id="batchInsert" parameterType="java.util.List">
+        
+        insert into t_Order(id, identify, custid, custName, orderDate, amount, state, modifydate, remark, status) 
+             values
+             <foreach collection="list" item="order" index="index" separator=",">
+                 (#{order.id} , #{order.identify}, #{order.custId}, #{order.custName}, #{order.orderDate}, #{order.amount}, #{order.state}, sysdate(), #{order.remark}, '1')
+             </foreach>
+    </insert>
+    
+    <update id="update" parameterType="Order">
+        update t_Order set 
+          identify = #{identify},
+          custName = #{custName},
+          orderDate = #{orderDate},
+          amount = #{amount},
+          remark = #{remark},
+          modifydate = sysdate()
+    where id = #{id}
+    </update>
+    <update id="deleteById" parameterType="String">
+        update t_Order set 
+          status = '0',
+          modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+</mapper>

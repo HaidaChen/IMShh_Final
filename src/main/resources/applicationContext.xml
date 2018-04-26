@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:aop="http://www.springframework.org/schema/aop"
+xmlns:tx="http://www.springframework.org/schema/tx"
+xmlns:context="http://www.springframework.org/schema/context"
+xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+      
+      <bean name="customerService" class="com.douniu.imshh.busdata.customer.service.impl.CustomerService">
+          <property name="dao" ref="customerDao"></property>
+      </bean>
+      <bean id="customerDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.busdata.customer.dao.ICustomerDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="supplierService" class="com.douniu.imshh.busdata.supplier.service.impl.SupplierService">
+          <property name="dao" ref="supplierDao"></property>
+      </bean>
+      <bean id="supplierDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.busdata.supplier.dao.ISupplierDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="productService" class="com.douniu.imshh.busdata.product.service.impl.ProductService">
+          <property name="dao" ref="productDao"></property>
+      </bean>
+      <bean id="productDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.busdata.product.dao.IProductDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="materialService" class="com.douniu.imshh.busdata.material.service.impl.MaterialService">
+          <property name="dao" ref="materialDao"></property>
+      </bean>
+      <bean id="materialDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.busdata.material.dao.IMaterialDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="orderService" class="com.douniu.imshh.finance.order.service.impl.OrderService">
+          <property name="dao" ref="orderDao"></property>
+          <property name="detailService" ref="orderDetailService"></property>
+      </bean>
+      <bean id="orderDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.order.dao.IOrderDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      
+      <bean name="orderDetailService" class="com.douniu.imshh.finance.order.service.impl.OrderDetailService">
+          <property name="dao" ref="orderDetailDao"></property>
+      </bean>
+      <bean id="orderDetailDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.order.dao.IOrderDetailDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      
+      <bean name="purchaseService" class="com.douniu.imshh.finance.purchase.service.impl.PurchaseService">
+          <property name="dao" ref="purchaseDao"></property>
+          <property name="dService" ref="purchaseDetailService"></property>
+      </bean>
+      <bean id="purchaseDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.purchase.dao.IPurchaseDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="purchaseDetailService" class="com.douniu.imshh.finance.purchase.service.impl.PurchaseDetailService">
+          <property name="dao" ref="purchaseDetailDao"></property>
+      </bean>
+      <bean id="purchaseDetailDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.purchase.dao.IPurchaseDetailDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="deliverDetailService" class="com.douniu.imshh.finance.purchase.service.impl.DeliverDetailService">
+          <property name="dao" ref="deliverDetailDao"></property>
+      </bean>
+      <bean id="deliverDetailDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.purchase.dao.IDeliverDetailDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="invoiceService" class="com.douniu.imshh.finance.invoice.service.impl.InvoiceService">
+          <property name="dao" ref="invoiceDao"></property>
+      </bean>
+      <bean id="invoiceDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.invoice.dao.IInvoiceDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="accountService" class="com.douniu.imshh.finance.account.service.impl.AccountService">
+          <property name="dao" ref="accountDao"></property>
+      </bean>
+      <bean id="accountDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.account.dao.IAccountDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="transactionService" class="com.douniu.imshh.finance.account.service.impl.TransactionService">
+          <property name="dao" ref="transactionDao"></property>
+      </bean>
+      <bean id="transactionDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.account.dao.ITransactionDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="storageService" class="com.douniu.imshh.finance.storage.service.impl.StorageService">
+          <property name="dao" ref="storageDao"></property>
+      </bean>
+      <bean id="storageDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.storage.dao.IStorageDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+           
+      <bean name="deliverService" class="com.douniu.imshh.finance.storage.service.impl.DeliverService">
+          <property name="dao" ref="deliverDao"></property>
+      </bean>
+      <bean id="deliverDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.storage.dao.IDeliverDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      
+      <!--  -->
+      <bean name="userService" class="com.douniu.imshh.sys.service.impl.UserService">
+          <property name="dao" ref="userDao"></property>
+      </bean>
+      <bean id="userDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.sys.dao.IUserDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="roleService" class="com.douniu.imshh.sys.service.impl.RoleService">
+          <property name="dao" ref="roleDao"></property>
+      </bean>
+      <bean id="roleDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.sys.dao.IRoleDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="authorityService" class="com.douniu.imshh.sys.service.impl.AuthorityService">
+          <property name="dao" ref="authorityDao"></property>
+      </bean>
+      <bean id="authorityDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.sys.dao.IAuthorityDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="menuService" class="com.douniu.imshh.sys.service.impl.MenuService">
+          <property name="dao" ref="menuDao"></property>
+      </bean>
+      <bean id="menuDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.sys.dao.IMenuDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      <!-- 公共部分 -->
+      <!-- SpringMVC上传文件时，需要配置MultipartResolver处理器 -->  
+	    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
+	        <property name="defaultEncoding" value="utf-8" />  
+	        <!-- 指定所上传文件的总大小不能超过10485760000B。注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和 -->  
+	        <property name="maxUploadSize" value="10485760000" />  
+	        <property name="maxInMemorySize" value="40960" />  
+	    </bean>  
+    
+      <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+         <property name="driverClassName" value="com.mysql.jdbc.Driver"/> 
+         <property name="url" value="jdbc:mysql://localhost:3306/imshh?characterEncoding=utf8"/> 
+         <property name="username" value="imshh"/> 
+         <property name="password" value="imshh"/> 
+     </bean> 
+      
+     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> 
+         <!--dataSource属性指定要用到的连接池--> 
+         <property name="dataSource" ref="dataSource"/> 
+         <!--configLocation属性指定mybatis的核心配置文件--> 
+         <property name="configLocation" value="classpath:dbConf.xml"/> 
+    </bean>   
+    
+    <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+    <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
+</beans>

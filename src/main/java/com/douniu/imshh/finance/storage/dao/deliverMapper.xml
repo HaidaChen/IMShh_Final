@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.finance.storage.dao.IDeliverDao">
+    <resultMap type="StorageDeliver" id="dlvrmap">
+        <result property="id" column="id"/>
+        <result property="deliverDate" column="deliverDate"/>
+        <result property="deliverType" column="deliverType"/>
+        <result property="orderId" column="orderId"/>
+        <result property="orderIdentify" column="orderIdentify"/>
+        <result property="pdtNo" column="pdtNo"/>
+        <result property="content" column="content"/>
+        <result property="amount" column="amount"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    
+    
+    <select id="queryDeliverDetail" parameterType="StorageDeliver" resultMap="dlvrmap">
+        select d.*, o.identify as orderIdentify from t_storage_deliver d 
+          left join t_order o on d.orderId = o.id
+          where d.status = 1
+        <if test="pdtNo != null and pdtNo !=''">
+          and pdtNo like #{pdtNo}           
+        </if> 
+        <if test="deliverType != null and deliverType !=''">
+          and deliverType like #{deliverType}           
+        </if>
+        <if test="startDate != null">
+          and deliverDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and deliverDate &lt;= #{endDate}
+        </if>
+          order by d.modifydate desc
+          limit #{pageOffset},#{pageSize}
+    </select>    
+    
+    <select id="queryDeliverNoPage" parameterType="StorageDeliver" resultMap="dlvrmap">
+        select d.*, o.identify as orderIdentify from t_storage_deliver d 
+          left join t_order o on d.orderId = o.id
+          where d.status = 1
+        <if test="pdtNo != null and pdtNo !=''">
+          and pdtNo like #{pdtNo}           
+        </if> 
+        <if test="deliverType != null and deliverType !=''">
+          and deliverType like #{deliverType}           
+        </if>
+        <if test="startDate != null">
+          and deliverDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and deliverDate &lt;= #{endDate}
+        </if>
+          order by d.modifydate desc
+    </select>
+    
+    <select id="countDeliverDetail" parameterType="StorageDeliver" resultType="int">
+        select count(1) from t_storage_deliver where status = 1
+        <if test="pdtNo != null and pdtNo !=''">
+          and pdtNo like #{pdtNo}           
+        </if> 
+        <if test="deliverType != null and deliverType !=''">
+          and deliverType like #{deliverType}           
+        </if>
+        <if test="startDate != null">
+          and deliverDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and deliverDate &lt;= #{endDate}
+        </if>
+    </select>
+    
+    <select id="findDeliverById" parameterType="String" resultMap="dlvrmap">
+        select * from t_storage_deliver where id = #{id}
+    </select>
+    
+    <insert id="insert" parameterType="StorageDeliver">
+        insert into t_storage_deliver(id, deliverDate, deliverType, orderId, pdtNo, content, amount, modifyDate, remark, status) 
+          values(#{id}, #{deliverDate}, #{deliverType}, #{orderId}, #{pdtNo}, #{content}, #{amount}, sysdate(), #{remark}, #{status})
+    </insert>
+    
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into t_storage_deliver(id, deliverDate, deliverType, orderId, pdtNo, content, amount, modifyDate, remark, status) 
+          values
+          <foreach collection="list" item="dlvr" index="index" separator=",">
+          (CONCAT(current_timestamp()+1, #{index}), #{dlvr.deliverDate}, #{dlvr.deliverType}, #{dlvr.orderId}, #{dlvr.pdtNo}, #{dlvr.content}, #{dlvr.amount}, sysdate(), #{dlvr.remark}, '1')
+    	  </foreach>
+    </insert>
+
+    <update id="update" parameterType="StorageDeliver">
+        update t_storage_deliver set 
+          deliverDate = #{deliverDate},                    
+          pdtNo = #{pdtNo},
+          content = #{content},
+          amount = #{amount},
+          deliverType = #{deliverType},
+          orderId = #{orderId},
+          remark = #{remark},
+          modifydate = sysdate()
+    where id = #{id}
+    </update>
+    <update id="deleteById" parameterType="String">
+        update t_storage_deliver set 
+          status = '0',
+          modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+    
+</mapper>

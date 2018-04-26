@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.finance.order.dao.IOrderDetailDao">
+    <resultMap type="OrderDetail" id="orderdtlmap">
+        <result property="id" column="id"/>
+        <result property="orderId" column="orderId"/>
+        <result property="pdtNo" column="pdtNo"/>
+        <result property="pdtId" column="pdtId"/>
+        <result property="pdtName" column="pdtName"/>
+        <result property="quantity" column="quantity"/>
+        <result property="priceRMB" column="priceRMB"/>
+        <result property="priceDollar" column="priceDollar"/>
+        <result property="totlemnt" column="totlemnt"/>
+        <result property="progress" column="progress"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    
+    <select id="queryByOrder" parameterType="String" resultMap="orderdtlmap">
+        select * from t_OrderDetail where orderId = #{orderId}
+          order by modifydate desc
+    </select>
+    
+    <!-- <insert id="insert" parameterType="OrderDetail">
+        insert into t_OrderDetail(id, orderId, pdtNo, pdtId, pdtName, content, quantity, priceRMB, priceDollar, totlemnt, progress, modifyDate, remark, status) 
+          values(#{id}, #{orderId}, #{pdtNo}, #{pdtId}, #{pdtName}, #{content}, #{quantity}, #{priceRMB}, #{priceDollar}, #{totlemnt}, #{progress}, sysdate(), #{remark}, #{status})
+    </insert> -->
+    
+    <insert id="batchInsert" parameterType="java.util.List">
+        
+        insert into t_OrderDetail(id, orderId, pdtNo, pdtId, pdtName, content, quantity, priceRMB, priceDollar, totlemnt, progress, modifyDate, remark, status) 
+             values
+             <foreach collection="list" item="orderdtl" index="index" separator=",">
+                 (CONCAT(current_timestamp()+1, #{index}) , #{orderdtl.orderId}, #{orderdtl.pdtNo}, #{orderdtl.pdtId}, #{orderdtl.pdtName}, #{orderdtl.content}, #{orderdtl.quantity}, #{orderdtl.priceRMB}, #{orderdtl.priceDollar}, #{orderdtl.totlemnt}, #{orderdtl.progress}, sysdate(), #{orderdtl.remark}, '1')
+             </foreach>
+    </insert>
+    
+    <update id="update" parameterType="OrderDetail">
+        update t_OrderDetail set 
+          pdtNo = #{pdtNo},
+          pdtId = #{pdtId},          
+          pdtName = #{pdtName},
+          quantity = #{quantity},
+          priceRMB = #{priceRMB},
+          priceDollar = #{priceDollar},
+          totlemnt = #{totlemnt},
+          progress = #{progress},
+          remark = #{remark},
+          modifydate = sysdate()
+    where id = #{id}
+    </update>
+    
+    <update id="deleteByOrderId" parameterType="String">
+        update t_OrderDetail set 
+               status = '0',
+               modifydate = sysdate()
+         where orderId = #{orderId}
+    </update>
+    
+    <update id="killByOrderId" parameterType="String">
+        delete from t_OrderDetail 
+         where orderId = #{orderId}
+    </update>
+    
+</mapper>

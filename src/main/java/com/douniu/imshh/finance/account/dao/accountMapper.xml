@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.finance.account.dao.IAccountDao">
+    <resultMap type="Account" id="accountmap">
+        <result property="id" column="id"/>
+        <result property="accountNo" column="accountNo"/>
+        <result property="bank" column="bank"/>
+        <result property="brachBank" column="brachBank"/>
+        <result property="bankLogo" column="bankLogo"/>
+        <result property="accountUser" column="accountUser"/>
+        <result property="accountType" column="accountType"/>
+        
+        <result property="status" column="status"/>
+    </resultMap>
+    
+    <select id="queryByType" parameterType="String" resultMap="accountmap">
+        select * from t_account where status = 1
+        <if test="type != null and type !=''">
+          and accounttype = #{type} 
+        </if>
+    </select> 
+    
+    <select id="findById" parameterType="String" resultMap="accountmap">
+        select * from t_account where id = #{id}
+    </select> 
+    
+    <insert id="insert" parameterType="Account">
+        insert into t_account(id, accountNo, bank, brachBank, bankLogo, accountUser, accountType, modifydate, status) 
+          values(#{id}, #{accountNo}, #{bank}, #{brachBank}, #{bankLogo}, #{accountUser}, #{accountType}, sysdate(), #{status})
+    </insert>
+    
+    <update id="update" parameterType="Account">
+        update t_account set 
+          accountNo = #{accountNo},          
+          bank = #{bank},
+          brachBank = #{brachBank},
+          bankLogo = #{bankLogo},
+          accountUser = #{accountUser},
+          accountType = #{accountType},
+          
+          modifydate = sysdate()
+    where id = #{id}
+    </update>
+    
+    <update id="deleteById" parameterType="String">
+        update t_account set 
+          status = '0',
+          modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+</mapper>

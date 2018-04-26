@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.busdata.product.dao.IProductDao">
+    <resultMap type="Product" id="pdtmap">
+        <result property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="specification" column="specification"/>
+        <result property="model" column="model"/>
+        <result property="lineDate" column="lineDate"/>
+        <result property="downlineDate" column="downlineDate"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    
+    <select id="findById" parameterType="String" resultMap="pdtmap">
+        select * from t_product where id = #{id}
+    </select>
+    
+    <select id="query" parameterType="Product" resultMap="pdtmap">
+        select * from t_product where status = 1
+        <if test="condition != null and condition !=''">
+          and (code like #{condition} 
+          or name like #{condition}
+          or specification like #{condition}
+          or model like #{condition})
+        </if>        
+          order by modifydate desc
+          limit #{pageOffset},#{pageSize}
+    </select> 
+    <select id="queryNoPage" parameterType="Product" resultMap="pdtmap">
+        select * from t_product where status = 1
+        <if test="condition != null and condition !=''">
+          and (code like #{condition} 
+          or name like #{condition}
+          or specification like #{condition}
+          or model like #{condition})
+        </if>        
+          order by modifydate desc
+    </select>
+    <select id="count" parameterType="Product" resultType="int">
+        select count(1) from t_product where status = 1
+        <if test="condition != null and condition !=''">
+          and (code like #{condition} 
+          or name like #{condition}
+          or specification like #{condition}
+          or model like #{condition})
+        </if>  
+    </select>   
+    <insert id="insert" parameterType="Product">
+        insert into t_product(id, code, name, specification, model, lineDate, downlineDate, modifydate, remark, status) 
+          values(#{id}, #{code}, #{name}, #{specification}, #{model}, #{lineDate}, #{downlineDate}, sysdate(), #{remark}, #{status})
+    </insert>
+    
+    <insert id="batchInsert" parameterType="java.util.List">
+        
+        insert into t_product(id, code, name, specification, model, lineDate, downlineDate, modifydate, remark, status) 
+             values
+             <foreach collection="list" item="pdt" index="index" separator=",">
+                 (CONCAT(current_timestamp()+1, #{index}) , #{pdt.code}, #{pdt.name}, #{pdt.specification}, #{pdt.model}, #{pdt.lineDate}, #{pdt.downlineDate}, sysdate(), #{pdt.remark}, '1')
+             </foreach>
+    </insert>
+    
+    <update id="update" parameterType="Product">
+        update t_product set 
+          code = #{code},
+          name = #{name},          
+          specification = #{specification},
+          model = #{model},
+          lineDate = #{lineDate},
+          downlineDate = #{downlineDate},
+          remark = #{remark},
+          modifydate = sysdate()
+    where id = #{id}
+    </update>
+    <update id="deleteById" parameterType="String">
+        update t_product set 
+          status = '0',
+          modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+</mapper>

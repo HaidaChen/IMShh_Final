@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.finance.invoice.dao.IInvoiceDao">
+    <resultMap type="Invoice" id="invmap">
+        <result property="id" column="id"/>
+        <result property="invoiceDate" column="invoiceDate"/>
+        <result property="customerId" column="customerId"/>
+        <result property="customerName" column="customerName"/>
+        <result property="amountWithTax" column="amountWithTax"/>
+        <result property="valueAddTax" column="valueAddTax"/>
+        <result property="exciseTax" column="exciseTax"/>
+        <result property="constructionTax" column="constructionTax"/>
+        <result property="educationFee" column="educationFee"/>
+        <result property="totalTax" column="totalTax"/>
+        <result property="drawback" column="drawback"/>
+        
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    
+    <select id="findById" parameterType="String" resultMap="invmap">
+        select * from t_invoice where id = #{id}
+    </select>
+    
+    <select id="query" parameterType="Invoice" resultMap="invmap">
+        select * from t_invoice where status = 1
+        <if test="customerName != null and customerName !=''">
+          and customerName like #{customerName}           
+        </if>       
+        
+        <if test="startDate != null">
+          and invoiceDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and invoiceDate &lt;= #{endDate}
+        </if>
+          order by modifydate desc
+          limit #{pageOffset},#{pageSize}
+    </select> 
+    <select id="queryNoPage" parameterType="Invoice" resultMap="invmap">
+        select * from t_invoice where status = 1
+        <if test="customerName != null and customerName !=''">
+          and customerName like #{customerName}           
+        </if>       
+        
+        <if test="startDate != null">
+          and invoiceDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and invoiceDate &lt;= #{endDate}
+        </if>
+          order by modifydate desc
+    </select>
+    <select id="count" parameterType="Invoice" resultType="int">
+        select count(1) from t_invoice where status = 1
+        <if test="customerName != null and customerName !=''">
+          and customerName like #{customerName}           
+        </if>       
+        
+        <if test="startDate != null">
+          and invoiceDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and invoiceDate &lt;= #{endDate}
+        </if>
+    </select>   
+    <insert id="insert" parameterType="Invoice">
+        insert into t_invoice(id, invoiceDate, customerId, customerName, amountWithTax, valueAddTax, exciseTax, constructionTax, educationFee, totalTax, drawback, modifydate, remark, status) 
+          values(#{id}, #{invoiceDate}, #{customerId}, #{customerName}, #{amountWithTax}, #{valueAddTax}, #{exciseTax}, #{constructionTax}, #{educationFee}, #{totalTax}, #{drawback}, sysdate(), #{remark}, #{status})
+    </insert>
+    
+    <insert id="batchInsert" parameterType="java.util.List">
+        
+        insert into t_invoice(id, invoiceDate, customerId, customerName, amountWithTax, valueAddTax, exciseTax, constructionTax, educationFee, totalTax, drawback, modifydate, remark, status) 
+             values
+             <foreach collection="list" item="inv" index="index" separator=",">
+                 (CONCAT(current_timestamp()+1, #{index}), #{inv.invoiceDate}, #{inv.customerId}, #{inv.customerName}, #{inv.amountWithTax}, #{inv.valueAddTax}, #{inv.exciseTax}, #{inv.constructionTax}, #{inv.educationFee}, #{inv.totalTax}, #{inv.drawback}, sysdate(), #{inv.remark}, '1')
+             </foreach>
+    </insert>
+    
+    <update id="update" parameterType="Invoice">
+        update t_invoice set 
+          invoiceDate = #{invoiceDate},          
+          customerName = #{customerName},
+          amountWithTax = #{amountWithTax},
+          valueAddTax = #{valueAddTax},
+          exciseTax = #{exciseTax},
+          constructionTax = #{constructionTax},
+          educationFee = #{educationFee},
+          totalTax = #{totalTax},
+          drawback = #{drawback},
+          
+          remark = #{remark},
+          modifydate = sysdate()
+    where id = #{id}
+    </update>
+    <update id="deleteById" parameterType="String">
+        update t_invoice set 
+          status = '0',
+          modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+</mapper>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.sys.dao.IUserDao">
+    <resultMap type="User" id="usermap">
+        <result property="id" column="id"/>
+        <result property="userName" column="userName"/>
+        <result property="password" column="password"/>
+        <result property="fullName" column="fullName"/>
+        <result property="email" column="email"/>
+        <result property="weichat" column="weichat"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    
+    
+    <select id="query" parameterType="User" resultMap="usermap">
+        select * from t_user where status = 1
+        <if test="userName != null and userName !=''">
+          and username like #{userName}           
+        </if> 
+        <if test="fullName != null and fullName !=''">
+          and fullname like #{fullName}           
+        </if> 
+        <if test="email != null and email !=''">
+          and email like #{email}           
+        </if>
+        <if test="weichat != null and weichat !=''">
+          and weichat like #{weichat}           
+        </if>
+          order by modifydate desc
+          limit #{pageOffset},#{pageSize}
+    </select>
+    
+    <select id="count" parameterType="User" resultType="int">
+        select count(1) from t_user where status = 1
+        <if test="userName != null and userName !=''">
+          and username like #{userName}           
+        </if> 
+        <if test="fullName != null and fullName !=''">
+          and fullname like #{fullName}           
+        </if> 
+        <if test="email != null and email !=''">
+          and email like #{email}           
+        </if>
+        <if test="weichat != null and weichat !=''">
+          and weichat like #{weichat}           
+        </if>
+    </select>
+    
+    <select id="findById" parameterType="String" resultMap="usermap">
+        select * from t_user where id = #{id}
+    </select>
+    
+    <insert id="insert" parameterType="User">
+        insert into t_user(id, userName, password, fullName, email, weichat, modifydate, status) 
+          values(#{id}, #{userName}, #{password}, #{fullName}, #{email}, #{weichat}, sysdate(), '1')
+    </insert>    
+    
+    <update id="update" parameterType="User">
+        update t_user set 
+          userName = #{userName},          
+          password = #{password},
+          fullName = #{fullName},
+          email = #{email},
+          weichat = #{weichat},
+          modifydate = sysdate()
+    where id = #{id}
+    </update>
+    
+    <update id="delete" parameterType="String">
+        update t_user set 
+          status = '0',
+          modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+    <select id="findByNmPwd" parameterType="User" resultMap="usermap">
+    	select * from t_user where status = '1'
+    	<if test="userName != null and userName !=''">
+          and username = #{userName}
+        </if> 
+        <if test="password != null and password !=''">
+          and password = #{password}           
+        </if>         
+    </select>
+    
+    
+    <delete id="deleteRoleRelation" parameterType="String">
+    	delete from t_user_role where userId = #{userId}
+    </delete>
+    
+    <insert id="addRoleRelation" parameterType="java.util.List">        
+        insert into t_user_role(userid, roleid) 
+             values
+             <foreach collection="list" item="ur" index="index" separator=",">
+                 (#{ur.userId}, #{ur.roleId})
+             </foreach>
+    </insert>
+</mapper>
