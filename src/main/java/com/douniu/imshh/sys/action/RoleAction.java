@@ -63,7 +63,7 @@ public class RoleAction {
 	public String queryAllAuthority(String roleId){
 		List<Authority> auList = authorityService.query();
 		List<Authority> roleAuthList = authorityService.queryByRole(roleId);
-		JSTree root = new JSTree("0", "系统权限");
+		JSTree root = new JSTree("0", "绯荤粺鏉冮檺");
 		root.getState().setOpened(true);
 		loadChildTree(root, auList, roleAuthList);
 		

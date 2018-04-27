@@ -1,11 +1,15 @@
 package com.douniu.imshh.sys.domain;
 
+import java.util.List;
+
 public class Menu {
 	private String id;
 	private String name;
 	private String icon;
 	private String url;
 	private String parentId;
+	private List<Menu> submenu;
+	
 	public String getId() {
 		return id;
 	}
@@ -36,4 +40,11 @@ public class Menu {
 	public void setParentId(String parentId) {
 		this.parentId = parentId;
 	}
+	public List<Menu> getSubmenu() {
+		return submenu;
+	}
+	public void setSubmenu(List<Menu> submenu) {
+		this.submenu = submenu;
+	}
+	
 }

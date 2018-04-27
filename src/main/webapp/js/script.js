@@ -3203,40 +3203,42 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var handleMenu = function(current){
 		
-		var menuContainer = $("#menubar");
-		$.getJSON("/IMShh_UI/json/menu.json", function (data){
-			$.each(data, function(index, obj) {
-				//alert(index);
-				var item = $("<li>");
-				var itemLink = $("<a  href='javascript:;' class=''></a>");
-				var itemContent = $("<i class='" + obj.icon + "'></i><span class='menu-text'>" + obj.name +"</span><span class='arrow'></span>");
+		var menuContainer = $("#menubar");		
+		var menuStr = $.cookie('userMenu');
+		alert(menuStr);
+		menuStr = encodeURIComponent(menuStr);
+		alert(menuStr);
+		var menus = JSON.parse(menuStr);		
+		$.each(menus, function(index, obj) {
+			var item = $("<li>");
+			var itemLink = $("<a  href='javascript:;' class=''></a>");
+			var itemContent = $("<i class='" + obj.icon + "'></i><span class='menu-text'>" + obj.name +"</span><span class='arrow'></span>");
+			
+			itemLink.append(itemContent);
+			item.append(itemLink);
+			menuContainer.append(item);
+			
+			if (obj.submenu){
+				item.attr("class", "has-sub");
+				var subcontainer = $("<ul class='sub'>");
+				$.each(obj.submenu, function(index, submenu){
+					var subItem = '';
+					if (submenu.url == current){
+						subItem = $("<li><a class='' href='" + getProjectName() + "/page/" + submenu.url + "'><span class='sub-menu-text'>" + submenu.name + "</span></a></li>");
+						item.attr("class", "has-sub active");
+						itemLink.html("<i class='" + obj.icon + "'></i><span class='menu-text'>" + obj.name +"</span><span class='arrow open'></span><span class='selected'></span>");
+					}
+					else{
+						subItem = $("<li class='current'><a class='' href='" + getProjectName() + "/page/" + submenu.url + "'><span class='sub-menu-text'>" + submenu.name + "</span></a></li>");
+					} 
+					subcontainer.append(subItem);
+				  
+				});
+				item.append(subcontainer);
 				
-				itemLink.append(itemContent);
-				item.append(itemLink);
-				menuContainer.append(item);
-				
-				if (obj.submenu){
-					item.attr("class", "has-sub");
-					var subcontainer = $("<ul class='sub'>");
-					$.each(obj.submenu, function(index, submenu){
-						var subItem = '';
-						if (submenu.url == current){
-							subItem = $("<li><a class='' href='" + submenu.url + "'><span class='sub-menu-text'>" + submenu.name + "</span></a></li>");
-							item.attr("class", "has-sub active");
-							itemLink.html("<i class='" + obj.icon + "'></i><span class='menu-text'>" + obj.name +"</span><span class='arrow open'></span><span class='selected'></span>");
-						}
-						else{
-							subItem = $("<li class='current'><a class='' href='" + submenu.url + "'><span class='sub-menu-text'>" + submenu.name + "</span></a></li>");
-						} 
-						subcontainer.append(subItem);
-					  
-					});
-					item.append(subcontainer);
-					
-				}else{
-					itemLink.attr("href", obj.url);
-				}				
-			});
+			}else{
+				itemLink.attr("href", obj.url);
+			}				
 		});
 	}
 

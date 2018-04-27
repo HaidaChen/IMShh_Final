@@ -43,7 +43,6 @@
         <mapper resource="/com/douniu/imshh/sys/dao/userMapper.xml"/>
         <mapper resource="/com/douniu/imshh/sys/dao/roleMapper.xml"/>
         <mapper resource="/com/douniu/imshh/sys/dao/authorityMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/sys/dao/menuMapper.xml"/>
     </mappers>
     
 </configuration>
