@@ -3204,10 +3204,8 @@ var App = function () {
 	var handleMenu = function(current){
 		
 		var menuContainer = $("#menubar");		
-		var menuStr = $.cookie('userMenu');
-		alert(menuStr);
-		menuStr = encodeURIComponent(menuStr);
-		alert(menuStr);
+		var menuStr = getCookie('userMenu');
+		
 		var menus = JSON.parse(menuStr);		
 		$.each(menus, function(index, obj) {
 			var item = $("<li>");
@@ -3246,6 +3244,7 @@ var App = function () {
 	/*	Init Login Function
 	/*-----------------------------------------------------------------------------------*/	
 	var initLoginModule = function(){
+		
 		$("#loginform").bootstrapValidator({
 			fields: {
 	        	userName : {validators: {notEmpty : {}}},
@@ -3254,12 +3253,12 @@ var App = function () {
 		});
 		
 		var options = {
-			url: getPojectName()+"/login/login.do",
+			url: getProjectName()+"/login/login.do",
 			type: 'get',
 			success: function(result){
 				$("#loginform .alert").remove();
 				if (result == 1) {
-					window.location.href = getPojectName() + "/index.html";
+					window.location.href = getProjectName() + "/index.html";
 				} else if (result == 0){
 					$("#loginform").append('<div class="alert alert-warning" role="alert">不存在该用户</div>');
 				} else{
@@ -3268,7 +3267,6 @@ var App = function () {
 			}
 		};
 		$("#loginform").submit(function(){
-			
 			$(this).ajaxSubmit(options);
 			
 			return false;
@@ -4518,7 +4516,23 @@ function loadAuTree(roleId){
 /*-----------------------------------------------------------------------------------*/
 /*	公共函数
 /*-----------------------------------------------------------------------------------*/
-var getPojectName = function(){
+var getCookie = function(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		c_start=document.cookie.indexOf(c_name + "=")
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1 
+			c_end=document.cookie.indexOf(";",c_start)
+			if (c_end==-1) c_end=document.cookie.length
+			return decodeURIComponent(document.cookie.substring(c_start,c_end))
+		} 
+	}
+	return ""
+}
+
+var getProjectName = function(){
 	var curWwwPath=window.document.location.href;
 	var pathName=window.document.location.pathname;
     var pos=curWwwPath.indexOf(pathName);
@@ -4562,7 +4576,14 @@ $.fn.datepicker.dates['cn'] = {   //切换为中文显示
             today: "今天",  
             clear: "清除"  
 };	          
-	 
+
+function exitsys(){
+	alert();
+	$.ajax({url: getProjectName()+"/login/logout.do", success: function(){
+		window.location.href = getProjectName() + "/login.html";
+	}});
+}
+
 function CreditCard(){
 	var cardData = {};
 	
@@ -4788,3 +4809,5 @@ function CreditCard(){
 		panelFooter.append($("<div class='clearfix'></div>"));
 	}
 };
+
+

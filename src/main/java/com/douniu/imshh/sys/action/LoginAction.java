@@ -31,7 +31,7 @@ public class LoginAction {
 	
 	@RequestMapping("/login")
 	@ResponseBody
-	public int login(User user, HttpServletRequest request, HttpServletResponse response, HttpSession httpSession){
+	public int login(User user, HttpServletRequest request, HttpServletResponse response, HttpSession httpSession) throws Exception{
 		// 判断是否存在当前用户
 		if (!service.existUserName(user.getUserName())) return 0;
 		
@@ -48,13 +48,28 @@ public class LoginAction {
 			List<Menu> menus =authorityService.queryMenuTreeByUser(oUser.getId());
 			Gson gson = new Gson();
 			String menuStr = gson.toJson(menus);
-			menuStr = URLEncoder.encode(menuStr);
-			Cookie usermenu = new Cookie("userMenu", menuStr);
+			menuStr = URLEncoder.encode(menuStr, "UTF-8");
+			Cookie usermenu = null;
+			if (request.getCookies() != null){
+				for (Cookie cookie :request.getCookies()){
+					if (cookie.getName().equals("userMenu")){
+						usermenu = cookie;
+						break;
+					}
+				}
+			}
 			
-			usermenu.setPath(request.getContextPath());
-			usermenu.setMaxAge(24*60*60);
-			usermenu.setSecure(true);
+			if (usermenu != null){
+				usermenu.setValue(menuStr);
+				usermenu.setPath(request.getContextPath());
+				usermenu.setSecure(false);
+			}else{
+				usermenu = new Cookie("userMenu", menuStr);
+				usermenu.setPath(request.getContextPath());
+				usermenu.setSecure(false);
+			}
 			response.addCookie(usermenu);
+			
 			return 1;
 		}else{
 			return -1;
@@ -62,11 +77,14 @@ public class LoginAction {
 		
 	}
 	
-	@RequestMapping("/logout")
+	@RequestMapping(value="/logout", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public int logout(User user, HttpSession httpSession){
+	public int logout(User user, HttpServletRequest request, HttpSession httpSession){
 		httpSession.removeAttribute("user");
 		httpSession.removeAttribute("userAuthority");
+		for (Cookie cookie :request.getCookies()){
+			cookie.setMaxAge(0);
+		}
 		return 1;
 	}
 	
