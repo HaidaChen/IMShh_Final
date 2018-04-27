@@ -7,7 +7,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.douniu.imshh.sys.domain.Authority;
 import com.douniu.imshh.sys.domain.User;
@@ -24,28 +24,33 @@ public class LoginAction {
 	private IAuthorityService authorityService;
 	
 	@RequestMapping("/login")
-	public ModelAndView login(User user, HttpSession httpSession){
-		ModelAndView mav = new ModelAndView();
-		Boolean verify = service.verify(user);		
-		if (verify){
+	@ResponseBody
+	public int login(User user, HttpSession httpSession){
+		// åˆ¤æ–­æ˜¯å¦å­˜åœ¨å½“å‰ç”¨æˆ·
+		if (!service.existUserName(user.getUserName())) return 0;
+		
+		// åˆ¤æ–­ç”¨æˆ·åå¯†ç æ˜¯å¦æ­£ç¡®
+		if (service.verify(user)){
 			httpSession.setAttribute("user", user);
 			
+			//ä¿å­˜ç”¨æˆ·æƒé™åˆ°session
 			User oUser = service.findByNmPwd(user);
 			List<Authority> authorities = authorityService.queryByUser(oUser.getId());
 			httpSession.setAttribute("userAuthority", authorities);
-			mav.setViewName("../index");
+			
+			return 1;
 		}else{
-			mav.setViewName("../login");
-			mav.addObject("tip", "ÓÃ»§Ãû»òÃÜÂë²»ÕıÈ·£¬ÇëÖØĞÂÊäÈë");
+			return -1;
 		}
-		return mav;
+		
 	}
 	
 	@RequestMapping("/logout")
-	public ModelAndView logout(User user, HttpSession httpSession){
-		ModelAndView mav = new ModelAndView();
+	@ResponseBody
+	public int logout(User user, HttpSession httpSession){
 		httpSession.removeAttribute("user");
-		mav.setViewName("../login");
-		return mav;
+		httpSession.removeAttribute("userAuthority");
+		return 1;
 	}
+	
 }

@@ -3239,6 +3239,40 @@ var App = function () {
 			});
 		});
 	}
+
+	/*-----------------------------------------------------------------------------------*/
+	/*	Init Login Function
+	/*-----------------------------------------------------------------------------------*/	
+	var initLoginModule = function(){
+		$("#loginform").bootstrapValidator({
+			fields: {
+	        	userName : {validators: {notEmpty : {}}},
+	        	password : {validators: {notEmpty : {}}}
+	        }
+		});
+		
+		var options = {
+			url: getPojectName()+"/login/login.do",
+			type: 'get',
+			success: function(result){
+				$("#loginform .alert").remove();
+				if (result == 1) {
+					window.location.href = getPojectName() + "/index.html";
+				} else if (result == 0){
+					$("#loginform").append('<div class="alert alert-warning" role="alert">不存在该用户</div>');
+				} else{
+					$("#loginform").append('<div class="alert alert-warning" role="alert">用户名密码不正确</div>');
+				}
+			}
+		};
+		$("#loginform").submit(function(){
+			
+			$(this).ajaxSubmit(options);
+			
+			return false;
+		});
+	}
+	
 	
 	/*-----------------------------------------------------------------------------------*/
 	/*	Load Order data
@@ -4085,13 +4119,17 @@ var App = function () {
 
         //Initialise theme pages
         init: function () {
-		
+		    if (App.isPage("login")) {
+				handleUniform();
+				initLoginModule();
+			}
             if (App.isPage("index")) {
             	handleMenu();
             }
             if (App.isPage("order")){
             	handleMenu("/IMShh_UI/page/order.html");
             	handleDatePicker();
+            	handleUniform();
             	initOrderModule(); 
             }
             if (App.isPage("receiptCons")){
@@ -4223,9 +4261,7 @@ var App = function () {
 				handleHover();		//Function to display hover-content
 				handleColorbox();		//Function to display colorbox
 			}
-			if (App.isPage("login")) {
-				handleUniform();	//Function to handle uniform inputs
-			}
+			
 			if (App.isPage("wizards_validations")) {
 				handleUniform();	//Function to handle uniform inputs
 			}
@@ -4480,6 +4516,15 @@ function loadAuTree(roleId){
 /*-----------------------------------------------------------------------------------*/
 /*	公共函数
 /*-----------------------------------------------------------------------------------*/
+var getPojectName = function(){
+	var curWwwPath=window.document.location.href;
+	var pathName=window.document.location.pathname;
+    var pos=curWwwPath.indexOf(pathName);
+	var localhostPaht=curWwwPath.substring(0,pos);
+	var projectName=pathName.substring(0,pathName.substr(1).indexOf('/')+1);
+	return localhostPaht+projectName;
+}
+
 var getJSONObjByForm = function(form){
 	var formitems = form.find("input");
 	var oform = {};

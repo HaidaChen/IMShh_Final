@@ -2,7 +2,7 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
   <display-name>IMShh</display-name>
   <welcome-file-list>
-    <welcome-file>login.jsp</welcome-file>
+    <welcome-file>login.html</welcome-file>
   </welcome-file-list>
   <listener>
     <listener-class>
@@ -50,7 +50,7 @@
    	 <filter-class>com.douniu.imshh.sys.action.AuthorizationFilter</filter-class>
    	 <init-param>
         <param-name>loginStrings</param-name>
-        <param-value>/IMShh/login.jsp;/IMShh/login/login.do</param-value>
+        <param-value>login/login.do</param-value>
      </init-param>
      <init-param>
         <param-name>includeStrings</param-name>
