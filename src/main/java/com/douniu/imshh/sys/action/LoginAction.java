@@ -37,10 +37,10 @@ public class LoginAction {
 		
 		// 判断用户名密码是否正确
 		if (service.verify(user)){
-			httpSession.setAttribute("user", user);
+			User oUser = service.findByNmPwd(user);
+			httpSession.setAttribute("user", oUser);
 			
 			//保存用户权限到session
-			User oUser = service.findByNmPwd(user);
 			List<Authority> authorities = authorityService.queryByUser(oUser.getId());
 			httpSession.setAttribute("userAuthority", authorities);
 			
@@ -86,6 +86,34 @@ public class LoginAction {
 			cookie.setMaxAge(0);
 		}
 		return 1;
+	}
+	
+	@RequestMapping(value="/verifyPWD", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public int verifyPWD(User user, HttpSession httpSession){
+		Object oUser = httpSession.getAttribute("user");
+		if (oUser != null && oUser instanceof User){
+			User tUser = (User)oUser;
+			if (tUser.getPassword().equals(user.getPassword())){
+				return 1;
+			}else{
+				return -1;
+			}
+		}
+		return 0;
+	}
+	
+	@RequestMapping(value="/changePWD", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public int changePWD(User user, HttpSession httpSession){
+		Object oUser = httpSession.getAttribute("user");
+		if (oUser instanceof User){
+			User tUser = (User)oUser;
+			tUser.setPassword(user.getPassword());
+			service.update(tUser);
+			return 1;
+		}
+		return 0;
 	}
 	
 }

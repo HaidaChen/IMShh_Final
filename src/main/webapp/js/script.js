@@ -3273,6 +3273,49 @@ var App = function () {
 		});
 	}
 	
+	/*-----------------------------------------------------------------------------------*/
+	/*	Handle change password Function
+	/*-----------------------------------------------------------------------------------*/	
+	var handleChangePWD = function(){
+		
+		$("#pwdForm").bootstrapValidator({
+			fields: {
+	        	opassword : {validators: {notEmpty : {}}},
+	        	npassword : {validators: {notEmpty : {}}}
+	        }
+		});
+		
+		var options = {
+			url: getProjectName()+"/login/changePWD.do",
+			type: 'get',
+			success: function(result){
+				if (result == 1) {
+					alert("密码修改成功");
+				} else{
+					alert("密码修改失败");
+				}
+				$("#modalPWD").modal("hide");
+			}
+		};
+		$("#pwdForm").submit(function(){
+			var opassword = $("input[name=opassword]").val();
+			$.ajax({
+				url:getProjectName()+"/login/verifyPWD.do?password="+opassword, 
+				success:function(result){
+					if (result == 1){
+						$("#pwdForm").ajaxSubmit(options);			
+					}else if (result == -1){
+						alert("原始密码错误");
+					}else{
+						alert("");
+					}
+			}});
+			return false;
+		});
+		$('#modalPWD').on("hide.bs.modal", function(){
+			removeFormData($("#pwdForm"));
+		});
+	}
 	
 	/*-----------------------------------------------------------------------------------*/
 	/*	Load Order data
