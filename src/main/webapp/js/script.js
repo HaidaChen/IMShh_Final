@@ -3306,7 +3306,7 @@ var App = function () {
 						$("#pwdForm").ajaxSubmit(options);			
 					}else if (result == -1){
 						alert("原始密码错误");
-					}else{
+					}else{ 
 						alert("");
 					}
 			}});
