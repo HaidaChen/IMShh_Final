@@ -11,6 +11,7 @@ public interface IUserService{
 	int count(User user);
 	User findById(String id);
 	void update(User user);
+	void updateProfile(User user);
 	void add(User user);
 	void remove(String id);
 	boolean verify(User user);

@@ -3281,33 +3281,34 @@ var App = function () {
 		$("#pwdForm").bootstrapValidator({
 			fields: {
 	        	opassword : {validators: {notEmpty : {}}},
-	        	npassword : {validators: {notEmpty : {}}}
+	        	npassword : {validators: {notEmpty : {}, identical: {field: 'rpassword'}}},
+	        	rpassword : {validators: {identical: {field: 'npassword'}}}
 	        }
 		});
 		
-		var options = {
-			url: getProjectName()+"/login/changePWD.do",
-			type: 'get',
-			success: function(result){
-				if (result == 1) {
-					alert("密码修改成功");
-				} else{
-					alert("密码修改失败");
-				}
-				$("#modalPWD").modal("hide");
-			}
-		};
 		$("#pwdForm").submit(function(){
 			var opassword = $("input[name=opassword]").val();
 			$.ajax({
 				url:getProjectName()+"/login/verifyPWD.do?password="+opassword, 
 				success:function(result){
 					if (result == 1){
-						$("#pwdForm").ajaxSubmit(options);			
+						$("#pwdForm").ajaxSubmit({
+							url: getProjectName()+"/login/changePWD.do?password="+$("input[name=npassword]").val(),
+							type: 'get',
+							success: function(result){
+								if (result == 1) {
+									alert("密码修改成功");
+								} else{
+									alert("密码修改失败");
+								}
+								$("#modalPWD").modal("hide");
+							}
+						});			
 					}else if (result == -1){
 						alert("原始密码错误");
 					}else{ 
-						alert("");
+						alert("请重新登录");
+						window.location.href = getProjectName() + "/login.html";
 					}
 			}});
 			return false;
@@ -3316,6 +3317,27 @@ var App = function () {
 			removeFormData($("#pwdForm"));
 		});
 	}
+
+
+	/*-----------------------------------------------------------------------------------*/
+	/*	Load UserProfile data
+	/*-----------------------------------------------------------------------------------*/	
+	var initUserProfileModule = function(){		
+		var fillForm = new FillForm();
+		fillForm.fill("div .viewForm", 0);
+		fillForm.fill("#profileForm", 1);
+		
+		$("#profileForm").submit(function(){
+			$(this).ajaxSubmit({
+				url: getProjectName()+"/user/editProfile.do",
+				success: function(){
+					window.location.reload();
+				}
+			});
+			return false;
+		});
+	}
+
 	
 	/*-----------------------------------------------------------------------------------*/
 	/*	Load Order data
@@ -4168,6 +4190,7 @@ var App = function () {
 			}
             if (App.isPage("index")) {
             	handleMenu();
+            	initUserProfileModule();
             }
             if (App.isPage("order")){
             	handleMenu("/IMShh_UI/page/order.html");
@@ -4357,6 +4380,7 @@ var App = function () {
 			handleGoToTop(); 	//Funtion to handle goto top buttons
 			handleNavbarFixedTop();		//Function to check & handle if navbar is fixed top
 			handleThemeSkins();		//Function to handle theme skins
+			handleChangePWD();
         },
 
         //Set page
@@ -4621,10 +4645,13 @@ $.fn.datepicker.dates['cn'] = {   //切换为中文显示
 };	          
 
 function exitsys(){
-	alert();
-	$.ajax({url: getProjectName()+"/login/logout.do", success: function(){
-		window.location.href = getProjectName() + "/login.html";
-	}});
+	bootbox.confirm("确定退出系统吗?", function(result){
+		if(result){
+			$.ajax({url: getProjectName()+"/login/logout.do", success: function(){
+				window.location.href = getProjectName() + "/login.html";
+			}});
+		}
+	});
 }
 
 function CreditCard(){

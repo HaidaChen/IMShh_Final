@@ -235,9 +235,17 @@ CREATE TABLE T_USER(
 	username varchar(60) not null,
 	password varchar(20) not null,
 	fullname varchar(60) not null,
+	birthday date,
+	gender char(1),
+	workNo varchar(20),
+	dept varchar(60),
+	position varchar(60),
+	phone varchar(60),
 	email varchar(128),
+	qq varchar(20),
 	weichat varchar(60),
-	
+	head varchar(60),
+	remark varchar(1024),
 	status char(1),
 	modifyDate datetime
 );

@@ -50,7 +50,7 @@
    	 <filter-class>com.douniu.imshh.sys.action.AuthorizationFilter</filter-class>
    	 <init-param>
         <param-name>loginStrings</param-name>
-        <param-value>login/login.do</param-value>
+        <param-value>login/login.do;login/verifyPWD.do;login/changePWD.do;login/logout.do;userProfile.do;editProfile.do</param-value>
      </init-param>
      <init-param>
         <param-name>includeStrings</param-name>

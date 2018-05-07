@@ -12,6 +12,7 @@ public interface IUserDao {
 	User findByNmPwd(User user);
 	void insert(User user);
 	void update(User user);
+	void updateProfile(User user);
 	void delete(String id);
 	void deleteRoleRelation(String userId);
 	void addRoleRelation(List<UserRole> userRole);

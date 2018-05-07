@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,21 @@ public class UserAction {
 	private IUserService service;
 	@Autowired
 	private IRoleService roleService;
+	
+	@RequestMapping(value ="/userProfile", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String userProfile(HttpSession httpSession){
+		Object obj = httpSession.getAttribute("user");
+		Gson gson = new Gson();
+		return gson.toJson(obj);
+	}
+	
+	@RequestMapping(value ="/editProfile", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public void editProfile(User user, HttpSession httpSession){
+		service.updateProfile(user);
+		httpSession.setAttribute("user", user);
+	}
 	
 	@RequestMapping("/main")
     public ModelAndView enter(){

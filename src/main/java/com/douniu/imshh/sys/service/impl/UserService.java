@@ -40,6 +40,11 @@ public class UserService implements IUserService{
 	public void update(User user) {
 		dao.update(user);
 	}
+	
+	@Override
+	public void updateProfile(User user) {
+		dao.updateProfile(user);
+	}
 
 	@Override
 	public void add(User user) {

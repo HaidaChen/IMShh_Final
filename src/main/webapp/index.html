@@ -7,9 +7,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
 	<meta name="description" content="">
 	<meta name="author" content="">
-	<link rel="stylesheet" type="text/css" href="css/cloud-admin.css" >
-	<link rel="stylesheet" type="text/css"  href="css/themes/default.css" id="skin-switcher" >
-	<link rel="stylesheet" type="text/css"  href="css/responsive.css" >
+	<link rel="stylesheet" href="css/cloud-admin.css" >
+	<link rel="stylesheet" href="css/themes/default.css" id="skin-switcher" >
+	<link rel="stylesheet" href="css/responsive.css" >
+	<link rel="stylesheet" href="js/bootstrapvalidator/css/bootstrapValidator.min.css" >
 	<!-- STYLESHEETS --><!--[if lt IE 9]><script src="js/flot/excanvas.min.js"></script><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
 	<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
@@ -56,11 +57,11 @@
 	<section id="page">
 		<div class="modal fade" id="modalPWD" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
-			    <div class="modal-content">
-					<div class="modal-body">
-						<div class="form-group">
-						<div class="box-container">										
-							<form class="form-horizontal" id="pwdForm" action="#">
+				<form class="form-horizontal" id="pwdForm" >
+				    <div class="modal-content">
+						<div class="modal-body">
+							<div class="form-group">
+							<div class="box-container">
 								<div class="form-group">
 									<label class="col-md-3 control-label">原始密码</label> 
 									<div class="col-md-7">
@@ -71,7 +72,7 @@
 								<div class="form-group">
 									<label class="col-md-3 control-label">新的密码</label> 
 									<div class="col-md-7">
-										<input type="password" name="npassword" class="form-control" value="">
+										<input type="password" name="npassword" class="form-control" >
 								    </div>
 								</div>
 								<div class="form-group">
@@ -79,16 +80,16 @@
 									<div class="col-md-7">
 										<input type="password" name="rpassword" class="form-control" value="">
 								    </div>
-								</div>												
-							</form>
+								</div>					
+							</div>
+							</div>
 						</div>
+						<div class="modal-footer">
+						    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						    <button id="btn_save_pwd" type="submit" class="btn btn-primary">保存</button>
 						</div>
-					</div>
-					<div class="modal-footer">
-					    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					    <button id="btn_save_material" type="button" class="btn btn-primary">保存</button>
-					</div>
-			    </div>
+				    </div>
+			    </form>
 			</div>
 		</div>
 		<div id="sidebar" class="sidebar-fixed">
@@ -119,7 +120,7 @@
 							<div class="col-md-12">
 								<div class="box border">
 									<div class="box-title">
-										<h4><i class="fa fa-user"></i><span class="hidden-inline-mobile">Hello, Jennifer!</span></h4>
+										<h4><i class="fa fa-user"></i><span class="hidden-inline-mobile" id="view_welcome">个人信息</span></h4>
 									</div>
 									<div class="box-body">										
 										<div class="tabbable header-tabs user-profile">
@@ -128,16 +129,16 @@
 											   <li class="active"><a href="#pro_overview" data-toggle="tab"><i class="fa fa-dot-circle-o"></i> <span class="hidden-inline-mobile">概况</span></a></li>
 											</ul>
 											<div class="tab-content">
-												<div class="tab-pane fade in active" id="pro_overview">
+												<div class="tab-pane fade in active viewForm" url="/user/userProfile.do" fieldAttr="id" fieldPerfix="view_" id="pro_overview">
 													<div class="row">
 														<div class="col-md-3">
 															<div class="list-group">
 																<li class="list-group-item zero-padding">
-																	<img alt="" class="img-responsive" src="img/profile/avatar.jpg">
+																	<img alt="" id="view_head" class="img-responsive formItem" src="img/profile/avatar.jpg">
 																</li>
 																<div class="list-group-item profile-details">
-																	<h2>Jennifer Doe</h2>
-																	<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt laoreet dolore magna aliquam tincidunt erat volutpat laoreet dolore magna aliquam tincidunt erat volutpat.</p>
+																	<h2 id="view_fullName" class="formItem"></h2>
+																	<p id="view_remark" class="formItem"></p>
 																</div>
 															</div>																
 														</div>
@@ -146,22 +147,24 @@
 															<div class="row">
 																<div class="col-md-6">
 																	<h3>基本信息</h3>
-																	<p>我的生日：1981-11-11</p>
-																	<p>我的性别：男</p>
+																	<p>我的生日：<span id="view_birthday" class="formItem"></span></p>
+																	<p>我的性别：<span id="view_gender" class="formItem" valueformatter="0:男,1:女"></span></p>
 																</div>
 																<div class="col-md-6">
 																	<h3>联系方式</h3>
-																	<p>我的电话：123456789012</p>
-																	<p>我的邮箱：123456789@qq.com</p>
+																	<p>我的电话：<span id="view_phone" class="formItem"></span></p>
+																	<p>我的邮箱：<span id="view_email" class="formItem"></span></p>
+																	<p>我的QQ：<span id="view_QQ" class="formItem"></span></p>
+																	<p>我的微信：<span id="view_weichat" class="formItem"></span></p>
 																</div>
 															</div>
 															
 															<div class="row">
 																<div class="col-md-6">
 																	<h3>在职信息</h3>
-																	<p>我的工号：No.001</p>
-																	<p>我的部门：财务部</p>
-																	<p>我的职位：财务经理</p>
+																	<p>我的工号：<span id="view_workNo" class="formItem"></span></p>
+																	<p>我的部门：<span id="view_dept" class="formItem"></span></p>
+																	<p>我的职位：<span id="view_position" class="formItem"></span></p>
 																</div>
 															</div>															
 														</div>
@@ -169,7 +172,7 @@
 												</div>
 											
 												<div class="tab-pane fade" id="pro_edit">
-													<form class="form-horizontal" action="#">
+													<form id="profileForm" class="form-horizontal" action="#" fieldAttr="name" url="/user/userProfile.do">
 														<div class="row">
 															<div class="col-md-4 col-md-offset-1">
 																<div class="row">
@@ -178,43 +181,46 @@
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">美照</label> 
 																		    <div class="col-md-8">
-																		    	<img src="img/profile/avatar.jpg" alt="" width="50", height="50"/>
+																		    	<img src="img/profile/avatar.jpg" class="formItem" alt="" width="50", height="50"/>
 																		    </div>
 																		</div>
 																		<div class="form-group">
-																		    <label class="col-md-4 control-label">姓名</label> 
-																		    <div class="col-md-8"><input type="text" name="regular" class="form-control" value="Jennifer"></div>
+																		    <label class="col-md-4 control-label">姓名</label> 																		    
+																		    <div class="col-md-8">
+																		    	<input type="text" name="fullName" class="form-control formItem" value="">
+																		    	<input type="hidden" name="id" class="form-control formItem" value="">
+																		    </div>
 																		</div>
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">生日</label> 
-																		    <div class="col-md-8"><input  class="form-control datepicker" type="text" name="regular" size="10"></div>
+																		    <div class="col-md-8"><input  class="form-control datepicker formItem" type="text" name="brithday" size="10"></div>
 																		</div>
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">性别</label> 
 																		    <div class="col-md-8">
-																			    <label class="radio"> <input type="radio" class="uniform" name="optionsRadios1" value="option1"> 男生 </label> 
-																			    <label class="radio"> <input type="radio" class="uniform" name="optionsRadios1" value="option2" checked> 女生 </label>
+																			    <label class="radio"> <input type="radio" class="uniform" name="optionsRadios1" value="0"> 男生 </label> 
+																			    <label class="radio"> <input type="radio" class="uniform" name="optionsRadios1" value="1" checked> 女生 </label>
 																		   </div>
 																		</div>
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">个人介绍</label> 
 																		    <div class="col-md-8">
-																			    <textarea class="form-control"></textarea>
+																			    <textarea class="form-control formItem"></textarea>
 																		   </div>
 																		</div>
 																		
 																		<h4>在职信息</h4>
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">工号</label> 
-																		    <div class="col-md-8"><input type="text" name="regular" class="form-control" value=""></div>
+																		    <div class="col-md-8"><input type="text" name="workNo" class="form-control formItem" value=""></div>
 																		</div>
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">所在部门</label> 
-																		    <div class="col-md-8"><input type="text" name="regular" class="form-control" value=""></div>
+																		    <div class="col-md-8"><input type="text" name="dept" class="form-control formItem" value=""></div>
 																		</div>
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">职位</label> 
-																		    <div class="col-md-8"><input type="text" name="regular" class="form-control" value=""></div>
+																		    <div class="col-md-8"><input type="text" name="position" class="form-control formItem" value=""></div>
 																		</div>
 																	</div>
 																</div>
@@ -226,19 +232,19 @@
 																		<h4>联系方式</h4>
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">电话</label> 
-																		    <div class="col-md-8"><input type="text" name="regular" class="form-control" value=""></div>
+																		    <div class="col-md-8"><input type="text" name="phone" class="form-control formItem" value=""></div>
 																		</div>
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">邮箱</label> 
-																		    <div class="col-md-8"><input  class="form-control datepicker" type="text" name="regular" size="10"></div>
+																		    <div class="col-md-8"><input  class="form-control formItem" type="text" name="email" size="10"></div>
 																		</div>
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">QQ号</label> 
-																		    <div class="col-md-8"><input  class="form-control datepicker" type="text" name="regular" size="10"></div>
+																		    <div class="col-md-8"><input  class="form-control formItem" type="text" name="QQ" size="10"></div>
 																		</div>
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">微信号</label> 
-																		    <div class="col-md-8"><input  class="form-control datepicker" type="text" name="regular" size="10"></div>
+																		    <div class="col-md-8"><input  class="form-control formItem" type="text" name="weichat" size="10"></div>
 																		</div>
 																		
 																	</div>
@@ -266,8 +272,11 @@
 	<script src="js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="bootstrap-dist/js/bootstrap.min.js"></script>
 	<script src="js/jQuery-Cookie/jquery.cookie.min.js"></script>
-	
-	
+	<script src="js/bootbox/bootbox.min.js"></script>
+	<script src="js/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+	<script src="js/bootstrapvalidator/js/language/zh_CN.js"></script>
+	<script src="js/jquery-form/jquery.form.js"></script>
+	<script src="js/fillForm.js"></script>
 	
 	<script src="js/script.js"></script>
 	<script>

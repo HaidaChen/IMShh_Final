@@ -34,18 +34,18 @@ public class AuthorizationFilter implements Filter{
 		String[] loginUrls = loginStrings.split(";");
 		String[] filterFlag = includeStrings.split(";");
 		
-		if (!this.isContains(hrequest.getRequestURI(), filterFlag)) {// 只对指定过滤参数后缀进行过滤
+		if (!this.isContains(hrequest.getRequestURI(), filterFlag)) {// 鍙鎸囧畾杩囨护鍙傛暟鍚庣紑杩涜杩囨护
             chain.doFilter(request, response);
             return;
         }
 
-        if (this.isContains(hrequest.getRequestURI(), loginUrls)) {// 对登录页面不进行过滤
+        if (this.isContains(hrequest.getRequestURI(), loginUrls)) {// 瀵圭櫥褰曢〉闈笉杩涜杩囨护
             chain.doFilter(request, response);
             return;
         }
         
         if (hrequest.getSession().getAttribute("user") == null){
-        	hresponse.sendRedirect("/IMShh/login.jsp");
+        	hresponse.sendRedirect(hrequest.getContextPath()+"/login.html");
         	return;
         }else{
         	List<Authority> authorities = (List<Authority>) hrequest.getSession().getAttribute("userAuthority");
@@ -63,7 +63,7 @@ public class AuthorizationFilter implements Filter{
         		chain.doFilter(request, response);
         	}else{
         		hresponse.sendRedirect("/IMShh/login.jsp");
-        		hrequest.setAttribute("tip", "权限不够");
+        		hrequest.setAttribute("tip", "鏉冮檺涓嶅");
         	}
             return;
         }

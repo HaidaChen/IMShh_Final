@@ -1,6 +1,7 @@
 insert into T_USER(id, username, password, fullname, email, weichat, status, modifyDate)
       value('01', 'admin', 'admin', 'admin', '', '', '1', now());
-
+insert into T_USER(id, username, password, fullname, email, weichat, status, modifyDate)
+      value('02', 'mfq', 'mfq', '毛发启', '', '', '1', now());
 
 insert into T_MENU(id, name, parentId, url, icon)
      values('01', '日常票据', '0', '', 'glyphicon glyphicon-th-list');

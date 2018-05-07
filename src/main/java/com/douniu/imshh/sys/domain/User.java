@@ -1,5 +1,6 @@
 package com.douniu.imshh.sys.domain;
 
+import java.util.Date;
 import java.util.List;
 
 import com.douniu.imshh.common.BaseQO;
@@ -10,11 +11,21 @@ public class User extends BaseQO{
 	private String password;	
 	private String fullName;
 	
+	private Date birthday;
+	private int gender;
+	private String workNo;
+	private String dept;
+	private String position;
+	
+	private String phone;
 	private String email;
+	private String QQ;
 	private String weichat;
+	private String head;
 	
 	private List<Role> roles;
 	
+	private String remark;
 	private String status;
 
 	public String getId() {
@@ -49,12 +60,68 @@ public class User extends BaseQO{
 		this.fullName = fullName;
 	}
 
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
+
+	public int getGender() {
+		return gender;
+	}
+
+	public void setGender(int gender) {
+		this.gender = gender;
+	}
+
+	public String getWorkNo() {
+		return workNo;
+	}
+
+	public void setWorkNo(String workNo) {
+		this.workNo = workNo;
+	}
+
+	public String getDept() {
+		return dept;
+	}
+
+	public void setDept(String dept) {
+		this.dept = dept;
+	}
+
+	public String getPosition() {
+		return position;
+	}
+
+	public void setPosition(String position) {
+		this.position = position;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
 	public String getEmail() {
 		return email;
 	}
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getQQ() {
+		return QQ;
+	}
+
+	public void setQQ(String qQ) {
+		QQ = qQ;
 	}
 
 	public String getWeichat() {
@@ -65,12 +132,12 @@ public class User extends BaseQO{
 		this.weichat = weichat;
 	}
 
-	public String getStatus() {
-		return status;
+	public String getHead() {
+		return head;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setHead(String head) {
+		this.head = head;
 	}
 
 	public List<Role> getRoles() {
@@ -80,5 +147,28 @@ public class User extends BaseQO{
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
-	
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", userName=" + userName + ", password=" + password + ", fullName=" + fullName
+				+ ", birthday=" + birthday + ", gender=" + gender + ", workNo=" + workNo + ", dept=" + dept
+				+ ", position=" + position + ", phone=" + phone + ", email=" + email + ", QQ=" + QQ + ", weichat="
+				+ weichat + ", head=" + head + ", roles=" + roles + ", status=" + status + "]";
+	}	
 }
