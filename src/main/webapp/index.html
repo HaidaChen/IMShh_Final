@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="css/themes/default.css" id="skin-switcher" >
 	<link rel="stylesheet" href="css/responsive.css" >
 	<link rel="stylesheet" href="js/bootstrapvalidator/css/bootstrapValidator.min.css" >
+	<link rel="stylesheet" href="js/datepicker/bootstrap-datepicker.css" />
 	<!-- STYLESHEETS --><!--[if lt IE 9]><script src="js/flot/excanvas.min.js"></script><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
 	<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
@@ -147,8 +148,8 @@
 															<div class="row">
 																<div class="col-md-6">
 																	<h3>基本信息</h3>
-																	<p>我的生日：<span id="view_birthday" class="formItem"></span></p>
-																	<p>我的性别：<span id="view_gender" class="formItem" valueformatter="0:男,1:女"></span></p>
+																	<p>我的生日：<span id="view_birthday" class="formItem" valuetype="date" valueformatter="yyyy-MM-dd"></span></p>
+																	<p>我的性别：<span id="view_gender" class="formItem" valuetype="dictionary" valueformatter='[{"key":1, "value":"男"}, {"key":2, "value":"女"}]'></span></p>
 																</div>
 																<div class="col-md-6">
 																	<h3>联系方式</h3>
@@ -193,19 +194,19 @@
 																		</div>
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">生日</label> 
-																		    <div class="col-md-8"><input  class="form-control datepicker formItem" type="text" name="brithday" size="10"></div>
+																		    <div class="col-md-8"><input type="text" class="form-control formItem selectData" name="birthday" size="10"></div>
 																		</div>
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">性别</label> 
 																		    <div class="col-md-8">
-																			    <label class="radio"> <input type="radio" class="uniform" name="optionsRadios1" value="0"> 男生 </label> 
-																			    <label class="radio"> <input type="radio" class="uniform" name="optionsRadios1" value="1" checked> 女生 </label>
+																			    <label class="radio"> <input type="radio" class="uniform" name="gender" value="0"> 男生 </label> 
+																			    <label class="radio"> <input type="radio" class="uniform" name="gender" value="1" checked> 女生 </label>
 																		   </div>
 																		</div>
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">个人介绍</label> 
 																		    <div class="col-md-8">
-																			    <textarea class="form-control formItem"></textarea>
+																			    <textarea class="form-control formItem" name="remark"></textarea>
 																		   </div>
 																		</div>
 																		
@@ -273,8 +274,9 @@
 	<script src="bootstrap-dist/js/bootstrap.min.js"></script>
 	<script src="js/jQuery-Cookie/jquery.cookie.min.js"></script>
 	<script src="js/bootbox/bootbox.min.js"></script>
-	<script src="js/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+	<script src="js/bootstrapvalidator/js/bootstrapValidator.min.js"></script>	
 	<script src="js/bootstrapvalidator/js/language/zh_CN.js"></script>
+	<script src="js/datepicker/bootstrap-datepicker.js"></script>
 	<script src="js/jquery-form/jquery.form.js"></script>
 	<script src="js/fillForm.js"></script>
 	

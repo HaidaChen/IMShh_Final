@@ -3325,7 +3325,7 @@ var App = function () {
 	var initUserProfileModule = function(){		
 		var fillForm = new FillForm();
 		fillForm.fill("div .viewForm", 0);
-		fillForm.fill("#profileForm", 1);
+		//fillForm.fill("#profileForm", 1);
 		
 		$("#profileForm").submit(function(){
 			$(this).ajaxSubmit({
@@ -4190,7 +4190,8 @@ var App = function () {
 			}
             if (App.isPage("index")) {
             	handleMenu();
-            	initUserProfileModule();
+            	handleDatePicker();
+            	initUserProfileModule();            	
             }
             if (App.isPage("order")){
             	handleMenu("/IMShh_UI/page/order.html");
