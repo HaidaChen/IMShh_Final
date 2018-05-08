@@ -24,17 +24,25 @@ var FillForm = function(){
 };
 
 var fillData = function(data, container, fieldAttr, fieldPerfix, formType){
-	var items = container.find(".formItem");
+	var items = container.find(".formItem, input[formItem=true]");
 	$.each(items, function(index, e){		
 		var field = $(e).attr(fieldAttr);
 		if (fieldPerfix){
 			field = $(e).attr(fieldAttr).substring(fieldPerfix.length);
 		}		
 		var dataValue = getFieldValue(data, field, $(e).attr("valuetype"), $(e).attr("valueformatter"));
-		console.log(dataValue+"-");
-		if ($(e).type == 'img'){
-			$(e).attr("src", data[field]);
-		}else{			
+		
+		if (e.tagName == 'IMG'){
+			$(e).attr("src", dataValue);
+		}
+		else if (e.tagName == 'INPUT' && $(e).attr('type') == 'radio'){
+			if ($(e).val() == dataValue){				
+				$(e).attr("checked","true");
+			}else{
+				$(e).attr("checked","false");
+			}
+		}
+		else{			
 			if (formType == 0){				
 				$(e).html(dataValue);
 			}else{
@@ -48,15 +56,19 @@ var getFieldValue = function(data, field, valuetype, valueformatter){
 	if (valuetype){
 		if (valuetype == 'dictionary'){
 			var dictionary = JSON.parse(valueformatter);
+			var value = '';
 			$.each(dictionary, function(index, obj){				
 				if (data[field] == obj.key){
-					alert(obj.value);
-					return obj.value;
+					value = obj.value;
+					return false;
 				}
 			});
+			return value;
 		}
 		
 		if (valuetype == 'date'){
+			if (data[field] == null)
+				return "";
 			return new Date(data[field]).Format(valueformatter);
 		}
 	}

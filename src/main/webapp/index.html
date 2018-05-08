@@ -93,6 +93,28 @@
 			    </form>
 			</div>
 		</div>
+		<div class="modal fade" id="modalUploadHead" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<form class="form-horizontal" id="uploadHeadForm"  enctype='multipart/form-data'>
+				    <div class="modal-content">
+						<div class="modal-body">
+							<div>
+					            <div id="loadImg" class="cnt-img-content">
+					                <img id="logo" class="ctn-uploadImg" src="" draggable="false">
+					                <div id="licenseBox" class="ctn-licence">
+					                    <input type="file" id="ctn-input-file" name="file" accept="image/*" style="height:40px">
+					                </div>
+					            </div>
+					        </div>
+						</div>
+						<div class="modal-footer">
+						    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						    <button id="btn_upload_head" type="submit" class="btn btn-primary">上传</button>
+						</div>
+				    </div>
+			    </form>
+			</div>
+		</div>
 		<div id="sidebar" class="sidebar-fixed">
 			<div class="sidebar-menu nav-collapse">
 				<ul id="menubar">
@@ -135,7 +157,7 @@
 														<div class="col-md-3">
 															<div class="list-group">
 																<li class="list-group-item zero-padding">
-																	<img alt="" id="view_head" class="img-responsive formItem" src="img/profile/avatar.jpg">
+																	<img alt="" id="view_head" class="img-responsive formItem" src="">
 																</li>
 																<div class="list-group-item profile-details">
 																	<h2 id="view_fullName" class="formItem"></h2>
@@ -182,7 +204,7 @@
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">美照</label> 
 																		    <div class="col-md-8">
-																		    	<img src="img/profile/avatar.jpg" class="formItem" alt="" width="50", height="50"/>
+																		    	<img src="" alt="点击上传头像" class="formItem" width="50", height="50" style="cursor: pointer;" data-toggle="modal" data-target="#modalUploadHead"/>
 																		    </div>
 																		</div>
 																		<div class="form-group">
@@ -194,13 +216,13 @@
 																		</div>
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">生日</label> 
-																		    <div class="col-md-8"><input type="text" class="form-control formItem selectData" name="birthday" size="10"></div>
+																		    <div class="col-md-8"><input type="text" class="form-control formItem selectData" name="birthday" size="10" valuetype="date" valueformatter="yyyy-MM-dd"></div>
 																		</div>
 																		<div class="form-group">
 																		    <label class="col-md-4 control-label">性别</label> 
 																		    <div class="col-md-8">
-																			    <label class="radio"> <input type="radio" class="uniform" name="gender" value="0"> 男生 </label> 
-																			    <label class="radio"> <input type="radio" class="uniform" name="gender" value="1" checked> 女生 </label>
+																			    <label class="radio"> <input type="radio" class="uniform" name="gender" formItem="true" value="1" checked> 男生 </label> 
+																			    <label class="radio"> <input type="radio" class="uniform" name="gender" formItem="true" value="2"> 女生 </label>
 																		   </div>
 																		</div>
 																		<div class="form-group">
