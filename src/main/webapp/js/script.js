@@ -3327,6 +3327,19 @@ var App = function () {
 		fillForm.fill("div .viewForm", 0);
 		fillForm.fill("#profileForm", 1);
 		
+		$("input[name=file]").change(function(){
+			var file = this;
+			if (file.files && file.files[0]){
+				var reader = new FileReader();
+				reader.onload = function(evt){
+					$("#preview").html('<img src="' + evt.target.result + '" width="65px" height="50px" />');
+				}
+				reader.readAsDataURL(file.files[0]);
+			}else{
+				$("#preview").html('<p style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src=\'' + file.value + '\'"></p>');
+			}
+		});
+		
 		$("#profileForm").submit(function(){
 			$(this).ajaxSubmit({
 				url: getProjectName()+"/user/editProfile.do",
@@ -3338,6 +3351,20 @@ var App = function () {
 		});
 	}
 
+	/*-----------------------------------------------------------------------------------*/
+	/*	init navbar for navbar
+	/*-----------------------------------------------------------------------------------*/	
+	var initNavbar = function(){		
+		$.ajax({
+			url: getProjectName()+"/user/userProfile.do",
+			success: function(result){
+				var head = getProjectName() + result["head"];
+				$("#header-user").find("img").attr("src", head);
+			}
+		});
+		
+	}
+	
 	
 	/*-----------------------------------------------------------------------------------*/
 	/*	Load Order data
@@ -4184,6 +4211,7 @@ var App = function () {
 
         //Initialise theme pages
         init: function () {
+        	initNavbar();
 		    if (App.isPage("login")) {
 				handleUniform();
 				initLoginModule();

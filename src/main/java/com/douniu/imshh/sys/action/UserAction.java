@@ -1,16 +1,21 @@
 package com.douniu.imshh.sys.action;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.douniu.imshh.common.PageResult;
@@ -38,9 +43,25 @@ public class UserAction {
 		return gson.toJson(obj);
 	}
 	
-	@RequestMapping(value ="/editProfile", produces = "application/json; charset=utf-8")
+	@RequestMapping(value ="/editProfile", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public void editProfile(User user, HttpSession httpSession){
+	public void editProfile(User user, @RequestParam("file") MultipartFile file, HttpServletRequest request, HttpSession httpSession) throws Exception{
+		if(!file.isEmpty()) {
+            //上传文件路径
+            String path = request.getSession().getServletContext().getRealPath("/fileupload/head/");
+            //上传文件名
+            String filename = ((User)httpSession.getAttribute("user")).getUserName()+"Head";//file.getOriginalFilename();
+            File filepath = new File(path,filename);
+            //判断路径是否存在，如果不存在就创建一个
+            if (!filepath.getParentFile().exists()) { 
+                filepath.getParentFile().mkdirs();
+            }
+            //将上传文件保存到一个目标文件当中
+            file.transferTo(new File(path + File.separator + filename));
+            user.setHead("/fileupload/head/"+filename);
+        } else {
+            user.setHead("");
+        }
 		service.updateProfile(user);
 		httpSession.setAttribute("user", user);
 	}

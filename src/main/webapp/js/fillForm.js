@@ -32,8 +32,8 @@ var fillData = function(data, container, fieldAttr, fieldPerfix, formType){
 		}		
 		var dataValue = getFieldValue(data, field, $(e).attr("valuetype"), $(e).attr("valueformatter"));
 		
-		if (e.tagName == 'IMG'){
-			$(e).attr("src", dataValue);
+		if (e.tagName == 'IMG'){	
+			$(e).attr("src", getProjectName() + dataValue);
 		}
 		else if (e.tagName == 'INPUT' && $(e).attr('type') == 'radio'){
 			if ($(e).val() == dataValue){				
