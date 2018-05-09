@@ -89,7 +89,7 @@ public class UserAction {
 		return gson.toJson(roles);
 	}
 	
-	@RequestMapping("/edit")
+	@RequestMapping(value="/edit", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String edit(User user){
 		User oUser = service.findById(user.getId());

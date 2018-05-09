@@ -35,12 +35,23 @@ var fillData = function(data, container, fieldAttr, fieldPerfix, formType){
 		if (e.tagName == 'IMG'){	
 			$(e).attr("src", getProjectName() + dataValue);
 		}
-		else if (e.tagName == 'INPUT' && ($(e).attr('type') == 'radio' || $(e).attr('type') == 'checkbox')){
-			if ($(e).val() == dataValue){				
-				$(e).attr("checked","true");
+		else if (e.tagName == 'INPUT' && $(e).attr('type') == 'radio'){
+			if ($(e).val() == dataValue){
+				$(e).prop("checked","true");
 			}else{
-				$(e).attr("checked","false");
+				$(e).removeAttr("checked");
 			}
+		}else if (e.tagName == 'INPUT' && $(e).attr('type') == 'checkbox'){			
+			var values = dataValue.split(";");
+			
+			$.each(values, function(index, value){
+				if ($(e).val() == value){	
+					$(e).prop("checked","checked");
+					return false;
+				}else{
+					$(e).removeAttr("checked");
+				}
+			})
 		}
 		else{			
 			if (formType == 0){				
@@ -71,8 +82,27 @@ var getFieldValue = function(data, field, valuetype, valueformatter){
 				return "";
 			return new Date(data[field]).Format(valueformatter);
 		}
+		
+		if (valuetype == 'list'){
+			var value = '';
+			
+			var fullfield = field.split('_');
+			var parentName = fullfield[0];
+			var subName = fullfield[1];
+			
+			if (data[parentName] != null){
+				$.each(data[parentName], function(index, subObject){
+					value += subObject[subName] + ';';
+				});
+			}
+			
+			if (value != ''){
+				value = value.substring(0, value.length - 1);
+			}
+			
+			return value;
+		}
 	}
-	alert("field="+field +"value="+data[field]);
 	return data[field];
 }
 

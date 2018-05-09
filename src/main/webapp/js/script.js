@@ -4131,8 +4131,8 @@ var App = function () {
                 field: '',
                 title: '操作',
                 formatter: function(value,row,index){
-					var strHtml = '<a href="javascript:;" onclick="javascript:editUser('+ row.id +')"><i class="fa fa-edit (alias)"></i></a>';
-					strHtml += '&nbsp;<a href="javascript:;" onclick="deleteUser(' + row.id + ')"><i class="fa fa-minus"></a>';
+                	var strHtml = '<a href="javascript:;" onclick="javascript:editUser(\''+ row.id +'\')"><i class="fa fa-edit (alias)"></i></a>';
+					strHtml += '&nbsp;<a href="javascript:;" onclick="deleteUser(\'' + row.id + '\')"><i class="fa fa-minus"></a>';
 					return strHtml;
 				}
             }],
@@ -4162,7 +4162,7 @@ var App = function () {
 			url: getProjectName() + "/user/loadRoses.do",
 			success: function(result){
 				$.each(result, function(index, obj){
-					$("#rolesChecks").append('<label class="checkbox"> <input type="checkbox" name="roles_id" class="uniform" formItem="true" value="'+ obj.id +'"> '+ obj.name +' </label> ');
+					$("#rolesChecks").append('<label class="checkbox"> <input type="checkbox" name="roles_id" class="uniform" formItem="true" value="'+ obj.id +'" valuetype="list"> '+ obj.name +' </label> ');
 				});
 			}
 		});
@@ -4510,7 +4510,16 @@ var editMaterial = function(mtrlId){
 /*	User Moduel Script
 /*-----------------------------------------------------------------------------------*/
 var deleteUser = function(userId){
-	alert(userId);
+	if (!confirm("确认要删除该记录吗")) {
+        return;
+    }
+	$.ajax({
+		type: 'POST',
+		url: getProjectName() + '/user/delete.do?id=' + userId,
+		success: function(result){
+			$('#tbl_user').bootstrapTable('refresh', {url: getProjectName() + '/user/loaduser.do', cache: false});
+		}
+	});
 }
 
 var editUser = function(userId){
@@ -4582,8 +4591,12 @@ var getJSONObjByForm = function(form){
 	
 var removeFormData = function(form){
 	var formitems = form.find("input");
-	$.each(formitems, function(index, item){
-		$(item).val("");
+	$.each(formitems, function(index, item){		
+		if (item.tagName == 'INPUT' && ($(item).attr('type') == 'radio' || $(item).attr('type') == 'checkbox')){
+			$(item).removeAttr("checked");
+		}else{
+			$(item).val("");
+		}
 	});
 }
 
