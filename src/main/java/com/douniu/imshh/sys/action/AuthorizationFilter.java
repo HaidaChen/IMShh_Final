@@ -30,9 +30,11 @@ public class AuthorizationFilter implements Filter{
 		
 		String loginStrings = config.getInitParameter("loginStrings");
 		String includeStrings = config.getInitParameter("includeStrings");
+		String baseAuthroityStrings = config.getInitParameter("baseAuthroity");
 		
 		String[] loginUrls = loginStrings.split(";");
 		String[] filterFlag = includeStrings.split(";");
+		String[] baseAuthroities = baseAuthroityStrings.split(";");
 		
 		if (!this.isContains(hrequest.getRequestURI(), filterFlag)) {// 只对指定过滤参数后缀进行过滤
             chain.doFilter(request, response);
@@ -47,22 +49,39 @@ public class AuthorizationFilter implements Filter{
         if (hrequest.getSession().getAttribute("user") == null){
         	hresponse.sendRedirect(hrequest.getContextPath()+"/login.html");
         	return;
-        }else{
-        	List<Authority> authorities = (List<Authority>) hrequest.getSession().getAttribute("userAuthority");
+        }else{        	
         	String url = hrequest.getRequestURL().toString();
         	boolean hasAuth = false;
-        	for (Authority authority : authorities){
-        		if (authority.getAction().equals(""))
-        			continue;
-        		if (url.indexOf(authority.getAction()) > -1){
+        	
+        	// 基础权限过滤
+        	for (String baseAuthroity : baseAuthroities){
+        		if (url.indexOf(baseAuthroity) > -1){
         			hasAuth = true;
         			break;
         		}
         	}
+        	
+        	// 基础权限之外的用户分配权限过滤
+        	if (!hasAuth){
+	        	List<Authority> authorities = (List<Authority>) hrequest.getSession().getAttribute("userAuthority");
+	        	for (Authority authority : authorities){
+	        		if (authority.getAction().equals(""))
+	        			continue;
+	        		String[] actions = authority.getAction().split(",");
+	        		for (String action : actions){
+		        		if (url.indexOf(action) > -1){
+		        			hasAuth = true;
+		        			break;
+		        		}
+	        		}
+	        	}
+        	}
+        	
+        	
         	if (hasAuth){
         		chain.doFilter(request, response);
         	}else{
-        		hresponse.sendRedirect("/IMShh/login.jsp");
+        		hresponse.sendRedirect(hrequest.getContextPath()+"/login.html");
         		hrequest.setAttribute("tip", "权限不够");
         	}
             return;

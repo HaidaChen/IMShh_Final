@@ -66,13 +66,6 @@ public class UserAction {
 		httpSession.setAttribute("user", user);
 	}
 	
-	@RequestMapping("/main")
-    public ModelAndView enter(){
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("/sys/userOverview");
-        return mav;
-    }
-	
 	@RequestMapping(value ="/loaduser", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String loadUser(User user){
@@ -86,6 +79,14 @@ public class UserAction {
 		
 		Gson gson = new Gson();
 		return gson.toJson(pr);
+	}
+	
+	@RequestMapping(value ="/loadRoses", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String loadRoses(){
+		List<Role> roles = roleService.query();
+		Gson gson = new Gson();
+		return gson.toJson(roles);
 	}
 	
 	@RequestMapping("/edit")
@@ -106,8 +107,9 @@ public class UserAction {
         return mav;
 	}
 	
-	@RequestMapping("/save")
-	public ModelAndView save(User user, String[] userRoles){
+	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public int save(User user){
 		if (!"".equals(user.getId()) && user.getId() != null){
 			service.update(user);
 		}else{
@@ -116,16 +118,16 @@ public class UserAction {
 			service.add(user);
 		}
 		
-		if (userRoles != null){
+		/*if (roles != null){
 			List<UserRole> userRoleList = new ArrayList<>();
-			for (String roleId : userRoles){
+			for (String roleId : roles){
 				UserRole ur = new UserRole(user.getId(), roleId);
 				userRoleList.add(ur);
 			}
 			service.deleteRoleRelation(user.getId());
 			service.addRoleRelation(userRoleList);
-		}
-		return enter();
+		}*/
+		return 1;
 	}	
 	
 	

@@ -3359,7 +3359,8 @@ var App = function () {
 			url: getProjectName()+"/user/userProfile.do",
 			success: function(result){
 				var head = getProjectName() + result["head"];
-				$("#header-user").find("img").attr("src", head);
+				$("#header-user img").attr("src", head);
+				$("#header-user .username").html(result["userName"]);
 			}
 		});
 		
@@ -4094,7 +4095,7 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initUserModule = function(){
 		$("#tbl_user").bootstrapTable({
-			url: "../json/user.json",
+			url: getProjectName() + "/user/loaduser.do",
 			method: "get",
 			pagination: true,
 			sidePagination: "server", 
@@ -4134,7 +4135,46 @@ var App = function () {
 					strHtml += '&nbsp;<a href="javascript:;" onclick="javascript:deleteUser(' + row.id + ')"><i class="fa fa-minus"></a>';
 					return strHtml;
 				}
-            }]
+            }],
+            queryParams: function(params){
+            	return {
+                    pageSize: params.limit,
+                    offset: params.offset,                    
+                    condition: $("input[name=condition]").val()
+                }
+            }
+		});
+		
+		$("input[name=condition]").change(function(){
+			$("#tbl_user").bootstrapTable("refresh", {url: getProjectName() + "/user/loaduser.do", cache: false});
+		});
+		
+		
+		$("#userForm").bootstrapValidator({
+			fields: {
+	        	userName : {validators: {notEmpty : {}}},
+	        	password : {validators: {notEmpty : {}}},
+	        	fullName : {validators: {notEmpty : {}}}
+	        }
+		});
+		
+		$.ajax({
+			url: getProjectName() + "/user/loadRoses.do",
+			success: function(result){
+				$.each(result, function(index, obj){
+					$("#rolesChecks").append('<label class="checkbox"> <input type="checkbox" name="roles.id" class="uniform" formItem="true" value="'+ obj.id +'"> '+ obj.name +' </label> ');
+				});
+			}
+		});
+		
+		$("#userForm").submit(function(){
+			$(this).ajaxSubmit({
+				url: getProjectName()+"/user/save.do",
+				success: function(){
+					window.location.reload();
+				}
+			});
+			return false;
 		});
 		
 		$("#btn_save_user").click(function(){
@@ -4281,118 +4321,14 @@ var App = function () {
             	initMaterialModule();
             }
             if (App.isPage("user")){
-            	handleMenu("/IMShh_UI/page/user.html");
+            	handleMenu("user.html");
             	initUserModule();
             }
             if (App.isPage("role")){
             	handleMenu("/IMShh_UI/page/role.html");
             	initRoleModule();
             }
-			if (App.isPage("widgets_box")) {
-				handleBoxSortable(); //Function to handle Box sortables
-            }
-			if (App.isPage("elements")) {
-				handleBootbox(); //Function to display Date Timepicker
-				handleMagicSuggest(); //Function to display autosuggest
-				handleDateColorpicker(); //Function to handle date and time picker
-				handleRaty(); //To show star ratings
-				handleTimeAgo(); //Function to handle timestamps
-            }
-			if (App.isPage("button_icons")) {
-				handleStatefulButtons(); //Function to display stateful buttons
-				handleToggle(); 		//Function to handle toggle buttons
-            }
-			if (App.isPage("sliders_progress")) {
-				handleSliders(); //Function to display sliders
-				handleProgress(); //Function to display progress bars
-				handleKnobs();	//Function to display knobs
-            }
-			if (App.isPage("treeview")) {
-				handleTree();	//Function to handle tree display
-			}
-			if (App.isPage("nestable_lists")) {
-				handleNestableLists();	//Function to handle nestable lists
-			}
-			if (App.isPage("simple_table")) {
-				handleTablecloth();	//Function to display tablecloth.js options
-			}
-			if (App.isPage("dynamic_table")) {
-				handleDataTables();	//Function to display data tables
-			}
-			if (App.isPage("jqgrid_plugin")) {
-				handleJqgrid();	//Function to display jqGrid
-			}
-			if (App.isPage("forms")) {
-				handleTypeahead();	//Function to display autocomplete
-				handleAutosize(); //Function to handle textarea autosize
-				handleCountable(); //Function to handle char count
-				handleSelect2(); //Function to handle select2
-				handleUniform();	//Function to handle uniform inputs
-				handleTimeAgo(); //Function to handle timestamps
-			}
-			if (App.isPage("rich_text_editors")) {
-				handleWysiwyg();	//Function to display wysiwyg
-			}
-			if (App.isPage("dropzone_file_upload")) {
-				handleDropzone();	//Function to display wysiwyg
-			}
-			if (App.isPage("xcharts")) {
-				handleXcharts();	//Function to display xcharts
-			}
-			if (App.isPage("others")) {
-				handleGage();	//Function to display justgage
-				handleEasyPie();	//Function to display easy pie charts
-				handleSparkline();	//Function to display sparklines
-			}
-			if (App.isPage("calendar")) {
-				handleCalendar();	//Function to display calendar
-				handleUniform();	//Function to handle uniform inputs
-			}
-			if (App.isPage("vector_maps")) {
-				handleJqvmaps();	//Function to display vector maps
-			}
-			if (App.isPage("gallery")) {
-				handleIsotope();	//Function to display portfolio
-				handleHover();		//Function to display hover-content
-				handleColorbox();		//Function to display colorbox
-			}
 			
-			if (App.isPage("wizards_validations")) {
-				handleUniform();	//Function to handle uniform inputs
-			}
-			if (App.isPage("login_bg")) {
-				handleUniform();	//Function to handle uniform inputs
-				handleBackstretch();	//Function to handle background images
-			}
-			if (App.isPage("chats")) {
-				handleChat('chat-window');	//Function to handle chat
-				handleChat('chat-widget');	//Function to handle chat
-				initTimeAgo(); //Function to init timestamps
-			}
-			if (App.isPage("todo_timeline")) {
-				handleTimeline();	//Function to display timeline
-			}
-			if (App.isPage("address_book")) {
-				handleSliderNav();	//Function to display address book
-			}
-			if (App.isPage("orders")) {
-				initTimeAgo(); //Function to init timestamps
-			}
-			if (App.isPage("faq")) {
-				handleActiveToggle(); //Function to handle active toggle
-			}
-			if (App.isPage("user_profile")) {
-				handleProfileSkillPie(); //Function to show skills in pie
-				handleSparkline();	//Function to display sparklines
-				handleUniform();	//Function to handle uniform inputs
-				handleProfileEdit();	//Function to handle profile edit tab
-			}
-			if (App.isPage("mini_sidebar")) {
-				collapseSidebar();	//Function to display mini menu				
-			}
-			if (App.isPage("fixed_header_sidebar")) {
-				handleFixedSidebar();	//Function to display fixed sidebar
-			}
 			checkLayout();	//Function to check if mini menu/fixed header is activated
 			handleSidebar(); //Function to display the sidebar
 			handleSidebarCollapse(); //Function to hide or show sidebar
@@ -4681,6 +4617,10 @@ function exitsys(){
 			}});
 		}
 	});
+}
+
+function userProfile(){
+	window.location.href = getProjectName() + "/index.html";
 }
 
 function CreditCard(){

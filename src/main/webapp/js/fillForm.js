@@ -35,7 +35,7 @@ var fillData = function(data, container, fieldAttr, fieldPerfix, formType){
 		if (e.tagName == 'IMG'){	
 			$(e).attr("src", getProjectName() + dataValue);
 		}
-		else if (e.tagName == 'INPUT' && $(e).attr('type') == 'radio'){
+		else if (e.tagName == 'INPUT' && ($(e).attr('type') == 'radio' || $(e).attr('type') == 'checkbox')){
 			if ($(e).val() == dataValue){				
 				$(e).attr("checked","true");
 			}else{

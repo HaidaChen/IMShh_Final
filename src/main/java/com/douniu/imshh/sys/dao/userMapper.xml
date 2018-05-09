@@ -20,40 +20,38 @@
         <result property="head" column="head"/>
         <result property="remark" column="remark"/>
         <result property="status" column="status"/>
+        
+        <collection column="id" property="roles" ofType="Role"
+		   select="selectRolesByUser"> 
+		   	<id column="id" property="id"/>
+		    <result column="name" property="name"/>
+		    <result column="remark" property="remark"/>
+		</collection>
     </resultMap>
     
+    <select id="selectRolesByUser" parameterType="int" resultType="Role">
+        select r.* from t_role r, t_user_role ur where r.id = ur.roleId and ur.userId = #{id}
+    </select>
     
     <select id="query" parameterType="User" resultMap="usermap">
         select * from t_user where status = 1
-        <if test="userName != null and userName !=''">
-          and username like #{userName}           
-        </if> 
-        <if test="fullName != null and fullName !=''">
-          and fullname like #{fullName}           
-        </if> 
-        <if test="email != null and email !=''">
-          and email like #{email}           
-        </if>
-        <if test="weichat != null and weichat !=''">
-          and weichat like #{weichat}           
-        </if>
+        <if test="condition != null and condition !=''">
+          and (username like #{condition} 
+           or fullname like #{condition}
+           or email like #{condition}
+           or weichat like #{condition})          
+        </if>         
           order by modifydate desc
           limit #{pageOffset},#{pageSize}
     </select>
     
     <select id="count" parameterType="User" resultType="int">
         select count(1) from t_user where status = 1
-        <if test="userName != null and userName !=''">
-          and username like #{userName}           
-        </if> 
-        <if test="fullName != null and fullName !=''">
-          and fullname like #{fullName}           
-        </if> 
-        <if test="email != null and email !=''">
-          and email like #{email}           
-        </if>
-        <if test="weichat != null and weichat !=''">
-          and weichat like #{weichat}           
+        <if test="condition != null and condition !=''">
+          and (username like #{condition} 
+           or fullname like #{condition}
+           or email like #{condition}
+           or weichat like #{condition})          
         </if>
     </select>
     

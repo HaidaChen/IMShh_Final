@@ -36,7 +36,7 @@ insert into T_MENU(id, name, parentId, url, icon)
 insert into T_MENU(id, name, parentId, url, icon)
      values('04', '系统管理', '0', '', 'glyphicon glyphicon-cog');  
 insert into T_MENU(id, name, parentId, url, icon)
-     values('0401', '用户管理', '04', 'user/main.do', '');
+     values('0401', '用户管理', '04', 'user.html', '');
 insert into T_MENU(id, name, parentId, url, icon)
      values('0402', '角色管理', '04', 'role/main.do', '');
      
@@ -83,7 +83,9 @@ insert into T_ROLE(id, name, remark, status, modifyDate)
 insert into T_ROLE(id, name, remark, status, modifyDate)
      values('02', '业务管理员', '业务管理员角色，是整个系统业务功能模块的管理员，能够访问系统的所有业务模块（不包含系统管理模块）', '1', sysdate());
      
- 
+INSERT INTO `t_user_role` VALUES ('02', '01');
+INSERT INTO `t_user_role` VALUES ('02', '02');
+INSERT INTO `t_user_role` VALUES ('01', '01');
      
 INSERT INTO `t_role_authority` VALUES ('01', '04');
 INSERT INTO `t_role_authority` VALUES ('01', '0401');

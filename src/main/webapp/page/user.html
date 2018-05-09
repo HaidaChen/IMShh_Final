@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="../css/themes/default.css">
 	<link rel="stylesheet" href="../css/responsive.css" >
 	<link rel="stylesheet" href="../bootstrap-table/bootstrap-table.css">
+	<link rel="stylesheet" href="../js/bootstrapvalidator/css/bootstrapValidator.min.css" >
 	<!-- STYLESHEETS --><!--[if lt IE 9]><script src="js/flot/excanvas.min.js"></script><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
 	<link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
 
@@ -39,21 +40,58 @@
 				<ul class="nav navbar-nav pull-right">
 					<li class="dropdown user" id="header-user">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-							<img alt="" src="../img/avatars/avatar3.jpg" />
-							<span class="username">Admin</span>
-							<i class="fa fa-angle-down"></i>
-						</a>
-						<ul class="dropdown-menu">
-							<li><a href="/IMShh_UI/index.html"><i class="fa fa-user"></i> 个人信息</a></li>
-							<li><a href="#"><i class="fa fa-eye"></i> 修改密码</a></li>
-							<li><a href="login.html"><i class="fa fa-power-off"></i> 退出系统</a></li>
-						</ul>
+						<img alt="" src="" />
+						<span class="username"></span>
+						<i class="fa fa-angle-down"></i>
+					</a>
+					<ul class="dropdown-menu">
+						<li><a href="javascript:;" onclick="userProfile()"><i class="fa fa-user"></i> 个人信息</a></li>
+						<li><a href="javascript:;" data-toggle="modal" data-target="#modalPWD"><i class="fa fa-eye"></i> 修改密码</a></li>
+						<li><a href="javascript:;" onclick="exitsys()"><i class="fa fa-power-off"></i> 退出系统</a></li>
+					</ul>
 					</li>
 				</ul>
 		</div>		
 	</header>
 	
 	<section id="page">
+		<div class="modal fade" id="modalPWD" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<form class="form-horizontal" id="pwdForm" >
+				    <div class="modal-content">
+						<div class="modal-body">
+							<div class="form-group">
+							<div class="box-container">
+								<div class="form-group">
+									<label class="col-md-3 control-label">原始密码</label> 
+									<div class="col-md-7">
+										<input type="hidden" name="id" value=""/>
+								    	<input type="password" name="opassword" class="form-control" value="">
+								    </div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-3 control-label">新的密码</label> 
+									<div class="col-md-7">
+										<input type="password" name="npassword" class="form-control" >
+								    </div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-3 control-label">再输一次</label> 
+									<div class="col-md-7">
+										<input type="password" name="rpassword" class="form-control" value="">
+								    </div>
+								</div>					
+							</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+						    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						    <button id="btn_save_pwd" type="submit" class="btn btn-primary">保存</button>
+						</div>
+				    </div>
+			    </form>
+			</div>
+		</div>
 		<div id="sidebar" class="sidebar-fixed">
 			<div class="sidebar-menu nav-collapse">
 				<ul id="menubar">
@@ -65,6 +103,7 @@
 			<div class="container">
 				<div class="modal fade" id="modalUserEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
+					    <form class="form-horizontal" id="userForm" method="POST" fieldAttr="name" url="/user/edit.do">
 					    <div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -74,55 +113,55 @@
 								<div class="form-group">
 								<div class="box-container">
 								<!-- BOX WITH TOOLBOX-->
-									<form class="form-horizontal" id="userForm" action="#">
-										<div class="form-group">
-											<label class="col-md-3 control-label">用户名称</label> 
-											<div class="col-md-7">
-												<input type="hidden" name="id" value=""/>
-										    	<input type="text" name="userName" class="form-control" value="">
-										    </div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">登录密码</label> 
-											<div class="col-md-7">
-												<input type="text" name="password" class="form-control" value="">
-										    </div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">姓名</label> 
-											<div class="col-md-7">
-												<input type="text" name="fullName" class="form-control" value="">
-										    </div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">Email</label> 
-											<div class="col-md-7">
-												<input type="text" name="email" class="form-control" value="">
-										    </div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">微信</label> 
-											<div class="col-md-7">
-												<input type="text" name="weichat" class="form-control" value="">
-										    </div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">所属角色</label> 
-											<div class="col-md-7">
-												<label class="checkbox"> <input type="checkbox" name="roles" class="uniform" value=""> 系统管理员 </label> 
-												<label class="checkbox"> <input type="checkbox" name="roles" class="uniform" value=""> 业务管理员</label>
-										    </div>
-										</div>
-									</form>
+									
+									<div class="form-group">
+										<label class="col-md-3 control-label">用户名称</label> 
+										<div class="col-md-7">
+											<input type="hidden" name="id" value="" class="formItem"/>
+									    	<input type="text" name="userName" class="form-control" value="">
+									    </div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-3 control-label">登录密码</label> 
+										<div class="col-md-7">
+											<input type="text" name="password" class="form-control formItem" value="">
+									    </div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-3 control-label">姓名</label> 
+										<div class="col-md-7">
+											<input type="text" name="fullName" class="form-control formItem" value="">
+									    </div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-3 control-label ">Email</label> 
+										<div class="col-md-7">
+											<input type="text" name="email" class="form-control formItem" value="">
+									    </div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-3 control-label">微信</label> 
+										<div class="col-md-7">
+											<input type="text" name="weichat" class="form-control formItem" value="">
+									    </div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-3 control-label">所属角色</label> 
+										<div class="col-md-7" id="rolesChecks">
+											
+									    </div>
+									</div>
+									
 									<!-- /BOX WITH TOOLBOX-->
 								</div>
 								</div>
 							</div>
 							<div class="modal-footer">
 							    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-							    <button id="btn_save_user" type="button" class="btn btn-primary">保存</button>
+							    <button id="btn_save_user" type="submit" class="btn btn-primary">保存</button>
 							</div>
 					    </div>
+					    </form>
 					</div>
 				</div>
 				<div class="row">
@@ -149,20 +188,14 @@
 													<div class="invoice-header clearfix">
 														<h3 class='pull-left'>
 														  <div class='btn-group'>
-															<a class="btn btn-default" href="#"><i class='fa fa-chain (alias)'></i>
-															导入
-															</a>
 															<a class="btn btn-default" href="#" data-toggle="modal" data-target="#modalUserEdit"><i class='fa fa-plus'></i>
 															新增
-															</a>															
-															<a class="btn btn-default" href="#"><i class='fa fa-external-link'></i>
-															导出
 															</a>
 														  </div>
 														</h3>
 														<div class='pull-right'>
 														    <div class="pull-right" >
-																<input type="text" class="form-control" placeholder="查询条件"/>
+																<input type="text" name="condition" class="form-control" placeholder="查询条件"/>
 														    </div>
 														</div>
 													</div>
@@ -196,6 +229,12 @@
 	<script src="../bootstrap-dist/js/bootstrap.min.js"></script>
 	<script src="../bootstrap-table/bootstrap-table.js"></script>
 	<script src="../js/jQuery-Cookie/jquery.cookie.min.js"></script>
+	<script src="../js/bootbox/bootbox.min.js"></script>
+	<script src="../js/bootstrapvalidator/js/bootstrapValidator.min.js"></script>	
+	<script src="../js/bootstrapvalidator/js/language/zh_CN.js"></script>
+	<script src="../js/datepicker/bootstrap-datepicker.js"></script>
+	<script src="../js/jquery-form/jquery.form.js"></script>
+	<script src="../js/fillForm.js"></script>
 	
 	<script src="../js/script.js"></script>
 	<script>
