@@ -38,7 +38,7 @@ insert into T_MENU(id, name, parentId, url, icon)
 insert into T_MENU(id, name, parentId, url, icon)
      values('0401', '用户管理', '04', 'user.html', '');
 insert into T_MENU(id, name, parentId, url, icon)
-     values('0402', '角色管理', '04', 'role/main.do', '');
+     values('0402', '角色管理', '04', 'role.html', '');
      
 
 insert into T_AUTHORITY(id, name, parentId, action, dependents, remark)

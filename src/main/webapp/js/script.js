@@ -4188,14 +4188,23 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initRoleModule = function(){
 		var rolelist = $("#select_role");
-		$.getJSON("/IMShh_UI/json/role.json", function (data){
-			$.each(data.rows, function(index, role) {
-				rolelist.append("<option value='" + role.id + "' remark='"+ role.remark +"'>" + role.name + "</option>");
-			});
+		$.ajax({
+			url: getProjectName()+"/role/getAllRoles.do",
+			success: function(data){
+				$.each(data, function(index, role) {
+					rolelist.append("<option value='" + role.id + "' remark='"+ role.remark +"'>" + role.name + "</option>");
+				});
+			}
 		});
 		
 		$("#btn_saverole").click(function(){
-	        $("#formRole").submit();        
+			$("#formRole").ajaxSubmit({
+				url: getProjectName()+"/role/saveRole.do",
+				success: function(role){
+					rolelist.append("<option value='" + role.id + "' remark='"+ role.remark +"'>" + role.name + "</option>");
+					$("#roleEditModal").modal('hide');
+				}
+			});      
 		});
 		
 		$("#btn_deleterole").click(function(){		
@@ -4209,13 +4218,14 @@ var App = function () {
 	            return;
 	        }
 			
-			/*$.ajax({
+			$.ajax({
 				type: "POST",
-				url: "delete.do?id="+roleId,
+				url: getProjectName()+"/role/delete.do?id="+roleId,
 				success: function(result){
-					$("#select_role option[value='" + roleId + "']").remove()
+					$("#select_role option[value='" + roleId + "']").remove();
+					$("#sideAuthority").hide();
 				}
-			});*/
+			});
 		});
 		
 		$("#select_role").change(function(){
@@ -4227,7 +4237,7 @@ var App = function () {
 		
 		$("#btn_save_authortiy").click(function(){
 			var roleId = $("#select_role").val();
-			var url = "saveAuthority.do?roleId="+roleId+"&authorityIds="+ids;
+			var url = getProjectName()+"/role/saveAuthority.do?roleId="+roleId+"&authorityIds="+ids;
 			$.ajax({"url": url, success: function(){
 				alert("角色权限保存成功");
 			}});
@@ -4320,7 +4330,7 @@ var App = function () {
             	initUserModule();
             }
             if (App.isPage("role")){
-            	handleMenu("/IMShh_UI/page/role.html");
+            	handleMenu("role.html");
             	initRoleModule();
             }
 			
@@ -4539,7 +4549,7 @@ function loadAuTree(roleId){
 	tree.jstree({
 	    'core' : {
 	      'data' : {
-	        "url" : "../json/authority.json",
+	        "url" : getProjectName() + "/role/allAuthority.do?roleId="+roleId,
 	        "dataType" : "json"
 	      }
 	    },

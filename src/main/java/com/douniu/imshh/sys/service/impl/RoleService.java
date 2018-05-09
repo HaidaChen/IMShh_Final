@@ -43,6 +43,7 @@ public class RoleService implements IRoleService{
 	@Override
 	public void delete(String id) {
 		dao.delete(id);
+		deleteAuthorityRelation(id);
 	}	
 	
 	public void setDao(IRoleDao dao) {

@@ -25,14 +25,13 @@ public class RoleAction {
 	@Autowired
 	private IAuthorityService authorityService;
 	
-	@RequestMapping("/main")
-    public ModelAndView enter(){
-        ModelAndView mav = new ModelAndView();
-        List<Role> roles = service.query();
-        mav.addObject("roles", roles);
-        mav.setViewName("/sys/roleOverview");
-        return mav;
-    }
+	@RequestMapping(value="/getAllRoles", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getAllRoles(){
+		List<Role> roles = service.query();
+		Gson gson = new Gson();
+		return gson.toJson(roles);
+	}
 	
 	@RequestMapping("/edit")
 	public ModelAndView edit(Role role){
@@ -45,10 +44,14 @@ public class RoleAction {
         return mav;
 	}
 	
-	@RequestMapping("/save")
-	public ModelAndView save(Role role){
+	@RequestMapping(value="/saveRole", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String save(Role role){
+		String id = System.currentTimeMillis() + "";
+		role.setId(id);
 		service.add(role);
-		return enter();
+		Gson gson = new Gson();
+		return gson.toJson(role);
 	}	
 	
 	

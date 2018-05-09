@@ -39,21 +39,58 @@
 				<ul class="nav navbar-nav pull-right">
 					<li class="dropdown user" id="header-user">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-							<img alt="" src="../img/avatars/avatar3.jpg" />
-							<span class="username">Admin</span>
-							<i class="fa fa-angle-down"></i>
-						</a>
-						<ul class="dropdown-menu">
-							<li><a href="/IMShh_UI/index.html"><i class="fa fa-user"></i> 个人信息</a></li>
-							<li><a href="#"><i class="fa fa-eye"></i> 修改密码</a></li>
-							<li><a href="login.html"><i class="fa fa-power-off"></i> 退出系统</a></li>
-						</ul>
+						<img alt="" src="" />
+						<span class="username"></span>
+						<i class="fa fa-angle-down"></i>
+					</a>
+					<ul class="dropdown-menu">
+						<li><a href="javascript:;" onclick="userProfile()"><i class="fa fa-user"></i> 个人信息</a></li>
+						<li><a href="javascript:;" data-toggle="modal" data-target="#modalPWD"><i class="fa fa-eye"></i> 修改密码</a></li>
+						<li><a href="javascript:;" onclick="exitsys()"><i class="fa fa-power-off"></i> 退出系统</a></li>
+					</ul>
 					</li>
 				</ul>
 		</div>		
 	</header>
 	
 	<section id="page">
+		<div class="modal fade" id="modalPWD" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<form class="form-horizontal" id="pwdForm" >
+				    <div class="modal-content">
+						<div class="modal-body">
+							<div class="form-group">
+							<div class="box-container">
+								<div class="form-group">
+									<label class="col-md-3 control-label">原始密码</label> 
+									<div class="col-md-7">
+										<input type="hidden" name="id" value=""/>
+								    	<input type="password" name="opassword" class="form-control" value="">
+								    </div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-3 control-label">新的密码</label> 
+									<div class="col-md-7">
+										<input type="password" name="npassword" class="form-control" >
+								    </div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-3 control-label">再输一次</label> 
+									<div class="col-md-7">
+										<input type="password" name="rpassword" class="form-control" value="">
+								    </div>
+								</div>					
+							</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+						    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						    <button id="btn_save_pwd" type="submit" class="btn btn-primary">保存</button>
+						</div>
+				    </div>
+			    </form>
+			</div>
+		</div>
 		<div id="sidebar" class="sidebar-fixed">
 			<div class="sidebar-menu nav-collapse">
 				<ul id="menubar">
@@ -73,7 +110,7 @@
 				                <h4 class="modal-title" id="myModalLabel">新的角色</h4>  
 				            </div>  
 				            <div class="modal-body">  
-				                <form id="formRole" method="post" role="form" class="form-horizontal" action="save.do">
+				                <form id="formRole" method="post" role="form" class="form-horizontal" action="saveRole.do">
 				                    <div class="form-group" style="margin-top:15px">
 				                        <label class="control-label col-sm-3" for="txt_name">角色名称</label>
 				                        <div class="col-sm-8">
@@ -89,7 +126,7 @@
 				                </form>  
 				            </div>  
 				            <div class="modal-footer">
-				                <button id="btn_save" type="button" class="btn btn-primary">保存</button>  
+				                <button id="btn_saverole" type="button" class="btn btn-primary">保存</button>  
 				                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>  
 				            </div>  
 				        </div>  
@@ -121,7 +158,7 @@
 									    			    	<button type="button" class="btn btn-default" data-toggle="modal" data-target="#roleEditModal">
 									    			    		<i class="glyphicon glyphicon-plus"></i>
 									    			    	</button>
-									    			    	<button id="btn_delete" type="button" class="btn btn-default">
+									    			    	<button id="btn_deleterole" type="button" class="btn btn-default">
 									    			    		<i class="glyphicon glyphicon-minus"></i>
 									    			    	</button>
 									    			    </div>    			    
@@ -175,7 +212,7 @@
 	<script src="../js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="../bootstrap-dist/js/bootstrap.min.js"></script>
 	<script src="../js/jstree/jstree.min.js"></script>
-	
+	<script src="../js/jquery-form/jquery.form.js"></script>
 	<script src="../js/jQuery-Cookie/jquery.cookie.min.js"></script>
 	
 	<script src="../js/script.js"></script>
