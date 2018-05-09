@@ -4,16 +4,16 @@
 var FillForm = function(){
 	var oFillForm = new Object();
 	
-	oFillForm.fill = function(filter, type){
+	oFillForm.fill = function(filter, type, urlparam){
 		var container = $(filter);
 		var url = getProjectName() + container.attr("url");
+		if (urlparam)
+			url = url + "?" + urlparam;
 		var attr = container.attr("fieldAttr");
 		var perfix = container.attr("fieldPerfix");
-		if (container.attr("params"))
-			var params = eval(container.attr("params"));
 		
 		$.ajax({
-			url: url+"?"+params,
+			url: url,
 			success: function(data){
 				fillData(data, container, attr, perfix, type);
 			}
@@ -72,6 +72,7 @@ var getFieldValue = function(data, field, valuetype, valueformatter){
 			return new Date(data[field]).Format(valueformatter);
 		}
 	}
+	alert("field="+field +"value="+data[field]);
 	return data[field];
 }
 

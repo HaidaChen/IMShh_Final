@@ -29,7 +29,7 @@
 		</collection>
     </resultMap>
     
-    <select id="selectRolesByUser" parameterType="int" resultType="Role">
+    <select id="selectRolesByUser" parameterType="String" resultType="Role">
         select r.* from t_role r, t_user_role ur where r.id = ur.roleId and ur.userId = #{id}
     </select>
     

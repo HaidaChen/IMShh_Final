@@ -90,26 +90,16 @@ public class UserAction {
 	}
 	
 	@RequestMapping("/edit")
-	public ModelAndView edit(User user){
-		List<Role> roles = roleService.query();
-		List<Role> userRoles = new ArrayList<>();	
-		ModelAndView mav = new ModelAndView();
-		if (!"".equals(user.getId()) && user.getId() != null){
-			User oUser = service.findById(user.getId());
-			mav.addObject("user", oUser);
-			userRoles = roleService.queryByUser(user.getId());			
-		}
-		
-		roles = getFreeRoles(roles, userRoles);		
-		mav.addObject("userRoles", userRoles);
-		mav.addObject("roles", roles);		
-        mav.setViewName("/sys/userEdit");
-        return mav;
+	@ResponseBody
+	public String edit(User user){
+		User oUser = service.findById(user.getId());
+		Gson gson = new Gson();
+        return gson.toJson(oUser);
 	}
 	
 	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public int save(User user){
+	public int save(User user, String[] roles_id){
 		if (!"".equals(user.getId()) && user.getId() != null){
 			service.update(user);
 		}else{
@@ -118,15 +108,15 @@ public class UserAction {
 			service.add(user);
 		}
 		
-		/*if (roles != null){
+		if (roles_id != null){
 			List<UserRole> userRoleList = new ArrayList<>();
-			for (String roleId : roles){
+			for (String roleId : roles_id){
 				UserRole ur = new UserRole(user.getId(), roleId);
 				userRoleList.add(ur);
 			}
 			service.deleteRoleRelation(user.getId());
 			service.addRoleRelation(userRoleList);
-		}*/
+		}
 		return 1;
 	}	
 	

@@ -4131,8 +4131,8 @@ var App = function () {
                 field: '',
                 title: '操作',
                 formatter: function(value,row,index){
-					var strHtml = '<a href="javascript:;" onclick="editUser('+ row.id +')"><i class="fa fa-edit (alias)"></i></a>';
-					strHtml += '&nbsp;<a href="javascript:;" onclick="javascript:deleteUser(' + row.id + ')"><i class="fa fa-minus"></a>';
+					var strHtml = '<a href="javascript:;" onclick="javascript:editUser('+ row.id +')"><i class="fa fa-edit (alias)"></i></a>';
+					strHtml += '&nbsp;<a href="javascript:;" onclick="deleteUser(' + row.id + ')"><i class="fa fa-minus"></a>';
 					return strHtml;
 				}
             }],
@@ -4162,23 +4162,18 @@ var App = function () {
 			url: getProjectName() + "/user/loadRoses.do",
 			success: function(result){
 				$.each(result, function(index, obj){
-					$("#rolesChecks").append('<label class="checkbox"> <input type="checkbox" name="roles.id" class="uniform" formItem="true" value="'+ obj.id +'"> '+ obj.name +' </label> ');
+					$("#rolesChecks").append('<label class="checkbox"> <input type="checkbox" name="roles_id" class="uniform" formItem="true" value="'+ obj.id +'"> '+ obj.name +' </label> ');
 				});
 			}
 		});
 		
-		$("#userForm").submit(function(){
-			$(this).ajaxSubmit({
+		$("#btn_save_user").click(function(){
+			$("#userForm").ajaxSubmit({
 				url: getProjectName()+"/user/save.do",
 				success: function(){
 					window.location.reload();
 				}
 			});
-			return false;
-		});
-		
-		$("#btn_save_user").click(function(){
-			$("#modalUserEdit").modal("hide");
 		});
 		
 		$('#modalUserEdit').on("hide.bs.modal", function(){
@@ -4519,7 +4514,9 @@ var deleteUser = function(userId){
 }
 
 var editUser = function(userId){
-	alert(userId);
+	var fillForm = new FillForm();
+	fillForm.fill("#userForm", 1, "id="+userId);
+	$("#modalUserEdit").modal("show");
 }
 
 /*-----------------------------------------------------------------------------------*/
