@@ -42,8 +42,11 @@ CREATE TABLE T_Product(
 CREATE TABLE T_MATERIAL(
     id varchar(20) not null,
     name varchar(20) not null,
-    specification varchar(64),
-    unit varchar(20),    
+    specification1 varchar(64),
+    specification2 varchar(64),
+    specification3 varchar(64),
+    unit varchar(20),
+    formula varchar(256),
     category varchar(20), 
     modifyDate datetime,
     remark varchar(1024),

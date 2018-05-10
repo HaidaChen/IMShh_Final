@@ -30,9 +30,9 @@ insert into T_MENU(id, name, parentId, url, icon)
 insert into T_MENU(id, name, parentId, url, icon)
      values('0302', '供应商信息', '03', 'supp/main.do', '');
 insert into T_MENU(id, name, parentId, url, icon)
-     values('0303', '产品信息', '03', 'pdt/main.do', '');
+     values('0303', '产品信息', '03', 'product.html', '');
 insert into T_MENU(id, name, parentId, url, icon)
-     values('0304', '原材料信息', '03', 'mtl/main.do', '');
+     values('0304', '原材料信息', '03', 'material.html', '');
 insert into T_MENU(id, name, parentId, url, icon)
      values('04', '系统管理', '0', '', 'glyphicon glyphicon-cog');  
 insert into T_MENU(id, name, parentId, url, icon)

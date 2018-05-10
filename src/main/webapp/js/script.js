@@ -3959,12 +3959,16 @@ var App = function () {
 		});
 		
 		$("#btn_save_customer").click(function(){
-			$("#customerForm").ajaxSubmit({
-				url: getProjectName()+"/cust/save.do",
-				success: function(){
-					window.location.reload();
-				}
-			});
+			var bv = $("#customerForm").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				$("#customerForm").ajaxSubmit({
+					url: getProjectName()+"/cust/save.do",
+					success: function(){
+						window.location.reload();
+					}
+				});
+			}
 		});
 		
 		$('#modalCustEdit').on("hide.bs.modal", function(){
@@ -3979,7 +3983,7 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initSupplierModule = function(){
 		$("#tbl_supplier").bootstrapTable({
-			url: "../json/supplier.json",
+			url: getProjectName() + "/supp/loadsupp.do",
 			method: "get",
 			pagination: true,
 			sidePagination: "server", 
@@ -4008,19 +4012,57 @@ var App = function () {
                 field: '',
                 title: '操作',
                 formatter: function(value,row,index){
-					var strHtml = '<a href="javascript:;" onclick="editSupplier('+ row.id +')"><i class="fa fa-edit (alias)"></i></a>';
-					strHtml += '&nbsp;<a href="javascript:;" onclick="javascript:deleteSupplier(' + row.id + ')"><i class="fa fa-minus"></a>';
+					var strHtml = '<a href="javascript:;" onclick="editSupplier(\''+ row.id +'\')"><i class="fa fa-edit (alias)"></i></a>';
+					strHtml += '&nbsp;<a href="javascript:;" onclick="javascript:deleteSupplier(\'' + row.id + '\')"><i class="fa fa-minus"></a>';
 					return strHtml;
 				}
-            }]
+            }],
+            queryParams: function(params){
+            	return {
+                    pageSize: params.limit,
+                    pageOffset: params.offset,                    
+                    condition: $("input[name=condition]").val()
+                }
+            }
 		});
 		
+		$("input[name=condition]").change(function(){
+			$("#tbl_supplier").bootstrapTable("refresh", {url: getProjectName() + "/supp/loadsupp.do", cache: false});
+		});
+		
+		$("#supplierForm").bootstrapValidator({
+			fields: {
+				name : {validators: {notEmpty : {}}},
+				phone : {validators: {notEmpty : {}}}
+	        }
+		});
+				
 		$("#btn_save_supplier").click(function(){
-			$("#modalSupplierEdit").modal("hide");
+			var bv = $("#supplierForm").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				$("#supplierForm").ajaxSubmit({
+					url: getProjectName()+"/supp/save.do",
+					success: function(){
+						window.location.reload();
+					}
+				});
+			}
 		});
 		
 		$('#modalSupplierEdit').on("hide.bs.modal", function(){
 			removeFormData($("#supplierForm"));
+		});
+		
+		$("#btn_import").click(function(){			
+			var oImportModal = new ImportModal(getProjectName() + "/supp/importsupplier.do", function(){
+				$("#tbl_supplier").bootstrapTable("refresh", {url: getProjectName() + "/supp/loadsupp.do", cache: false});
+        	}, getProjectName() + "/templaters/供应商信息.xlsx");
+			oImportModal.createModal();  
+		});
+		
+		$("#btn_export").click(function(){			
+			window.open(getProjectName() + "/supp/exportsupplier.do?condition="+$("input[name=condition]").val()); 
 		});
 		
 	}
@@ -4031,13 +4073,13 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initProductModule = function(){
 		$("#tbl_product").bootstrapTable({
-			url: "../json/product.json",
+			url: getProjectName() + "/pdt/loadpdt.do",
 			method: "get",
 			pagination: true,
 			sidePagination: "server", 
 			columns: [{
                 field: 'code',
-                title: '编码'
+                title: '货号'
             }, {
                 field: 'name',
                 title: '产品名称'
@@ -4048,28 +4090,67 @@ var App = function () {
                 field: 'model',
                 title: '型号'
             }, {
-                field: 'lineDate',
-                title: '上线日期'
-            }, {
                 field: 'remark',
                 title: '备注'
             }, {
                 field: '',
                 title: '操作',
                 formatter: function(value,row,index){
-					var strHtml = '<a href="javascript:;" onclick="editProduct('+ row.id +')"><i class="fa fa-edit (alias)"></i></a>';
-					strHtml += '&nbsp;<a href="javascript:;" onclick="javascript:deleteProduct(' + row.id + ')"><i class="fa fa-minus"></a>';
+					var strHtml = '<a href="javascript:;" onclick="editProduct(\''+ row.id +'\')"><i class="fa fa-edit (alias)"></i></a>';
+					strHtml += '&nbsp;<a href="javascript:;" onclick="javascript:deleteProduct(\'' + row.id + '\')"><i class="fa fa-minus"></a>';
 					return strHtml;
 				}
-            }]
+            }],
+            queryParams: function(params){
+            	return {
+                    pageSize: params.limit,
+                    pageOffset: params.offset,                    
+                    condition: $("input[name=condition]").val()
+                }
+            }
 		});
 		
+		$("input[name=condition]").change(function(){
+			$("#tbl_product").bootstrapTable("refresh", {url: getProjectName() + "/pdt/loadpdt.do", cache: false});
+		});
+		
+		
+		$("#productForm").bootstrapValidator({
+			fields: {
+				code : {validators: {notEmpty : {}}},
+				name : {validators: {notEmpty : {}}},
+				model : {validators: {notEmpty : {}}},
+				specification : {validators: {notEmpty : {}}}				
+	        }
+		});
+		
+		
 		$("#btn_save_product").click(function(){
-			$("#modalProductEdit").modal("hide");
+			var bv = $("#productForm").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				$("#productForm").ajaxSubmit({
+					url: getProjectName()+"/pdt/save.do",
+					success: function(){
+						window.location.reload();
+					}
+				});
+			}
 		});
 		
 		$('#modalProductEdit').on("hide.bs.modal", function(){
 			removeFormData($("#productForm"));
+		});
+		
+		$("#btn_import").click(function(){			
+			var oImportModal = new ImportModal(getProjectName() + "/pdt/importproduct.do", function(){
+				$("#tbl_product").bootstrapTable("refresh", {url: getProjectName() + "/pdt/loadpdt.do", cache: false});
+        	}, getProjectName() + "/templaters/产品信息.xlsx");
+			oImportModal.createModal();  
+		});
+		
+		$("#btn_export").click(function(){			
+			window.open(getProjectName() + "/pdt/exportproduct.do?condition="+$("input[name=condition]").val()); 
 		});
 		
 	}
@@ -4080,7 +4161,7 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initMaterialModule = function(){
 		$("#tbl_material").bootstrapTable({
-			url: "../json/material.json",
+			url: getProjectName() + "/mtl/loadmtl.do",
 			method: "get",
 			pagination: true,
 			sidePagination: "server", 
@@ -4088,19 +4169,25 @@ var App = function () {
                 field: 'name',
                 title: '品名'
             }, {
-                field: 'specification',
-                title: '规格'
+                field: '',
+                title: '规格',
+                formatter: function(value, row, index){
+                	
+                	var specification = row.specification1;
+                	if (row.specification2 && row.specification2 != ''){
+                		specification += '*' + row.specification2;
+                	}
+                	if (row.specification3 && row.specification3 != ''){
+                		specification += '*' + row.specification3;
+                	}
+                	return specification;
+                }
+            }, {
+                field: 'formula',
+                title: '计量公式'
             }, {
                 field: 'unit',
                 title: '单位'
-            }, {
-                field: 'category',
-                title: '分类',
-                formatter: function(value,row,index){
-                	if (value == 1) return '木方';
-                	else if (value == 2) return '纸箱';
-                	else return '其他';
-                }
             }, {
                 field: 'remark',
                 title: '备注'
@@ -4108,19 +4195,96 @@ var App = function () {
                 field: '',
                 title: '操作',
                 formatter: function(value,row,index){
-					var strHtml = '<a href="javascript:;" onclick="editMaterial('+ row.id +')"><i class="fa fa-edit (alias)"></i></a>';
-					strHtml += '&nbsp;<a href="javascript:;" onclick="javascript:deleteMaterial(' + row.id + ')"><i class="fa fa-minus"></a>';
+					var strHtml = '<a href="javascript:;" onclick="editMaterial(\''+ row.id +'\')"><i class="fa fa-edit (alias)"></i></a>';
+					strHtml += '&nbsp;<a href="javascript:;" onclick="javascript:deleteMaterial(\'' + row.id + '\')"><i class="fa fa-minus"></a>';
 					return strHtml;
 				}
-            }]
+            }],
+            queryParams: function(params){
+            	return {
+                    pageSize: params.limit,
+                    pageOffset: params.offset,                    
+                    condition: $("input[name=condition]").val()
+                }
+            }
+		});
+		
+		$("input[name=condition]").change(function(){
+			$("#tbl_material").bootstrapTable("refresh", {url: getProjectName() + "/mtl/loadmtl.do", cache: false});
+		});
+		
+		
+		$("#materialForm").bootstrapValidator({
+			fields: {
+				name : {validators: {notEmpty : {}}}
+	        }
 		});
 		
 		$("#btn_save_material").click(function(){
-			$("#modalMaterialEdit").modal("hide");
+			var bv = $("#materialForm").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				$("#materialForm").ajaxSubmit({
+					url: getProjectName()+"/mtl/save.do",
+					success: function(){
+						window.location.reload();
+					}
+				});
+			}
 		});
 		
 		$('#modalMaterialEdit').on("hide.bs.modal", function(){
 			removeFormData($("#materialForm"));
+		});
+		
+		$("#btn_import").click(function(){			
+			var oImportModal = new ImportModal(getProjectName() + "/mtl/importmaterial.do", function(){
+				$("#tbl_material").bootstrapTable("refresh", {url: getProjectName() + "/mtl/loadmtl.do", cache: false});
+        	}, getProjectName() + "/templaters/原材料信息.xlsx");
+			oImportModal.createModal();  
+		});
+		
+		$("#btn_export").click(function(){			
+			window.open(getProjectName() + "/mtl/exportmaterial.do?condition="+$("input[name=condition]").val()); 
+		});
+		
+		
+		
+		
+		$("#btn_showformula").click(function(){
+			$("#formulabox").show();
+		});
+		
+		$("#grp_factor").children().click(function(){
+			var content = $("#calculation").text();
+			$("#calculation").text(content + "'" + $(this).html() + "'");
+		});
+		
+		$("#grp_number, #grp_operation").children().click(function(){
+			var content = $("#calculation").text();
+			$("#calculation").text(content + $(this).html());
+		});
+		
+		$("#btn_reback").click(function(){
+			var content = $("#calculation").text();
+			var iplus = content.lastIndexOf("+");
+			var iminus = content.lastIndexOf("-");
+			var imultiplication = content.lastIndexOf("*");
+			var idivision = content.lastIndexOf("/");
+			var near = Math.max.apply(null, [iplus, iminus, imultiplication, idivision]);
+			if (near == -1)
+				return;
+			content = content.substr(0, near);
+			$("#calculation").text(content);
+		});
+		
+		$("#btn_clear").click(function(){
+			$("#calculation").text("");
+		});
+		
+		$("#btn_save").click(function(){
+			$("input[name=formula]").val($("#calculation").html());
+			$("#formulabox").hide();
 		});
 		
 	}
@@ -4204,12 +4368,16 @@ var App = function () {
 		});
 		
 		$("#btn_save_user").click(function(){
-			$("#userForm").ajaxSubmit({
-				url: getProjectName()+"/user/save.do",
-				success: function(){
-					window.location.reload();
-				}
-			});
+			var bv = $("#customerForm").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				$("#userForm").ajaxSubmit({
+					url: getProjectName()+"/user/save.do",
+					success: function(){
+						window.location.reload();
+					}
+				});
+			}
 		});
 		
 				
@@ -4350,16 +4518,15 @@ var App = function () {
             	initCustomerModule();
             }
             if (App.isPage("supplier")){
-            	handleMenu("/IMShh_UI/page/supplier.html");
+            	handleMenu("supplier.html");
             	initSupplierModule();
             }
             if (App.isPage("product")){
-            	handleMenu("/IMShh_UI/page/product.html");
-            	handleDatePicker();
+            	handleMenu("product.html");
             	initProductModule();
             }
             if (App.isPage("material")){
-            	handleMenu("/IMShh_UI/page/material.html");
+            	handleMenu("material.html");
             	initMaterialModule();
             }
             if (App.isPage("user")){
@@ -4535,33 +4702,66 @@ var editCustomer = function(custId){
 /*	Product Moduel Script
 /*-----------------------------------------------------------------------------------*/
 var deleteProduct = function(pdtId){
-	alert(pdtId);
+	if (!confirm("确认要删除该记录吗")) {
+        return;
+    }
+	$.ajax({
+		type: 'POST',
+		url: getProjectName() + '/pdt/delete.do?id=' + pdtId,
+		success: function(result){
+			$('#tbl_product').bootstrapTable('refresh', {url: getProjectName() + '/pdt/loadpdt.do', cache: false});
+		}
+	});
 }
 
 var editProduct = function(pdtId){
-	alert(pdtId);
+	var fillForm = new FillForm();
+	fillForm.fill("#productForm", 1, "id="+pdtId);
+	$("#modalProductEdit").modal("show");
 }
 
 /*-----------------------------------------------------------------------------------*/
 /*	Supplier Moduel Script
 /*-----------------------------------------------------------------------------------*/
 var deleteSupplier = function(suppId){
-	alert(suppId);
+	if (!confirm("确认要删除该记录吗")) {
+        return;
+    }
+	$.ajax({
+		type: 'POST',
+		url: getProjectName() + '/supp/delete.do?id=' + custId,
+		success: function(result){
+			$('#tbl_supplier').bootstrapTable('refresh', {url: getProjectName() + '/supp/loadsupp.do', cache: false});
+		}
+	});
 }
 
 var editSupplier = function(suppId){
-	alert(suppId);
+	var fillForm = new FillForm();
+	fillForm.fill("#supplierForm", 1, "id="+suppId);
+	$("#modalSupplierEdit").modal("show");
 }
 
 /*-----------------------------------------------------------------------------------*/
 /*	Material Moduel Script
 /*-----------------------------------------------------------------------------------*/
 var deleteMaterial = function(mtrlId){
-	alert(mtrlId);
+	if (!confirm("确认要删除该记录吗")) {
+        return;
+    }
+	$.ajax({
+		type: 'POST',
+		url: getProjectName() + '/mtl/delete.do?id=' + mtrlId,
+		success: function(result){
+			$('#tbl_material').bootstrapTable('refresh', {url: getProjectName() + '/mtl/loadmtl.do', cache: false});
+		}
+	});
 }
 
 var editMaterial = function(mtrlId){
-	alert(mtrlId);
+	var fillForm = new FillForm();
+	fillForm.fill("#materialForm", 1, "id="+mtrlId);
+	$("#modalMaterialEdit").modal("show");
 }
 
 /*-----------------------------------------------------------------------------------*/
