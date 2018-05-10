@@ -50,28 +50,19 @@ public class CustomerAction {
 	@Autowired
 	private ICustomerService service;
 	
-	@RequestMapping("/main")
-    public ModelAndView enter(Customer cust){
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("/busdata/cust/overview");
-        return mav;
-    }
-	
-	@RequestMapping("/edit")
-	public ModelAndView edit(Customer cust){
-		ModelAndView mav = new ModelAndView();
-		if (cust.getId() != ""){
-			Customer customer = service.getById(cust.getId());
-			mav.addObject("cust", customer);
-		}
-        mav.setViewName("/busdata/cust/edit");
-        return mav;
+	@RequestMapping(value="/edit", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String edit(Customer cust){		
+		Customer customer = service.getById(cust.getId());
+		Gson gson = new Gson();
+		return gson.toJson(customer);
 	}
 	
-	@RequestMapping("/save")
-	public ModelAndView save(Customer cust){
+	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public int save(Customer cust){
 		service.save(cust);
-        return enter(cust);
+        return 1;
 	}
 	
 	@RequestMapping(value ="/loadcust", produces = "application/json; charset=utf-8")
@@ -92,13 +83,11 @@ public class CustomerAction {
 	@ResponseBody
 	public void delete(String id){
 		service.delete(id);
-	}
+	}	
 	
-	
-	
+    @RequestMapping(value="importcustomer",method={RequestMethod.GET,RequestMethod.POST})  
     @ResponseBody  
-    @RequestMapping(value="ajaxUpload",method={RequestMethod.GET,RequestMethod.POST})  
-    public void ajaxUploadExcel(HttpServletRequest request,HttpServletResponse response) throws Exception {  
+    public void importCustomer(HttpServletRequest request,HttpServletResponse response) throws Exception {  
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;    
           
         InputStream in =null;  
@@ -113,9 +102,9 @@ public class CustomerAction {
         service.batchAdd(customers);
     }  
     
-    @RequestMapping(value = "downloadExcel", method = RequestMethod.GET)  
+    @RequestMapping(value = "exportcustomer", method = RequestMethod.GET)  
     @ResponseBody  
-    public void downloadExcel(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
+    public void exportCustomer(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
         response.reset();  
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");  
         String dateStr = sdf.format(new Date());  

@@ -3891,9 +3891,11 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initCustomerModule = function(){
 		$("#tbl_customer").bootstrapTable({
-			url: "../json/customer.json",
+			url: getProjectName() + "/cust/loadcust.do",
 			method: "get",
 			pagination: true,
+			pageSize: 10,
+			pageNumber: 1,
 			sidePagination: "server", 
 			columns: [{
                 field: 'name',
@@ -3920,15 +3922,49 @@ var App = function () {
                 field: '',
                 title: '操作',
                 formatter: function(value,row,index){
-					var strHtml = '<a href="javascript:;" onclick="editCustomer('+ row.id +')"><i class="fa fa-edit (alias)"></i></a>';
-					strHtml += '&nbsp;<a href="javascript:;" onclick="javascript:deleteCustomer(' + row.id + ')"><i class="fa fa-minus"></a>';
+					var strHtml = '<a href="javascript:;" onclick="editCustomer(\''+ row.id +'\')"><i class="fa fa-edit (alias)"></i></a>';
+					strHtml += '&nbsp;<a href="javascript:;" onclick="javascript:deleteCustomer(\'' + row.id + '\')"><i class="fa fa-minus"></a>';
 					return strHtml;
 				}
-            }]
+            }],
+            queryParams: function(params){
+            	return {
+                    pageSize: params.limit,
+                    pageOffset: params.offset,                    
+                    condition: $("input[name=condition]").val()
+                }
+            }
+		});
+		
+		$("input[name=condition]").change(function(){
+			$("#tbl_customer").bootstrapTable("refresh", {url: getProjectName() + "/cust/loadcust.do", cache: false});
+		});
+		
+		$("#customerForm").bootstrapValidator({
+			fields: {
+				name : {validators: {notEmpty : {}}},
+				phone : {validators: {notEmpty : {}}}
+	        }
+		});
+		
+		$("#btn_import").click(function(){			
+			var oImportModal = new ImportModal(getProjectName() + "/cust/importcustomer.do", function(){
+				$("#tbl_customer").bootstrapTable("refresh", {url: getProjectName() + "/cust/loadcust.do", cache: false});
+        	}, getProjectName() + "/templaters/客户信息.xlsx");
+			oImportModal.createModal();  
+		});
+		
+		$("#btn_export").click(function(){			
+			window.open(getProjectName() + "/cust/exportcustomer.do?condition="+$("input[name=condition]").val()); 
 		});
 		
 		$("#btn_save_customer").click(function(){
-			$("#modalCustEdit").modal("hide");
+			$("#customerForm").ajaxSubmit({
+				url: getProjectName()+"/cust/save.do",
+				success: function(){
+					window.location.reload();
+				}
+			});
 		});
 		
 		$('#modalCustEdit').on("hide.bs.modal", function(){
@@ -4139,7 +4175,7 @@ var App = function () {
             queryParams: function(params){
             	return {
                     pageSize: params.limit,
-                    offset: params.offset,                    
+                    pageOffset: params.offset,                    
                     condition: $("input[name=condition]").val()
                 }
             }
@@ -4176,6 +4212,7 @@ var App = function () {
 			});
 		});
 		
+				
 		$('#modalUserEdit').on("hide.bs.modal", function(){
 			removeFormData($("#userForm"));
 		});
@@ -4309,7 +4346,7 @@ var App = function () {
             	initAccountDetailModule();
             }
             if (App.isPage("customer")){
-            	handleMenu("/IMShh_UI/page/customer.html");
+            	handleMenu("customer.html");
             	initCustomerModule();
             }
             if (App.isPage("supplier")){
@@ -4476,11 +4513,22 @@ var deleteOrderItem = function(index){
 /*	Customer Moduel Script
 /*-----------------------------------------------------------------------------------*/
 var deleteCustomer = function(custId){
-	alert(custId);
+	if (!confirm("确认要删除该记录吗")) {
+        return;
+    }
+	$.ajax({
+		type: 'POST',
+		url: getProjectName() + '/cust/delete.do?id=' + custId,
+		success: function(result){
+			$('#tbl_customer').bootstrapTable('refresh', {url: getProjectName() + '/cust/loadcust.do', cache: false});
+		}
+	});
 }
 
 var editCustomer = function(custId){
-	alert(custId);
+	var fillForm = new FillForm();
+	fillForm.fill("#customerForm", 1, "id="+custId);
+	$("#modalCustEdit").modal("show");
 }
 
 /*-----------------------------------------------------------------------------------*/
@@ -4600,14 +4648,16 @@ var getJSONObjByForm = function(form){
 }
 	
 var removeFormData = function(form){
-	var formitems = form.find("input");
-	$.each(formitems, function(index, item){		
+	var formitems = form.find("input,textarea");
+	$.each(formitems, function(index, item){
 		if (item.tagName == 'INPUT' && ($(item).attr('type') == 'radio' || $(item).attr('type') == 'checkbox')){
 			$(item).removeAttr("checked");
-		}else{
+		}
+		else{
 			$(item).val("");
 		}
 	});
+	
 }
 
 var getChoseRows = function(table){

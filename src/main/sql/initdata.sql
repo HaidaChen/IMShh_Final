@@ -26,7 +26,7 @@ insert into T_MENU(id, name, parentId, url, icon)
 insert into T_MENU(id, name, parentId, url, icon)
      values('03', '业务数据', '0', '', 'glyphicon glyphicon-list-alt');  
 insert into T_MENU(id, name, parentId, url, icon)
-     values('0301', '客户信息', '03', 'cust/main.do', '');
+     values('0301', '客户信息', '03', 'customer.html', '');
 insert into T_MENU(id, name, parentId, url, icon)
      values('0302', '供应商信息', '03', 'supp/main.do', '');
 insert into T_MENU(id, name, parentId, url, icon)
