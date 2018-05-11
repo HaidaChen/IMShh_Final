@@ -3210,7 +3210,11 @@ var App = function () {
 		$.each(menus, function(index, obj) {
 			var item = $("<li>");
 			var itemLink = $("<a  href='javascript:;' class=''></a>");
-			var itemContent = $("<i class='" + obj.icon + "'></i><span class='menu-text'>" + obj.name +"</span><span class='arrow'></span>");
+			var icon = obj.icon;
+			if (icon && icon != '' && icon.indexOf('+') > -1){
+				icon = icon.replace(/\+/g, ' ');
+			}
+			var itemContent = $("<i class='" + icon + "'></i><span class='menu-text'>" + obj.name +"</span><span class='arrow'></span>");
 			
 			itemLink.append(itemContent);
 			item.append(itemLink);
