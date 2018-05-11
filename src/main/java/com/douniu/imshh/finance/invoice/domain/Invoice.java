@@ -12,11 +12,17 @@ public class Invoice extends BaseQO{
 	private String customerName;            
 	private float amountWithTax;            /*价税合计*/
 	private float valueAddTax;              /*应交增值税*/
+	private float valueAddTaxCal;           /*应交增值税计算公式*/
 	private float exciseTax;                /*应交消费税*/
+	private float exciseTaxCal;             /*应交消费税计算公式*/
 	private float constructionTax;          /*城建税*/
+	private float constructionTaxCal;       /*城建税计算公式*/
 	private float educationFee;             /*教育费附加*/
+	private float educationFeeCal;          /*教育费附加计算公式*/
 	private float totalTax;                 /*税款合计*/
+	private float totalTaxCal;              /*税款合计计算公式*/
 	private float drawback;                 /*退税*/
+	private float drawbackCal;              /*退税*/
 	
 	private String remark;
 	private int status = 1;
@@ -99,16 +105,59 @@ public class Invoice extends BaseQO{
 		this.status = status;
 	}
 	
+	
+	public float getValueAddTaxCal() {
+		return valueAddTaxCal;
+	}
+	public void setValueAddTaxCal(float valueAddTaxCal) {
+		this.valueAddTaxCal = valueAddTaxCal;
+	}
+	public float getExciseTaxCal() {
+		return exciseTaxCal;
+	}
+	public void setExciseTaxCal(float exciseTaxCal) {
+		this.exciseTaxCal = exciseTaxCal;
+	}
+	public float getConstructionTaxCal() {
+		return constructionTaxCal;
+	}
+	public void setConstructionTaxCal(float constructionTaxCal) {
+		this.constructionTaxCal = constructionTaxCal;
+	}
+	public float getEducationFeeCal() {
+		return educationFeeCal;
+	}
+	public void setEducationFeeCal(float educationFeeCal) {
+		this.educationFeeCal = educationFeeCal;
+	}
+	public float getTotalTaxCal() {
+		return totalTaxCal;
+	}
+	public void setTotalTaxCal(float totalTaxCal) {
+		this.totalTaxCal = totalTaxCal;
+	}
+	public float getDrawbackCal() {
+		return drawbackCal;
+	}
+	public void setDrawbackCal(float drawbackCal) {
+		this.drawbackCal = drawbackCal;
+	}
+	
 	@Override
 	public String toString() {
 		return "Invoice [id=" + id + ", invoiceDate=" + invoiceDate + ", customerId=" + customerId + ", customerName="
-				+ customerName + ", amountWithTax=" + amountWithTax + ", valueAddTax=" + valueAddTax + ", exciseTax="
-				+ exciseTax + ", constructionTax=" + constructionTax + ", educationFee=" + educationFee + ", totalTax="
-				+ totalTax + ", drawback=" + drawback + ", remark=" + remark + ", status=" + status + "]";
+				+ customerName + ", amountWithTax=" + amountWithTax + ", valueAddTax=" + valueAddTax
+				+ ", valueAddTaxCal=" + valueAddTaxCal + ", exciseTax=" + exciseTax + ", exciseTaxCal=" + exciseTaxCal
+				+ ", constructionTax=" + constructionTax + ", constructionTaxCal=" + constructionTaxCal
+				+ ", educationFee=" + educationFee + ", educationFeeCal=" + educationFeeCal + ", totalTax=" + totalTax
+				+ ", totalTaxCal=" + totalTaxCal + ", drawback=" + drawback + ", drawbackCal=" + drawbackCal
+				+ ", remark=" + remark + ", status=" + status + "]";
 	}
 	
 	private float decimalMoney(float src){
 		BigDecimal b = new BigDecimal(src);  
+		
+		
 		return b.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();  
 	}
 }

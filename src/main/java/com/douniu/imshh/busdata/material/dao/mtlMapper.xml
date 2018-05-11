@@ -5,9 +5,11 @@
     <resultMap type="Material" id="mtlmap">
         <result property="id" column="id"/>
         <result property="name" column="name"/>
-        <result property="specification" column="specification"/>
+        <result property="specification1" column="specification1"/>
+        <result property="specification2" column="specification2"/>
+        <result property="specification3" column="specification3"/>
         <result property="unit" column="unit"/>
-        <result property="category" column="category"/>
+        <result property="formula" column="formula"/>
         <result property="remark" column="remark"/>
         <result property="status" column="status"/>
     </resultMap>
@@ -20,8 +22,9 @@
         select * from t_material where status = 1
         <if test="condition != null and condition !=''">
           and (name like #{condition} 
-          or category like #{condition}
-          or specification like #{condition})
+          or specification1 like #{condition}
+          or specification2 like #{condition}
+          or specification3 like #{condition})
         </if>        
           order by modifydate desc
           limit #{pageOffset},#{pageSize}
@@ -30,8 +33,9 @@
         select * from t_material where status = 1
         <if test="condition != null and condition !=''">
           and (name like #{condition}
-          or category like #{condition}
-          or specification like #{condition})
+          or specification1 like #{condition}
+          or specification2 like #{condition}
+          or specification3 like #{condition})
         </if>        
           order by modifydate desc
     </select>
@@ -39,28 +43,32 @@
         select count(1) from t_material where status = 1
         <if test="condition != null and condition !=''">
           and (name like #{condition}
-          or category like #{condition}
-          or specification like #{condition})
+          or specification1 like #{condition}
+          or specification2 like #{condition}
+          or specification3 like #{condition})
         </if>  
     </select>   
     <insert id="insert" parameterType="Material">
-        insert into t_material(id, name, specification, unit, category, modifydate, remark, status) 
-          values(#{id}, #{name}, #{specification}, #{unit}, #{category}, sysdate(), #{remark}, #{status})
+        insert into t_material(id, name, specification1, specification2, specification3, unit, formula, modifydate, remark, status)  
+          values(#{id}, #{name}, #{specification1}, #{specification2}, #{specification3}, #{unit}, #{formula}, sysdate(), #{remark}, #{status})
     </insert>
     
     <insert id="batchInsert" parameterType="java.util.List">
-        insert into t_material(id, name, specification, unit, category, modifydate, remark, status) 
+        insert into t_material(id, name, specification1, specification2, specification3, unit, formula, modifydate, remark, status) 
              values
              <foreach collection="list" item="mtl" index="index" separator=",">
-                 (CONCAT(current_timestamp()+1, #{index}) , #{mtl.name}, #{mtl.specification}, #{mtl.unit}, #{mtl.category}, sysdate(), #{mtl.remark}, '1')
+                 (CONCAT(current_timestamp()+1, #{index}) , #{mtl.name}, #{mtl.specification1}, #{mtl.specification2}, #{mtl.specification3}, #{mtl.unit}, #{mtl.formula}, sysdate(), #{mtl.remark}, '1')
              </foreach>
     </insert>
     
     <update id="update" parameterType="Material">
         update t_material set 
           name = #{name},          
-          specification = #{specification},
+          specification1 = #{specification1},
+          specification2 = #{specification2},
+          specification3 = #{specification3},
           unit = #{unit},
+          formula = #{formula},
           remark = #{remark},
           category = #{category},
           modifydate = sysdate()

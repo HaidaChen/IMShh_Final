@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="../css/themes/default.css">
 	<link rel="stylesheet" href="../css/responsive.css" >
 	<link rel="stylesheet" href="../bootstrap-table/bootstrap-table.css">
+	<link rel="stylesheet" href="../js/bootstrapvalidator/css/bootstrapValidator.min.css" >
 	<!-- STYLESHEETS --><!--[if lt IE 9]><script src="js/flot/excanvas.min.js"></script><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
 	<link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
 
@@ -39,21 +40,58 @@
 				<ul class="nav navbar-nav pull-right">
 					<li class="dropdown user" id="header-user">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-							<img alt="" src="../img/avatars/avatar3.jpg" />
-							<span class="username">Admin</span>
-							<i class="fa fa-angle-down"></i>
-						</a>
-						<ul class="dropdown-menu">
-							<li><a href="/IMShh_UI/index.html"><i class="fa fa-user"></i> 个人信息</a></li>
-							<li><a href="#"><i class="fa fa-eye"></i> 修改密码</a></li>
-							<li><a href="login.html"><i class="fa fa-power-off"></i> 退出系统</a></li>
-						</ul>
+						<img alt="" src="" />
+						<span class="username"></span>
+						<i class="fa fa-angle-down"></i>
+					</a>
+					<ul class="dropdown-menu">
+						<li><a href="javascript:;" onclick="userProfile()"><i class="fa fa-user"></i> 个人信息</a></li>
+						<li><a href="javascript:;" data-toggle="modal" data-target="#modalPWD"><i class="fa fa-eye"></i> 修改密码</a></li>
+						<li><a href="javascript:;" onclick="exitsys()"><i class="fa fa-power-off"></i> 退出系统</a></li>
+					</ul>
 					</li>
 				</ul>
 		</div>		
 	</header>
 	
 	<section id="page">
+		<div class="modal fade" id="modalPWD" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<form class="form-horizontal" id="pwdForm" >
+				    <div class="modal-content">
+						<div class="modal-body">
+							<div class="form-group">
+							<div class="box-container">
+								<div class="form-group">
+									<label class="col-md-3 control-label">原始密码</label> 
+									<div class="col-md-7">
+										<input type="hidden" name="id" value=""/>
+								    	<input type="password" name="opassword" class="form-control" value="">
+								    </div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-3 control-label">新的密码</label> 
+									<div class="col-md-7">
+										<input type="password" name="npassword" class="form-control" >
+								    </div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-3 control-label">再输一次</label> 
+									<div class="col-md-7">
+										<input type="password" name="rpassword" class="form-control" value="">
+								    </div>
+								</div>					
+							</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+						    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						    <button id="btn_save_pwd" type="submit" class="btn btn-primary">保存</button>
+						</div>
+				    </div>
+			    </form>
+			</div>
+		</div>
 		<div id="sidebar" class="sidebar-fixed">
 			<div class="sidebar-menu nav-collapse">
 				<ul id="menubar">
@@ -74,52 +112,108 @@
 								<div class="form-group">
 								<div class="box-container">
 								<!-- BOX WITH TOOLBOX-->
-									<form class="form-horizontal" id="materialForm" action="#">
+									<form class="form-horizontal" id="materialForm" method="POST" fieldAttr="name" url="/mtl/edit.do">
 										<div class="form-group">
 											<label class="col-md-3 control-label">品名</label> 
 											<div class="col-md-7">
-												<input type="hidden" name="id" value=""/>
-										    	<input type="text" name="name" class="form-control" value="">
+												<input type="hidden" name="id" class="formItem" value=""/>
+										    	<input type="text" name="name" class="form-control formItem" value="">
 										    </div>
 										</div>
 										<div class="form-group">
-											<label class="col-md-3 control-label">规格</label> 
+											<label class="col-md-3 control-label">规格1</label> 
 											<div class="col-md-7">
-												<input type="text" name="specification" class="form-control" value="">
+												<input type="text" name="specification1" class="form-control formItem" value="">
 										    </div>
 										</div>
 										<div class="form-group">
-											<label class="col-md-3 control-label">规格格式</label> 
+											<label class="col-md-3 control-label">规格2</label> 
 											<div class="col-md-7">
-												<input type="text" name="specification" class="form-control" value="">
+												<input type="text" name="specification2" class="form-control formItem" value="">
+										    </div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-3 control-label">规格3</label> 
+											<div class="col-md-7">
+												<input type="text" name="specification3" class="form-control formItem" value="">
+										    </div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-3 control-label">计量公式</label> 
+											<div class="col-md-7">
+												<div class="input-group">
+													<input type="text" name="formula" class="form-control formItem" value="">
+													<span id="btn_showformula" class="input-group-addon" style="cursor: pointer;"><i class="fa fa-keyboard-o"></i></span>
+												</div>
+										    </div>
+										</div>
+										<div id="formulabox" class="form-group" style="display: none;">
+											<label class="col-md-3 control-label"></label> 
+											<div class="col-md-7">
+												<div class="box-container">
+												<!-- BOX WITH TOOLBOX-->
+													<div class="box border green">
+														
+														<div class="toolbox">
+															<div id="grp_factor" class="btn-group">
+															  <button type="button" class="btn btn-default">规格1</button>
+															  <button type="button" class="btn btn-default">规格2</button>
+															  <button type="button" class="btn btn-default">规格3</button>															  
+															</div>
+														</div>
+														<div class="toolbox">
+															<div id="grp_number" class="btn-group">
+															  <button type="button" class="btn btn-default">0</button>
+															  <button type="button" class="btn btn-default">1</button>
+															  <button type="button" class="btn btn-default">2</button>
+															  <button type="button" class="btn btn-default">3</button>
+															  <button type="button" class="btn btn-default">4</button>
+															  <button type="button" class="btn btn-default">5</button>
+															  <button type="button" class="btn btn-default">6</button>
+															  <button type="button" class="btn btn-default">7</button>
+															  <button type="button" class="btn btn-default">8</button>
+															  <button type="button" class="btn btn-default">9</button>
+															  <button type="button" class="btn btn-default">.</button>
+															</div>
+														</div>
+														<div class="toolbox">
+															<div id="grp_operation" class="btn-group">
+															  <button type="button" class="btn btn-default">+</button>
+															  <button type="button" class="btn btn-default">-</button>
+															  <button type="button" class="btn btn-default">*</button>
+															  <button type="button" class="btn btn-default">/</button>
+															  <button type="button" class="btn btn-default">(</button>
+															  <button type="button" class="btn btn-default">)</button>
+															</div>
+														</div>
+														<div class="box-body">
+															<div class="scroller" data-height="165px" data-always-visible="1" data-rail-visible="1">
+																<p id="calculation"></p>
+															</div>
+														</div>
+														<div class="toolbox bottom">
+															<div class="btn-group">
+															  <button id="btn_reback" type="button" class="btn btn-default"><i class="fa fa-mail-reply (alias)"></i></button>
+															  <button id="btn_clear" type="button" class="btn btn-default"><i class="fa fa-eraser"></i></button>	
+															  <button id="btn_save" type="button" class="btn btn-default"><i class="fa fa-save (alias)"></i></button>										  
+															</div>
+														</div>
+														
+													</div>
+													<!-- /BOX WITH TOOLBOX-->
+												</div>
 										    </div>
 										</div>
 										<div class="form-group">
 											<label class="col-md-3 control-label">单位</label> 
 											<div class="col-md-7">
-												<input type="text" name="unit" class="form-control" value="">
+												<input type="text" name="unit" class="form-control formItem" value="">
 										    </div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">计算公式</label> 
-											<div class="col-md-7">
-												<input type="text" name="unit" class="form-control" value="">
-										    </div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">分类</label> 
-											<div class="col-md-7">
-												<select name="category" class="form-control">
-													<option value="1">木方</option>
-													<option value="2">纸箱</option>
-													<option value="3">其他</option>
-												</select>												
-										    </div>
-										</div>										
+										</div>									
 										<div class="form-group">
 											<label class="col-md-3 control-label">备注</label> 
 											<div class="col-md-7">
-												<textarea name="remark" class="form-control" rows="3"></textarea>
+												<textarea name="remark" class="form-control formItem" rows="3"></textarea>
 										    </div>
 										</div>
 									</form>
@@ -158,20 +252,20 @@
 													<div class="invoice-header clearfix">
 														<h3 class='pull-left'>
 														  <div class='btn-group'>
-															<a class="btn btn-default" href="#"><i class='fa fa-chain (alias)'></i>
+															<a class="btn btn-default" id="btn_import" href="javascript:;"><i class='fa fa-chain (alias)'></i>
 															导入
 															</a>
-															<a class="btn btn-default" href="#" data-toggle="modal" data-target="#modalMaterialEdit"><i class='fa fa-plus'></i>
+															<a class="btn btn-default" id="btn_add" href="javascript:;" data-toggle="modal" data-target="#modalMaterialEdit"><i class='fa fa-plus'></i>
 															新增
 															</a>															
-															<a class="btn btn-default" href="#"><i class='fa fa-external-link'></i>
+															<a class="btn btn-default" id="btn_export" href="javascript:;"><i class='fa fa-external-link'></i>
 															导出
 															</a>
 														  </div>
 														</h3>
 														<div class='pull-right'>
 														    <div class="pull-right" >
-																<input type="text" class="form-control" placeholder="查询条件"/>
+																<input type="text" class="form-control" name="condition" placeholder="查询条件"/>
 														    </div>
 														</div>
 													</div>
@@ -205,7 +299,11 @@
 	<script src="../bootstrap-dist/js/bootstrap.min.js"></script>
 	<script src="../bootstrap-table/bootstrap-table.js"></script>
 	<script src="../js/jQuery-Cookie/jquery.cookie.min.js"></script>
-	
+	<script src="../js/bootstrapvalidator/js/bootstrapValidator.min.js"></script>	
+	<script src="../js/bootstrapvalidator/js/language/zh_CN.js"></script>
+	<script src="../js/jquery-form/jquery.form.js"></script>
+	<script src="../js/importModal.js"></script>
+	<script src="../js/fillForm.js"></script>
 	<script src="../js/script.js"></script>
 	<script>
 		jQuery(document).ready(function() {		

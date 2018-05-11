@@ -1,9 +1,5 @@
 package com.douniu.imshh.busdata.product.domain;
 
-import java.util.Date;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.douniu.imshh.common.BaseQO;
 
 public class Product extends BaseQO{
@@ -12,10 +8,6 @@ public class Product extends BaseQO{
 	private String name;
 	private String specification;
 	private String model;
-	@DateTimeFormat(pattern = "yyyy-MM-dd") 
-	private Date lineDate;
-	@DateTimeFormat(pattern = "yyyy-MM-dd") 
-	private Date downlineDate;
 	private String remark;
 	private int status = 1;
 	
@@ -56,19 +48,6 @@ public class Product extends BaseQO{
 		this.remark = remark;
 	}
 	
-	public Date getLineDate() {
-		return lineDate;
-	}
-	public void setLineDate(Date lineDate) {
-		this.lineDate = lineDate;
-	}
-	
-	public Date getDownlineDate() {
-		return downlineDate;
-	}
-	public void setDownlineDate(Date downlineDate) {
-		this.downlineDate = downlineDate;
-	}
 	public int getStatus() {
 		return status;
 	}
@@ -78,7 +57,6 @@ public class Product extends BaseQO{
 	@Override
 	public String toString() {
 		return "Product [id=" + id + ", code=" + code + ", name=" + name + ", specification=" + specification
-				+ ", model=" + model + ", remark=" + remark + ", lineDate=" + lineDate + ", downlineDate="
-				+ downlineDate + ", status=" + status + "]";
+				+ ", model=" + model + ", remark=" + remark + ", status=" + status + "]";
 	}	
 }

@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.douniu.imshh.busdata.supplier.domain.Supplier;
 import com.douniu.imshh.busdata.supplier.service.ISupplierService;
@@ -48,28 +47,20 @@ public class SupplierAction {
 	@Autowired
 	private ISupplierService service;
 	
-	@RequestMapping("/main")
-    public ModelAndView enter(Supplier supp){
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("/busdata/supp/overview");
-        return mav;
-    }
 	
-	@RequestMapping("/edit")
-	public ModelAndView edit(Supplier supp){
-		ModelAndView mav = new ModelAndView();
-		if (supp.getId() != ""){
-			Supplier supplier = service.getById(supp.getId());
-			mav.addObject("supp", supplier);
-		}
-        mav.setViewName("/busdata/supp/edit");
-        return mav;
+	@RequestMapping(value="/edit", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String edit(Supplier supp){
+		Supplier supplier = service.getById(supp.getId());
+		Gson gson = new Gson();
+        return gson.toJson(supplier);
 	}
 	
-	@RequestMapping("/save")
-	public ModelAndView save(Supplier supp){
+	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public int save(Supplier supp){
 		service.save(supp);
-        return enter(supp);
+        return 1;
 	}
 	
 	@RequestMapping(value ="/loadsupp", produces = "application/json; charset=utf-8")
@@ -96,8 +87,8 @@ public class SupplierAction {
 	
 	
     @ResponseBody  
-    @RequestMapping(value="ajaxUpload",method={RequestMethod.GET,RequestMethod.POST})  
-    public  void  ajaxUploadExcel(HttpServletRequest request,HttpServletResponse response) throws Exception {  
+    @RequestMapping(value="importsupplier",method={RequestMethod.GET,RequestMethod.POST})  
+    public  void  importSupplier(HttpServletRequest request,HttpServletResponse response) throws Exception {  
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;    
           
         InputStream in =null;  
@@ -112,9 +103,9 @@ public class SupplierAction {
         service.batchAdd(suppliers);
     }  
     
-    @RequestMapping(value = "downloadExcel", method = RequestMethod.GET)  
+    @RequestMapping(value = "exportsupplier", method = RequestMethod.GET)  
     @ResponseBody  
-    public void downloadExcel(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
+    public void exportSupplier(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
         response.reset();  
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");  
         String dateStr = sdf.format(new Date());  

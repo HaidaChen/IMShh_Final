@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.douniu.imshh.busdata.product.domain.Product;
 import com.douniu.imshh.busdata.product.service.IProductService;
@@ -37,40 +36,29 @@ import com.google.gson.GsonBuilder;
 public class ProductAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{
-		mapper.add(new ExcelBean("产品编码","code",0));  
+		mapper.add(new ExcelBean("货号","code",0));  
 		mapper.add(new ExcelBean("产品名称","name",0));  
 		mapper.add(new ExcelBean("规格","specification",0));   
-		mapper.add(new ExcelBean("型号","model",0));  
-		mapper.add(new ExcelBean("上线日期","lineDate",0));  
-		mapper.add(new ExcelBean("下线日期","downlineDate",0));  
+		mapper.add(new ExcelBean("型号","model",0)); 
 		mapper.add(new ExcelBean("备注","remark",0));  
 	}
 	
 	@Autowired
 	private IProductService service;
 	
-	@RequestMapping("/main")
-    public ModelAndView enter(Product pdt){
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("/busdata/pdt/overview");
-        return mav;
-    }
-	
-	@RequestMapping("/edit")
-	public ModelAndView edit(Product pdt){
-		ModelAndView mav = new ModelAndView();
-		if (pdt.getId() != ""){
-			Product product = service.getById(pdt.getId());
-			mav.addObject("pdt", product);
-		}
-        mav.setViewName("/busdata/pdt/edit");
-        return mav;
+	@RequestMapping(value="/edit", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String edit(Product pdt){
+		Product product = service.getById(pdt.getId());
+		Gson gson = new Gson();
+        return gson.toJson(product);
 	}
 	
-	@RequestMapping("/save")
-	public ModelAndView save(Product pdt){
+	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public int save(Product pdt){
 		service.save(pdt);
-        return enter(pdt);
+        return 1;
 	}
 	
 	@RequestMapping(value ="/loadpdt", produces = "application/json; charset=utf-8")
@@ -97,8 +85,8 @@ public class ProductAction {
 	
 	
     @ResponseBody  
-    @RequestMapping(value="ajaxUpload",method={RequestMethod.GET,RequestMethod.POST})  
-    public  void  ajaxUploadExcel(HttpServletRequest request,HttpServletResponse response) throws Exception {  
+    @RequestMapping(value="importproduct",method={RequestMethod.GET,RequestMethod.POST})  
+    public  void  importProduct(HttpServletRequest request,HttpServletResponse response) throws Exception {  
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;    
           
         InputStream in =null;  
@@ -113,9 +101,9 @@ public class ProductAction {
         service.batchAdd(products);
     }  
     
-    @RequestMapping(value = "downloadExcel", method = RequestMethod.GET)  
+    @RequestMapping(value = "exportproduct", method = RequestMethod.GET)  
     @ResponseBody  
-    public void downloadExcel(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
+    public void exportProduct(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
         response.reset();  
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");  
         String dateStr = sdf.format(new Date());  

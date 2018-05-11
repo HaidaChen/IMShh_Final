@@ -6,8 +6,10 @@ public class Material extends BaseQO{
 	private String id;
 	private String name;
 	private String unit;
-	private String specification;
-	private String category;
+	private String specification1;
+	private String specification2;
+	private String specification3;
+	private String formula;
 	private String remark;
 	private int status = 1;
 	public String getId() {
@@ -28,17 +30,29 @@ public class Material extends BaseQO{
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
-	public String getSpecification() {
-		return specification;
+	public String getSpecification1() {
+		return specification1;
 	}
-	public void setSpecification(String specification) {
-		this.specification = specification;
+	public void setSpecification1(String specification1) {
+		this.specification1 = specification1;
 	}
-	public String getCategory() {
-		return category;
+	public String getSpecification2() {
+		return specification2;
 	}
-	public void setCategory(String category) {
-		this.category = category;
+	public void setSpecification2(String specification2) {
+		this.specification2 = specification2;
+	}
+	public String getSpecification3() {
+		return specification3;
+	}
+	public void setSpecification3(String specification3) {
+		this.specification3 = specification3;
+	}
+	public String getFormula() {
+		return formula;
+	}
+	public void setFormula(String formula) {
+		this.formula = formula;
 	}
 	public String getRemark() {
 		return remark;
@@ -54,7 +68,8 @@ public class Material extends BaseQO{
 	}
 	@Override
 	public String toString() {
-		return "Material [id=" + id + ", name=" + name + ", unit=" + unit + ", specification=" + specification
-				+ ", category=" + category + ", remark=" + remark + ", status=" + status + "]";
-	}
+		return "Material [id=" + id + ", name=" + name + ", unit=" + unit + ", specification1=" + specification1
+				+ ", specification2=" + specification2 + ", specification3=" + specification3 + ", formula=" + formula
+				+ ", remark=" + remark + ", status=" + status + "]";
+	}	
 }

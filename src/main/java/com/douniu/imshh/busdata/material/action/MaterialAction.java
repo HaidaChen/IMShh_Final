@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.douniu.imshh.busdata.material.domain.Material;
 import com.douniu.imshh.busdata.material.service.IMaterialService;
@@ -30,7 +29,6 @@ import com.douniu.imshh.utils.ExcelBean;
 import com.douniu.imshh.utils.ExcelUtil;
 import com.douniu.imshh.utils.POIExcelAdapter;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/mtl")
@@ -38,37 +36,30 @@ public class MaterialAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{
 		mapper.add(new ExcelBean("品名","name",0));  
-		mapper.add(new ExcelBean("规格","specification",0));  
-		mapper.add(new ExcelBean("单位","unit",0));   
-		mapper.add(new ExcelBean("分类","category",0));  
+		mapper.add(new ExcelBean("规格1","specification1",0)); 
+		mapper.add(new ExcelBean("规格2","specification2",0)); 
+		mapper.add(new ExcelBean("规格3","specification3",0)); 		  
+		mapper.add(new ExcelBean("计量公式","formula",0));  
+		mapper.add(new ExcelBean("计量单位","unit",0));
 		mapper.add(new ExcelBean("备注","remark",0));  
 	}
 	
 	@Autowired
-	private IMaterialService service;
+	private IMaterialService service;	
 	
-	@RequestMapping("/main")
-    public ModelAndView enter(Material mtl){
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("/busdata/mtl/overview");
-        return mav;
-    }
-	
-	@RequestMapping("/edit")
-	public ModelAndView edit(Material mtl){
-		ModelAndView mav = new ModelAndView();
-		if (mtl.getId() != ""){
-			Material material = service.getById(mtl.getId());
-			mav.addObject("mtl", material);
-		}
-        mav.setViewName("/busdata/mtl/edit");
-        return mav;
+	@RequestMapping(value="/edit", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String edit(Material mtl){
+		Material material = service.getById(mtl.getId());
+		Gson gson = new Gson();
+        return gson.toJson(material);
 	}
 	
-	@RequestMapping("/save")
-	public ModelAndView save(Material mtl){
+	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public int save(Material mtl){
 		service.save(mtl);
-        return enter(mtl);
+        return 1;
 	}
 	
 	@RequestMapping(value ="/loadmtl", produces = "application/json; charset=utf-8")
@@ -90,12 +81,10 @@ public class MaterialAction {
 	public void delete(String id){
 		service.delete(id);
 	}
-	
-	
-	
+		
+    @RequestMapping(value="importmaterial",method={RequestMethod.GET,RequestMethod.POST})  
     @ResponseBody  
-    @RequestMapping(value="ajaxUpload",method={RequestMethod.GET,RequestMethod.POST})  
-    public  void  ajaxUploadExcel(HttpServletRequest request,HttpServletResponse response) throws Exception {  
+    public  void  importMaterial(HttpServletRequest request,HttpServletResponse response) throws Exception {  
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;    
           
         InputStream in =null;  
@@ -110,9 +99,9 @@ public class MaterialAction {
         service.batchAdd(materials);
     }  
     
-    @RequestMapping(value = "downloadExcel", method = RequestMethod.GET)  
+    @RequestMapping(value = "exportmaterial", method = RequestMethod.GET)  
     @ResponseBody  
-    public void downloadExcel(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
+    public void exportMaterial(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
         response.reset();  
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");  
         String dateStr = sdf.format(new Date());  

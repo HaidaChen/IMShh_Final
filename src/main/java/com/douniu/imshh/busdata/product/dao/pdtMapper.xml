@@ -8,8 +8,6 @@
         <result property="name" column="name"/>
         <result property="specification" column="specification"/>
         <result property="model" column="model"/>
-        <result property="lineDate" column="lineDate"/>
-        <result property="downlineDate" column="downlineDate"/>
         <result property="remark" column="remark"/>
         <result property="status" column="status"/>
     </resultMap>
@@ -49,16 +47,16 @@
         </if>  
     </select>   
     <insert id="insert" parameterType="Product">
-        insert into t_product(id, code, name, specification, model, lineDate, downlineDate, modifydate, remark, status) 
-          values(#{id}, #{code}, #{name}, #{specification}, #{model}, #{lineDate}, #{downlineDate}, sysdate(), #{remark}, #{status})
+        insert into t_product(id, code, name, specification, model, modifydate, remark, status) 
+          values(#{id}, #{code}, #{name}, #{specification}, #{model}, sysdate(), #{remark}, #{status})
     </insert>
     
     <insert id="batchInsert" parameterType="java.util.List">
         
-        insert into t_product(id, code, name, specification, model, lineDate, downlineDate, modifydate, remark, status) 
+        insert into t_product(id, code, name, specification, model, modifydate, remark, status) 
              values
              <foreach collection="list" item="pdt" index="index" separator=",">
-                 (CONCAT(current_timestamp()+1, #{index}) , #{pdt.code}, #{pdt.name}, #{pdt.specification}, #{pdt.model}, #{pdt.lineDate}, #{pdt.downlineDate}, sysdate(), #{pdt.remark}, '1')
+                 (CONCAT(current_timestamp()+1, #{index}) , #{pdt.code}, #{pdt.name}, #{pdt.specification}, #{pdt.model}, sysdate(), #{pdt.remark}, '1')
              </foreach>
     </insert>
     
@@ -68,8 +66,6 @@
           name = #{name},          
           specification = #{specification},
           model = #{model},
-          lineDate = #{lineDate},
-          downlineDate = #{downlineDate},
           remark = #{remark},
           modifydate = sysdate()
     where id = #{id}
