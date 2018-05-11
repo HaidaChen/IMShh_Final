@@ -3374,7 +3374,7 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/
 	/*	Handle DatePriod Select
 	/*-----------------------------------------------------------------------------------*/	
-	var handleDatePriod = function(){
+	var handleDatePriod = function(table, refreshurl){
 		$("#dataperiod li").click(function(){
 			var btnDatapriod = $("#btn_datapriod");
 			var index = $("#dataperiod li").index(this);
@@ -3393,7 +3393,7 @@ var App = function () {
 						$("#startDate").val(current.getFullYear()+'-01-01');
 						$("#endDate").val(current.getFullYear()+'-12-31');
 					}
-					$("#tbl_invoice").bootstrapTable("refresh", {url: getProjectName() + "/invoice/loadinvoice.do", cache: false});
+					table.bootstrapTable("refresh", {url: getProjectName() + refreshurl, cache: false});
 				}
 			}
 		});
@@ -3401,7 +3401,7 @@ var App = function () {
 		$("#btn_chosedate").click(function(){
 			$("#btn_datapriod").html($("#startDate").val() + " 至 " + $("#endDate").val());
 			$('#modaldatepicker').modal('hide');
-			$("#tbl_invoice").bootstrapTable("refresh", {url: getProjectName() + "/invoice/loadinvoice.do", cache: false});
+			table.bootstrapTable("refresh", {url: getProjectName() + refreshurl, cache: false});
 		});
 	}
 	var getLastDay = function(year,month)     
@@ -3620,13 +3620,11 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initStorageModule = function(){
 		$("#tbl_storagedetail").bootstrapTable({
-			url: "../json/storageDetail.json",
+			url: getProjectName() + "/storage/loadstorage.do",
 			method: "get",
 			pagination: true,
 			sidePagination: "server", 
 			columns: [{
-				checkbox: true
-			},{
                 field: 'storageDate',
                 title: '入库日期'
             }, {
@@ -3644,11 +3642,20 @@ var App = function () {
             }, {
                 field: 'remark',
                 title: '备注'
-            }]
+            }],
+            queryParams: function(params){
+            	return {
+                    pageSize: params.limit,
+                    pageOffset: params.offset,                    
+                    condition: $("input[name=condition]").val(),
+                    startDate: $("#startDate").val(),
+                    endDate: $("#endDate").val()
+                }
+            }
 		});	
 		
 		$("#tbl_storage").bootstrapTable({
-			url: "../json/storage.json",
+			url: getProjectName() + "/storage/loadstatistics.do",
 			method: "get",
 			pagination: true,
 			sidePagination: "server", 
@@ -3661,39 +3668,72 @@ var App = function () {
             }, {
                 field: 'amount',
                 title: '库存'
-            }]
+            }],
+            queryParams: function(params){
+            	return {
+                    pageSize: params.limit,
+                    pageOffset: params.offset,                    
+                    pdtNo: $("input[name=condition_pdtNo]").val()
+                }
+            }
 		});	
 		
-		$.getJSON("/IMShh_UI/json/order.json", function (data){
+		$("input[name=condition]").change(function(){
+			$("#tbl_storagedetail").bootstrapTable("refresh", {url: getProjectName() + "/storage/loadstorage.do", cache: false});
+		});
+		
+		$("input[name=condition_pdtNo]").change(function(){
+			$("#tbl_storage").bootstrapTable("refresh", {url: getProjectName() + "/storage/loadstatistics.do", cache: false});
+		});
+		
+		
+		
+		$.getJSON(getProjectName() + "/order/loadallorder.do", function (data){
 			$("#relorder").append("<option></option>");
-			$.each(data.rows, function(index, obj){
+			$.each(data, function(index, obj){
 				$("#relorder").append("<option value='"+obj.id+"'>"+ obj.identify +"</option>");
 			});
 			$("#relorder").select2({
 			    placeholder: "关联订单",
 			    allowClear: true
 			});
+		});		
+		
+		$("#storageForm").bootstrapValidator({
+			fields: {
+				storageDate : {validators: {notEmpty : {}}},
+				pdtNo : {validators: {notEmpty : {}}},
+				content : {validators: {notEmpty : {}}},
+				amount : {validators: {notEmpty : {}}}
+	        }
 		});
 		
-		$("#btn_edit").click(function(){
-			var ids = getChoseRows($("#tbl_storagedetail"));
-			if (ids.length == 0){
-				alert("请选择要修改的记录");
-				return;
+		$("#btn_save_storagedtl").click(function(){
+			var bv = $("#storageForm").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				$("#storageForm").ajaxSubmit({
+					url: getProjectName()+"/storage/save.do",
+					success: function(){
+						window.location.reload();
+					}
+				});
 			}
-			if (ids.length > 1){
-				alert("一次只可以修改一条记录");
-				return;
-			}
-			$("#modalstoragedtledit").modal("show");
 		});
 		
-		$("btn_delete").click(function(){
-			var ids = getChoseRows($("#tbl_storagedetail"));
-			if (ids.length == 0){
-				alert("请选择要删除的记录");
-				return;
-			}			
+		$('#modalstoragedtledit').on("hide.bs.modal", function(){
+			removeFormData($("#storageForm"));
+		});
+		
+		$("#btn_import").click(function(){			
+			var oImportModal = new ImportModal(getProjectName() + "/storage/importstorage.do", function(){
+				$("#tbl_storagedetail").bootstrapTable("refresh", {url: getProjectName() + "/storage/loadstorage.do", cache: false});
+        	}, getProjectName() + "/templaters/入库单.xlsx");
+			oImportModal.createModal();  
+		});
+		
+		$("#btn_export").click(function(){			
+			window.open(getProjectName() + "/storage/exportstorage.do?condition="+$("input[name=condition]").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()); 
 		});
 	}
 
@@ -4582,27 +4622,31 @@ var App = function () {
             	handleMenu("order.html");
             	handleDatePicker();
             	handleUniform();
+            	handleDatePriod();
             	initOrderModule(); 
             }
             if (App.isPage("receiptCons")){
             	handleMenu("receiptCons.html");
             	handleDatePicker();
+            	handleDatePriod();
             	initReceiptConsModule(); 
             }
             if (App.isPage("deliver")){
             	handleMenu("deliver.html");
             	handleDatePicker();
+            	handleDatePriod();
             	initDeliverModule();
             }
             if (App.isPage("storage")){
             	handleMenu("storage.html");
             	handleDatePicker();
+            	handleDatePriod($("#tbl_storagedetail"), "/storage/loadstorage.do");
             	initStorageModule();
             }
             if (App.isPage("invoice")){
             	handleMenu("invoice.html");
             	handleDatePicker();
-            	handleDatePriod();
+            	handleDatePriod($("#tbl_invoice"), "/invoice/loadinvoice.do");
             	initInvoiceModule();
             }
             if (App.isPage("receivable")){

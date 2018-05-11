@@ -61,7 +61,23 @@
           order by modifydate desc
           limit #{pageOffset},#{pageSize}
     </select> 
-    <select id="queryNoPage" parameterType="Order" resultMap="orderdtlmap">
+    <select id="queryNoPage" parameterType="Order" resultMap="ordermap">
+        select * from t_Order where status = 1
+        <if test="identify != null and identify !=''">
+          and identify like #{identify}
+        </if>        
+        <if test="custName != null and custName !=''">
+          and custName like #{custName}
+        </if>
+        <if test="startDate != null">
+          and orderDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and orderDate &lt;= #{endDate}
+        </if>
+          order by modifydate desc
+    </select> 
+    <select id="queryOrderAndDetail" parameterType="Order" resultMap="orderdtlmap">
         <!-- select t_order.id, identify, custName, orderDate, amount, t_Order.remark, orderId, t_orderdetail.id as detailid, pdtno,content,pdtName, quantity,priceRMB,priceDollar,totlemnt,t_orderdetail.remark as detailremark  from t_Order, t_orderdetail where t_Order.id = t_orderdetail.orderid and t_Order.status = 1 -->
         select * from t_order left join t_orderdetail on t_order.id = t_orderdetail.orderid where t_Order.status = 1
         <if test="identify != null and identify !=''">

@@ -48,14 +48,9 @@ public class StorageAction {
 	@Autowired
 	private IStorageService service;
 	
-	@RequestMapping("/main")
-    public ModelAndView enter(Storage storage){
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("/finance/storage/storageOverview");
-        return mav;
-    }
 	
-	@RequestMapping("/edit")
+	@RequestMapping(value="/edit", produces = "application/json; charset=utf-8")
+	@ResponseBody
 	public ModelAndView edit(Storage storage){
 		ModelAndView mav = new ModelAndView();
 		if (storage.getId() != ""){
@@ -66,10 +61,11 @@ public class StorageAction {
         return mav;
 	}
 	
-	@RequestMapping("/save")
-	public ModelAndView save(Storage storage){
+	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public int save(Storage storage){
 		service.save(storage);
-        return enter(storage);
+        return 1;
 	}
 	
 	@RequestMapping(value ="/loadstorage", produces = "application/json; charset=utf-8")
@@ -94,10 +90,9 @@ public class StorageAction {
 	}
 	
 	
-	
+    @RequestMapping(value="importstorage",method={RequestMethod.GET,RequestMethod.POST})  
     @ResponseBody  
-    @RequestMapping(value="ajaxUpload",method={RequestMethod.GET,RequestMethod.POST})  
-    public  void  ajaxUploadExcel(HttpServletRequest request,HttpServletResponse response) throws Exception {  
+    public  void  importStorage(HttpServletRequest request,HttpServletResponse response) throws Exception {  
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;    
           
         InputStream in =null;  
@@ -112,7 +107,7 @@ public class StorageAction {
         service.batchAdd(storages);
     }  
     
-    @RequestMapping(value = "downloadExcel", method = RequestMethod.GET)  
+    @RequestMapping(value = "exportstorage", method = RequestMethod.GET)  
     @ResponseBody  
     public void downloadExcel(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
     	response.reset();  

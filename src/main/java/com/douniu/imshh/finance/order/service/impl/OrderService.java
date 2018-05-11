@@ -22,12 +22,29 @@ public class OrderService implements IOrderService{
 		return dao.query(condition);
 	}
 
-	@Override
+	
+	/*@Override
 	public List<OrderAndDetail> queryNoPage(Order order) {
 		Order condition = LikeFlagUtil.appendLikeFlag(order, new String[]{"identify", "custName"});
 		List<Order> result = dao.queryNoPage(condition);
 		return tileOrder(result);
+	}*/
+
+	@Override
+	public List<OrderAndDetail> queryOrderAndDetail(Order order) {
+		Order condition = LikeFlagUtil.appendLikeFlag(order, new String[]{"identify", "custName"});
+		List<Order> result = dao.queryOrderAndDetail(condition);
+		return tileOrder(result);
 	}
+
+
+	@Override
+	public List<Order> queryNoPage(Order order) {
+		Order condition = LikeFlagUtil.appendLikeFlag(order, new String[]{"identify", "custName"});
+		List<Order> result = dao.queryNoPage(condition);
+		return result;
+	}
+
 
 	@Override
 	public int count(Order order) {

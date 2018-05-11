@@ -6,6 +6,7 @@ import com.douniu.imshh.finance.order.domain.Order;
 
 public interface IOrderDao {
 	List<Order> query(Order order);
+	List<Order> queryOrderAndDetail(Order order);
 	List<Order> queryNoPage(Order order);
 	int count(Order order);
 	Order findById(String id);

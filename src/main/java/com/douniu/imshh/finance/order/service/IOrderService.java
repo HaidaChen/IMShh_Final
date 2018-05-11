@@ -7,7 +7,8 @@ import com.douniu.imshh.finance.order.domain.OrderAndDetail;
 
 public interface IOrderService {
 	List<Order> query(Order order);
-	List<OrderAndDetail> queryNoPage(Order order);
+	List<OrderAndDetail> queryOrderAndDetail(Order order);
+	List<Order> queryNoPage(Order order);
 	int count(Order order);
 	Order getById(String id);
 	void save(Order order);

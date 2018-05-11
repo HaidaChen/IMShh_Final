@@ -12,6 +12,7 @@
 	<link rel="stylesheet" href="../css/responsive.css" >
 	<link rel="stylesheet" href="../bootstrap-table/bootstrap-table.css">
 	<link rel="stylesheet" href="../js/datepicker/bootstrap-datepicker.css" />
+	<link rel="stylesheet" href="../js/bootstrapvalidator/css/bootstrapValidator.min.css" >
 	<link rel="stylesheet" href="../js/select2/select2.min.css" />
 	<!-- STYLESHEETS --><!--[if lt IE 9]><script src="js/flot/excanvas.min.js"></script><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
 	<link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
@@ -41,21 +42,58 @@
 				<ul class="nav navbar-nav pull-right">
 					<li class="dropdown user" id="header-user">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-							<img alt="" src="../img/avatars/avatar3.jpg" />
-							<span class="username">Admin</span>
-							<i class="fa fa-angle-down"></i>
-						</a>
-						<ul class="dropdown-menu">
-							<li><a href="/IMShh_UI/index.html"><i class="fa fa-user"></i> 个人信息</a></li>
-							<li><a href="#"><i class="fa fa-eye"></i> 修改密码</a></li>
-							<li><a href="login.html"><i class="fa fa-power-off"></i> 退出系统</a></li>
-						</ul>
+						<img alt="" src="" />
+						<span class="username"></span>
+						<i class="fa fa-angle-down"></i>
+					</a>
+					<ul class="dropdown-menu">
+						<li><a href="javascript:;" onclick="userProfile()"><i class="fa fa-user"></i> 个人信息</a></li>
+						<li><a href="javascript:;" data-toggle="modal" data-target="#modalPWD"><i class="fa fa-eye"></i> 修改密码</a></li>
+						<li><a href="javascript:;" onclick="exitsys()"><i class="fa fa-power-off"></i> 退出系统</a></li>
+					</ul>
 					</li>
 				</ul>
 		</div>		
 	</header>
 	
 	<section id="page">
+		<div class="modal fade" id="modalPWD" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<form class="form-horizontal" id="pwdForm" >
+				    <div class="modal-content">
+						<div class="modal-body">
+							<div class="form-group">
+							<div class="box-container">
+								<div class="form-group">
+									<label class="col-md-3 control-label">原始密码</label> 
+									<div class="col-md-7">
+										<input type="hidden" name="id" value=""/>
+								    	<input type="password" name="opassword" class="form-control" value="">
+								    </div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-3 control-label">新的密码</label> 
+									<div class="col-md-7">
+										<input type="password" name="npassword" class="form-control" >
+								    </div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-3 control-label">再输一次</label> 
+									<div class="col-md-7">
+										<input type="password" name="rpassword" class="form-control" value="">
+								    </div>
+								</div>					
+							</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+						    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						    <button id="btn_save_pwd" type="submit" class="btn btn-primary">保存</button>
+						</div>
+				    </div>
+			    </form>
+			</div>
+		</div>
 		<div id="sidebar" class="sidebar-fixed" >
 			<div class="sidebar-menu nav-collapse" >
 				<ul id="menubar" >
@@ -100,12 +138,12 @@
 							<div class="modal-body">
 								<div class="form-group">
 									<div class="box-container">
-										<form class="form-horizontal" id="storagedelForm" action="#">
+										<form class="form-horizontal" id="storageForm" method="post">
 											<div class="form-group">
 												<label class="col-md-3 control-label">入库日期</label> 
 												<div class="col-md-7">
 													<input type="hidden" name="id" value=""/>
-											    	<input type="text" name="name" class="form-control selectData" value="">
+											    	<input type="text" name="storageDate" class="form-control selectData">											    	
 											    </div>
 											</div>
 											<div class="form-group">
@@ -176,16 +214,16 @@
 												    <div class="divide-10"></div>
 												    <div class="toolbox ">
 												    	<div class="btn-group">
-												    		<button id="btn_import" type="button" class="btn btn-default" title="导入"><i class="fa fa-download"></i></button>
-												    		<button id="btn_add" type="button" class="btn btn-default" title="新增" data-toggle="modal" data-target="#modalstoragedtledit"><i class="fa  fa-pencil"></i></button>
-												    		<button id="btn_edit" type="button" class="btn btn-default" title="修改"><i class="fa  fa-edit (alias)"></i></button>
-												    		<button id="btn_delete" type="button" class="btn btn-default" title="删除"><i class="fa  fa-times"></i></button>
-												    		<button id="btn_export" type="button" class="btn btn-default" title="导出"><i class="fa  fa-external-link"></i></button>
+												    		<button id="btn_import" type="button" class="btn btn-default"><i class="fa fa-chain (alias)"></i>导入</button>
+												    		<button id="btn_add" type="button" class="btn btn-default" data-toggle="modal" data-target="#modalstoragedtledit"><i class="fa  fa-pencil"></i>新增</button>
+												    		<!-- <button id="btn_edit" type="button" class="btn btn-default" title="修改"><i class="fa  fa-edit (alias)"></i></button>
+												    		<button id="btn_delete" type="button" class="btn btn-default" title="删除"><i class="fa  fa-times"></i></button> -->
+												    		<button id="btn_export" type="button" class="btn btn-default"><i class="fa  fa-external-link"></i>导出</button>
 												    	</div>
 												    	
 												    	<span class="pull-right col-md-4" >
 															<div class="input-group" >
-																<input type="text" class="form-control" placeholder="查询条件"/>
+																<input type="text" name="condition" class="form-control" placeholder="查询条件"/>
 																<div class="input-group-btn">
 																	<button type="button" id="btn_datapriod" class="btn btn-default dropdown-toggle" data-toggle="dropdown">所有数据<span class="caret"></span></button>
 																	<ul id="dataperiod" class="dropdown-menu" >
@@ -205,7 +243,7 @@
 													<div class="divide-10"></div>
 													<div class="toolbox ">												    	
 												    	<span class="pull-right col-md-3" >
-												    		<input type="text" class="form-control" placeholder="货号"/>															
+												    		<input type="text" name="condition_pdtNo" class="form-control" placeholder="货号"/>															
 														</span>
 												    </div>
 											    	<div class="divide-10"></div>
@@ -232,7 +270,10 @@
 	<script src="../js/datepicker/bootstrap-datepicker.js"></script>
 	<script src="../js/select2/select2.min.js"></script>
 	<script src="../js/jQuery-Cookie/jquery.cookie.min.js"></script>
-	
+	<script src="../js/bootstrapvalidator/js/bootstrapValidator.min.js"></script>	
+	<script src="../js/bootstrapvalidator/js/language/zh_CN.js"></script>
+	<script src="../js/jquery-form/jquery.form.js"></script>
+	<script src="../js/importModal.js"></script>
 	<script src="../js/script.js"></script>
 	<script>
 		jQuery(document).ready(function() {		

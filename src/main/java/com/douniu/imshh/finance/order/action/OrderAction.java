@@ -71,7 +71,7 @@ public class OrderAction {
 	/**
 	 * 查询订单，需要根据订单号、状态、日期、客户查询订单
 	 */
-	@RequestMapping(value ="/loadOrder", produces = "application/json; charset=utf-8")
+	@RequestMapping(value ="/loadorder", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String queryOrder(Order condition){
 		List<Order> res = service.query(condition);
@@ -81,6 +81,17 @@ public class OrderAction {
 		pr.setRows(res);
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		return gson.toJson(pr);
+	}
+	
+	/**
+	 * 查询订单，需要根据订单号、状态、日期、客户查询订单
+	 */
+	@RequestMapping(value ="/loadallorder", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String queryAllOrder(Order condition){
+		List<Order> res = service.queryNoPage(condition);
+		Gson gson = new Gson();
+		return gson.toJson(res);
 	}
 	
 	/**
@@ -178,7 +189,7 @@ public class OrderAction {
         	order.setStartDate(startDate);
         	order.setEndDate(endDate);
         	
-            List<OrderAndDetail> Orders = service.queryNoPage(order);
+            List<OrderAndDetail> Orders = service.queryOrderAndDetail(order);
         	workbook = POIExcelAdapter.toWorkBook(Orders, mapper, OrderAndDetail.class); 
         } catch (Exception e) {  
             e.printStackTrace();  

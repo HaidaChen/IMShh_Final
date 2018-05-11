@@ -273,7 +273,7 @@ CREATE TABLE T_AUTHORITY(
 	id varchar(20) not null,
 	name varchar(60) not null,
 	parentId varchar(20) not null,
-	action varchar(128) not null,
+	action varchar(256) not null,
 	dependents varchar(1024),
 	remark varchar(1024)
 );
