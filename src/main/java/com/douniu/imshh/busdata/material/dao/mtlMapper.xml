@@ -70,7 +70,6 @@
           unit = #{unit},
           formula = #{formula},
           remark = #{remark},
-          category = #{category},
           modifydate = sysdate()
     where id = #{id}
     </update>

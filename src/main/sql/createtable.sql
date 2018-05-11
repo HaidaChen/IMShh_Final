@@ -86,70 +86,23 @@ CREATE TABLE T_ORDERDETAIL(
 );
 
 
-CREATE TABLE T_PURCHASEPLAN(
+CREATE TABLE T_RECEPTION(
     id varchar(20) not null,
-    identify varchar(120),
-    orderId varchar(20),
-    createDate date not null,
-    
-    money numeric(10,2),
-    paid numeric(10,2),  
-    
-    planStatus char(1),
-    
-    modifyDate datetime,
-    remark varchar(1024),
-    status char(1)
-);
-
-CREATE TABLE T_PURCHASEDETAIL(
-    id varchar(20) not null,
-    planId varchar(20) not null,
+    receiveDate date not null,
+    orderIdentify varchar(20),
     materialId varchar(20),
     materialName varchar(20) not null,
     supplierId varchar(20),
     supplierName varchar(20),    
-    specification varchar(20),
+    specification1 varchar(20),
+    specification2 varchar(20),
+    specification3 varchar(20),
+    formula varchar(256),
     unit varchar(20),
-    amount int,
+    meterage numeric(12,4),
+    amount int not null,    
     unitPrice numeric(10,2),
     totlemnt numeric(10,2),
-    paid numeric(10,2),   
-    
-    modifyDate datetime,
-    status char(1)
-);
-
-CREATE TABLE T_DELIVERDETAIL(
-    id varchar(20) not null,
-    planId varchar(20) not null,
-    planDetailId varchar(20) not null,
-    materialId varchar(20),
-    materialName varchar(20) not null,
-    supplierId varchar(20),
-    supplierName varchar(20),    
-    specification varchar(20),
-    unit varchar(20),
-    amount int not null,
-    deliverDate date not null,
-    unitPrice numeric(10,2),
-    totlemnt numeric(10,2),
-    
-    modifyDate datetime,
-    remark varchar(1024),
-    status char(1)
-);
-
-CREATE TABLE T_PAYMENTDETAIL(
-    id varchar(20) not null,
-    deliverDetailId varchar(20) not null,
-    pamentAmount numeric(10,2) not null,
-    paymentDate date not null,
-    accountId varchar(20),
-    
-    tranUser  varchar(120), 
-    tranBank  varchar(120),
-    tranAccountNo varchar(60),
     
     modifyDate datetime,
     remark varchar(1024),

@@ -65,7 +65,7 @@ xsi:schemaLocation="
       </bean>
       
       
-      <bean name="purchaseService" class="com.douniu.imshh.finance.purchase.service.impl.PurchaseService">
+      <!-- <bean name="purchaseService" class="com.douniu.imshh.finance.purchase.service.impl.PurchaseService">
           <property name="dao" ref="purchaseDao"></property>
           <property name="dService" ref="purchaseDetailService"></property>
       </bean>
@@ -87,6 +87,14 @@ xsi:schemaLocation="
       </bean>
       <bean id="deliverDetailDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
           <property name="mapperInterface" value="com.douniu.imshh.finance.purchase.dao.IDeliverDetailDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean> -->
+      
+      <bean name="receptionService" class="com.douniu.imshh.finance.reception.service.impl.ReceptionService">
+          <property name="dao" ref="receptionDao"></property>
+      </bean>
+      <bean id="receptionDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.reception.dao.IReceptionDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       

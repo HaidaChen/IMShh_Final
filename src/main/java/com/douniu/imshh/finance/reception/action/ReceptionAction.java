@@ -1,4 +1,4 @@
-package com.douniu.imshh.busdata.material.action;
+package com.douniu.imshh.finance.reception.action;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -22,67 +22,67 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.douniu.imshh.busdata.material.domain.Material;
-import com.douniu.imshh.busdata.material.service.IMaterialService;
 import com.douniu.imshh.common.PageResult;
+import com.douniu.imshh.finance.reception.domain.Reception;
+import com.douniu.imshh.finance.reception.service.IReceptionService;
+import com.douniu.imshh.utils.DateUtil;
 import com.douniu.imshh.utils.ExcelBean;
 import com.douniu.imshh.utils.ExcelUtil;
 import com.douniu.imshh.utils.POIExcelAdapter;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
-@RequestMapping("/mtl")
-public class MaterialAction {
+@RequestMapping("/reception")
+public class ReceptionAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{
-		mapper.add(new ExcelBean("品名","name",0));  
-		mapper.add(new ExcelBean("规格1","specification1",0)); 
-		mapper.add(new ExcelBean("规格2","specification2",0)); 
-		mapper.add(new ExcelBean("规格3","specification3",0)); 		  
-		mapper.add(new ExcelBean("计量公式","formula",0));  
+		mapper.add(new ExcelBean("接收日期","receiveDate",0));  
+		mapper.add(new ExcelBean("关联订单号","orderIdentify",0));  
+		mapper.add(new ExcelBean("供应商","supplierName",0));   
+		mapper.add(new ExcelBean("品名","materialName",0));  
+		mapper.add(new ExcelBean("规格1","specification1",0));  
+		mapper.add(new ExcelBean("规格2","specification2",0));		
+		mapper.add(new ExcelBean("规格3","specification3",0));
 		mapper.add(new ExcelBean("计量单位","unit",0));
+		mapper.add(new ExcelBean("计量数","formula",0));		
+		mapper.add(new ExcelBean("单价","unitPrice",0));
+		mapper.add(new ExcelBean("数量","amount",0));
+		mapper.add(new ExcelBean("合计","totlemnt",0));
 		mapper.add(new ExcelBean("备注","remark",0));  
 	}
 	
 	@Autowired
-	private IMaterialService service;	
+	private IReceptionService service;
 	
 	@RequestMapping(value="/edit", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String edit(Material mtl){
-		Material material = service.getById(mtl.getId());
+	public String edit(Reception reception){
+		Reception oReception = service.getById(reception.getId());
 		Gson gson = new Gson();
-        return gson.toJson(material);
+        return gson.toJson(oReception);
 	}
 	
 	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public int save(Material mtl){
-		service.save(mtl);
+	public int save(Reception reception){
+		service.save(reception);
         return 1;
 	}
 	
-	@RequestMapping(value ="/loadmtl", produces = "application/json; charset=utf-8")
+	@RequestMapping(value ="/loadreception", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String loadMaterial(Material mtl){
-		List<Material> res = service.query(mtl);
-		int count = service.count(mtl);
+	public String loadReception(Reception reception){
+		List<Reception> res = service.query(reception);
+		int count = service.count(reception);
+		
 		PageResult pr = new PageResult();
 		
 		pr.setTotal(count);
 		pr.setRows(res);
 		
-		Gson gson = new Gson();
-        return gson.toJson(pr);
-	}
-	
-	@RequestMapping(value ="/loadallmtl", produces = "application/json; charset=utf-8")
-	@ResponseBody
-	public String loadAllMaterial(Material mtl){
-		List<Material> res = service.queryNoPage(mtl);
-		
-		Gson gson = new Gson();
-        return gson.toJson(res);
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		return gson.toJson(pr);
 	}
 	
 	@RequestMapping("/delete")
@@ -90,10 +90,11 @@ public class MaterialAction {
 	public void delete(String id){
 		service.delete(id);
 	}
-		
-    @RequestMapping(value="importmaterial",method={RequestMethod.GET,RequestMethod.POST})  
+	
+	
     @ResponseBody  
-    public  void  importMaterial(HttpServletRequest request,HttpServletResponse response) throws Exception {  
+    @RequestMapping(value="importreception",method={RequestMethod.GET,RequestMethod.POST})  
+    public  void  importReception(HttpServletRequest request,HttpServletResponse response) throws Exception {  
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;    
           
         InputStream in =null;  
@@ -104,14 +105,14 @@ public class MaterialAction {
           
         in = file.getInputStream();  
         List<List<Object>>  data = ExcelUtil.parseExcel(in, file.getOriginalFilename());
-        List<Material> materials = POIExcelAdapter.toDomainList(data, mapper, Material.class);
-        service.batchAdd(materials);
+        List<Reception> reception = POIExcelAdapter.toDomainList(data, mapper, Reception.class);
+        service.batchAdd(reception);
     }  
     
-    @RequestMapping(value = "exportmaterial", method = RequestMethod.GET)  
+    @RequestMapping(value = "exportreception", method = RequestMethod.GET)  
     @ResponseBody  
-    public void exportMaterial(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
-        response.reset();  
+    public void exportReception(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
+    	response.reset();  
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");  
         String dateStr = sdf.format(new Date());  
          
@@ -124,10 +125,16 @@ public class MaterialAction {
         Workbook workbook=null;  
         try {
         	String condition = request.getParameter("condition");
-        	Material material = new Material();
-        	material.setCondition(condition);
-            List<Material> products = service.queryNoPage(material);
-        	workbook = POIExcelAdapter.toWorkBook(products, mapper, Material.class); 
+        	Date startDate = DateUtil.string2Date(request.getParameter("startDate"));
+        	Date endDate = DateUtil.string2Date(request.getParameter("endDate"));
+        	
+        	Reception reception = new Reception();
+        	reception.setCondition(condition);
+        	reception.setStartDate(startDate);
+        	reception.setEndDate(endDate);
+        	
+            List<Reception> receptions = service.queryNoPage(reception);
+        	workbook = POIExcelAdapter.toWorkBook(receptions, mapper, Reception.class); 
         } catch (Exception e) {  
             e.printStackTrace();  
         }  

@@ -3524,25 +3524,42 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initReceiptConsModule = function(){
 		$("#tbl_receiptCons").bootstrapTable({
-			url: "../json/receiptCons.json",
+			url: getProjectName() + "/reception/loadreception.do",
 			method: "get",
 			pagination: true,
 			sidePagination: "server", 
 			columns: [{
-                field: 'receiptDate',
+                field: 'receiveDate',
                 title: '接收日期'
             }, {
-                field: 'suppName',
+                field: 'orderIdentify',
+                title: '关联订单号'
+            }, {
+                field: 'supplierName',
                 title: '供应商'
             }, {
                 field: 'materialName',
                 title: '品名'
             }, {
-                field: 'specification',
-                title: '规格'
+                field: '',
+                title: '规格',
+                formatter: function(value, row, index){
+                	
+                	var specification = row.specification1;
+                	if (row.specification2 && row.specification2 != ''){
+                		specification += '*' + row.specification2;
+                	}
+                	if (row.specification3 && row.specification3 != ''){
+                		specification += '*' + row.specification3;
+                	}
+                	return specification;
+                }
             }, {
                 field: 'unit',
-                title: '单位'
+                title: '计量单位'
+            }, {
+                field: 'meterage',
+                title: '计量数'
             }, {
                 field: 'amount',
                 title: '数量'
@@ -3555,19 +3572,192 @@ var App = function () {
             }, {
                 field: 'remark',
                 title: '备注'
-            }]
+            }],
+            queryParams: function(params){
+            	return {
+                    pageSize: params.limit,
+                    pageOffset: params.offset,                    
+                    condition: $("input[name=condition]").val(),
+                    startDate: $("#startDate").val(),
+                    endDate: $("#endDate").val()
+                }
+            }
 		});
 		
-		$.getJSON("/IMShh_UI/json/material.json", function (data){
+		$("input[name=condition]").change(function(){
+			$("#tbl_receiptCons").bootstrapTable("refresh", {url: getProjectName() + "/reception/loadreception.do", cache: false});
+		});
+		
+		
+		//----------表单-----------------------
+		$.getJSON(getProjectName() + "/order/loadallorder.do", function (data){
+			$("#relorder").append("<option></option>");
+			$.each(data, function(index, obj){
+				$("#relorder").append("<option value='"+obj.identify+"'>"+ obj.identify +"</option>");
+			});
+			$("#relorder").select2({
+			    placeholder: "关联订单",
+			    allowClear: true
+			});
+		});
+		
+		$.getJSON(getProjectName() + "/mtl/loadallmtl.do", function (data){
 			$("#relmaterial").append("<option></option>");
-			$.each(data.rows, function(index, obj){
-				$("#relmaterial").append("<option value='"+obj.id+"'>"+ obj.name + " " + obj.specification +"</option>");
+			$.each(data, function(index, obj){
+				var specification = obj.specification1;
+            	if (obj.specification2 && obj.specification2 != ''){
+            		specification += '*' + obj.specification2;
+            	}
+            	if (obj.specification3 && obj.specification3 != ''){
+            		specification += '*' + obj.specification3;
+            	}
+				$("#relmaterial").append("<option id='"+obj.id+"' value='"+obj.name+"'>"+ obj.name + " " + specification +"</option>");
 			});
 			$("#relmaterial").select2({
 			    placeholder: "关联原材料",
 			    allowClear: true
 			});
 		});
+		
+		$("#relmaterial").change(function(){
+			var mtlId = $("#relmaterial option:selected").attr("id");
+			$.getJSON(getProjectName() + "/mtl/edit.do?id="+mtlId, function (data){
+				if(data!=null){
+					$("input[name=specification1]").val(data["specification1"]);
+					$("input[name=specification2]").val(data["specification2"]);
+					$("input[name=specification3]").val(data["specification3"]);
+					$("input[name=formula]").val(data["formula"]);
+					$("#calculation").html(data["formula"]);					
+				}else{
+					$("input[name=specification1]").val("");
+					$("input[name=specification2]").val("");
+					$("input[name=specification3]").val("");
+					$("input[name=formula]").val("");
+					$("#calculation").html("");
+				}
+				
+				if ($("input[name=formula]").val() != ''){
+					calculateMeterage();
+					calculateTotlment();
+				}
+			});
+		});
+		
+		$("input[name=amount], input[name=unitPrice]").change(function(){
+			calculateTotlment();
+		});
+		
+		$("#receptionForm").bootstrapValidator({
+			fields: {
+				receiptDate : {validators: {notEmpty : {}}},
+				supplierName : {validators: {notEmpty : {}}},
+				materialName : {validators: {notEmpty : {}}},
+				amount : {validators: {notEmpty : {}, integer:{}}},
+				unitPrice : {validators: {notEmpty : {}, numeric:{}}}
+	        }
+		});
+		
+		$("#btn_save_reception").click(function(){
+			var bv = $("#receptionForm").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				$("#receptionForm").ajaxSubmit({
+					url: getProjectName()+"/reception/save.do",
+					success: function(){
+						window.location.reload();
+					}
+				});
+			}
+		});
+		
+		$("#btn_import").click(function(){			
+			var oImportModal = new ImportModal(getProjectName() + "/reception/importreception.do", function(){
+				$("#tbl_receiptCons").bootstrapTable("refresh", {url: getProjectName() + "/reception/loadreception.do", cache: false});
+        	}, getProjectName() + "/templaters/材料接收单.xlsx");
+			oImportModal.createModal();  
+		});
+		
+		$("#btn_export").click(function(){			
+			window.open(getProjectName() + "/reception/exportreception.do?condition="+$("input[name=condition]").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()); 
+		});
+		
+		
+		//-----------计算金额-----------
+		$("#btn_showformula").click(function(){
+			if($("#formulabox").is(":hidden")){
+			       $("#formulabox").show();
+			}else{
+			      $("#formulabox").hide();
+			}
+		});
+		
+		$("#grp_factor").children().click(function(){
+			var content = $("#calculation").text();
+			$("#calculation").text(content + "'" + $(this).html() + "'");
+		});
+		
+		$("#grp_number, #grp_operation").children().click(function(){
+			var content = $("#calculation").text();
+			$("#calculation").text(content + $(this).html());
+		});
+		
+		$("#btn_reback").click(function(){
+			var content = $("#calculation").text();
+			var iplus = content.lastIndexOf("+");
+			var iminus = content.lastIndexOf("-");
+			var imultiplication = content.lastIndexOf("*");
+			var idivision = content.lastIndexOf("/");
+			var near = Math.max.apply(null, [iplus, iminus, imultiplication, idivision]);
+			if (near == -1)
+				return;
+			content = content.substr(0, near);
+			$("#calculation").text(content);
+		});
+		
+		$("#btn_clear").click(function(){
+			$("#calculation").text("");
+		});
+		
+		$("#btn_save").click(function(){
+			$("input[name=formula]").val($("#calculation").html());
+			$("#formulabox").hide();
+		});
+		
+		var calculateMeterage = function(){
+			var exp = analysisExp($("input[name=formula]").val());
+			$("input[name=meterage]").val(math.eval(exp).toFixed(2));			
+		}
+		
+		var calculateTotlment = function(){
+			var meterage = $("input[name=meterage]").val();
+			var amount = $("input[name=amount]").val();
+			var unitPrice = $("input[name=unitPrice]").val();
+			var totlemnt = $("input[name=totlemnt]");
+			
+			if (amount != '' && unitPrice != ''){
+				
+				var exp = amount + '*' + unitPrice;
+				if (meterage != '')
+					exp = exp + '*' + meterage;
+				alert(math.eval(exp).toFixed(2));
+				totlemnt.val(math.eval(exp).toFixed(2));
+			}
+		}
+		
+		var analysisExp = function(expression){
+			var str = expression;
+			var index = str.indexOf("'");
+			if (index < 0){
+				return expression;
+			}
+			var factor = str.substr(index+1);
+			index = factor.indexOf("'");
+			factor = factor.substr(0, index);
+			var factorVal = $("input[label="+ factor +"]").val();
+			var nexpression = expression.replace("'"+factor+"'", factorVal);
+			var exp = analysisExp(nexpression);		
+			return exp;
+		}
 	}
 	
 
@@ -4442,9 +4632,13 @@ var App = function () {
 		
 		
 		
-		
 		$("#btn_showformula").click(function(){
-			$("#formulabox").show();
+			if($("#formulabox").is(":hidden")){
+			       $("#formulabox").show();
+			       $("#calculation").html($("input[name=formula]").val());
+			}else{
+			      $("#formulabox").hide();
+			}
 		});
 		
 		$("#grp_factor").children().click(function(){
@@ -4673,7 +4867,7 @@ var App = function () {
             if (App.isPage("receiptCons")){
             	handleMenu("receiptCons.html");
             	handleDatePicker();
-            	handleDatePriod();
+            	handleDatePriod($("#tbl_receiptCons"), "/reception/loadreception.do");
             	initReceiptConsModule(); 
             }
             if (App.isPage("deliver")){
