@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.finance.storage.domain.Storage;
@@ -39,6 +38,7 @@ public class StorageAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{
 		mapper.add(new ExcelBean("入库日期","storageDate",0));  
+		mapper.add(new ExcelBean("关联订单号","orderIdentify",0)); 
 		mapper.add(new ExcelBean("货号","pdtNo",0));  
 		mapper.add(new ExcelBean("含量","content",0));   
 		mapper.add(new ExcelBean("数量","amount",0));  
@@ -51,14 +51,10 @@ public class StorageAction {
 	
 	@RequestMapping(value="/edit", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public ModelAndView edit(Storage storage){
-		ModelAndView mav = new ModelAndView();
-		if (storage.getId() != ""){
-			Storage oStorage = service.getById(storage.getId());
-			mav.addObject("storage", oStorage);
-		}
-        mav.setViewName("/finance/storage/storageEdit");
-        return mav;
+	public String edit(Storage storage){
+		Storage oStorage = service.getById(storage.getId());
+		Gson gson = new Gson();
+        return gson.toJson(oStorage);
 	}
 	
 	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
@@ -122,12 +118,12 @@ public class StorageAction {
   
         Workbook workbook=null;  
         try {
-        	String pdtNo = request.getParameter("pdtNo");
+        	String condition = request.getParameter("condition");
         	Date startDate = DateUtil.string2Date(request.getParameter("startDate"));
         	Date endDate = DateUtil.string2Date(request.getParameter("endDate"));
         	
         	Storage storage = new Storage();
-        	storage.setPdtNo(pdtNo);
+        	storage.setCondition(condition);
         	storage.setStartDate(startDate);
         	storage.setEndDate(endDate);
         	

@@ -3576,7 +3576,7 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initDeliverModule = function(){
 		$("#tbl_deliver").bootstrapTable({
-			url: "../json/deliver.json",
+			url: getProjectName() + "/deliver/loaddeliver.do",
 			method: "get",
 			pagination: true,
 			sidePagination: "server", 
@@ -3598,18 +3598,67 @@ var App = function () {
             }, {
                 field: 'remark',
                 title: '备注'
-            }]
+            }],
+            queryParams: function(params){
+            	return {
+                    pageSize: params.limit,
+                    pageOffset: params.offset,                    
+                    condition: $("input[name=condition]").val(),
+                    startDate: $("#startDate").val(),
+                    endDate: $("#endDate").val()
+                }
+            }
 		});
 		
-		$.getJSON("/IMShh_UI/json/order.json", function (data){
+		$("input[name=condition]").change(function(){
+			$("#tbl_deliver").bootstrapTable("refresh", {url: getProjectName() + "/deliver/loaddeliver.do", cache: false});
+		});
+		
+		
+		
+		$("#deliverForm").bootstrapValidator({
+			fields: {
+				deliverDate : {validators: {notEmpty : {}}},
+				pdtNo : {validators: {notEmpty : {}}},
+				content : {validators: {notEmpty : {}}},
+				amount : {validators: {notEmpty : {}, integer:{}}}
+	        }
+		});
+		
+		$.getJSON(getProjectName() + "/order/loadallorder.do", function (data){
 			$("#relorder").append("<option></option>");
-			$.each(data.rows, function(index, obj){
-				$("#relorder").append("<option value='"+obj.id+"'>"+ obj.identify +"</option>");
+			$.each(data, function(index, obj){
+				$("#relorder").append("<option value='"+obj.identify+"'>"+ obj.identify +"</option>");
 			});
 			$("#relorder").select2({
 			    placeholder: "关联订单",
 			    allowClear: true
 			});
+		});
+		
+		$("#btn_save_deliver").click(function(){
+			var bv = $("#deliverForm").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				$("#deliverForm").ajaxSubmit({
+					url: getProjectName()+"/deliver/save.do",
+					success: function(){
+						//removeFormData($("#deliverForm"));
+						window.location.reload();
+					}
+				});
+			}
+		});
+		
+		$("#btn_import").click(function(){			
+			var oImportModal = new ImportModal(getProjectName() + "/deliver/importdeliver.do", function(){
+				$("#tbl_deliver").bootstrapTable("refresh", {url: getProjectName() + "/deliver/loaddeliver.do", cache: false});
+        	}, getProjectName() + "/templaters/出库单.xlsx");
+			oImportModal.createModal();  
+		});
+		
+		$("#btn_export").click(function(){			
+			window.open(getProjectName() + "/deliver/exportdeliver.do?condition="+$("input[name=condition]").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()); 
 		});
 		
 	}
@@ -3628,6 +3677,9 @@ var App = function () {
                 field: 'storageDate',
                 title: '入库日期'
             }, {
+                field: 'orderIdentify',
+                title: '关联订单号'
+            }, {
                 field: 'pdtNo',
                 title: '货号'
             }, {
@@ -3636,9 +3688,6 @@ var App = function () {
             }, {
                 field: 'amount',
                 title: '数量'
-            }, {
-                field: 'orderIdentify',
-                title: '关联订单号'
             }, {
                 field: 'remark',
                 title: '备注'
@@ -3687,25 +3736,24 @@ var App = function () {
 		});
 		
 		
-		
-		$.getJSON(getProjectName() + "/order/loadallorder.do", function (data){
-			$("#relorder").append("<option></option>");
-			$.each(data, function(index, obj){
-				$("#relorder").append("<option value='"+obj.id+"'>"+ obj.identify +"</option>");
-			});
-			$("#relorder").select2({
-			    placeholder: "关联订单",
-			    allowClear: true
-			});
-		});		
-		
 		$("#storageForm").bootstrapValidator({
 			fields: {
 				storageDate : {validators: {notEmpty : {}}},
 				pdtNo : {validators: {notEmpty : {}}},
 				content : {validators: {notEmpty : {}}},
-				amount : {validators: {notEmpty : {}}}
+				amount : {validators: {notEmpty : {}, integer:{}}}
 	        }
+		});
+		
+		$.getJSON(getProjectName() + "/order/loadallorder.do", function (data){
+			$("#relorder").append("<option></option>");
+			$.each(data, function(index, obj){
+				$("#relorder").append("<option value='"+obj.identify+"'>"+ obj.identify +"</option>");
+			});
+			$("#relorder").select2({
+			    placeholder: "关联订单",
+			    allowClear: true
+			});
 		});
 		
 		$("#btn_save_storagedtl").click(function(){
@@ -3715,14 +3763,11 @@ var App = function () {
 				$("#storageForm").ajaxSubmit({
 					url: getProjectName()+"/storage/save.do",
 					success: function(){
+						removeFormData($("#storageForm"));
 						window.location.reload();
 					}
 				});
 			}
-		});
-		
-		$('#modalstoragedtledit').on("hide.bs.modal", function(){
-			removeFormData($("#storageForm"));
 		});
 		
 		$("#btn_import").click(function(){			
@@ -4634,7 +4679,7 @@ var App = function () {
             if (App.isPage("deliver")){
             	handleMenu("deliver.html");
             	handleDatePicker();
-            	handleDatePriod();
+            	handleDatePriod($("#tbl_deliver"), "/deliver/loaddeliver.do");
             	initDeliverModule();
             }
             if (App.isPage("storage")){

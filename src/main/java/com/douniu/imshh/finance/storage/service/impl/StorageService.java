@@ -12,19 +12,19 @@ public class StorageService implements IStorageService{
 	
 	@Override
 	public List<Storage> queryDetail(Storage storage) {
-		Storage condition = LikeFlagUtil.appendLikeFlag(storage, new String[]{"pdtNo"});
+		Storage condition = LikeFlagUtil.appendLikeFlag(storage, new String[]{"condition"});
 		return dao.queryDetail(condition);
 	}
 
 	@Override
 	public List<Storage> queryDetailNoPage(Storage storage) {
-		Storage condition = LikeFlagUtil.appendLikeFlag(storage, new String[]{"pdtNo"});
+		Storage condition = LikeFlagUtil.appendLikeFlag(storage, new String[]{"condition"});
 		return dao.queryDetailNoPage(condition);
 	}
 
 	@Override
 	public int count(Storage storage) {
-		Storage condition = LikeFlagUtil.appendLikeFlag(storage, new String[]{"pdtNo"});
+		Storage condition = LikeFlagUtil.appendLikeFlag(storage, new String[]{"condition"});
 		return dao.countDetail(condition);
 	}
 

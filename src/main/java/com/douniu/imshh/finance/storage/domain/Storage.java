@@ -7,6 +7,7 @@ import com.douniu.imshh.common.BaseQO;
 public class Storage extends BaseQO{
 	private String id;
 	private Date storageDate;
+	private String orderIdentify;
 	private String pdtNo;	
 	private String content;
 	private int amount;	
@@ -61,11 +62,18 @@ public class Storage extends BaseQO{
 	}
 	public void setStatus(int status) {
 		this.status = status;
+	}	
+	public String getOrderIdentify() {
+		return orderIdentify;
+	}
+	public void setOrderIdentify(String orderIdentify) {
+		this.orderIdentify = orderIdentify;
 	}
 	@Override
 	public String toString() {
-		return "Storage [id=" + id + ", storageDate=" + storageDate + ", pdtNo=" + pdtNo + ", content=" + content
-				+ ", amount=" + amount + ", remark=" + remark + ", modifyDate=" + modifyDate + ", status=" + status
-				+ "]";
-	}	
+		return "Storage [id=" + id + ", storageDate=" + storageDate + ", orderIdentify=" + orderIdentify + ", pdtNo="
+				+ pdtNo + ", content=" + content + ", amount=" + amount + ", remark=" + remark + ", modifyDate="
+				+ modifyDate + ", status=" + status + "]";
+	}
+		
 }

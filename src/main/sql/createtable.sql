@@ -217,6 +217,7 @@ CREATE TABLE T_TRANSACTION (
 CREATE TABLE T_STORAGE (
     id varchar(20) not null,
     storageDate date not null,
+    orderIdentify varchar(20),
     pdtNo varchar(20) not null,
     content varchar(20) not null,
     amount int not null,
@@ -229,8 +230,7 @@ CREATE TABLE T_STORAGE (
 CREATE TABLE T_STORAGE_DELIVER (
     id varchar(20) not null,
     deliverDate date not null,
-    deliverType varchar(20),
-    orderId varchar(20),
+    orderIdentify varchar(20),
     pdtNo varchar(20) not null,
     content varchar(20) not null,
     amount int not null,

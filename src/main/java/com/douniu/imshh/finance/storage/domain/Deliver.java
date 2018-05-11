@@ -7,8 +7,6 @@ import com.douniu.imshh.common.BaseQO;
 public class Deliver extends BaseQO{
 	private String id;
 	private Date deliverDate;
-	private String deliverType;
-	private String orderId;
 	private String orderIdentify;
 	private String pdtNo;	
 	private String content;
@@ -29,18 +27,7 @@ public class Deliver extends BaseQO{
 	public void setDeliverDate(Date deliverDate) {
 		this.deliverDate = deliverDate;
 	}
-	public String getDeliverType() {
-		return deliverType;
-	}
-	public void setDeliverType(String deliverType) {
-		this.deliverType = deliverType;
-	}
-	public String getOrderId() {
-		return orderId;
-	}
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
-	}
+	
 	public String getOrderIdentify() {
 		return orderIdentify;
 	}
@@ -85,8 +72,8 @@ public class Deliver extends BaseQO{
 	}
 	@Override
 	public String toString() {
-		return "Deliver [id=" + id + ", deliverDate=" + deliverDate + ", deliverType=" + deliverType + ", orderId="
-				+ orderId + ", orderIdentify=" + orderIdentify + ", pdtNo=" + pdtNo + ", content=" + content
+		return "Deliver [id=" + id + ", deliverDate=" + deliverDate + ", orderIdentify="
+				+ orderIdentify + ", pdtNo=" + pdtNo + ", content=" + content
 				+ ", amount=" + amount + ", remark=" + remark + ", modifyDate=" + modifyDate + ", status=" + status
 				+ "]";
 	}	

@@ -12,19 +12,19 @@ public class DeliverService implements IDeliverService{
 	
 	@Override
 	public List<Deliver> query(Deliver deliver) {
-		Deliver condition = LikeFlagUtil.appendLikeFlag(deliver, new String[]{"pdtNo"});
+		Deliver condition = LikeFlagUtil.appendLikeFlag(deliver, new String[]{"condition"});
 		return dao.queryDeliverDetail(condition);
 	}
 	
 	@Override
 	public List<Deliver> queryNoPage(Deliver deliver) {
-		Deliver condition = LikeFlagUtil.appendLikeFlag(deliver, new String[]{"pdtNo"});
+		Deliver condition = LikeFlagUtil.appendLikeFlag(deliver, new String[]{"condition"});
 		return dao.queryDeliverNoPage(condition);
 	}
 	
 	@Override
 	public int count(Deliver deliver) {
-		Deliver condition = LikeFlagUtil.appendLikeFlag(deliver, new String[]{"pdtNo"});
+		Deliver condition = LikeFlagUtil.appendLikeFlag(deliver, new String[]{"condition"});
 		return dao.countDeliverDetail(condition);
 	}
 

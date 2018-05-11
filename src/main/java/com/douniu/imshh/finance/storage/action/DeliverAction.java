@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.finance.storage.domain.Deliver;
@@ -39,7 +38,6 @@ public class DeliverAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{
 		mapper.add(new ExcelBean("出库日期","deliverDate",0)); 
-		mapper.add(new ExcelBean("是否交付订单","deliverType",0)); 
 		mapper.add(new ExcelBean("关联订单号","orderIdentify",0)); 
 		mapper.add(new ExcelBean("货号","pdtNo",0));  
 		mapper.add(new ExcelBean("含量","content",0));   
@@ -50,28 +48,20 @@ public class DeliverAction {
 	@Autowired
 	private IDeliverService service;
 	
-	@RequestMapping("/main")
-    public ModelAndView enter(Deliver deliver){
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("/finance/storage/deliverOverview");
-        return mav;
-    }
 	
-	@RequestMapping("/edit")
-	public ModelAndView edit(Deliver deliver){
-		ModelAndView mav = new ModelAndView();
-		if (deliver.getId() != ""){
-			Deliver oDeliver = service.getById(deliver.getId());
-			mav.addObject("deliver", oDeliver);
-		}
-        mav.setViewName("/finance/storage/deliverEdit");
-        return mav;
+	@RequestMapping(value="/edit", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String edit(Deliver deliver){
+		Deliver oDeliver = service.getById(deliver.getId());
+		Gson gson = new Gson();
+        return gson.toJson(oDeliver);
 	}
 	
-	@RequestMapping("/save")
-	public ModelAndView save(Deliver deliver){
+	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public int save(Deliver deliver){
 		service.save(deliver);
-        return enter(deliver);
+        return 1;
 	}
 	
 	@RequestMapping(value ="/loaddeliver", produces = "application/json; charset=utf-8")
@@ -97,9 +87,9 @@ public class DeliverAction {
 	
 	
 	
+    @RequestMapping(value="importdeliver",method={RequestMethod.GET,RequestMethod.POST})  
     @ResponseBody  
-    @RequestMapping(value="ajaxUpload",method={RequestMethod.GET,RequestMethod.POST})  
-    public  void  ajaxUploadExcel(HttpServletRequest request,HttpServletResponse response) throws Exception {  
+    public  void  importDeliver(HttpServletRequest request,HttpServletResponse response) throws Exception {  
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;    
           
         InputStream in =null;  
@@ -114,9 +104,9 @@ public class DeliverAction {
         service.batchAdd(delivers);
     }  
     
-    @RequestMapping(value = "downloadExcel", method = RequestMethod.GET)  
+    @RequestMapping(value = "exportdeliver", method = RequestMethod.GET)  
     @ResponseBody  
-    public void downloadExcel(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
+    public void exportDeliver(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
     	response.reset();  
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");  
         String dateStr = sdf.format(new Date());  
@@ -129,17 +119,17 @@ public class DeliverAction {
   
         Workbook workbook=null;  
         try {
-        	String pdtNo = request.getParameter("pdtNo");
+        	String condition = request.getParameter("condition");
         	Date startDate = DateUtil.string2Date(request.getParameter("startDate"));
         	Date endDate = DateUtil.string2Date(request.getParameter("endDate"));
         	
         	Deliver deliver = new Deliver();
-        	deliver.setPdtNo(pdtNo);
+        	deliver.setCondition(condition);
         	deliver.setStartDate(startDate);
         	deliver.setEndDate(endDate);
         	
             List<Deliver> delivers = service.queryNoPage(deliver);
-        	workbook = POIExcelAdapter.toWorkBook(delivers, mapper, Deliver.class); 
+            workbook = POIExcelAdapter.toWorkBook(delivers, mapper, Deliver.class); 
         } catch (Exception e) {  
             e.printStackTrace();  
         }  
@@ -155,5 +145,6 @@ public class DeliverAction {
         } catch (IOException e) {  
             e.printStackTrace();  
         }  
-    }      
+    }    
+    
 }
