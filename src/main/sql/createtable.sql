@@ -169,6 +169,13 @@ CREATE TABLE T_INVOICE(
     totalTax  numeric(10,2),
     drawback  numeric(10,2),
     
+    valueAddTaxCal  varchar(256) default '\'价税合计\'/1.17*0.09',
+    exciseTaxCal  varchar(256) default '\'价税合计\'/1.17*0.15',
+    constructionTaxCal  varchar(256) default '(\'应交增值税\'+\'应交消费税\')*0.07',
+    educationFeeCal  varchar(256) default '(\'应交增值税\'+\'应交消费税\')*0.05',
+    totalTaxCal  varchar(256) default '\'应交增值税\'+\'应交消费税\'+\'城建税\'+\'教育费附加\'',
+    drawbackCal  varchar(256) default '\'价税合计\'/1.17*0.28',
+    
     modifyDate datetime,
     remark varchar(1024),
     status char(1)

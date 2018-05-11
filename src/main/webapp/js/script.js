@@ -3372,6 +3372,51 @@ var App = function () {
 	
 	
 	/*-----------------------------------------------------------------------------------*/
+	/*	Handle DatePriod Select
+	/*-----------------------------------------------------------------------------------*/	
+	var handleDatePriod = function(){
+		$("#dataperiod li").click(function(){
+			var btnDatapriod = $("#btn_datapriod");
+			var index = $("#dataperiod li").index(this);
+			if (index != 3){
+				if ($(this).children().html() != btnDatapriod.html()){
+					btnDatapriod.html($(this).children().html());
+					var current = new Date();
+					if (index == 0){
+						$("#startDate").val("");
+						$("#endDate").val("");
+					} else if (index == 1){
+						var lastDay = getLastDay(current.getFullYear(), current.getMonth());
+						$("#startDate").val(current.getFullYear()+'-'+ (current.getMonth()+1) +'-01');
+						$("#endDate").val(current.getFullYear()+'-'+ (current.getMonth()+1) + '-'+lastDay);
+					} else{
+						$("#startDate").val(current.getFullYear()+'-01-01');
+						$("#endDate").val(current.getFullYear()+'-12-31');
+					}
+					$("#tbl_invoice").bootstrapTable("refresh", {url: getProjectName() + "/invoice/loadinvoice.do", cache: false});
+				}
+			}
+		});
+		
+		$("#btn_chosedate").click(function(){
+			$("#btn_datapriod").html($("#startDate").val() + " 至 " + $("#endDate").val());
+			$('#modaldatepicker').modal('hide');
+			$("#tbl_invoice").bootstrapTable("refresh", {url: getProjectName() + "/invoice/loadinvoice.do", cache: false});
+		});
+	}
+	var getLastDay = function(year,month)     
+	{     
+		 var new_year = year;  //取当前的年份     
+		 var new_month = ++month;//取下一个月的第一天，方便计算（最后一天不固定）     
+		 if(month>11)      //如果当前大于12月，则年份转到下一年     
+		 {     
+		 new_month -=12;    //月份减     
+		 new_year++;      //年份增     
+		 }     
+		 var new_date = new Date(new_year,new_month,1);        //取当年当月中的第一天     
+		 return (new Date(new_date.getTime()-1000*60*60*24)).getDate();//获取当月最后一天日期     
+	} 
+	/*-----------------------------------------------------------------------------------*/
 	/*	Load Order data
 	/*-----------------------------------------------------------------------------------*/	
 	var initOrderModule = function(){
@@ -3658,7 +3703,7 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initInvoiceModule = function(){
 		$("#tbl_invoice").bootstrapTable({
-			url: "../json/invoice.json",
+			url: getProjectName() + "/invoice/loadinvoice.do",
 			method: "get",
 			pagination: true,
 			sidePagination: "server", 
@@ -3692,9 +3737,25 @@ var App = function () {
             },{
                 field: 'remark',
                 title: '备注'
-            }]
+            }],
+            queryParams: function(params){
+            	return {
+                    pageSize: params.limit,
+                    pageOffset: params.offset,                    
+                    customerName: $("input[name=condition]").val(),
+                    startDate: $("#startDate").val(),
+                    endDate: $("#endDate").val()
+                }
+            }
 		});	
 		
+		$("input[name=condition]").change(function(){
+			$("#tbl_invoice").bootstrapTable("refresh", {url: getProjectName() + "/invoice/loadinvoice.do", cache: false});
+		});
+		
+		
+		
+		//---------------------------公式计算---------------------
 		var ecal = {};
 		$("input[readonly=readonly]").dblclick(function(){
 			ecal = $(this).next();
@@ -3729,6 +3790,20 @@ var App = function () {
 			$("#calculation").text("");
 		});
 		
+		
+		//---------------表单-----------------
+		$("#invoiceForm").bootstrapValidator({
+			fields: {
+				invoiceDate : {validators: {notEmpty : {}}},
+				customerName : {validators: {notEmpty : {}}},
+				amountWithTax: {validators: {notEmpty : {}},
+								regexp: {
+				                    regexp: /^[0-9\.]+$/,
+				                    message: '价税合计只能是数字'
+				                }}
+	        }
+		});
+		
 		$('#btn_save_calculation').click(function () {
 		      ecal.val($("#calculation").text());
 		      $("#modalCalculation").modal("hide");
@@ -3738,7 +3813,35 @@ var App = function () {
 		$("input[name=amountWithTax]").change(function(){
 			calculateInvoice();
 		});
+		
+		
+		$("#btn_save_invoice").click(function(){
+			var bv = $("#invoiceForm").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				$("#invoiceForm").ajaxSubmit({
+					url: getProjectName()+"/invoice/save.do",
+					success: function(){
+						removeFormData($("#invoiceForm"));
+						window.location.reload();
+					}
+				});
+			}
+		});
+		
+		$("#btn_import").click(function(){			
+			var oImportModal = new ImportModal(getProjectName() + "/invoice/importinvoice.do", function(){
+				$("#tbl_invoice").bootstrapTable("refresh", {url: getProjectName() + "/invoice/loadinvoice.do", cache: false});
+        	}, getProjectName() + "/templaters/开票信息.xlsx");
+			oImportModal.createModal();  
+		});
+		
+		$("#btn_export").click(function(){			
+			window.open(getProjectName() + "/invoice/exportinvoice.do?customerName="+$("input[name=condition]").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()); 
+		});
 	}
+	
+	    
 
 	var calculateInvoice = function(){
 		$("input[name=valueAddTax]").val(math.eval(analysisExp($("input[name=valueAddTaxCal]").val())).toFixed(2));
@@ -4476,45 +4579,46 @@ var App = function () {
             	initUserProfileModule();            	
             }
             if (App.isPage("order")){
-            	handleMenu("/IMShh_UI/page/order.html");
+            	handleMenu("order.html");
             	handleDatePicker();
             	handleUniform();
             	initOrderModule(); 
             }
             if (App.isPage("receiptCons")){
-            	handleMenu("/IMShh_UI/page/receiptCons.html");
+            	handleMenu("receiptCons.html");
             	handleDatePicker();
             	initReceiptConsModule(); 
             }
             if (App.isPage("deliver")){
-            	handleMenu("/IMShh_UI/page/deliver.html");
+            	handleMenu("deliver.html");
             	handleDatePicker();
             	initDeliverModule();
             }
             if (App.isPage("storage")){
-            	handleMenu("/IMShh_UI/page/storage.html");
+            	handleMenu("storage.html");
             	handleDatePicker();
             	initStorageModule();
             }
             if (App.isPage("invoice")){
-            	handleMenu("/IMShh_UI/page/invoice.html");
+            	handleMenu("invoice.html");
             	handleDatePicker();
+            	handleDatePriod();
             	initInvoiceModule();
             }
             if (App.isPage("receivable")){
-            	handleMenu("/IMShh_UI/page/receivable.html");
+            	handleMenu("receivable.html");
             	initReceivableModule();
             }
             if (App.isPage("payment")){
-            	handleMenu("/IMShh_UI/page/payment.html");
+            	handleMenu("payment.html");
             	initPaymentModule();
             }
             if (App.isPage("account")){
-            	handleMenu("/IMShh_UI/page/account.html");
+            	handleMenu("account.html");
             	initAccountModule();
             }
             if (App.isPage("accountDetail")){
-            	handleMenu("/IMShh_UI/page/account.html");
+            	handleMenu("account.html");
             	initAccountDetailModule();
             }
             if (App.isPage("customer")){

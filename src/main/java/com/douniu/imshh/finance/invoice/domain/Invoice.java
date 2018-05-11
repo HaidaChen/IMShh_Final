@@ -12,17 +12,17 @@ public class Invoice extends BaseQO{
 	private String customerName;            
 	private float amountWithTax;            /*价税合计*/
 	private float valueAddTax;              /*应交增值税*/
-	private float valueAddTaxCal;           /*应交增值税计算公式*/
+	private String valueAddTaxCal;           /*应交增值税计算公式*/
 	private float exciseTax;                /*应交消费税*/
-	private float exciseTaxCal;             /*应交消费税计算公式*/
+	private String exciseTaxCal;             /*应交消费税计算公式*/
 	private float constructionTax;          /*城建税*/
-	private float constructionTaxCal;       /*城建税计算公式*/
+	private String constructionTaxCal;       /*城建税计算公式*/
 	private float educationFee;             /*教育费附加*/
-	private float educationFeeCal;          /*教育费附加计算公式*/
+	private String educationFeeCal;          /*教育费附加计算公式*/
 	private float totalTax;                 /*税款合计*/
-	private float totalTaxCal;              /*税款合计计算公式*/
+	private String totalTaxCal;              /*税款合计计算公式*/
 	private float drawback;                 /*退税*/
-	private float drawbackCal;              /*退税*/
+	private String drawbackCal;              /*退税*/
 	
 	private String remark;
 	private int status = 1;
@@ -106,43 +106,43 @@ public class Invoice extends BaseQO{
 	}
 	
 	
-	public float getValueAddTaxCal() {
+	
+	public String getValueAddTaxCal() {
 		return valueAddTaxCal;
 	}
-	public void setValueAddTaxCal(float valueAddTaxCal) {
+	public void setValueAddTaxCal(String valueAddTaxCal) {
 		this.valueAddTaxCal = valueAddTaxCal;
 	}
-	public float getExciseTaxCal() {
+	public String getExciseTaxCal() {
 		return exciseTaxCal;
 	}
-	public void setExciseTaxCal(float exciseTaxCal) {
+	public void setExciseTaxCal(String exciseTaxCal) {
 		this.exciseTaxCal = exciseTaxCal;
 	}
-	public float getConstructionTaxCal() {
+	public String getConstructionTaxCal() {
 		return constructionTaxCal;
 	}
-	public void setConstructionTaxCal(float constructionTaxCal) {
+	public void setConstructionTaxCal(String constructionTaxCal) {
 		this.constructionTaxCal = constructionTaxCal;
 	}
-	public float getEducationFeeCal() {
+	public String getEducationFeeCal() {
 		return educationFeeCal;
 	}
-	public void setEducationFeeCal(float educationFeeCal) {
+	public void setEducationFeeCal(String educationFeeCal) {
 		this.educationFeeCal = educationFeeCal;
 	}
-	public float getTotalTaxCal() {
+	public String getTotalTaxCal() {
 		return totalTaxCal;
 	}
-	public void setTotalTaxCal(float totalTaxCal) {
+	public void setTotalTaxCal(String totalTaxCal) {
 		this.totalTaxCal = totalTaxCal;
 	}
-	public float getDrawbackCal() {
+	public String getDrawbackCal() {
 		return drawbackCal;
 	}
-	public void setDrawbackCal(float drawbackCal) {
+	public void setDrawbackCal(String drawbackCal) {
 		this.drawbackCal = drawbackCal;
 	}
-	
 	@Override
 	public String toString() {
 		return "Invoice [id=" + id + ", invoiceDate=" + invoiceDate + ", customerId=" + customerId + ", customerName="
@@ -155,9 +155,7 @@ public class Invoice extends BaseQO{
 	}
 	
 	private float decimalMoney(float src){
-		BigDecimal b = new BigDecimal(src);  
-		
-		
+		BigDecimal b = new BigDecimal(src);  		
 		return b.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();  
 	}
 }

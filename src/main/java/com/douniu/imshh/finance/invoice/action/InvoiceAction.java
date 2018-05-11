@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.finance.invoice.domain.Invoice;
@@ -53,28 +52,19 @@ public class InvoiceAction {
 	@Autowired
 	private IInvoiceService service;
 	
-	@RequestMapping("/main")
-    public ModelAndView enter(Invoice invoice){
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("/finance/invoice/overview");
-        return mav;
-    }
-	
-	@RequestMapping("/edit")
-	public ModelAndView edit(Invoice invoice){
-		ModelAndView mav = new ModelAndView();
-		if (invoice.getId() != ""){
-			Invoice oInvoice = service.getById(invoice.getId());
-			mav.addObject("invoice", oInvoice);
-		}
-        mav.setViewName("/finance/invoice/edit");
-        return mav;
+	@RequestMapping(value="/edit", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String edit(Invoice invoice){
+		Invoice oInvoice = service.getById(invoice.getId());
+		Gson gson = new Gson();
+        return gson.toJson(oInvoice);
 	}
 	
-	@RequestMapping("/save")
-	public ModelAndView save(Invoice invoice){
+	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public int save(Invoice invoice){
 		service.save(invoice);
-        return enter(invoice);
+        return 1;
 	}
 	
 	@RequestMapping(value ="/loadinvoice", produces = "application/json; charset=utf-8")
@@ -99,10 +89,9 @@ public class InvoiceAction {
 	}
 	
 	
-	
     @ResponseBody  
-    @RequestMapping(value="ajaxUpload",method={RequestMethod.GET,RequestMethod.POST})  
-    public  void  ajaxUploadExcel(HttpServletRequest request,HttpServletResponse response) throws Exception {  
+    @RequestMapping(value="importinvoice",method={RequestMethod.GET,RequestMethod.POST})  
+    public  void  importInvoice(HttpServletRequest request,HttpServletResponse response) throws Exception {  
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;    
           
         InputStream in =null;  
@@ -117,9 +106,9 @@ public class InvoiceAction {
         service.batchAdd(Invoices);
     }  
     
-    @RequestMapping(value = "downloadExcel", method = RequestMethod.GET)  
+    @RequestMapping(value = "exportinvoice", method = RequestMethod.GET)  
     @ResponseBody  
-    public void downloadExcel(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
+    public void exportInvoice(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
     	response.reset();  
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");  
         String dateStr = sdf.format(new Date());  
