@@ -21,13 +21,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.finance.order.domain.Order;
 import com.douniu.imshh.finance.order.domain.OrderAndDetail;
-import com.douniu.imshh.finance.order.domain.OrderDetail;
-import com.douniu.imshh.finance.order.service.IOrderDetailService;
 import com.douniu.imshh.finance.order.service.IOrderService;
 import com.douniu.imshh.utils.DateUtil;
 import com.douniu.imshh.utils.ExcelBean;
@@ -58,15 +55,6 @@ public class OrderAction {
 	
 	@Autowired
 	private IOrderService service;
-	@Autowired
-	private IOrderDetailService dService;
-	
-	@RequestMapping("/main")
-	public ModelAndView enter(){
-		ModelAndView mav = new ModelAndView();
-		mav.setViewName("/finance/order/overview");
-		return mav;
-	}
 	
 	/**
 	 * 查询订单，需要根据订单号、状态、日期、客户查询订单
@@ -94,60 +82,23 @@ public class OrderAction {
 		return gson.toJson(res);
 	}
 	
-	/**
-	 * 根据订单编号查询订单项
-	 */
-	@RequestMapping(value="/loadOrderDetail", produces = "application/json; charset=utf-8")
+	@RequestMapping(value="/findById", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String queryOrderDetail(OrderDetail detail){
-		List<OrderDetail> details = dService.queryByOrder(detail.getOrderId());		
+	public String editOrder(String id){
+		Order order = service.getById(id);
 		Gson gson = new Gson();
-		return gson.toJson(details);
+        return gson.toJson(order);
 	}
 	
-	/**
-	 * 进入订单编辑页面，要求同时显示订单项信息
-	 */
-	@RequestMapping("/enterEdit")
-	public ModelAndView editOrder(Order order){
-		ModelAndView mav = new ModelAndView();
-		if (order.getId() != null && !order.getId().equals("")){
-			Order Order = service.getById(order.getId());
-			mav.addObject("order", Order);
-		}
-        mav.setViewName("/finance/order/edit");
-        return mav;
-	}
-	
-	/**
-	 * 保存订单信息，要求同时可以保存订单项
-	 */
-	@RequestMapping("/save")
-	public ModelAndView saveOrder(Order order){
-		service.save(order);
-        return enter();
-	}
-	
-	/**
-	 * 显示订单信息，不允许编辑
-	 */
-	@RequestMapping("/showOne")
-	public ModelAndView showOrder(Order order){
-		ModelAndView mav = new ModelAndView();
-		Order res = service.getById(order.getId());
-		mav.setViewName("/finance/order/view");
-		mav.addObject("order", res);
-		return mav;
-	}
-	
-	@RequestMapping("/delete")
+	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public void deleteOrder(String id){
-		service.delete(id);
+	public int saveOrder(Order order){
+		service.save(order);
+        return 1;
 	}
 	
 	@ResponseBody  
-    @RequestMapping(value="ajaxUpload",method={RequestMethod.GET,RequestMethod.POST})  
+    @RequestMapping(value="importorder",method={RequestMethod.GET,RequestMethod.POST})  
     public  void  ajaxUploadExcel(HttpServletRequest request,HttpServletResponse response) throws Exception {  
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;    
           
@@ -163,7 +114,7 @@ public class OrderAction {
         service.batchAdd(Orders);
     }  
     
-    @RequestMapping(value = "downloadExcel", method = RequestMethod.GET)  
+    @RequestMapping(value = "exportorder", method = RequestMethod.GET)  
     @ResponseBody  
     public void downloadExcel(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
         response.reset();  

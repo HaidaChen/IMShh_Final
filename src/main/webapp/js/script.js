@@ -3420,7 +3420,45 @@ var App = function () {
 	/*	Load Order data
 	/*-----------------------------------------------------------------------------------*/	
 	var initOrderModule = function(){
-		var orderlist = $("#orderlist");
+		$("#tbl_invoice").bootstrapTable({
+			url: getProjectName() + "/order/loadorder.do",
+			method: "get",
+			pagination: true,
+			sidePagination: "server", 
+			columns: [{
+                field: 'identify',
+                title: '订单编号'
+            }, {
+                field: 'custName',
+                title: '客户名称'
+            }, {
+                field: 'orderDate',
+                title: '订购日期'
+            }, {
+                field: 'amount',
+                title: '订单金额'
+            }, {
+                field: 'state',
+                title: '订单状态'
+            }, {
+            	field: 'remark',
+                title: '备注'
+            }],
+            queryParams: function(params){
+            	return {
+                    pageSize: params.limit,
+                    pageOffset: params.offset,                    
+                    condition: $("input[name=condition]").val(),
+                    startDate: $("#startDate").val(),
+                    endDate: $("#endDate").val()
+                }
+            }
+		});	
+		
+		$("input[name=condition]").change(function(){
+			$("#tbl_invoice").bootstrapTable("refresh", {url: getProjectName() + "/invoice/loadinvoice.do", cache: false});
+		});
+		/*var orderlist = $("#orderlist");
 		var orderdetail = $("#tbl_odrdetail");
 		var orderidenfity = $("#odridentify");
 		var ordertotlment = $("#odrtotlment");
@@ -3515,7 +3553,7 @@ var App = function () {
 		$("#btn_chosedate").click(function(){
 			$("#btn_datapriod").html($("#startDate").val() + " 至 " + $("#endDate").val());
 			$('#modaldatepicker').modal('hide');
-		});
+		});*/
 	}
 	
 	
@@ -4630,8 +4668,6 @@ var App = function () {
 			window.open(getProjectName() + "/mtl/exportmaterial.do?condition="+$("input[name=condition]").val()); 
 		});
 		
-		
-		
 		$("#btn_showformula").click(function(){
 			if($("#formulabox").is(":hidden")){
 			       $("#formulabox").show();
@@ -4861,7 +4897,7 @@ var App = function () {
             	handleMenu("order.html");
             	handleDatePicker();
             	handleUniform();
-            	handleDatePriod();
+            	handleDatePriod($("#tbl_order"), "/order/loadorder.do");
             	initOrderModule(); 
             }
             if (App.isPage("receiptCons")){
