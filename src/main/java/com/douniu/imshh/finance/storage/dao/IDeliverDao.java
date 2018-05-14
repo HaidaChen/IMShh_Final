@@ -9,6 +9,7 @@ public interface IDeliverDao {
 	List<Deliver> queryDeliverNoPage(Deliver deliver);
 	int countDeliverDetail(Deliver deliver);
 	Deliver findDeliverById(String id);
+	List<Deliver> findByOrder(String orderId);
 	void insert(Deliver deliver);
 	void batchInsert(List<Deliver> delivers);
 	void update(Deliver deliver);

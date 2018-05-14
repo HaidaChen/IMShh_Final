@@ -9,6 +9,7 @@ public interface ICustomerDao {
 	List<Customer> queryNoPage(Customer customer);
 	int count(Customer customer);
 	Customer findById(String id);
+	Customer findByName(String custname);
 	void insert(Customer customer);
 	void batchInsert(List<Customer> customers);
 	void update(Customer customer);

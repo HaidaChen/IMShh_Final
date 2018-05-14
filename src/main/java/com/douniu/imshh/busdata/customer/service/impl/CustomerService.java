@@ -36,6 +36,10 @@ public class CustomerService implements ICustomerService{
 		// TODO Auto-generated method stub
 		return dao.findById(id);
 	}
+	
+	public Customer getByName(String custname){
+		return dao.findByName(custname);
+	}
 
 	public void save(Customer customer) {
 		// TODO Auto-generated method stub

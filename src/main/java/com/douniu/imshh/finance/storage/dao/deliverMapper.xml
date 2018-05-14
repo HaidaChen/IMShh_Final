@@ -65,6 +65,10 @@
         select * from t_storage_deliver where id = #{id}
     </select>
     
+    <select id="findByOrder" parameterType="String" resultMap="dlvrmap">
+        select * from t_storage_deliver where orderId = #{orderId}
+    </select>
+    
     <insert id="insert" parameterType="StorageDeliver">
         insert into t_storage_deliver(id, deliverDate, orderIdentify, pdtNo, content, amount, modifyDate, remark, status) 
           values(#{id}, #{deliverDate}, #{orderIdentify}, #{pdtNo}, #{content}, #{amount}, sysdate(), #{remark}, #{status})

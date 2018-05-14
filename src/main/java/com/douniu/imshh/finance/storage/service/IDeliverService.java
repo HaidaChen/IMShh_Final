@@ -9,6 +9,7 @@ public interface IDeliverService {
 	List<Deliver> queryNoPage(Deliver deliver);
 	int count(Deliver deliver);
 	Deliver getById(String id);
+	List<Deliver> findByOrder(String orderId);
 	void save(Deliver deliver);
 	void delete(String id);
 	void batchAdd(List<Deliver> delivers);

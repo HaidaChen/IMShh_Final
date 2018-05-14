@@ -9,6 +9,7 @@ public interface ICustomerService {
 	List<Customer> queryNoPage(Customer customer);
 	int count(Customer customer);
 	Customer getById(String id);
+	Customer getByName(String custname);
 	void save(Customer customer);
 	void delete(String id);
 	void batchAdd(List<Customer> customers);

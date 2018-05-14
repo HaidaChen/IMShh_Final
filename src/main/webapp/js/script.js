@@ -3420,7 +3420,7 @@ var App = function () {
 	/*	Load Order data
 	/*-----------------------------------------------------------------------------------*/	
 	var initOrderModule = function(){
-		$("#tbl_invoice").bootstrapTable({
+		$("#tbl_order").bootstrapTable({
 			url: getProjectName() + "/order/loadorder.do",
 			method: "get",
 			pagination: true,
@@ -3456,7 +3456,52 @@ var App = function () {
 		});	
 		
 		$("input[name=condition]").change(function(){
-			$("#tbl_invoice").bootstrapTable("refresh", {url: getProjectName() + "/invoice/loadinvoice.do", cache: false});
+			$("#tbl_order").bootstrapTable("refresh", {url: getProjectName() + "/order/loadorder.do", cache: false});
+		});
+		
+		var orderItems = [];
+		$("#tbl_orderItems").bootstrapTable({
+			data: orderItems,
+			cache: false,
+			columns: [
+			{field: 'pdtNo',title: '货号'}, 
+			{field: 'pdtName',title: '品名'}, 
+			{field: 'content',title: '含量'}, 
+			{field: 'priceRMB',title: '人民币单价'}, 
+			{field: 'priceDollar',title: '美元单价'}, 
+			{field: 'quantity',title: '数量'}, 
+			{field: 'totlemnt',title: '合计'}]});
+		
+		
+		$('#tbl_order').on('click-row.bs.table', function (e, row, element){  
+			$.getJSON(getProjectName() + "/order/findById.do?id="+row.id, function (data){
+				orderItems = data.details;
+				console.log(JSON.stringify(orderItems));
+				$("#view_orderId").html("#" + data.identify);
+				$("#view_totlment").html("Total:$" + data.amount);
+				$("#tbl_orderItems").bootstrapTable("refreshOptions", {data: orderItems, cache: false});
+				
+				$("#view_custname").html(data.custName);
+				$.getJSON(getProjectName() + "/cust/findbyname.do?custname="+data.custName, function(cust){
+					$("#view_custaddress").html(cust.address);
+					$("#view_custemail").html(cust.email);
+					$("#view_custphone").html(cust.phone);
+				});
+				
+				$.getJSON(getProjectName() + "/cust/findbyname.do?custname="+data.custName, function(cust){
+					$("#view_custaddress").html(cust.address);
+					$("#view_custemail").html(cust.email);
+					$("#view_custphone").html(cust.phone);
+				});
+				
+				$("#orderList").slideToggle();
+				$("#orderDetail").slideToggle();
+			});			
+	    });  
+		
+		$('a.goback').click(function(){
+			$("#orderList").slideToggle();
+			$("#orderDetail").slideToggle();
 		});
 		/*var orderlist = $("#orderlist");
 		var orderdetail = $("#tbl_odrdetail");
@@ -4896,7 +4941,6 @@ var App = function () {
             if (App.isPage("order")){
             	handleMenu("order.html");
             	handleDatePicker();
-            	handleUniform();
             	handleDatePriod($("#tbl_order"), "/order/loadorder.do");
             	initOrderModule(); 
             }

@@ -7,7 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
 	<meta name="description" content="">
 	<meta name="author" content="">
-	<link rel="stylesheet" href="../bootstrap-dist/css/bootstrap-min.css">
+	<link rel="stylesheet" href="../bootstrap-dist/css/bootstrap.css">
 	<link rel="stylesheet" href="../css/cloud-admin.css" >
 	<link rel="stylesheet" href="../css/themes/default.css">
 	<link rel="stylesheet" href="../css/responsive.css" >
@@ -215,7 +215,7 @@
 							<div class="col-md-12">
 								<div class="box">							
 									<div class="box-body">
-										<div class="panel panel-default">
+										<div id="orderList" class="panel panel-default">
 										  <div class="panel-body">
 											<div class='row'>
 												<div class='col-md-12'>
@@ -260,6 +260,133 @@
 										  </table>
 										  
 										</div>
+										
+										<div id="orderDetail" class='row' style="display: none">
+											<div class='col-md-12'>
+												<div class="box">
+													<div class="box-title">
+														<h4><i class="fa fa-shopping-cart"></i>订单</h4>
+														<div class="tools">
+															
+															<a href="javascript:;" class="goback">
+																<i class="fa fa-times"></i>
+															</a>
+														</div>
+													</div>
+													<div class="box-body">
+														<div class="panel panel-default">
+														  <div class="panel-body">
+															<div class='row'>
+																<div class='col-md-12'>
+																	<div class="invoice-header clearfix">
+																		<h3 class='pull-left'>
+																		  <i class='fa fa-money'></i>
+																		  <span>订单</span>
+																		  <span id="view_orderId" class='text-muted'></span>
+																		</h3>
+																		<div class='pull-right'>
+																		  <div class='btn-group'>
+																			<a class="btn btn-default" href="#"><i class='fa fa-external-link'></i>
+																			Export
+																			</a>
+																			<a class="btn btn-success" href="#"><i class='fa fa-check'></i>
+																			Paid
+																			</a>
+																		  </div>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<hr>
+															<div class='row'>																
+																<div class='col-sm-4 buyer'>
+																  <div class='invoice-title'>客户信息</div>
+																  <i class='fa fa-male'></i>
+																  <address>
+																	<strong id="view_custname"></strong>																	
+																	<br>
+																	<span id="view_custaddress"></span>
+																	<br>																	
+																	<small ><a id="view_custemail" href="mailto:jane@doe.com">jane@yahoo.com</a></small>
+																	<br>
+																	<small id="view_custphone"></small>
+																  </address>
+																</div>
+																<div class='col-sm-4 seller'>
+																  <div class='invoice-title'>入库明细</div>
+																  <div id="myCarousel" class="well carousel slide" data-wrap="false">
+																	  <ol class="carousel-indicators" style="bottom: -8px">
+																		  <li data-target="#myCarousel" data-slide-to="0" class="active" ></li>
+																		  <li data-target="#myCarousel" data-slide-to="1" ></li>
+																		  <li data-target="#myCarousel" data-slide-to="2" ></li>
+																	  </ol>   
+																	<!-- 轮播（Carousel）项目 -->
+																	<div class="carousel-inner">
+																		<div class="item active">
+																		  <strong>发货日期: </strong> 18/10/2013
+																		  <br>
+																		  <strong>货号: </strong> 16/09/2013 to 17/10/2013
+																		  <br>
+																		  <strong>品名: </strong> 123 456 789 101
+																		  <br>
+																		  <strong>含量: </strong> 153462792SHFD
+																		  <br>
+																		  <strong>数量: </strong> 37464-FDRE-AHF65
+																		</div>
+																		<div class="item">
+																			<img src="/wp-content/uploads/2014/07/slide2.png" alt="Second slide">
+																		</div>
+																		<div class="item">
+																			<img src="/wp-content/uploads/2014/07/slide3.png" alt="Third slide">
+																		</div>
+																	</div>
+																	
+																  </div>
+																</div>
+																<div class='col-sm-4 payment-info'>
+																  <div class='invoice-title text-muted'>支付明细</div>
+																  <div class="well">
+																	  <strong>Invoice date: </strong> 18/10/2013
+																	  <br>
+																	  <strong>Billing period: </strong> 16/09/2013 to 17/10/2013
+																	  <br>
+																	  <strong>Bank account: </strong> 123 456 789 101
+																	  <br>
+																	  <strong>SWIFT Code: </strong> 153462792SHFD
+																	  <br>
+																	  <strong>V.A.T Reg: </strong> 37464-FDRE-AHF65
+																  </div>
+																</div>
+															  </div>
+														</div>
+														<table id="tbl_orderItems" class="table table-striped table-hover font-400 font-14">
+										
+									  					</table>
+									  					<hr>
+														  <div class="panel-body">
+															  <div class='row'>
+																<div class='col-sm-12'>
+																  <div class='text-right font-400 font-14'>
+																	<h2 id="view_totlment" class="amount"></h2>
+																  <br/>
+																  <div class='btn-group hidden-xs pull-right invoice-btn-group'>
+																	  <a class="btn btn-lg btn-default" onclick="javascript:window.print();"><i class="fa fa-print"></i> 打印订单</a>
+																	  
+																  </div>
+																  <div class='btn-group visible-xs pull-right invoice-btn-group'>
+																	  <a class="btn btn-default" onclick="javascript:window.print();"><i class="fa fa-print"></i> 打印订单</a>
+																	  
+																  </div>
+																  </div>
+																  
+																</div>
+															  </div>
+														  </div>
+													</div>
+												</div>
+										</div>
+											
+										  
 									</div>
 								</div>
 								<!-- /BOX -->

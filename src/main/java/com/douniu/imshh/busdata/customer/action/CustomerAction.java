@@ -56,6 +56,14 @@ public class CustomerAction {
 		return gson.toJson(customer);
 	}
 	
+	@RequestMapping(value="/findbyname", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String findByName(String custname){
+		Customer customer = service.getByName(custname);
+		Gson gson = new Gson();
+		return gson.toJson(customer);
+	}
+	
 	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public int save(Customer cust){

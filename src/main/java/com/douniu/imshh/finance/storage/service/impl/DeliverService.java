@@ -32,6 +32,12 @@ public class DeliverService implements IDeliverService{
 	public Deliver getById(String id) {
 		return dao.findDeliverById(id);
 	}
+	
+	@Override
+	public List<Deliver> findByOrder(String orderId) {
+		// TODO Auto-generated method stub
+		return dao.findByOrder(orderId);
+	}
 
 	@Override
 	public void save(Deliver deliver) {

@@ -19,6 +19,10 @@
         select * from t_customer where id = #{id}
     </select>
     
+    <select id="findByName" parameterType="String" resultMap="custmap">
+        select * from t_customer where name = #{custname}
+    </select>
+    
     <select id="query" parameterType="Customer" resultMap="custmap">
         select * from t_customer where status = 1
         <if test="condition != null and condition !=''">

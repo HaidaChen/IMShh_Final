@@ -18,13 +18,13 @@ public class OrderService implements IOrderService{
 	
 	@Override
 	public List<Order> query(Order order) {
-		Order condition = LikeFlagUtil.appendLikeFlag(order, new String[]{"identify", "custName"});
+		Order condition = LikeFlagUtil.appendLikeFlag(order, new String[]{"condition"});
 		return dao.query(condition);
 	}
 	
 	@Override
 	public List<OrderAndDetail> queryOrderAndDetail(Order order) {
-		Order condition = LikeFlagUtil.appendLikeFlag(order, new String[]{"identify", "custName"});
+		Order condition = LikeFlagUtil.appendLikeFlag(order, new String[]{"condition"});
 		List<Order> result = dao.queryOrderAndDetail(condition);
 		return tileOrder(result);
 	}
@@ -32,7 +32,7 @@ public class OrderService implements IOrderService{
 
 	@Override
 	public List<Order> queryNoPage(Order order) {
-		Order condition = LikeFlagUtil.appendLikeFlag(order, new String[]{"identify", "custName"});
+		Order condition = LikeFlagUtil.appendLikeFlag(order, new String[]{"condition"});
 		List<Order> result = dao.queryNoPage(condition);
 		return result;
 	}
@@ -40,7 +40,7 @@ public class OrderService implements IOrderService{
 
 	@Override
 	public int count(Order order) {
-		Order condition = LikeFlagUtil.appendLikeFlag(order, new String[]{"identify", "custName"});
+		Order condition = LikeFlagUtil.appendLikeFlag(order, new String[]{"condition"});
 		return dao.count(condition);
 	}
 

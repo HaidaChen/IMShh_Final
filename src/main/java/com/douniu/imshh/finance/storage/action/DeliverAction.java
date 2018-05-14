@@ -79,6 +79,15 @@ public class DeliverAction {
 		return gson.toJson(pr);
 	}
 	
+	@RequestMapping(value ="/findbyorder", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String findbyOrder(String orderId){
+		List<Deliver> res = service.findByOrder(orderId);
+		
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		return gson.toJson(res);
+	}
+	
 	@RequestMapping("/delete")
 	@ResponseBody
 	public void delete(String id){
