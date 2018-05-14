@@ -23,8 +23,8 @@ public class TransactionService implements ITransactionService{
 	}
 
 	@Override
-	public List<Transaction> queryByOrderId(String orderId) {
-		return dao.findByOrderId(orderId);
+	public List<Transaction> queryByOrder(String orderIdentify) {
+		return dao.findByOrder(orderIdentify);
 	}
 
 	@Override

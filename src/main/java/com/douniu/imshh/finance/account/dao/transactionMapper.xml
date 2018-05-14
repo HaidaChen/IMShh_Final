@@ -12,7 +12,7 @@
         <result property="tranUser" column="tranUser"/>
         <result property="tranBank" column="tranBank"/>
         <result property="tranAccountNo" column="tranAccountNo"/>
-        <result property="orderId" column="orderId"/>
+        <result property="orderIdentify" column="orderIdentify"/>
         <result property="purchaseId" column="purchaseId"/>
         
         <result property="remark" column="remark"/>
@@ -71,10 +71,10 @@
         </if>
     </select>   
     
-    <select id="findByOrderId" parameterType="String" resultMap="tranmap">
+    <select id="findByOrder" parameterType="String" resultMap="tranmap">
         select * from t_transaction 
          where status = 1
-           and orderId = #{orderId} 
+           and orderIdentify = #{orderIdentify} 
     </select>
     
     <select id="findByPurchaseId" parameterType="String" resultMap="tranmap">

@@ -62,11 +62,11 @@
     </select>
     
     <select id="findDeliverById" parameterType="String" resultMap="dlvrmap">
-        select * from t_storage_deliver where id = #{id}
+        select * from t_storage_deliver where status = 1 and id = #{id}
     </select>
     
     <select id="findByOrder" parameterType="String" resultMap="dlvrmap">
-        select * from t_storage_deliver where orderId = #{orderId}
+        select * from t_storage_deliver where orderIdentify = #{orderIdentify}
     </select>
     
     <insert id="insert" parameterType="StorageDeliver">

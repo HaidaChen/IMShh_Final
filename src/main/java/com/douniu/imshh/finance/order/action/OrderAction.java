@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.finance.order.domain.Order;
 import com.douniu.imshh.finance.order.domain.OrderAndDetail;
+import com.douniu.imshh.finance.order.domain.OrderDetail;
 import com.douniu.imshh.finance.order.service.IOrderService;
 import com.douniu.imshh.utils.DateUtil;
 import com.douniu.imshh.utils.ExcelBean;
@@ -32,6 +33,7 @@ import com.douniu.imshh.utils.ExcelUtil;
 import com.douniu.imshh.utils.POIExcelAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 @Controller
 @RequestMapping("/order")
@@ -92,7 +94,10 @@ public class OrderAction {
 	
 	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public int saveOrder(Order order){
+	public int saveOrder(Order order, String orderDetails){
+		Gson gson = new Gson();
+		List<OrderDetail> details =gson.fromJson(orderDetails, new TypeToken<List<OrderDetail>>() {}.getType());
+		order.setDetails(details);
 		service.save(order);
         return 1;
 	}

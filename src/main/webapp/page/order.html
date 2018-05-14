@@ -7,14 +7,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
 	<meta name="description" content="">
 	<meta name="author" content="">
-	<link rel="stylesheet" href="../bootstrap-dist/css/bootstrap.css">
+	
 	<link rel="stylesheet" href="../css/cloud-admin.css" >
 	<link rel="stylesheet" href="../css/themes/default.css">
 	<link rel="stylesheet" href="../css/responsive.css" >
+	<link rel="stylesheet" href="../css/print.css" media="print"/>
 	<link rel="stylesheet" href="../bootstrap-table/bootstrap-table.css">
 	<link rel="stylesheet" href="../js/bootstrapvalidator/css/bootstrapValidator.min.css" >
 	<link rel="stylesheet" href="../js/datepicker/bootstrap-datepicker.css" />
 	<link rel="stylesheet" href="../js/uniform/css/uniform.default.min.css" />
+	<link rel="stylesheet" href="../js/select2/select2.min.css" />
 	<!-- STYLESHEETS --><!--[if lt IE 9]><script src="js/flot/excanvas.min.js"></script><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
 	<link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
 
@@ -129,74 +131,68 @@
 					    </div>
 					</div>
 				</div>
-			
-				<!-- <div class="modal fade" id="modalCustEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal fade" id="modalorderitem" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
 					    <div class="modal-content">
 							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-							    <h4 class="modal-title">客户信息</h4>
+							    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							    <h4 class="modal-title">新的订单项</h4>
 							</div>
 							<div class="modal-body">
-								<div class="form-group">
-								<div class="box-container">
-								BOX WITH TOOLBOX
-									<form class="form-horizontal" id="customerForm" method="POST" fieldAttr="name" url="/cust/edit.do">
-										<div class="form-group">
-											<label class="col-md-3 control-label">客户名称</label> 
-											<div class="col-md-7">
-												<input type="hidden" name="id" class="formItem" value=""/>
-										    	<input type="text" name="name" class="form-control formItem" value="">
-										    </div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">客户地址</label> 
-											<div class="col-md-7">
-												<input type="text" name="address" class="form-control formItem" value="">
-										    </div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">联系电话</label> 
-											<div class="col-md-7">
-												<input type="text" name="phone" class="form-control formItem" value="">
-										    </div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">邮箱</label> 
-											<div class="col-md-7">
-												<input type="text" name="email" class="form-control formItem" value="">
-										    </div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">传真</label> 
-											<div class="col-md-7">
-												<input type="text" name="fax" class="form-control formItem" value="">
-										    </div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">联系人</label> 
-											<div class="col-md-7">
-												<input type="text" name="contacts" class="form-control formItem" value="">
-										    </div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">备注</label> 
-											<div class="col-md-7">
-												<textarea name="remark" class="form-control formItem" rows="3"></textarea>
-										    </div>
-										</div>
-									</form>
-									/BOX WITH TOOLBOX
-								</div>
-								</div>
+								<form id="orderitemform" class="form-horizontal" action="#">
+									<div class="form-group">
+									    <label class="col-md-3 control-label">货号</label> 
+									    <div class="col-md-7">
+									    	<select id="relpdt" name="pdtNo" class="col-md-12">
+											</select>
+									    	
+									    </div>
+									</div>
+									<div class="form-group">
+									    <label class="col-md-3 control-label">品名</label> 
+									    <div class="col-md-7">
+									    	<input type="text" name="pdtName" class="form-control" value="">
+									    </div>
+									</div>
+									<div class="form-group">
+									    <label class="col-md-3 control-label">含量</label> 
+									    <div class="col-md-7">
+									    	<input type="text" name="content" class="form-control" value="">
+									    </div>
+									</div>
+									<div class="form-group">
+									    <label class="col-md-3 control-label">￥单价</label> 
+									    <div class="col-md-7">
+									    	<input type="text" name="priceRMB" class="form-control" value="">
+									    </div>
+									</div>
+									<div class="form-group">
+									    <label class="col-md-3 control-label">$ 单价</label> 
+									    <div class="col-md-7">
+									    	<input type="text" name="priceDollar" class="form-control" value="">
+									    </div>
+									</div>
+									<div class="form-group">
+									    <label class="col-md-3 control-label">数量</label> 
+									    <div class="col-md-7">
+									    	<input type="text" name="quantity" class="form-control" value="">
+									    </div>
+									</div>
+									<div class="form-group">
+									    <label class="col-md-3 control-label">合计</label> 
+									    <div class="col-md-7">
+									    	<input type="text" name="totlemnt" class="form-control" value="" readonly>
+									    </div>
+									</div>										
+								</form>
 							</div>
 							<div class="modal-footer">
 							    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-							    <button id="btn_save_customer" type="button" class="btn btn-primary">保存</button>
+							    <button id="btn_save_orderitem" type="button" class="btn btn-primary">保存</button>
 							</div>
 					    </div>
 					</div>
-				</div> -->
+				</div>			
 				
 				<div class="row">
 					<div id="content" class="col-lg-12">
@@ -220,35 +216,28 @@
 											<div class='row'>
 												<div class='col-md-12'>
 													<div class="invoice-header clearfix">
-														<h3 class='pull-left'>
-														  <div class='btn-group'>
-															<a class="btn btn-default" id="btn_import" href="javascript:;"><i class='fa fa-chain (alias)'></i>
-															导入
-															</a>
-															<a class="btn btn-default" id="btn_add" href="javascript:;" data-toggle="modal" data-target="#modalCustEdit"><i class='fa fa-plus'></i>
-															新增
-															</a>															
-															<a class="btn btn-default" id="btn_export" href="javascript:;"><i class='fa fa-external-link'></i>
-															导出
-															</a>
-														  </div>
-														</h3>
-														<div class='pull-right'>
-														    <div class="pull-right" >
-																<div class="input-group" >
-																	<input type="text" name="condition" class="form-control" placeholder="查询条件"/>
-																	<div class="input-group-btn">
-																		<button type="button" id="btn_datapriod" class="btn btn-default dropdown-toggle" data-toggle="dropdown">所有数据<span class="caret"></span></button>
-																		<ul id="dataperiod" class="dropdown-menu" >
-																		  <li><a href="javascript:;">所有数据</a></li>
-																		  <li><a href="javascript:;">本月</a></li>
-																		  <li><a href="javascript:;">今年</a></li>																  
-																		  <li><a data-toggle="modal" data-target="#modaldatepicker"><i class="fa fa-calendar"></i>&nbsp指定日期</a></li>
-																		</ul>
-																	  </div>
+														<div class="btn-group">
+												    		<button id="btn_import" type="button" class="btn btn-default"><i class="fa fa-chain (alias)"></i>导入</button>
+												    		<button id="btn_add" type="button" class="btn btn-default" data-toggle="modal" data-target="#modalstoragedtledit"><i class="fa  fa-pencil"></i>新增</button>
+												    		<!-- <button id="btn_edit" type="button" class="btn btn-default" title="修改"><i class="fa  fa-edit (alias)"></i></button>
+												    		<button id="btn_delete" type="button" class="btn btn-default" title="删除"><i class="fa  fa-times"></i></button> -->
+												    		<button id="btn_export" type="button" class="btn btn-default"><i class="fa  fa-external-link"></i>导出</button>
+												    	</div>
+												    	
+												    	<span class="pull-right col-md-4" >
+															<div class="input-group" >
+																<input type="text" name="condition" class="form-control" placeholder="查询条件"/>
+																<div class="input-group-btn">
+																	<button type="button" id="btn_datapriod" class="btn btn-default dropdown-toggle" data-toggle="dropdown">所有数据<span class="caret"></span></button>
+																	<ul id="dataperiod" class="dropdown-menu" >
+																	  <li><a href="javascript:;">所有数据</a></li>
+																	  <li><a href="javascript:;">本月</a></li>
+																	  <li><a href="javascript:;">今年</a></li>																  
+																	  <li><a data-toggle="modal" data-target="#modaldatepicker"><i class="fa fa-calendar"></i>&nbsp指定日期</a></li>
+																	</ul>
 																</div>
-														    </div>
-														</div>
+															</div>
+														</span>
 													</div>
 												</div>
 											</div>
@@ -268,7 +257,7 @@
 														<h4><i class="fa fa-shopping-cart"></i>订单</h4>
 														<div class="tools">
 															
-															<a href="javascript:;" class="goback">
+															<a href="javascript:;" class="vgoback">
 																<i class="fa fa-times"></i>
 															</a>
 														</div>
@@ -307,54 +296,22 @@
 																	<br>
 																	<span id="view_custaddress"></span>
 																	<br>																	
-																	<small ><a id="view_custemail" href="mailto:jane@doe.com">jane@yahoo.com</a></small>
+																	<small ><a id="view_custemail" href="mailto:jane@doe.com"></a></small>
 																	<br>
 																	<small id="view_custphone"></small>
 																  </address>
 																</div>
 																<div class='col-sm-4 seller'>
-																  <div class='invoice-title'>入库明细</div>
-																  <div id="myCarousel" class="well carousel slide" data-wrap="false">
-																	  <ol class="carousel-indicators" style="bottom: -8px">
-																		  <li data-target="#myCarousel" data-slide-to="0" class="active" ></li>
-																		  <li data-target="#myCarousel" data-slide-to="1" ></li>
-																		  <li data-target="#myCarousel" data-slide-to="2" ></li>
-																	  </ol>   
-																	<!-- 轮播（Carousel）项目 -->
-																	<div class="carousel-inner">
-																		<div class="item active">
-																		  <strong>发货日期: </strong> 18/10/2013
-																		  <br>
-																		  <strong>货号: </strong> 16/09/2013 to 17/10/2013
-																		  <br>
-																		  <strong>品名: </strong> 123 456 789 101
-																		  <br>
-																		  <strong>含量: </strong> 153462792SHFD
-																		  <br>
-																		  <strong>数量: </strong> 37464-FDRE-AHF65
-																		</div>
-																		<div class="item">
-																			<img src="/wp-content/uploads/2014/07/slide2.png" alt="Second slide">
-																		</div>
-																		<div class="item">
-																			<img src="/wp-content/uploads/2014/07/slide3.png" alt="Third slide">
-																		</div>
-																	</div>
+																  <div class='invoice-title'>发货明细</div>
+																  <div id="deliverCarousel" class="well carousel slide" data-wrap="false">
+																	  
 																	
 																  </div>
 																</div>
 																<div class='col-sm-4 payment-info'>
 																  <div class='invoice-title text-muted'>支付明细</div>
-																  <div class="well">
-																	  <strong>Invoice date: </strong> 18/10/2013
-																	  <br>
-																	  <strong>Billing period: </strong> 16/09/2013 to 17/10/2013
-																	  <br>
-																	  <strong>Bank account: </strong> 123 456 789 101
-																	  <br>
-																	  <strong>SWIFT Code: </strong> 153462792SHFD
-																	  <br>
-																	  <strong>V.A.T Reg: </strong> 37464-FDRE-AHF65
+																  <div id="receiveCarousel" class="well carousel slide" data-wrap="false">
+																	  
 																  </div>
 																</div>
 															  </div>
@@ -389,6 +346,97 @@
 										  
 									</div>
 								</div>
+								
+								<div id="orderEdit" style="display:none">
+								    <div class='col-md-12'>
+									    <div class="box">
+									        <div class="box-title">
+												<div class="tools">
+													
+													<a href="javascript:;" class="egoback">
+														<i class="fa fa-times"></i>
+													</a>
+												</div>
+											</div>
+									    	<div class="box-body">
+												<div class="panel panel-default">
+												  <div class="panel-body">
+													  
+													  <div class='row'>													      
+														<form id="formOrder" class="form-horizontal" method="post">
+															<div class="row">
+																<div class="col-md-12">
+																	<h4 style="margin-left:10px"><i class="fa fa-edit"></i>&nbsp;新的订单</h4>
+																	<hr />
+																	<div class="form-group">
+																	    <label class="col-md-3 control-label">订单编号</label> 
+																	    <div class="col-md-4">
+																	    	<input type="hidden" name="id" value="">
+																	    	<input type="text" name="identify" class="form-control" value="">
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																	    <label class="col-md-3 control-label">订购日期</label> 
+																	    <div class="col-md-4">
+																	    	<input type="text" name="orderDate" class="form-control selectData" value="">
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																	    <label class="col-md-3 control-label">目标客户</label> 
+																	    <div class="col-md-4">
+																	    	<select id="relcust" name="custName" class="col-md-12">
+												                            </select>
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																	    <label class="col-md-3 control-label">订单金额</label> 
+																	    <div class="col-md-4">
+																	    	<input type="text" name="amount" class="form-control" value="" readonly="readonly">
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																	    <label class="col-md-3 control-label">备注</label> 
+																	    <div class="col-md-4">
+																	    	<textarea name="remark" class="form-control" rows="3"></textarea>
+																	    </div>
+																	</div>
+																</div>
+															</div>																
+															<input type="hidden" name="orderDetails">
+														</form>	
+														<div class="row">
+															<div class="col-md-12">
+																<h4 style="margin-left:10px"><i class="fa fa-list" ></i>&nbsp;订单项列表</h4>
+																<hr>
+																<table id="tbl_orderitem" class='table table-hover' data-data='[]'>
+																	<thead>
+																		<tr>																		  
+																		    <th data-field="pdtNo">货号</th>
+																			<th data-field="pdtName">品名</th>
+																			<th data-field="content">含量</th>
+																			<th data-field="priceRMB">￥单价</th>
+																			<th data-field="priceDollar">$ 单价</th>
+																			<th data-field="quantity">数量</th>
+																			<th data-field="totlemnt">合计</th>
+																		    <th data-formatter="return 'a'">操作</th>
+																		</tr>
+																	</thead>
+																	<tbody>
+																		
+																	</tbody>
+																</table>
+															</div>
+														</div>
+														<div class="form-actions clearfix"> 
+															<input id="btn_save_order" type="button" value="保存" class="btn btn-primary pull-right">
+															<input type="button" value="新订单项" class="btn btn-primary pull-right" style="margin: 0px 8px;" data-toggle="modal" data-target="#modalorderitem">
+														</div>
+													  </div>
+												  </div>
+											  </div>
+									    </div>
+									</div>
+								</div>
 								<!-- /BOX -->
 							</div>
 								
@@ -407,8 +455,10 @@
 	<script src="../bootstrap-dist/js/bootstrap.min.js"></script>
 	<script src="../bootstrap-table/bootstrap-table.js"></script>
 	<script src="../js/jQuery-Cookie/jquery.cookie.min.js"></script>
-	<script src="../js/bootstrapvalidator/js/bootstrapValidator.min.js"></script>	
+	<script src="../js/bootstrapvalidator/js/bootstrapValidator.min.js"></script>		
 	<script src="../js/bootstrapvalidator/js/language/zh_CN.js"></script>
+	<script src="../js/datepicker/bootstrap-datepicker.js"></script>
+	<script src="../js/select2/select2.min.js"></script>
 	<script src="../js/jquery-form/jquery.form.js"></script>
 	<script src="../js/importModal.js"></script>
 	<script src="../js/fillForm.js"></script>

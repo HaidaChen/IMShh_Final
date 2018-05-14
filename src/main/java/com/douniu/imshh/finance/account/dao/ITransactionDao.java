@@ -8,7 +8,7 @@ public interface ITransactionDao {
 	List<Transaction> query(Transaction transaction);
 	int count(Transaction transaction);
 	Transaction findById(String id);
-	List<Transaction> findByOrderId(String orderId);
+	List<Transaction> findByOrder(String orderIdentify);
 	List<Transaction> findByPurchaseId(String purchaseId);
 	void insert(Transaction transaction);
 	void update(Transaction Transaction);

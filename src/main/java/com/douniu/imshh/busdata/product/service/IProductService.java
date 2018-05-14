@@ -9,6 +9,7 @@ public interface IProductService {
 	List<Product> queryNoPage(Product product);
 	int count(Product product);
 	Product getById(String id);
+	Product getByCode(String code);
 	void save(Product product);
 	void delete(String id);
 	void batchAdd(List<Product> products);

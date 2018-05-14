@@ -1,12 +1,10 @@
 package com.douniu.imshh.busdata.product.service.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import com.douniu.imshh.busdata.product.dao.IProductDao;
 import com.douniu.imshh.busdata.product.domain.Product;
 import com.douniu.imshh.busdata.product.service.IProductService;
-import com.douniu.imshh.busdata.supplier.domain.Supplier;
 import com.douniu.imshh.utils.LikeFlagUtil;
 
 public class ProductService implements IProductService{
@@ -35,6 +33,12 @@ public class ProductService implements IProductService{
 	public Product getById(String id) {
 		// TODO Auto-generated method stub
 		return dao.findById(id);
+	}
+	
+	@Override
+	public Product getByCode(String code) {
+		// TODO Auto-generated method stub
+		return dao.findByCode(code);
 	}
 
 	@Override

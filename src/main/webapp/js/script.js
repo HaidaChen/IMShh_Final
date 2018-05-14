@@ -3484,6 +3484,7 @@ var App = function () {
 				$("#view_custname").html(data.custName);
 				$.getJSON(getProjectName() + "/cust/findbyname.do?custname="+data.custName, function(cust){
 					$("#view_custaddress").html(cust.address);
+					$("#view_custemail").attr("href", "mailto:"+cust.email);
 					$("#view_custemail").html(cust.email);
 					$("#view_custphone").html(cust.phone);
 				});
@@ -3494,68 +3495,131 @@ var App = function () {
 					$("#view_custphone").html(cust.phone);
 				});
 				
+				$.getJSON(getProjectName() + "/deliver/findbyorder.do?orderIdentify=" + row.identify, function(delivers){
+					var deliverCarousel = $("#deliverCarousel");
+					deliverCarousel.html('');
+					var indicators = $('<ol class="carousel-indicators" style="bottom: -8px">');
+					$.each(delivers, function(index, deliver){						 
+						var indicatorItem = {};
+						if (index == 0)
+							indicatorItem = $('<li data-target="#myCarousel" data-slide-to="'+index+'" class="active" >');
+						else
+							indicatorItem = $('<li data-target="#myCarousel" data-slide-to="'+index+'">');
+						indicators.append(indicatorItem);
+					});
+					
+					var carouselInner = $('<div class="carousel-inner">');
+					$.each(delivers, function(index, deliver){
+						var carouselItem = {};
+						if (index == 0)
+							carouselItem = $('<div class="item active">');
+						else
+							carouselItem = $('<div class="item">');
+						
+						carouselItem.append('<strong>发货日期: </strong> ' + deliver.deliverDate + '<br>');
+						carouselItem.append('<strong>货号: </strong>' + deliver.pdtNo + '<br>');
+						carouselItem.append('<strong>含量: </strong>' + deliver.content + '<br>');
+						carouselItem.append('<strong>数量: </strong>' + deliver.amount + '<br>');
+						
+						carouselInner.append(carouselItem);
+					});
+					
+					deliverCarousel.append(indicators);
+					deliverCarousel.append(carouselInner);
+					
+				});
+				
+				$.getJSON(getProjectName() + "/deliver/findbyorder.do?orderIdentify=" + row.identify, function(delivers){
+					var deliverCarousel = $("#deliverCarousel");
+					deliverCarousel.html('');
+					var indicators = $('<ol class="carousel-indicators" style="bottom: -8px">');
+					$.each(delivers, function(index, deliver){						 
+						var indicatorItem = {};
+						if (index == 0)
+							indicatorItem = $('<li data-target="#myCarousel" data-slide-to="'+index+'" class="active" >');
+						else
+							indicatorItem = $('<li data-target="#myCarousel" data-slide-to="'+index+'">');
+						indicators.append(indicatorItem);
+					});
+					
+					var carouselInner = $('<div class="carousel-inner">');
+					$.each(delivers, function(index, deliver){
+						var carouselItem = {};
+						if (index == 0)
+							carouselItem = $('<div class="item active">');
+						else
+							carouselItem = $('<div class="item">');
+						
+						carouselItem.append('<strong>发货日期: </strong> ' + deliver.deliverDate + '<br>');
+						carouselItem.append('<strong>货号: </strong>' + deliver.pdtNo + '<br>');
+						carouselItem.append('<strong>含量: </strong>' + deliver.content + '<br>');
+						carouselItem.append('<strong>数量: </strong>' + deliver.amount + '<br>');
+						
+						carouselInner.append(carouselItem);
+					});
+					
+					deliverCarousel.append(indicators);
+					deliverCarousel.append(carouselInner);
+					
+				})
+				
+				
+				$.getJSON(getProjectName() + "/transaction/findbyorder.do?orderIdentify=" + row.identify, function(receives){
+					var receiveCarousel = $("#receiveCarousel");
+					receiveCarousel.html('');
+					var indicators = $('<ol class="carousel-indicators" style="bottom: -8px">');
+					$.each(receives, function(index, receive){						 
+						var indicatorItem = {};
+						if (index == 0)
+							indicatorItem = $('<li data-target="#myCarousel" data-slide-to="'+index+'" class="active" >');
+						else
+							indicatorItem = $('<li data-target="#myCarousel" data-slide-to="'+index+'">');
+						indicators.append(indicatorItem);
+					});
+					
+					var carouselInner = $('<div class="carousel-inner">');
+					$.each(receives, function(index, receive){
+						var carouselItem = {};
+						if (index == 0)
+							carouselItem = $('<div class="item active">');
+						else
+							carouselItem = $('<div class="item">');
+						
+						carouselItem.append('<strong>支付日期: </strong> ' + receive.tranDate + '<br>');
+						carouselItem.append('<strong>支付账号: </strong>' + receive.tranAccountNo + '<br>');
+						carouselItem.append('<strong>收款账号: </strong>' + receive.accountId + '<br>');
+						carouselItem.append('<strong>交易金额: </strong>' + receive.tranAmount + '<br>');
+						
+						carouselInner.append(carouselItem);
+					});
+					
+					receiveCarousel.append(indicators);
+					receiveCarousel.append(carouselInner);
+					
+				})
+				
 				$("#orderList").slideToggle();
 				$("#orderDetail").slideToggle();
 			});			
 	    });  
 		
-		$('a.goback').click(function(){
+		$('a.vgoback').click(function(){
 			$("#orderList").slideToggle();
 			$("#orderDetail").slideToggle();
 		});
-		/*var orderlist = $("#orderlist");
-		var orderdetail = $("#tbl_odrdetail");
-		var orderidenfity = $("#odridentify");
-		var ordertotlment = $("#odrtotlment");
 		
-		
-		$.getJSON("/IMShh_UI/json/order.json", function (data){
-			$.each(data.rows, function(index, order) {
-				var item = $('<li class="clearfix">');
-				var itemleft = $('<div class="pull-left"><p><h5><strong>' + order.identify + '</strong> ' + order.custName + '</h5></p><p><i class="fa fa-clock-o"></i> <abbr class="timeago" title="' + order.orderDate + '" >' + order.orderDate + '</abbr></p>');
-				var itemright = $('<div class="text-right pull-right"></div>');
-				var itemcost = $('<h4 class="cost">$' + order.amount + '</h4>');
-				var itemstate = '';
-				if (order.state == 1){
-					itemstate = $('<span class="label label-danger arrow-in-right"><i class="fa fa-star"></i> 新订单</span>');
-				}
-				if (order.state == 2){
-					itemstate = $('<span class="label label-primary arrow-in-right"><i class="fa fa-cogs"></i> 生产中</span>');
-				}
-				if (order.state == 3){
-					itemstate = $('<span class="label label-warning arrow-in-right"><i class="fa fa-rocket"></i> 已发货</span>');
-				}
-				if (order.state == 4){
-					itemstate = $('<p><span class="label label-success arrow-in-right"><i class="fa fa-check"></i> 以完成</span></p>');
-				}
-				
-				itemright.append(itemcost);
-				itemright.append(itemstate);
-				item.append(itemleft);
-				item.append(itemright);
-				orderlist.append(item);
-				if (index == 0){
-					orderidenfity.text(order.identify);
-					orderdetail.bootstrapTable({
-						data: order.details,
-						cache: false
-					});
-					ordertotlment.text("$" + order.amount);
-				}
-				item.click(function(){
-					orderidenfity.text(order.identify);
-					orderdetail.bootstrapTable('refresh', {
-						data: order.details,
-						cache: false
-					});
-					ordertotlment.text("$" + order.amount);
-				});
-			});
+		$('#btn_add').click(function(){
+			$("#orderList").slideToggle();
+			$("#orderEdit").slideToggle();
+		});
+		$('a.egoback').click(function(){
+			$("#orderList").slideToggle();
+			$("#orderEdit").slideToggle();
 		});
 		
-		$('#modalorderitem').on("hide.bs.modal", function(){
-			removeFormData($("#orderitemform"));
-		});
+		
+		
+		
 		$("#tbl_orderitem").bootstrapTable({columns: [
 			{field: 'pdtNo',title: '货号'}, 
 			{field: 'pdtName',title: '品名'}, 
@@ -3567,38 +3631,125 @@ var App = function () {
 			{field: '', title: '操作', formatter: function(value,row,index){
 				return '<a href="javascript:;" onclick="deleteOrderItem(' + index + ')"><i class="fa fa-cut (alias)"></a>';
 			}}]});
-		$("#btn_save_orderitem").click(function(){
-			var orderitem = getJSONObjByForm($("#orderitemform"));
-			var orderitems = $("#tbl_orderitem").attr("data-data");
-			var oorderitems = JSON.parse(orderitems);
-			oorderitems[oorderitems.length] = orderitem;
-			$("#tbl_orderitem").attr("data-data", JSON.stringify(oorderitems));
-			$("#tbl_orderitem").bootstrapTable("refreshOptions", {data: oorderitems});
+		
+		
+		
+		
+		$.getJSON(getProjectName() + "/pdt/loadallpdt.do", function (data){
+			$("#relpdt").append("<option></option>");
+			$.each(data, function(index, obj){
+				$("#relpdt").append("<option value='"+obj.code+"'>"+ obj.code + "-" + obj.name + "-" + obj.specification +"</option>");
+			});
+			$("#relpdt").select2({
+			    placeholder: "关联产品",
+			    allowClear: true
+			});
+		});
+		$("#relpdt").change(function(){
+			var pdtno = $(this).val();
+			if (pdtno == ''){
+				$("input[name=pdtName]").val('');
+				$("input[name=content]").val('');
+			}else{
+				$.getJSON(getProjectName() + "/pdt/findbycode.do?code="+pdtno, function (pdt){
+					
+					$("input[name=pdtName]").val(pdt.name);
+					$("input[name=content]").val(pdt.specification);
+				});
+			}
 			
-			$('#modalorderitem').modal('hide');
+		});
+		
+		$("#orderitemform").bootstrapValidator({
+			fields: {
+				pdtNo : {validators: {notEmpty : {}}},
+				pdtName : {validators: {notEmpty : {}}},
+				content: {validators: {notEmpty : {}}},
+				priceDollar: {validators: {notEmpty : {}, numeric : {}}},
+				quantity: {validators: {notEmpty : {}, integer : {}}}
+	        }
+		});
+		$("#btn_save_orderitem").click(function(){
+			var bv = $("#orderitemform").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				var orderitem = getJSONObjByForm($("#orderitemform"));
+				var orderitems = $("#tbl_orderitem").attr("data-data");
+				
+				var oorderitems = JSON.parse(orderitems);
+				oorderitems[oorderitems.length] = orderitem;
+				$("#tbl_orderitem").attr("data-data", JSON.stringify(oorderitems));
+				$("#tbl_orderitem").bootstrapTable("refreshOptions", {data: oorderitems});
+				
+				var totlment = 0;
+				$.each(oorderitems, function(index, item){
+					totlment += parseFloat(item.totlemnt);
+				});
+				$("#formOrder input[name=amount]").val(totlment);
+				
+				$('#modalorderitem').modal('hide');
+			}
+		});
+		$('#modalorderitem').on("hide.bs.modal", function(){
+			removeFormData($("#orderitemform"));
+		});
+		$("input[name=priceDollar],input[name=quantity]").change(function(){
+			if ($("input[name=priceDollar]").val()!="" && $("input[name=quantity]").val()!=""){
+				$("input[name=totlemnt]").val(parseInt($("input[name=quantity]").val()) * parseFloat($("input[name=priceDollar]").val()));
+			}
 		});
 		
 		
-		$("#dataperiod li").click(function(){
-			var index = $(this).index();
-			if (index == 3) return;
-			var period = '';
-			if (index == 0){
-				period = '所有数据';
-			}
-			if (index == 1){
-				period = '本月';
-			}
-			if (index == 2){
-				period = '今年';
-			}
-			$("#btn_datapriod").html(period);
+		
+		$.getJSON(getProjectName() + "/cust/loadallcust.do", function (data){
+			$("#relcust").append("<option></option>");
+			$.each(data, function(index, obj){
+				$("#relcust").append("<option value='"+obj.name+"'>"+ obj.name + "</option>");
+			});
+			$("#relcust").select2({
+			    placeholder: "关联客户",
+			    allowClear: true
+			});
 		});
 		
-		$("#btn_chosedate").click(function(){
-			$("#btn_datapriod").html($("#startDate").val() + " 至 " + $("#endDate").val());
-			$('#modaldatepicker').modal('hide');
-		});*/
+		$("#formOrder").bootstrapValidator({
+			fields: {
+				identify : {validators: {notEmpty : {}}},
+				orderDate : {validators: {notEmpty : {}}},
+				custName: {validators: {notEmpty : {}}}
+	        }
+		});
+		$("#btn_save_order").click(function(){
+			alert(1);
+			var bv = $("#formOrder").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				alert(2);
+				$("input[name=orderDetails]").val($("#tbl_orderitem").attr("data-data"));
+				$("#formOrder").ajaxSubmit({
+					url: getProjectName()+"/order/save.do",
+					success: function(){
+						window.location.reload();
+					}
+				});
+			}
+		})
+		
+		
+		
+		
+		
+		
+		$("#btn_import").click(function(){			
+			var oImportModal = new ImportModal(getProjectName() + "/order/importorder.do", function(){
+				$("#tbl_order").bootstrapTable("refresh", {url: getProjectName() + "/order/loadorder.do", cache: false});
+        	}, getProjectName() + "/templaters/订单.xlsx");
+			oImportModal.createModal();  
+		});
+		
+		$("#btn_export").click(function(){			
+			window.open(getProjectName() + "/order/exportorder.do?condition="+$("input[name=condition]").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()); 
+		});
 	}
 	
 	

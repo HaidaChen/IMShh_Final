@@ -34,9 +34,9 @@ public class DeliverService implements IDeliverService{
 	}
 	
 	@Override
-	public List<Deliver> findByOrder(String orderId) {
+	public List<Deliver> findByOrder(String orderIdentify) {
 		// TODO Auto-generated method stub
-		return dao.findByOrder(orderId);
+		return dao.findByOrder(orderIdentify);
 	}
 
 	@Override

@@ -81,8 +81,8 @@ public class DeliverAction {
 	
 	@RequestMapping(value ="/findbyorder", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String findbyOrder(String orderId){
-		List<Deliver> res = service.findByOrder(orderId);
+	public String findbyOrder(String orderIdentify){
+		List<Deliver> res = service.findByOrder(orderIdentify);
 		
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		return gson.toJson(res);

@@ -85,6 +85,16 @@ public class CustomerAction {
         return gson.toJson(pr);
 	}
 	
+	@RequestMapping(value ="/loadallcust", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String loadAllCustomer(Customer cust){
+		cust.setPageSize(10000);
+		List<Customer> res = service.query(cust);
+		
+		Gson gson = new Gson();
+        return gson.toJson(res);
+	}
+	
 	@RequestMapping("/delete")
 	@ResponseBody
 	public void delete(String id){

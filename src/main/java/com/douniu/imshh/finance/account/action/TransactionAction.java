@@ -71,4 +71,13 @@ public class TransactionAction {
 		return gson.toJson(pr);
 	}
 	
+	@RequestMapping(value ="/findbyorder", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String findByOrder(String orderIdentify){
+		List<Transaction> res = service.queryByOrder(orderIdentify);
+		
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd hh:mm:ss").create();
+		return gson.toJson(res);
+	}
+	
 }

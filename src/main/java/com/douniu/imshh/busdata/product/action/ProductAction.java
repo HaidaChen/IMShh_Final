@@ -54,6 +54,14 @@ public class ProductAction {
         return gson.toJson(product);
 	}
 	
+	@RequestMapping(value="/findbycode", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String findByCode(String code){
+		Product product = service.getByCode(code);
+		Gson gson = new Gson();
+        return gson.toJson(product);
+	}
+	
 	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public int save(Product pdt){
@@ -73,6 +81,17 @@ public class ProductAction {
 				
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
         String resJson = gson.toJson(pr);
+		return resJson;
+	}
+	
+	@RequestMapping(value ="/loadallpdt", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String loadAllProduct(Product pdt){
+		pdt.setPageSize(10000);
+		List<Product> res = service.query(pdt);
+		
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+        String resJson = gson.toJson(res);
 		return resJson;
 	}
 	
