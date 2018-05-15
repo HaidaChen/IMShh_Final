@@ -39,7 +39,7 @@ public class TransactionService implements ITransactionService{
 
 	@Override
 	public void save(Transaction transaction) {
-		if (transaction.getId().equals("")){
+		if (transaction.getId() == null || transaction.getId().equals("")){
 			transaction.setId(System.currentTimeMillis()+"");
 			transaction.setStatus(1);
 			dao.insert(transaction);

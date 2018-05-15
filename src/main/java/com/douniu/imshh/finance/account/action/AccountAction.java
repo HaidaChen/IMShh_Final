@@ -26,6 +26,22 @@ public class AccountAction {
         return gson.toJson(accounts);
 	}
 	
+	@RequestMapping(value ="/querythird", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String queryThird(){
+		List<Account> accounts = service.findThird();
+		Gson gson = new Gson();
+		return gson.toJson(accounts);
+	}
+	
+	@RequestMapping(value ="/queryByNo", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String queryByNo(String no){
+		Account account = service.findByNo(no);
+		Gson gson = new Gson();
+		return gson.toJson(account);
+	}
+	
 	@RequestMapping(value ="/save", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String save(Account account){

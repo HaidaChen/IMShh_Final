@@ -6,7 +6,7 @@ import com.douniu.imshh.common.BaseQO;
 
 public class Transaction extends BaseQO{
 	private String id;
-	private String accountId;
+	private String accountNo;
 	private Date tranDate;
 	private int tranType;
 	private float tranAmount;
@@ -30,11 +30,11 @@ public class Transaction extends BaseQO{
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getAccountId() {
-		return accountId;
+	public String getAccountNo() {
+		return accountNo;
 	}
-	public void setAccountId(String accountId) {
-		this.accountId = accountId;
+	public void setAccountNo(String accountNo) {
+		this.accountNo = accountNo;
 	}
 	public Date getTranDate() {
 		return tranDate;
@@ -117,7 +117,7 @@ public class Transaction extends BaseQO{
 	}
 	@Override
 	public String toString() {
-		return "Transaction [id=" + id + ", accountId=" + accountId + ", tranDate=" + tranDate + ", tranType="
+		return "Transaction [id=" + id + ", accountNo=" + accountNo + ", tranDate=" + tranDate + ", tranType="
 				+ tranType + ", tranAmount=" + tranAmount + ", balance=" + balance + ", tranUser=" + tranUser
 				+ ", tranBank=" + tranBank + ", tranAccountNo=" + tranAccountNo + ", orderId=" + orderId
 				+ ", orderIdentify=" + orderIdentify + ", purchaseId=" + purchaseId + ", purchaseIdentify="

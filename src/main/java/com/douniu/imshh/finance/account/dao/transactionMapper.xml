@@ -4,7 +4,7 @@
 <mapper namespace="com.douniu.imshh.finance.account.dao.ITransactionDao">
     <resultMap type="Transaction" id="tranmap">
         <result property="id" column="id"/>
-        <result property="accountId" column="accountNo"/>
+        <result property="accountNo" column="accountNo"/>
         <result property="tranDate" column="tranDate"/>
         <result property="tranType" column="tranType"/>
         <result property="tranAmount" column="tranAmount"/>
@@ -24,18 +24,11 @@
     </select>
     
     <select id="query" parameterType="Transaction" resultMap="tranmap">
-        select t_transaction.* from t_transaction 
-               left join t_order on t_transaction.orderid = t_order.id 
-               left join t_purchase on t_transaction.purchaseid = t_purchase.id 
-               where t_transaction.status = 1
-        <if test="orderId != null and orderId !=''">
-          and t_order.identify like #{orderId} 
-        </if>
-        <if test="purchaseId != null and purchaseId !=''">
-          and t_purchase.supplierName like #{purchaseId} 
-        </if> 
-        <if test="tranUser != null and tranUser !=''">
-          and tranUser like #{tranUser} 
+        select * from t_transaction where status = 1
+        <if test="condition != null and condition !=''">
+          and (orderidentify like #{condition} 
+            or tranUser like #{condition} 
+            or tranAccountNo like #{condition})
         </if>
         
         <if test="startDate != null">
@@ -49,18 +42,11 @@
     </select> 
     
     <select id="count" parameterType="Transaction" resultType="int">
-        select count(1) from t_transaction 
-               left join t_order on t_transaction.orderid = t_order.id 
-               left join t_purchase on t_transaction.purchaseid = t_purchase.id 
-               where t_transaction.status = 1
-        <if test="orderId != null and orderId !=''">
-          and t_order.identify like #{orderId} 
-        </if>
-        <if test="purchaseId != null and purchaseId !=''">
-          and t_purchase.supplierName like #{purchaseId} 
-        </if> 
-        <if test="tranUser != null and tranUser !=''">
-          and tranUser like #{tranUser} 
+        select count(1) from t_transaction where status = 1
+        <if test="condition != null and condition !=''">
+          and (orderidentify like #{condition} 
+            or tranUser like #{condition} 
+            or tranAccountNo like #{condition})
         </if>
         
         <if test="startDate != null">
@@ -84,20 +70,20 @@
     </select>
     
     <insert id="insert" parameterType="Transaction">
-        insert into t_transaction(id, accountNo, tranDate, tranType, tranAmount, balance, tranUser, tranBank, tranAccountNo, orderId, purchaseId, modifydate, remark, status) 
-          values(#{id}, #{accountId}, #{tranDate}, #{tranType}, #{tranAmount}, #{balance}, #{tranUser}, #{tranBank}, #{tranAccountNo}, #{orderId}, #{purchaseId}, sysdate(), #{remark}, #{status})
+        insert into t_transaction(id, accountNo, tranDate, tranType, tranAmount, balance, tranUser, tranBank, tranAccountNo, orderIdentify, purchaseId, modifydate, remark, status) 
+          values(#{id}, #{accountNo}, #{tranDate}, #{tranType}, #{tranAmount}, #{balance}, #{tranUser}, #{tranBank}, #{tranAccountNo}, #{orderIdentify}, #{purchaseId}, sysdate(), #{remark}, #{status})
     </insert>
     
     <update id="update" parameterType="Transaction">
         update t_transaction set 
-          accountNo = #{accountId},          
+          accountNo = #{accountNo},          
           tranDate = #{tranDate},
           tranType = #{tranType},
           tranAmount = #{tranAmount},
           tranUser = #{tranUser},
           tranBank = #{tranBank},
           tranAccountNo = #{tranAccountNo},
-          orderId = #{orderId},
+          orderIdentify = #{orderIdentify},
           purchaseId = #{purchaseId},
           
           remark = #{remark},

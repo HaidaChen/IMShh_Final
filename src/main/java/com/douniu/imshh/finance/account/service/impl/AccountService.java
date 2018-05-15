@@ -16,10 +16,23 @@ public class AccountService implements IAccountService{
 		return dao.queryByType(type);
 	}
 
+
 	@Override
 	public Account findById(String id) {
 		// TODO Auto-generated method stub
 		return dao.findById(id);
+	}
+	
+	@Override
+	public Account findByNo(String no) {
+		// TODO Auto-generated method stub
+		return dao.findByNo(no);
+	}
+		
+	@Override
+	public List<Account> findThird() {
+		// TODO Auto-generated method stub
+		return dao.findThird();
 	}
 
 	@Override

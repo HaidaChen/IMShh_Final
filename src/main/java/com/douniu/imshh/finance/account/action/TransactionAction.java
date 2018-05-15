@@ -25,17 +25,6 @@ public class TransactionAction {
 	@Autowired
 	private IAccountService accountService;
 	
-	@RequestMapping("/main")
-    public ModelAndView enter(String accountId, String accountNo, String bank){
-        ModelAndView mav = new ModelAndView();
-        String maskNo = accountNo.substring(0, 4) + "****" + accountNo.substring(accountNo.length() - 4);
-        mav.addObject("accountId", accountId);
-        mav.addObject("bank", bank);
-        mav.addObject("maskNo", maskNo);
-        mav.setViewName("/finance/account/transaction");
-        return mav;
-    }
-	
 	@RequestMapping("/edit")
 	public ModelAndView edit(Transaction transaction){
 		ModelAndView mav = new ModelAndView();
@@ -49,16 +38,25 @@ public class TransactionAction {
         return mav;
 	}
 	
-	@RequestMapping("/save")
-	public ModelAndView save(Transaction transaction){
+	@RequestMapping(value ="/save", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public int save(Transaction transaction){
+		Account account = accountService.findByNo(transaction.getTranAccountNo());
+		if (account == null){
+			account = new Account();
+			account.setAccountNo(transaction.getTranAccountNo());
+			account.setAccountUser(transaction.getTranUser());
+			account.setAccountType("3");
+			account.setBank(transaction.getTranBank());
+			accountService.save(account);
+		}
 		service.save(transaction);
-		Account account = accountService.findById(transaction.getAccountId());
-        return enter(transaction.getAccountId(), account.getAccountNo(), account.getBank());
+		return 1;
 	}
 	
 	@RequestMapping(value ="/loadtransaction", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String loadInvoice(Transaction transaction){
+	public String loadtransaction(Transaction transaction){
 		List<Transaction> res = service.query(transaction);
 		int count = service.count(transaction);
 		

@@ -10,6 +10,7 @@ public class Account extends BaseQO{
 	private String bankLogo;
 	private String accountUser;
 	private String accountType;
+	private float balance;
 	
 	private int status = 1;
 
@@ -76,11 +77,22 @@ public class Account extends BaseQO{
 	public void setBankLogo(String bankLogo) {
 		this.bankLogo = bankLogo;
 	}
+	
+
+	public float getBalance() {
+		return balance;
+	}
+
+	public void setBalance(float balance) {
+		this.balance = balance;
+	}
 
 	@Override
 	public String toString() {
 		return "Account [id=" + id + ", accountNo=" + accountNo + ", bank=" + bank + ", brachBank=" + brachBank
-				+ ", accountUser=" + accountUser + ", accountType=" + accountType + ", status=" + status + "]";
+				+ ", bankLogo=" + bankLogo + ", accountUser=" + accountUser + ", accountType=" + accountType
+				+ ", balance=" + balance + ", status=" + status + "]";
 	}
+
 	
 }

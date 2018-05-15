@@ -3587,7 +3587,7 @@ var App = function () {
 						
 						carouselItem.append('<strong>支付日期: </strong> ' + receive.tranDate + '<br>');
 						carouselItem.append('<strong>支付账号: </strong>' + receive.tranAccountNo + '<br>');
-						carouselItem.append('<strong>收款账号: </strong>' + receive.accountId + '<br>');
+						carouselItem.append('<strong>收款账号: </strong>' + receive.accountNo + '<br>');
 						carouselItem.append('<strong>交易金额: </strong>' + receive.tranAmount + '<br>');
 						
 						carouselInner.append(carouselItem);
@@ -4467,7 +4467,7 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initAccountModule = function(){
 		$.ajax({
-			url: "/IMShh_UI/json/account.json",
+			url: getProjectName() + "/account/query.do",
 			success: function(result){
 				var accounts = result;
 				
@@ -4495,10 +4495,138 @@ var App = function () {
 	}
 
 	/*-----------------------------------------------------------------------------------*/
-	/*	init Account data
+	/*	init Transaction data
 	/*-----------------------------------------------------------------------------------*/	
-	var initAccountDetailModule = function(){
+	var initTransactionModule = function(){
+		var no = $.cookie("accountNo");		
+		$.getJSON(getProjectName() + "/account/queryByNo.do?no="+no, function(data){
+			$("#accountInfo").html("账号：" + no + "  余额：" + data.balance);
+			$("input[name=accountNo]").val(no);
+		});
 		
+		$("#tbl_transaction").bootstrapTable({
+			url: getProjectName() + "/transaction/loadtransaction.do",
+			method: "get",
+			pagination: true,
+			sidePagination: "server", 
+			columns: [{
+                field: 'tranDate',
+                title: '交易日期'
+            }, {
+                field: 'tranType',
+                title: '交易类型',
+                formatter: function(value,row,index){
+                	if (value == 1)
+                		return '收款';
+                	if (value == 2)
+                		return '付款';
+                	return value;
+                }
+            }, {
+                field: 'tranAmount',
+                title: '交易金额'
+            }, {
+                field: 'balance',
+                title: '余额'
+            }, {
+                field: 'tranUser',
+                title: '交易用户'
+            }, {
+            	field: 'tranBank',
+                title: '交易银行'
+            },{
+            	field: 'tranAccountNo',
+                title: '交易账号'
+            },{
+            	field: 'orderIdentify',
+                title: '关联订单'
+            },{
+                field: 'remark',
+                title: '备注'
+            }],
+            queryParams: function(params){
+            	return {
+                    pageSize: params.limit,
+                    pageOffset: params.offset,                    
+                    condition: $("input[name=condition]").val(),
+                    startDate: $("#startDate").val(),
+                    endDate: $("#endDate").val()
+                }
+            }
+		});	
+		
+		$("input[name=condition]").change(function(){
+			$("#tbl_transaction").bootstrapTable("refresh", {url: getProjectName() + "/transaction/loadtransaction.do", cache: false});
+		});
+		
+		$.getJSON(getProjectName() + "/order/loadallorder.do", function (data){
+			$("#relorder").append("<option></option>");
+			$.each(data, function(index, obj){
+				$("#relorder").append("<option value='"+obj.identify+"'>"+ obj.identify +"</option>");
+			});
+			$("#relorder").select2({
+			    placeholder: "关联订单",
+			    allowClear: true
+			});
+		});
+		
+		$.getJSON(getProjectName() + "/account/querythird.do", function (data){
+			$("#relacc").append("<option></option>");
+			$("#relacc").append("<option>新的交易用户</option>");
+			$.each(data, function(index, obj){
+				$("#relacc").append("<option value='"+obj.accountUser+"'>"+ obj.accountUser +"-"+ obj.bank + "-" + obj.accountNo +"</option>");
+			});
+			$("#relacc").select2({
+			    placeholder: "关联账号",
+			    allowClear: true
+			});
+		});
+		$("#relacc").change(function(){
+			var text = $("#relacc option:selected").text()
+			
+			if (text && text != ""){
+				if (text == "新的交易用户"){
+					$("input[name=tranUser]").show();
+				}else{
+					$("input[name=tranUser]").hide();
+					values = text.split("-");
+					$("input[name=tranUser]").val(values[0]);
+					$("input[name=tranBank]").val(values[1]);
+					$("input[name=tranAccountNo]").val(values[2]);
+				}
+			}
+		});
+		
+		$("input[name=tranAmount]").change(function(){
+			$.getJSON(getProjectName() + "/account/queryByNo.do?no="+no, function(data){
+				if ($("select[name=tranType]").val() == 2)
+					$("input[name=tranAmount]").val("-"+$("input[name=tranAmount]").val())
+				
+				$("input[name=balance]").val(data.balance + parseFloat($("input[name=tranAmount]").val()));
+			});
+		});
+		
+		
+		$("#transactionForm").bootstrapValidator({
+			fields: {
+				tranDate : {validators: {notEmpty : {}}},
+				tranType : {validators: {notEmpty : {}}},
+				tranAmount : {validators: {notEmpty : {}}, numeric : {}}
+	        }
+		});
+		
+		$("#btn_save_transaction").click(function(){
+			var bv = $("#transactionForm").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				$("#transactionForm").ajaxSubmit({
+					url: getProjectName()+"/transaction/save.do",
+					success: function(){
+						window.location.reload();
+					}
+				});
+			}
+		});
 	}
 
 
@@ -5131,9 +5259,11 @@ var App = function () {
             	handleMenu("account.html");
             	initAccountModule();
             }
-            if (App.isPage("accountDetail")){
+            if (App.isPage("transaction")){
             	handleMenu("account.html");
-            	initAccountDetailModule();
+            	handleDatePicker();
+            	handleDatePriod($("#tbl_transaction"), "/transaction/loadtransaction.do");
+            	initTransactionModule();
             }
             if (App.isPage("customer")){
             	handleMenu("customer.html");
@@ -5566,7 +5696,8 @@ function CreditCard(){
 	}
 	
 	var createOptDetail = function(){
-		var oOpt_detail = $("<span class='pull-right tool'><a href='/IMShh_UI/page/accountDetail.html'>&nbsp;<i class='fa fa-eye'></i></a></span>");
+		$.cookie("accountNo", cardData.accountNo);
+		var oOpt_detail = $("<span class='pull-right tool'><a href='"+getProjectName()+"/page/transaction.html'>&nbsp;<i class='fa fa-eye'></i></a></span>");
 		return oOpt_detail;
 	}
 	
@@ -5583,7 +5714,7 @@ function CreditCard(){
 		oOpt_remove.click(function(){
 			bootbox.confirm("确定要删除银行卡吗？", function(){
 				$.ajax({
-					url: baseURL+"account/delete.do?id=" + cardData.id,
+					url: getProjectName()+"/account/delete.do?id=" + cardData.id,
 					success: function(result){
 						cardRoot.remove();
 					}
@@ -5719,7 +5850,7 @@ function CreditCard(){
 		cardData.accountUser = cardUser;
 		
 		$.ajax({
-			url: baseURL+"account/save.do",
+			url: getProjectName()+"/account/save.do",
 			type: "POST",
 			data: cardData,
 			success: function(result){

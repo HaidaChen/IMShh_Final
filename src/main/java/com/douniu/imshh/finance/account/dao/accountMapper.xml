@@ -10,6 +10,7 @@
         <result property="bankLogo" column="bankLogo"/>
         <result property="accountUser" column="accountUser"/>
         <result property="accountType" column="accountType"/>
+        <result property="balance" column="balance"/>
         
         <result property="status" column="status"/>
     </resultMap>
@@ -21,13 +22,21 @@
         </if>
     </select> 
     
+    <select id="findThird" resultMap="accountmap">
+        select * from t_account where status = 1 and accountType = '3'
+    </select> 
+    
     <select id="findById" parameterType="String" resultMap="accountmap">
-        select * from t_account where id = #{id}
+        select * from t_account where status = 1 and id = #{id}
+    </select> 
+    
+    <select id="findByNo" parameterType="String" resultMap="accountmap">
+        select * from t_account where status = 1 and accountNo = #{no}
     </select> 
     
     <insert id="insert" parameterType="Account">
-        insert into t_account(id, accountNo, bank, brachBank, bankLogo, accountUser, accountType, modifydate, status) 
-          values(#{id}, #{accountNo}, #{bank}, #{brachBank}, #{bankLogo}, #{accountUser}, #{accountType}, sysdate(), #{status})
+        insert into t_account(id, accountNo, bank, brachBank, bankLogo, accountUser, accountType, balance, modifydate, status) 
+          values(#{id}, #{accountNo}, #{bank}, #{brachBank}, #{bankLogo}, #{accountUser}, #{accountType}, #{balance}, sysdate(), #{status})
     </insert>
     
     <update id="update" parameterType="Account">
@@ -38,6 +47,7 @@
           bankLogo = #{bankLogo},
           accountUser = #{accountUser},
           accountType = #{accountType},
+          balance = #{balance}
           
           modifydate = sysdate()
     where id = #{id}

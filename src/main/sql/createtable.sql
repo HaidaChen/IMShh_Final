@@ -142,6 +142,7 @@ CREATE TABLE T_ACCOUNT(
     bankLogo varchar(20),
     accountUser varchar(20) not null,
     accountType char(1) not null,
+    balance numeric(10,2),
         
     modifyDate datetime,
     status char(1)
