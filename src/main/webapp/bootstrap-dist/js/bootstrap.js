@@ -861,7 +861,7 @@ if (typeof jQuery === "undefined") { throw new Error("Bootstrap requires jQuery"
     this.$element  = $(element)
     this.$backdrop =
     this.isShown   = null
-
+    $.fn.modal.Constructor.prototype.enforceFocus = function() {};  
     if (this.options.remote) this.$element.load(this.options.remote)
   }
 

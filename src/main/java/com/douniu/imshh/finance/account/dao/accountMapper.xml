@@ -47,10 +47,17 @@
           bankLogo = #{bankLogo},
           accountUser = #{accountUser},
           accountType = #{accountType},
-          balance = #{balance}
+          balance = #{balance},
           
           modifydate = sysdate()
     where id = #{id}
+    </update>
+    
+    <update id="updateBalance" parameterType="Account">
+        update t_account set 
+          balance = #{balance},         
+          modifydate = sysdate()
+    where accountNo = #{accountNo}
     </update>
     
     <update id="deleteById" parameterType="String">

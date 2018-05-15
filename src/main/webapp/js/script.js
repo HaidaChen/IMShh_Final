@@ -3536,9 +3536,9 @@ var App = function () {
 					$.each(delivers, function(index, deliver){						 
 						var indicatorItem = {};
 						if (index == 0)
-							indicatorItem = $('<li data-target="#myCarousel" data-slide-to="'+index+'" class="active" >');
+							indicatorItem = $('<li data-target="#deliverCarousel" data-slide-to="'+index+'" class="active" >');
 						else
-							indicatorItem = $('<li data-target="#myCarousel" data-slide-to="'+index+'">');
+							indicatorItem = $('<li data-target="#deliverCarousel" data-slide-to="'+index+'">');
 						indicators.append(indicatorItem);
 					});
 					
@@ -3571,9 +3571,9 @@ var App = function () {
 					$.each(receives, function(index, receive){						 
 						var indicatorItem = {};
 						if (index == 0)
-							indicatorItem = $('<li data-target="#myCarousel" data-slide-to="'+index+'" class="active" >');
+							indicatorItem = $('<li data-target="#receiveCarousel" data-slide-to="'+index+'" class="active" >');
 						else
-							indicatorItem = $('<li data-target="#myCarousel" data-slide-to="'+index+'">');
+							indicatorItem = $('<li data-target="#receiveCarousel" data-slide-to="'+index+'">');
 						indicators.append(indicatorItem);
 					});
 					
@@ -4606,7 +4606,15 @@ var App = function () {
 			});
 		});
 		
-		
+		$('input[name=tranDate]').datetimepicker({
+	        language:  'zh-CN',
+	        weekStart: 1,
+	        todayBtn:  1,
+			autoclose: 1,
+			todayHighlight: 1,
+			startView: 2,
+			forceParse: 0
+	    });
 		$("#transactionForm").bootstrapValidator({
 			fields: {
 				tranDate : {validators: {notEmpty : {}}},
@@ -4622,6 +4630,7 @@ var App = function () {
 				$("#transactionForm").ajaxSubmit({
 					url: getProjectName()+"/transaction/save.do",
 					success: function(){
+						removeFormData($("#transactionForm"));
 						window.location.reload();
 					}
 				});

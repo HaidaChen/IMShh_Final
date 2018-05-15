@@ -160,7 +160,7 @@ CREATE TABLE T_TRANSACTION (
     tranBank  varchar(120),
     tranAccountNo varchar(60),
     
-    orderId varchar(20),
+    orderIdentify varchar(20),
     purchaseId varchar(20),
     
     modifyDate datetime,

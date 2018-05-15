@@ -25,17 +25,12 @@ public class TransactionAction {
 	@Autowired
 	private IAccountService accountService;
 	
-	@RequestMapping("/edit")
-	public ModelAndView edit(Transaction transaction){
-		ModelAndView mav = new ModelAndView();
-		if (transaction.getId() != null && transaction.getId() != ""){
-			Transaction oTransaction = service.getById(transaction.getId());
-			mav.addObject("transaction", oTransaction);
-		}else{
-			mav.addObject("transaction", transaction);
-		}
-        mav.setViewName("/finance/account/edit");
-        return mav;
+	@RequestMapping(value ="/findbyid", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String findById(Transaction transaction){
+		Transaction oTransaction = service.getById(transaction.getId());
+		Gson gson = new Gson();
+        return gson.toJson(oTransaction);
 	}
 	
 	@RequestMapping(value ="/save", produces = "application/json; charset=utf-8")
@@ -51,6 +46,9 @@ public class TransactionAction {
 			accountService.save(account);
 		}
 		service.save(transaction);
+		account.setAccountNo(transaction.getAccountNo());
+		account.setBalance(transaction.getBalance());
+		accountService.updateBalance(account);
 		return 1;
 	}
 	

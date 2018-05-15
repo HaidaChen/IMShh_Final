@@ -47,6 +47,13 @@ public class AccountService implements IAccountService{
 		}
 	}
 
+	
+	@Override
+	public void updateBalance(Account account) {
+		dao.updateBalance(account);
+	}
+
+
 	@Override
 	public void delete(String id) {
 		// TODO Auto-generated method stub

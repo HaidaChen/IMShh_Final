@@ -10,5 +10,6 @@ public interface IAccountService {
 	Account findByNo(String no);
 	List<Account> findThird();
 	void save(Account account);
+	void updateBalance(Account account);
 	void delete(String id);
 }

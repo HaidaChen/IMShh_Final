@@ -11,5 +11,6 @@ public interface IAccountDao {
 	Account findByNo(String no);
 	void insert(Account account);
 	void update(Account account);
+	void updateBalance(Account account);
 	void deleteById(String id);
 }

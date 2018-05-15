@@ -1,25 +1,56 @@
 package com.douniu.imshh.utils;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.core.convert.converter.Converter;
 
 public class DateConverter implements Converter<String, Date>{
-
-    @Override
+	private static final List<String> formarts = new ArrayList<String>(4);
+    static{
+        formarts.add("yyyy-MM");
+        formarts.add("yyyy-MM-dd");
+        formarts.add("yyyy-MM-dd hh:mm");
+        formarts.add("yyyy-MM-dd hh:mm:ss");
+    }
     public Date convert(String source) {
-    	if ("".equals(source))
-    		return null;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateFormat.setLenient(false); 
+        String value = source.trim();
+        if ("".equals(value)) {
+            return null;
+        }
+        if(source.matches("^\\d{4}-\\d{1,2}$")){ 
+            return parseDate(source, formarts.get(0));
+        }else if(source.matches("^\\d{4}-\\d{1,2}-\\d{1,2}$")){
+            return parseDate(source, formarts.get(1));
+        }else if(source.matches("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}$")){
+            return parseDate(source, formarts.get(2));
+        }else if(source.matches("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}:\\d{1,2}$")){
+            return parseDate(source, formarts.get(3));
+        }else {
+            throw new IllegalArgumentException("Invalid boolean value '" + source + "'");
+        }
+    }
+
+    /**
+     * 功能描述：格式化日期
+     * 
+     * @param dateStr
+     *            String 字符型日期
+     * @param format
+     *            String 格式
+     * @return Date 日期
+     */
+    public  Date parseDate(String dateStr, String format) {
+        Date date=null;
         try {
-            return dateFormat.parse(source);
-        } catch (java.text.ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }        
-        return null;
+            DateFormat dateFormat = new SimpleDateFormat(format);
+            date = (Date) dateFormat.parse(dateStr);
+        } catch (Exception e) {
+        }
+        return date;
     }
 
 }

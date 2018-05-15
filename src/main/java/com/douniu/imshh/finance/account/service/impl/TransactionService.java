@@ -12,13 +12,13 @@ public class TransactionService implements ITransactionService{
 	
 	@Override
 	public List<Transaction> query(Transaction transaction) {
-		Transaction condition = LikeFlagUtil.appendLikeFlag(transaction, new String[]{"tranUser", "orderId", "purchaseId"});
+		Transaction condition = LikeFlagUtil.appendLikeFlag(transaction, new String[]{"condition"});
 		return dao.query(condition);
 	}
 
 	@Override
 	public int count(Transaction transaction) {
-		Transaction condition = LikeFlagUtil.appendLikeFlag(transaction, new String[]{"tranUser", "orderId", "purchaseId"});
+		Transaction condition = LikeFlagUtil.appendLikeFlag(transaction, new String[]{"condition"});
 		return dao.count(condition);
 	}
 

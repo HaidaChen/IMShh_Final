@@ -2,11 +2,14 @@ package com.douniu.imshh.finance.account.domain;
 
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.douniu.imshh.common.BaseQO;
 
 public class Transaction extends BaseQO{
 	private String id;
 	private String accountNo;
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")  
 	private Date tranDate;
 	private int tranType;
 	private float tranAmount;
