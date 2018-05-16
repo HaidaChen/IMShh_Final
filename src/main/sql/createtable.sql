@@ -134,6 +134,22 @@ CREATE TABLE T_INVOICE(
     status char(1)
 );
 
+CREATE TABLE T_ACCOUNT_RECEPTION(
+    customerId varchar(20),
+    customerName varchar(128) not null,
+    month varchar(20) not null,
+    reception numeric(10,2),
+    payment numeric(10,2)
+);
+
+CREATE TABLE T_ACCOUNT_PAYMENT(
+    supplierId varchar(20) not null,
+    supplierName varchar(128) not null,
+    month varchar(20) not null,
+    debt numeric(10,2),
+    payment numeric(10,2)
+);
+
 CREATE TABLE T_ACCOUNT(
     id varchar(20) not null,
     accountNo varchar(60) not null,

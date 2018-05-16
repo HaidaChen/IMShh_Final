@@ -4381,44 +4381,31 @@ var App = function () {
 	var initReceivableModule = function(){
 		var date = new Date();
 		$("#tbl_receivable").bootstrapTable({
-			url: "../json/receivable.json",
+			data: getProjectName() + "/accountrpt/statisticsByCustomer.do",
 			method: "get",
 			pagination: false,
 			sidePagination: "server", 
 			columns: [{
-                field: 'customer',
+                field: 'customerName',
                 title: '客户单位'
             }, {
-                field: 'receiveulm',
-                title: '截止' + date.getFullYear() + '年' + date.getMonth() + '月收款'
-            }, {
-                field: 'retainageulm',
-                title: '截止' + date.getFullYear() + '年' + date.getMonth() + '月尾款'
-            }, {
-                field: 'amountcm',
-                title: date.getFullYear() + '年' + (date.getMonth() + 1) + '月金额'
-            }, {
-                field: 'receivecm',
-                title: date.getFullYear() + '年' + (date.getMonth() + 1) + '月收款'
-            }, {
-                field: 'retainagecm',
-                title: date.getFullYear() + '年' + (date.getMonth() + 1) + '月尾款'
-            }, {
-                field: 'amount',
+                field: 'reception',
                 title: '截止当前金额'
             }, {
-                field: 'receive',
+                field: 'payment',
                 title: '截止当前收款'
-            }, {
-                field: 'retainage',
-                title: '截止当前尾款'
             }, {
             	field: '',
             	title: '查看',
             	formatter: function(value,row,index){
             		return '&nbsp; <a href="javascript:;" onclick="editCustomer()" title="收款明细"><i class="fa fa-money"></i></a>';
             	}
-            }]
+            }],
+            queryParams: function(params){
+            	return {
+                    year: "2018%"
+                }
+            }
 		});
 		
 	}	

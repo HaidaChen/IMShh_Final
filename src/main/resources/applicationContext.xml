@@ -65,31 +65,6 @@ xsi:schemaLocation="
       </bean>
       
       
-      <!-- <bean name="purchaseService" class="com.douniu.imshh.finance.purchase.service.impl.PurchaseService">
-          <property name="dao" ref="purchaseDao"></property>
-          <property name="dService" ref="purchaseDetailService"></property>
-      </bean>
-      <bean id="purchaseDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.finance.purchase.dao.IPurchaseDao"/>
-          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean>
-      
-      <bean name="purchaseDetailService" class="com.douniu.imshh.finance.purchase.service.impl.PurchaseDetailService">
-          <property name="dao" ref="purchaseDetailDao"></property>
-      </bean>
-      <bean id="purchaseDetailDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.finance.purchase.dao.IPurchaseDetailDao"/>
-          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean>
-      
-      <bean name="deliverDetailService" class="com.douniu.imshh.finance.purchase.service.impl.DeliverDetailService">
-          <property name="dao" ref="deliverDetailDao"></property>
-      </bean>
-      <bean id="deliverDetailDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.finance.purchase.dao.IDeliverDetailDao"/>
-          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean> -->
-      
       <bean name="receptionService" class="com.douniu.imshh.finance.reception.service.impl.ReceptionService">
           <property name="dao" ref="receptionDao"></property>
       </bean>
@@ -103,6 +78,23 @@ xsi:schemaLocation="
       </bean>
       <bean id="invoiceDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
           <property name="mapperInterface" value="com.douniu.imshh.finance.invoice.dao.IInvoiceDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="accountReceptionService" class="com.douniu.imshh.finance.account.service.impl.ReceptionService">
+          <property name="dao" ref="accountReceptionDao"></property>
+          <property name="orderService" ref="orderService"></property>
+      </bean>
+      <bean id="accountReceptionDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.account.dao.IReceptionDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="accountPaymentService" class="com.douniu.imshh.finance.account.service.impl.PaymentService">
+          <property name="dao" ref="accountPaymentDao"></property>
+      </bean>
+      <bean id="accountPaymentDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.account.dao.IPaymentDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       

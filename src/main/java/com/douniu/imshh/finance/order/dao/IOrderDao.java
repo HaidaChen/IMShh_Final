@@ -10,6 +10,7 @@ public interface IOrderDao {
 	List<Order> queryNoPage(Order order);
 	int count(Order order);
 	Order findById(String id);
+	Order findByNo(String no);
 	void insert(Order Order);
 	void batchInsert(List<Order> orders);
 	void update(Order order);

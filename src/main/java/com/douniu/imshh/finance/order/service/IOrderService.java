@@ -11,6 +11,7 @@ public interface IOrderService {
 	List<Order> queryNoPage(Order order);
 	int count(Order order);
 	Order getById(String id);
+	Order getByNo(String no);
 	void save(Order order);
 	void delete(String id);
 	void batchAdd(List<OrderAndDetail> orders);

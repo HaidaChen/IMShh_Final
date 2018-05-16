@@ -44,6 +44,10 @@
         select * from t_order left join t_orderdetail on t_order.id = t_orderdetail.orderid where t_order.id = #{id}
     </select>
     
+    <select id="findByNo" parameterType="String" resultMap="orderdtlmap">
+        select * from t_order left join t_orderdetail on t_order.id = t_orderdetail.orderid where t_order.identify = #{no}
+    </select>
+    
     <select id="query" parameterType="Order" resultMap="ordermap">
         select * from t_Order where status = 1
         <if test="condition != null and condition !=''">
