@@ -3720,11 +3720,9 @@ var App = function () {
 	        }
 		});
 		$("#btn_save_order").click(function(){
-			alert(1);
 			var bv = $("#formOrder").data('bootstrapValidator');
 	        bv.validate();
 			if(bv.isValid()){
-				alert(2);
 				$("input[name=orderDetails]").val($("#tbl_orderitem").attr("data-data"));
 				$("#formOrder").ajaxSubmit({
 					url: getProjectName()+"/order/save.do",
@@ -4045,7 +4043,9 @@ var App = function () {
 				deliverDate : {validators: {notEmpty : {}}},
 				pdtNo : {validators: {notEmpty : {}}},
 				content : {validators: {notEmpty : {}}},
-				amount : {validators: {notEmpty : {}, integer:{}}}
+				amount : {validators: {notEmpty : {}, integer:{}}},
+				price : {validators: {numeric:{}}},
+				totlment : {validators: {numeric:{}}}
 	        }
 		});
 		
@@ -4058,6 +4058,54 @@ var App = function () {
 			    placeholder: "关联订单",
 			    allowClear: true
 			});
+		});
+		
+		$("#relorder").change(function(){
+			var orderIdentify = $(this).val();
+			if (orderIdentify!=''){
+				$.getJSON(getProjectName() + "/order/findbyidentify.do?identify="+orderIdentify, function (data){
+					$("input[name=customerName]").val(data.custName);
+					$("#orderItems").show();
+					$("#relorderDetail").html('');
+					$("#relorderDetail").append("<option value=''></option>");
+					$.each(data.details, function(index, detail){
+						$("#relorderDetail").append("<option value='"+detail.id+"'>"+detail.pdtNo+" " +detail.content+"</option>");
+					});
+				})
+			}else{
+				$("input[name=customerName]").val('');
+				$("input[name=pdtNo]").val('');
+				$("input[name=content]").val('');
+				$("input[name=amount]").val('');
+				$("input[name=price]").val('');
+				$("input[name=totlment]").val('');
+				$("#orderItems").hide();
+			}
+		});
+		
+		$("#relorderDetail").change(function(){
+			var detailId = $(this).val();
+			if (detailId != ''){
+				$.getJSON(getProjectName() + "/order/finddetailbyid.do?id="+detailId, function (detail){
+					$("input[name=pdtNo]").val(detail.pdtNo);
+					$("input[name=content]").val(detail.content);
+					$("input[name=price]").val(detail.priceRMB);
+				});
+			}else{
+				$("input[name=pdtNo]").val('');
+				$("input[name=content]").val('');
+				$("input[name=amount]").val('');
+				$("input[name=price]").val('');
+				$("input[name=totlment]").val('');
+			}
+		});
+		
+		$("input[name=price],input[name=amount]").change(function(){
+			var price = $("input[name=price]").val();
+			var amount = $("input[name=amount]").val();
+			if (price != '' && amount != ''){
+				$("input[name=totlment]").val(parseFloat(price)*parseFloat(amount));
+			}
 		});
 		
 		$("#btn_save_deliver").click(function(){
@@ -4381,7 +4429,7 @@ var App = function () {
 	var initReceivableModule = function(){
 		var date = new Date();
 		$("#tbl_receivable").bootstrapTable({
-			data: getProjectName() + "/accountrpt/statisticsByCustomer.do",
+			url: getProjectName() + "/accountrpt/statisticsByCustomer.do",
 			method: "get",
 			pagination: false,
 			sidePagination: "server", 
@@ -4390,24 +4438,29 @@ var App = function () {
                 title: '客户单位'
             }, {
                 field: 'reception',
-                title: '截止当前金额'
+                title: '截止当前应收款'
             }, {
                 field: 'payment',
-                title: '截止当前收款'
+                title: '截止当前已收款'
+            }, {
+                field: '',
+                title: '截止当前待金额',
+                formatter: function(value,row,index){
+                	return row.reception - row.payment;
+                }
             }, {
             	field: '',
             	title: '查看',
             	formatter: function(value,row,index){
-            		return '&nbsp; <a href="javascript:;" onclick="editCustomer()" title="收款明细"><i class="fa fa-money"></i></a>';
+            		return '<a href="javascript:;" onclick="viewDeliver(\''+row.customerName+'\')" title="发货明细"><i class="fa fa-truck"></i></a>&nbsp; <a href="javascript:;" onclick="viewTransaction(\''+row.customerName+'\')" title="收款明细"><i class="fa fa-money"></i></a>';
             	}
-            }],
-            queryParams: function(params){
-            	return {
-                    year: "2018%"
-                }
-            }
+            }]
 		});
 		
+		
+		$("#btn_query_deliver").click(function(){
+			$("#tbl_deliver").bootstrapTable('refresh', {url: getProjectName() + "/deliver/loadbycust.do", cash:false});
+		});
 	}	
 	
 	/*-----------------------------------------------------------------------------------*/
@@ -4442,7 +4495,7 @@ var App = function () {
             	field: '',
             	title: '查看',
             	formatter: function(value,row,index){
-            		return '<a href="javascript:;" onclick="editCustomer()" title="接收明细"><i class="fa fa-truck"></i></a> &nbsp; <a href="javascript:;" onclick="editCustomer()" title="付款明细"><i class="fa fa-money"></i></a>';
+            		return '<a href="javascript:;" onclick="viewReceptionM(\''+row.purchase+'\')" title="接收明细"><i class="fa fa-truck"></i></a> &nbsp; <a href="javascript:;" onclick="viewTransaction(\''+row.purchase+'\')" title="付款明细"><i class="fa fa-money"></i></a>';
             	}
             }]
 		});
@@ -5558,6 +5611,61 @@ function loadAuTree(roleId){
 }
 
 /*-----------------------------------------------------------------------------------*/
+/*	account Moduel Script
+/*-----------------------------------------------------------------------------------*/
+function viewDeliver(customer){
+	$("#modalDeliver").modal('show');
+	$("#tbl_deliver").bootstrapTable({
+		url: getProjectName() + "/deliver/loadbycust.do",
+		method: "get",
+		pagination: true,
+		sidePagination: "server", 
+		columns: [{
+            field: 'deliverDate',
+            title: '发货日期'
+        }, {
+            field: 'orderIdentify',
+            title: '关联订单'
+        }, {
+            field: 'customerName',
+            title: '客户'
+        }, {
+            field: 'pdtNo',
+            title: '品名'
+        }, {
+            field: 'content',
+            title: '含量'
+        }, {
+            field: 'price',
+            title: '单价'
+        }, {
+            field: 'amount',
+            title: '数量'            
+        }, {
+            field: 'totlment',
+            title: '合计金额'            
+        }],
+        queryParams: function(params){
+        	return {
+                pageSize: params.limit,
+                pageOffset: params.offset,   
+                startDate: $("#startDate_dlv").val(),
+                endDate: $("#endDate_dlv").val(),
+                customerName: customer
+            }
+        }
+	});
+}
+
+function viewReceptionM(supplier){
+	
+}
+
+function viewTransaction(user){
+	
+}
+
+/*-----------------------------------------------------------------------------------*/
 /*	公共函数
 /*-----------------------------------------------------------------------------------*/
 var getCookie = function(c_name)
@@ -5586,7 +5694,7 @@ var getProjectName = function(){
 }
 
 var getJSONObjByForm = function(form){
-	var formitems = form.find("input");
+	var formitems = form.find("input,select");
 	var oform = {};
 	$.each(formitems, function(index, item){
 		var field = $(item).attr("name");

@@ -6,9 +6,13 @@
         <result property="id" column="id"/>
         <result property="deliverDate" column="deliverDate"/>
         <result property="orderIdentify" column="orderIdentify"/>
+        <result property="customerId" column="customerId"/>
+        <result property="customerName" column="customerName"/>
         <result property="pdtNo" column="pdtNo"/>
         <result property="content" column="content"/>
         <result property="amount" column="amount"/>
+        <result property="price" column="price"/>
+        <result property="totlment" column="totlment"/>
         <result property="remark" column="remark"/>
         <result property="status" column="status"/>
     </resultMap>
@@ -19,7 +23,8 @@
           where status = 1
         <if test="condition != null and condition !=''">
           and (pdtNo like #{condition}
-            or orderIdentify like #{condition})             
+            or orderIdentify like #{condition},
+            or customername like #{condition})             
         </if> 
         <if test="startDate != null">
           and deliverDate &gt;= #{startDate}
@@ -31,12 +36,29 @@
           limit #{pageOffset},#{pageSize}
     </select>    
     
+    <select id="queryByCustomer" parameterType="StorageDeliver" resultMap="dlvrmap">
+        select * from t_storage_deliver 
+          where status = 1
+        <if test="customerName != null and customerName !=''">
+          and customername like #{customerName}           
+        </if> 
+        <if test="startDate != null">
+          and deliverDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and deliverDate &lt;= #{endDate}
+        </if>
+          order by modifydate desc
+          limit #{pageOffset},#{pageSize}
+    </select>
+    
     <select id="queryDeliverNoPage" parameterType="StorageDeliver" resultMap="dlvrmap">
         select * from t_storage_deliver 
           where status = 1
         <if test="condition != null and condition !=''">
           and (pdtNo like #{condition}
-            or orderIdentify like #{condition})           
+            or orderIdentify like #{condition},
+            or customername like #{condition})           
         </if> 
         <if test="startDate != null">
           and deliverDate &gt;= #{startDate}
@@ -51,8 +73,23 @@
         select count(1) from t_storage_deliver where status = 1
         <if test="condition != null and condition !=''">
           and (pdtNo like #{condition}
-            or orderIdentify like #{condition})           
+            or orderIdentify like #{condition},
+            or customername like #{condition})           
         </if>
+        <if test="startDate != null">
+          and deliverDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and deliverDate &lt;= #{endDate}
+        </if>
+    </select>
+    
+    <select id="countByCustomer" parameterType="StorageDeliver" resultType="int">
+        select count(1) from t_storage_deliver 
+          where status = 1
+        <if test="customerName != null and customerName !=''">
+          and customername like #{customerName}           
+        </if> 
         <if test="startDate != null">
           and deliverDate &gt;= #{startDate}
         </if>
@@ -70,15 +107,15 @@
     </select>
     
     <insert id="insert" parameterType="StorageDeliver">
-        insert into t_storage_deliver(id, deliverDate, orderIdentify, pdtNo, content, amount, modifyDate, remark, status) 
-          values(#{id}, #{deliverDate}, #{orderIdentify}, #{pdtNo}, #{content}, #{amount}, sysdate(), #{remark}, #{status})
+        insert into t_storage_deliver(id, deliverDate, orderIdentify, customerId, customerName, pdtNo, content, amount, price, totlment, modifyDate, remark, status) 
+          values(#{id}, #{deliverDate}, #{orderIdentify}, #{customerId}, #{customerName}, #{pdtNo}, #{content}, #{amount}, #{price}, #{totlment}, sysdate(), #{remark}, #{status})
     </insert>
     
     <insert id="batchInsert" parameterType="java.util.List">
-        insert into t_storage_deliver(id, deliverDate, orderIdentify, pdtNo, content, amount, modifyDate, remark, status) 
+        insert into t_storage_deliver(id, deliverDate, orderIdentify, customerId, customerName, pdtNo, content, amount, price, totlment, modifyDate, remark, status) 
           values
           <foreach collection="list" item="dlvr" index="index" separator=",">
-          (CONCAT(current_timestamp()+1, #{index}), #{dlvr.deliverDate}, #{dlvr.orderIdentify}, #{dlvr.pdtNo}, #{dlvr.content}, #{dlvr.amount}, sysdate(), #{dlvr.remark}, '1')
+          (CONCAT(current_timestamp()+1, #{index}), #{dlvr.deliverDate}, #{dlvr.orderIdentify}, #{dlvr.customerId}, #{dlvr.customerName}, #{dlvr.pdtNo}, #{dlvr.content}, #{dlvr.amount}, #{dlvr.price}, #{dlvr.totlment}, sysdate(), #{dlvr.remark}, '1')
     	  </foreach>
     </insert>
 

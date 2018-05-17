@@ -22,6 +22,9 @@
           order by modifydate desc
     </select>
     
+    <select id="findById" parameterType="String" resultType="OrderDetail">
+        select * from t_OrderDetail where id = #{id}
+    </select>
     <!-- <insert id="insert" parameterType="OrderDetail">
         insert into t_OrderDetail(id, orderId, pdtNo, pdtId, pdtName, content, quantity, priceRMB, priceDollar, totlemnt, progress, modifyDate, remark, status) 
           values(#{id}, #{orderId}, #{pdtNo}, #{pdtId}, #{pdtName}, #{content}, #{quantity}, #{priceRMB}, #{priceDollar}, #{totlemnt}, #{progress}, sysdate(), #{remark}, #{status})

@@ -7,7 +7,9 @@ import com.douniu.imshh.finance.storage.domain.Deliver;
 public interface IDeliverService {
 	List<Deliver> query(Deliver deliver);
 	List<Deliver> queryNoPage(Deliver deliver);
+	List<Deliver> queryByCustomer(Deliver deliver);
 	int count(Deliver deliver);
+	int countByCustomer(Deliver deliver);
 	Deliver getById(String id);
 	List<Deliver> findByOrder(String orderIdentify);
 	void save(Deliver deliver);

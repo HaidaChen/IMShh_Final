@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.finance.account.domain.Reception;
 import com.douniu.imshh.finance.account.service.IReceptionService;
 import com.google.gson.Gson;
@@ -27,11 +28,14 @@ public class AccountReceptionAction {
 	
 	@RequestMapping(value ="/statisticsByCustomer", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String statisticsByCustomer(String year){
-		List<Reception> receptions = serivce.statisticsByCustomer(year);
+	public String statisticsByCustomer(){
+		List<Reception> receptions = serivce.statisticsByCustomer();
+		
+		PageResult pr = new PageResult();
+		pr.setTotal(receptions.size());
+		pr.setRows(receptions);
+		
 		Gson gson = new Gson();
-		String str = gson.toJson(receptions);
-		System.out.println(str);
-        return gson.toJson(receptions);
+		return gson.toJson(pr);
 	}
 }

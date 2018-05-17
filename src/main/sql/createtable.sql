@@ -201,11 +201,13 @@ CREATE TABLE T_STORAGE_DELIVER (
     id varchar(20) not null,
     deliverDate date not null,
     orderIdentify varchar(20),
+    customerId varchar(20),
+    customerName varchar(64),
     pdtNo varchar(20) not null,
     content varchar(20) not null,
     amount int not null,
-    
-    modifyDate datetime,
+    price numeric(10,2),
+    totlment numeric(10,2)
     remark varchar(1024),
     status char(1)
 );

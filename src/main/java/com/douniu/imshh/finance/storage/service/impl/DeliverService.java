@@ -17,6 +17,11 @@ public class DeliverService implements IDeliverService{
 	}
 	
 	@Override
+	public List<Deliver> queryByCustomer(Deliver deliver) {
+		return dao.queryByCustomer(deliver);
+	}
+	
+	@Override
 	public List<Deliver> queryNoPage(Deliver deliver) {
 		Deliver condition = LikeFlagUtil.appendLikeFlag(deliver, new String[]{"condition"});
 		return dao.queryDeliverNoPage(condition);
@@ -26,6 +31,11 @@ public class DeliverService implements IDeliverService{
 	public int count(Deliver deliver) {
 		Deliver condition = LikeFlagUtil.appendLikeFlag(deliver, new String[]{"condition"});
 		return dao.countDeliverDetail(condition);
+	}
+	
+	@Override
+	public int countByCustomer(Deliver deliver) {
+		return dao.countByCustomer(deliver);
 	}
 
 	@Override
@@ -43,7 +53,7 @@ public class DeliverService implements IDeliverService{
 	public void save(Deliver deliver) {
 		if (deliver.getId().equals("")){
 			deliver.setId(System.currentTimeMillis()+"");
-			deliver.setStatus(1);
+			deliver.setStatus(1);			
 			dao.insert(deliver);
 		}else{
 			dao.update(deliver);
@@ -63,4 +73,5 @@ public class DeliverService implements IDeliverService{
 	public void setDao(IDeliverDao dao) {
 		this.dao = dao;
 	}
+
 }

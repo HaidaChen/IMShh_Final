@@ -13,6 +13,11 @@ public class OrderDetailService implements IOrderDetailService{
 	public List<OrderDetail> queryByOrder(String orderId) {
 		return dao.queryByOrder(orderId);
 	}
+	
+	@Override
+	public OrderDetail findById(String id){
+		return dao.findById(id);
+	}
 
 	@Override
 	public void batchAdd(List<OrderDetail> details) {

@@ -38,9 +38,12 @@ public class DeliverAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{
 		mapper.add(new ExcelBean("出库日期","deliverDate",0)); 
-		mapper.add(new ExcelBean("关联订单号","orderIdentify",0)); 
+		mapper.add(new ExcelBean("关联订单号","orderIdentify",0));
+		mapper.add(new ExcelBean("接收客户", "customerName"));
 		mapper.add(new ExcelBean("货号","pdtNo",0));  
-		mapper.add(new ExcelBean("含量","content",0));   
+		mapper.add(new ExcelBean("含量","content",0)); 
+		mapper.add(new ExcelBean("单价","price",0));
+		mapper.add(new ExcelBean("合计","totlment",0));
 		mapper.add(new ExcelBean("数量","amount",0));  
 		mapper.add(new ExcelBean("备注","remark",0));
 	}
@@ -62,13 +65,13 @@ public class DeliverAction {
 	public int save(Deliver deliver){
 		service.save(deliver);
         return 1;
-	}
+	}	
 	
-	@RequestMapping(value ="/loaddeliver", produces = "application/json; charset=utf-8")
+	@RequestMapping(value ="/loadbycust", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String loadDeliver(Deliver deliver){
-		List<Deliver> res = service.query(deliver);
-		int count = service.count(deliver);
+	public String loadByCust(Deliver deliver){
+		List<Deliver> res = service.queryByCustomer(deliver);
+		int count = service.countByCustomer(deliver);
 		
 		PageResult pr = new PageResult();
 		

@@ -25,7 +25,7 @@
         <result property="status" column="status"/>
         
         <collection property="details" ofType="OrderDetail">
-            <id property="id" column="detailid"/>
+            <id property="id" column="detailId"/>
 	        <result property="orderId" column="orderId"/>
 	        <result property="pdtNo" column="pdtNo"/>
 	        <result property="pdtId" column="pdtId"/>
@@ -33,6 +33,7 @@
 	        <result property="quantity" column="quantity"/>
 	        <result property="priceRMB" column="priceRMB"/>
 	        <result property="priceDollar" column="priceDollar"/>
+	        <result property="content" column="content"/>
 	        <result property="totlemnt" column="totlemnt"/>
 	        <result property="progress" column="progress"/>
 	        <result property="remark" column="detailremark"/>
@@ -41,11 +42,11 @@
     </resultMap>
     
     <select id="findById" parameterType="String" resultMap="orderdtlmap">
-        select * from t_order left join t_orderdetail on t_order.id = t_orderdetail.orderid where t_order.id = #{id}
+        select *, t_orderdetail.id as detailId from t_order left join t_orderdetail on t_order.id = t_orderdetail.orderid where t_order.id = #{id}
     </select>
     
     <select id="findByNo" parameterType="String" resultMap="orderdtlmap">
-        select * from t_order left join t_orderdetail on t_order.id = t_orderdetail.orderid where t_order.identify = #{no}
+        select *, t_orderdetail.id as detailId from t_order left join t_orderdetail on t_order.id = t_orderdetail.orderid where t_order.identify = #{no}
     </select>
     
     <select id="query" parameterType="Order" resultMap="ordermap">

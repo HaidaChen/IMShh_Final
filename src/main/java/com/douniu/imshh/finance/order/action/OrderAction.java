@@ -26,6 +26,7 @@ import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.finance.order.domain.Order;
 import com.douniu.imshh.finance.order.domain.OrderAndDetail;
 import com.douniu.imshh.finance.order.domain.OrderDetail;
+import com.douniu.imshh.finance.order.service.IOrderDetailService;
 import com.douniu.imshh.finance.order.service.IOrderService;
 import com.douniu.imshh.utils.DateUtil;
 import com.douniu.imshh.utils.ExcelBean;
@@ -57,6 +58,8 @@ public class OrderAction {
 	
 	@Autowired
 	private IOrderService service;
+	@Autowired
+	private IOrderDetailService detailService;
 	
 	/**
 	 * 查询订单，需要根据订单号、状态、日期、客户查询订单
@@ -90,6 +93,22 @@ public class OrderAction {
 		Order order = service.getById(id);
 		Gson gson = new Gson();
         return gson.toJson(order);
+	}
+	
+	@RequestMapping(value="/findbyidentify", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String findByIdentify(String identify){
+		Order order = service.getByNo(identify);
+		Gson gson = new Gson();
+        return gson.toJson(order);
+	}
+	
+	@RequestMapping(value="/finddetailbyid", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String findDetailById(String id){
+		OrderDetail detail = detailService.findById(id);
+		Gson gson = new Gson();
+        return gson.toJson(detail);
 	}
 	
 	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")

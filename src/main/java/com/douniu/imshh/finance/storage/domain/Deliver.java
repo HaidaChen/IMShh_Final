@@ -8,10 +8,14 @@ public class Deliver extends BaseQO{
 	private String id;
 	private Date deliverDate;
 	private String orderIdentify;
+	private String customerId;
+	private String customerName;
 	private String pdtNo;	
 	private String content;
 	private int amount;	
 	private String remark;
+	private float price;
+	private float totlment;
 	
 	private Date modifyDate;
 	private int status = 1;
@@ -71,11 +75,35 @@ public class Deliver extends BaseQO{
 		this.status = status;
 	}
 	
+	public float getPrice() {
+		return price;
+	}
+	public void setPrice(float price) {
+		this.price = price;
+	}
+	public float getTotlment() {
+		return totlment;
+	}
+	public void setTotlment(float totlment) {
+		this.totlment = totlment;
+	}	
+	public String getCustomerId() {
+		return customerId;
+	}
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+	public String getCustomerName() {
+		return customerName;
+	}
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
 	@Override
 	public String toString() {
-		return "Deliver [id=" + id + ", deliverDate=" + deliverDate + ", orderIdentify="
-				+ orderIdentify + ", pdtNo=" + pdtNo + ", content=" + content
-				+ ", amount=" + amount + ", remark=" + remark + ", modifyDate=" + modifyDate + ", status=" + status
-				+ "]";
+		return "Deliver [id=" + id + ", deliverDate=" + deliverDate + ", orderIdentify=" + orderIdentify
+				+ ", customerId=" + customerId + ", customerName=" + customerName + ", pdtNo=" + pdtNo + ", content="
+				+ content + ", amount=" + amount + ", remark=" + remark + ", price=" + price + ", totlment=" + totlment
+				+ ", modifyDate=" + modifyDate + ", status=" + status + "]";
 	}	
 }
