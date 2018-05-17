@@ -69,6 +69,34 @@
         </if>
     </select>
     
+    <select id="queryBySupplier" parameterType="Reception" resultMap="receptionmap">
+    	select * from T_RECEPTION where status = 1
+        <if test="supplierName != null and supplierName !=''">
+          and supplierName like #{supplierName}
+        </if>
+        <if test="startDate != null">
+          and receiveDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and receiveDate &lt;= #{endDate}
+        </if>
+          order by modifydate desc
+          limit #{pageOffset},#{pageSize}
+    </select>
+    
+    <select id="countBySupplier" parameterType="Reception" resultType="int">
+    	select count(1) from T_RECEPTION where status = 1
+        <if test="supplierName != null and supplierName !=''">
+          and supplierName like #{supplierName}
+        </if>
+        <if test="startDate != null">
+          and receiveDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and receiveDate &lt;= #{endDate}
+        </if>
+    </select>
+    
     <select id="findById" parameterType="String" resultType="Reception">
         select * from T_RECEPTION where id = #{id}
     </select>

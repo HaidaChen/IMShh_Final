@@ -78,6 +78,11 @@ public class OrderService implements IOrderService{
 			dao.update(order);
 		}
 	}
+	
+	@Override
+	public void updateState(Order order) {
+		dao.updateState(order);
+	}
 
 	@Override
 	public void delete(String id) {

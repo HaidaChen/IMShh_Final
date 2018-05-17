@@ -28,8 +28,8 @@ public class AccountReceptionAction {
 	
 	@RequestMapping(value ="/statisticsByCustomer", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String statisticsByCustomer(){
-		List<Reception> receptions = serivce.statisticsByCustomer();
+	public String statisticsByCustomer(String customerName){
+		List<Reception> receptions = serivce.statisticsByCustomer(customerName);
 		
 		PageResult pr = new PageResult();
 		pr.setTotal(receptions.size());

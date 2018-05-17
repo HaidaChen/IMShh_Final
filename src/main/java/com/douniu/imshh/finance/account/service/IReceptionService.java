@@ -8,7 +8,7 @@ import com.douniu.imshh.finance.storage.domain.Deliver;
 
 public interface IReceptionService {
 	Reception statistics(String year);
-	List<Reception> statisticsByCustomer();
+	List<Reception> statisticsByCustomer(String customerName);
 	void addReception(Deliver deliver);
 	void addPayment(Transaction transaction);
 }

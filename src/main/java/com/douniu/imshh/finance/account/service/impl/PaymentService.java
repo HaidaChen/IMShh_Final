@@ -20,8 +20,8 @@ public class PaymentService implements IPaymentService{
 	}
 
 	@Override
-	public List<Payment> statisticsBySupplier(String year) {
-		return dao.statisticsBySupplier(year);
+	public List<Payment> statisticsBySupplier(String supplierName) {
+		return dao.statisticsBySupplier("%"+supplierName+"%");
 	}
 
 	@Override

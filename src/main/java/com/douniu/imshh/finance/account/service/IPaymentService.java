@@ -8,7 +8,7 @@ import com.douniu.imshh.finance.reception.domain.Reception;
 
 public interface IPaymentService {
 	Payment statistics(String year);
-	List<Payment> statisticsBySupplier(String year);
+	List<Payment> statisticsBySupplier(String supplierName);
 	void addDebt(Reception reception);
 	void addPayment(Transaction transaction);
 }

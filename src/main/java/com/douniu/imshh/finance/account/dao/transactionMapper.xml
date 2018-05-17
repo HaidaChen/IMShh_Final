@@ -57,6 +57,36 @@
         </if>
     </select>   
     
+    <select id="queryByUser" parameterType="Transaction" resultMap="tranmap">
+        select * from t_transaction where status = 1
+        <if test="tranUser != null and tranUser !=''">
+          and tranUser like #{tranUser} 
+        </if>
+        
+        <if test="startDate != null">
+          and tranDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and tranDate &lt;= #{endDate}
+        </if>
+          order by modifydate desc
+          limit #{pageOffset},#{pageSize}
+    </select> 
+    
+    <select id="countByUser" parameterType="Transaction" resultType="int">
+        select count(1) from t_transaction where status = 1
+        <if test="tranUser != null and tranUser !=''">
+          and tranUser like #{tranUser} 
+        </if>
+        
+        <if test="startDate != null">
+          and tranDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and tranDate &lt;= #{endDate}
+        </if>
+    </select>   
+    
     <select id="findByOrder" parameterType="String" resultMap="tranmap">
         select * from t_transaction 
          where status = 1

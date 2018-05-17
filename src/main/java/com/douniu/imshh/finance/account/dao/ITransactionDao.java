@@ -7,6 +7,8 @@ import com.douniu.imshh.finance.account.domain.Transaction;
 public interface ITransactionDao {
 	List<Transaction> query(Transaction transaction);
 	int count(Transaction transaction);
+	List<Transaction> queryByUser(Transaction transaction);
+	int countByUser(Transaction transaction);
 	Transaction findById(String id);
 	List<Transaction> findByOrder(String orderIdentify);
 	List<Transaction> findByPurchaseId(String purchaseId);

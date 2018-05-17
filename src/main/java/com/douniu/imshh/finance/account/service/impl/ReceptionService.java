@@ -23,8 +23,8 @@ public class ReceptionService implements IReceptionService{
 	}
 
 	@Override
-	public List<Reception> statisticsByCustomer() {
-		return dao.statisticsByCustomer();
+	public List<Reception> statisticsByCustomer(String customerName) {
+		return dao.statisticsByCustomer("%"+customerName+"%");
 	}
 
 	@Override

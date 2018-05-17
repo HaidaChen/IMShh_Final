@@ -121,6 +121,13 @@ public class OrderAction {
         return 1;
 	}
 	
+	@RequestMapping(value="/updatestate", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public int updateState(Order order){
+		service.updateState(order);
+        return 1;
+	}
+	
 	@ResponseBody  
     @RequestMapping(value="importorder",method={RequestMethod.GET,RequestMethod.POST})  
     public  void  ajaxUploadExcel(HttpServletRequest request,HttpServletResponse response) throws Exception {  

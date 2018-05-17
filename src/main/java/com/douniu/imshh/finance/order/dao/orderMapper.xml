@@ -130,6 +130,14 @@
           modifydate = sysdate()
     where id = #{id}
     </update>
+    
+    <update id="updateState" parameterType="Order">
+        update t_Order set 
+          state = #{state},          
+          modifydate = sysdate()
+    where identify = #{identify}
+    </update>
+    
     <update id="deleteById" parameterType="String">
         update t_Order set 
           status = '0',

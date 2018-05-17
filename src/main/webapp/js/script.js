@@ -3439,7 +3439,17 @@ var App = function () {
                 title: '订单金额'
             }, {
                 field: 'state',
-                title: '订单状态'
+                title: '订单状态',
+                formatter: function(value, row, index){
+                	if (value == 1)
+                		return '新的订单';
+                	else if (value == 2)
+                		return '已发货';
+                	else if (value == 3)
+                		return '已收款';
+                	else
+                		return '';
+                }
             }, {
             	field: 'remark',
                 title: '备注'
@@ -3476,9 +3486,25 @@ var App = function () {
 		$('#tbl_order').on('click-row.bs.table', function (e, row, element){  
 			$.getJSON(getProjectName() + "/order/findById.do?id="+row.id, function (data){
 				orderItems = data.details;
-				console.log(JSON.stringify(orderItems));
+				
 				$("#view_orderId").html("#" + data.identify);
 				$("#view_totlment").html("Total:$" + data.amount);
+				
+				fixState(data.state);		
+				
+				$("#groupstate").children().click(function(){
+					var index = $("#groupstate").children().index(this);
+					var state = index + 1;
+					$.ajax({
+						type: "POST",
+						url: getProjectName() + "/order/updatestate.do?identify="+data.identify+"&state="+state,
+						success: function(result){
+							fixState(state);	
+						}
+					});
+					
+				});
+				
 				$("#tbl_orderItems").bootstrapTable("refreshOptions", {data: orderItems, cache: false});
 				
 				$("#view_custname").html(data.custName);
@@ -3693,9 +3719,9 @@ var App = function () {
 		$('#modalorderitem').on("hide.bs.modal", function(){
 			removeFormData($("#orderitemform"));
 		});
-		$("input[name=priceDollar],input[name=quantity]").change(function(){
-			if ($("input[name=priceDollar]").val()!="" && $("input[name=quantity]").val()!=""){
-				$("input[name=totlemnt]").val(parseInt($("input[name=quantity]").val()) * parseFloat($("input[name=priceDollar]").val()));
+		$("input[name=priceRMB],input[name=quantity]").change(function(){
+			if ($("input[name=priceRMB]").val()!="" && $("input[name=quantity]").val()!=""){
+				$("input[name=totlemnt]").val(parseInt($("input[name=quantity]").val()) * parseFloat($("input[name=priceRMB]").val()));
 			}
 		});
 		
@@ -3971,7 +3997,6 @@ var App = function () {
 				var exp = amount + '*' + unitPrice;
 				if (meterage != '')
 					exp = exp + '*' + meterage;
-				alert(math.eval(exp).toFixed(2));
 				totlemnt.val(math.eval(exp).toFixed(2));
 			}
 		}
@@ -4009,14 +4034,23 @@ var App = function () {
                 field: 'orderIdentify',
                 title: '关联订单号'
             }, {
+                field: 'customerName',
+                title: '客户单位'
+            }, {
                 field: 'pdtNo',
                 title: '货号'
             }, {
                 field: 'content',
                 title: '含量'
             }, {
+                field: 'price',
+                title: '单价'
+            }, {
                 field: 'amount',
                 title: '发货数'
+            }, {
+                field: 'totlment',
+                title: '金额'
             }, {
                 field: 'remark',
                 title: '备注'
@@ -4454,9 +4488,21 @@ var App = function () {
             	formatter: function(value,row,index){
             		return '<a href="javascript:;" onclick="viewDeliver(\''+row.customerName+'\')" title="发货明细"><i class="fa fa-truck"></i></a>&nbsp; <a href="javascript:;" onclick="viewTransaction(\''+row.customerName+'\')" title="收款明细"><i class="fa fa-money"></i></a>';
             	}
-            }]
+            }],
+            queryParams: function(params){
+            	return {   
+                    customerName: $("input[name=customerName]").val()
+                }
+            }
 		});
 		
+		$("input[name=customerName]").change(function(){
+			$("#tbl_receivable").bootstrapTable('refresh', {url: getProjectName() + "/accountrpt/statisticsByCustomer.do", cash:false});
+		});
+		
+		$("#btn_query_tran").click(function(){
+			$("#tbl_transaction").bootstrapTable('refresh', {url: getProjectName() + "/transaction/loadbyuser.do", cash:false});
+		});
 		
 		$("#btn_query_deliver").click(function(){
 			$("#tbl_deliver").bootstrapTable('refresh', {url: getProjectName() + "/deliver/loadbycust.do", cash:false});
@@ -4469,37 +4515,53 @@ var App = function () {
 	var initPaymentModule = function(){
 		var date = new Date();
 		$("#tbl_payment").bootstrapTable({
-			url: "../json/payment.json",
+			url: getProjectName() + "/accountpmt/statisticsBySupplier.do",
 			method: "get",
 			pagination: false,
 			sidePagination: "server", 
 			columns: [{
-                field: 'purchase',
+                field: 'supplierName',
                 title: '往来单位'
             }, {
-                field: 'arrearsulm',
-                title: '截止' + date.getFullYear() + '年' + date.getMonth() + '月欠款'
+                field: 'debt',
+                title: '截止当前应付金额'
             }, {
-                field: 'paidulm',
-                title: '截止' + date.getFullYear() + '年' + date.getMonth() + '月付款'
+                field: 'payment',
+                title: '截止当前已付金额',
+                formatter: function(value,row,index){
+                	return Math.abs(value);
+                }
             }, {
-                field: 'arrearscm',
-                title: date.getFullYear() + '年' + (date.getMonth() + 1) + '月欠款'
-            }, {
-                field: 'paidcm',
-                title: date.getFullYear() + '年' + (date.getMonth() + 1) + '月付款'
-            }, {
-                field: 'arrears',
-                title: '截止当前欠款'
+                field: '',
+                title: '截止当前欠款金额',
+                formatter: function(value,row,index){
+                	return row.debt - Math.abs(row.payment);
+                }
             }, {
             	field: '',
             	title: '查看',
             	formatter: function(value,row,index){
-            		return '<a href="javascript:;" onclick="viewReceptionM(\''+row.purchase+'\')" title="接收明细"><i class="fa fa-truck"></i></a> &nbsp; <a href="javascript:;" onclick="viewTransaction(\''+row.purchase+'\')" title="付款明细"><i class="fa fa-money"></i></a>';
+            		return '<a href="javascript:;" onclick="viewReceptionM(\''+row.supplierName+'\')" title="接收明细"><i class="fa fa-truck"></i></a> &nbsp; <a href="javascript:;" onclick="viewTransaction(\''+row.supplierName+'\')" title="付款明细"><i class="fa fa-money"></i></a>';
             	}
-            }]
+            }],
+            queryParams: function(params){
+            	return {   
+                    supplierName: $("input[name=supplierName]").val()
+                }
+            }
 		});
 		
+		$("input[name=supplierName]").change(function(){
+			$("#tbl_payment").bootstrapTable('refresh', {url: getProjectName() + "/accountpmt/statisticsBySupplier.do", cash:false});
+		});
+		
+		$("#btn_query_tran").click(function(){
+			$("#tbl_transaction").bootstrapTable('refresh', {url: getProjectName() + "/transaction/loadbyuser.do", cash:false});
+		});
+		
+		$("#btn_query_reception").click(function(){
+			$("#tbl_reception").bootstrapTable('refresh', {url: getProjectName() + "/reception/loadbysupplier.do", cash:false});
+		});
 	}
 
 	/*-----------------------------------------------------------------------------------*/
@@ -5298,10 +5360,12 @@ var App = function () {
             }
             if (App.isPage("receivable")){
             	handleMenu("receivable.html");
+            	handleDatePicker();
             	initReceivableModule();
             }
             if (App.isPage("payment")){
             	handleMenu("payment.html");
+            	handleDatePicker();
             	initPaymentModule();
             }
             if (App.isPage("account")){
@@ -5475,6 +5539,18 @@ var deleteOrderItem = function(index){
 	oorderitems.splice(index, 1);
 	$("#tbl_orderitem").attr("data-data", JSON.stringify(oorderitems));
 	$("#tbl_orderitem").bootstrapTable("refreshOptions", {data: oorderitems});
+}
+
+var fixState = function(state){
+	var btnstates = $("#groupstate").children();
+	var currentBtn = $(btnstates[state - 1]);
+	
+	currentBtn.attr("class", "btn btn-success");
+	currentBtn.prepend("<i class='fa fa-check'></i>");
+	
+	btnstates.not(currentBtn).attr("class", "btn btn-default");
+	btnstates.not(currentBtn).find("i").remove();
+	
 }
 
 /*-----------------------------------------------------------------------------------*/
@@ -5658,11 +5734,103 @@ function viewDeliver(customer){
 }
 
 function viewReceptionM(supplier){
-	
+	$("#modalReception").modal('show');
+	$("#tbl_reception").bootstrapTable({
+		url: getProjectName() + "/reception/loadbysupplier.do",
+		method: "get",
+		pagination: true,
+		sidePagination: "server", 
+		columns: [{
+            field: 'receiveDate',
+            title: '接收日期'
+        }, {
+            field: 'supplierName',
+            title: '供应商'
+        }, {
+            field: 'materialName',
+            title: '原材料'
+        }, {
+            field: '',
+            title: '规格',
+            formatter: function(value, row, index){
+            	
+            	var specification = row.specification1;
+            	if (row.specification2 && row.specification2 != ''){
+            		specification += '*' + row.specification2;
+            	}
+            	if (row.specification3 && row.specification3 != ''){
+            		specification += '*' + row.specification3;
+            	}
+            	return specification;
+            }
+        }, {
+            field: 'meterage',
+            title: '计量数'
+        }, {
+            field: 'amount',
+            title: '数量'
+        }, {
+            field: 'unitPrice',
+            title: '单价'
+        }, {
+            field: 'totlemnt',
+            title: '合计'
+        }],
+        queryParams: function(params){
+        	return {
+                pageSize: params.limit,
+                pageOffset: params.offset,   
+                startDate: $("#startDate_rep").val(),
+                endDate: $("#endDate_rep").val(),
+                supplierName: supplier
+            }
+        }
+	});
 }
 
 function viewTransaction(user){
-	
+	$("#modalTransaction").modal('show');
+	$("#tbl_transaction").bootstrapTable({
+		url: getProjectName() + "/transaction/loadbyuser.do",
+		method: "get",
+		pagination: true,
+		sidePagination: "server", 
+		columns: [{
+            field: 'tranDate',
+            title: '交易日期'
+        }, {
+            field: 'tranType',
+            title: '交易类型',
+            formatter: function(value, row, index){
+            	if (value == 1)
+            		return "收款";
+            	if (value == 2)
+            		return "付款";
+            	return "";
+            }
+        }, {
+            field: 'tranAmount',
+            title: '交易金额'
+        }, {
+            field: 'tranUser',
+            title: '交易用户'
+        }, {
+            field: 'tranBank',
+            title: '交易银行'
+        }, {
+            field: 'tranAccountNo',
+            title: '交易账号'
+        }],
+        queryParams: function(params){
+        	return {
+                pageSize: params.limit,
+                pageOffset: params.offset,   
+                startDate: $("#startDate_tran").val(),
+                endDate: $("#endDate_tran").val(),
+                tranUser: user
+            }
+        }
+	});
 }
 
 /*-----------------------------------------------------------------------------------*/

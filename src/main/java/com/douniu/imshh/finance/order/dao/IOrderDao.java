@@ -14,5 +14,6 @@ public interface IOrderDao {
 	void insert(Order Order);
 	void batchInsert(List<Order> orders);
 	void update(Order order);
+	void updateState(Order order);
 	void deleteById(String id);
 }

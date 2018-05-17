@@ -8,6 +8,8 @@ public interface IReceptionService {
 	List<Reception> query(Reception reception);
 	List<Reception> queryNoPage(Reception reception);
 	int count(Reception reception);
+	List<Reception> queryBySupplier(Reception reception);
+	int countBySupplier(Reception reception);
 	Reception getById(String id);
 	void save(Reception reception);
 	void delete(String id);

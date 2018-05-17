@@ -22,6 +22,17 @@ public class TransactionService implements ITransactionService{
 		return dao.count(condition);
 	}
 
+	
+	@Override
+	public List<Transaction> queryByUser(Transaction transaction) {
+		return dao.queryByUser(transaction);
+	}
+
+	@Override
+	public int countByUser(Transaction transaction) {
+		return dao.countByUser(transaction);
+	}
+
 	@Override
 	public List<Transaction> queryByOrder(String orderIdentify) {
 		return dao.findByOrder(orderIdentify);

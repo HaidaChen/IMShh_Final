@@ -15,7 +15,7 @@
          where month like #{month}        
     </select> 
     
-    <select id="statisticsByCustomer" resultMap="receptionmap">
+    <select id="statisticsByCustomer" parameterType="String" resultMap="receptionmap">
         select r.custName as customerName, r.reception as reception, (case when p.payment is null then 0 else p.payment end) as payment from 
            (select o.custName custName, sum(d.totlment) reception 
               from t_storage_deliver d, t_order o 
@@ -25,6 +25,7 @@
               from t_transaction 
              where trantype = 1 group by tranuser)p 
             on r.custName = p.tranuser
+         where custName like #{customerName}
     </select>     
     
     <update id="addReception" parameterType="AccountReception">

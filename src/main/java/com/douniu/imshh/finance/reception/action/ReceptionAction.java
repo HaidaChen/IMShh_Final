@@ -85,6 +85,22 @@ public class ReceptionAction {
 		return gson.toJson(pr);
 	}
 	
+	
+	@RequestMapping(value ="/loadbysupplier", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String loadBySupplier(Reception reception){
+		List<Reception> res = service.queryBySupplier(reception);
+		int count = service.countBySupplier(reception);
+		
+		PageResult pr = new PageResult();
+		
+		pr.setTotal(count);
+		pr.setRows(res);
+		
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		return gson.toJson(pr);
+	}
+	
 	@RequestMapping("/delete")
 	@ResponseBody
 	public void delete(String id){

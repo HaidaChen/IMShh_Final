@@ -67,6 +67,21 @@ public class DeliverAction {
         return 1;
 	}	
 	
+	@RequestMapping(value ="/loaddeliver", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String loadDeliver(Deliver deliver){
+		List<Deliver> res = service.query(deliver);
+		int count = service.countByCustomer(deliver);
+		
+		PageResult pr = new PageResult();
+		
+		pr.setTotal(count);
+		pr.setRows(res);
+		
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		return gson.toJson(pr);
+	}
+	
 	@RequestMapping(value ="/loadbycust", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String loadByCust(Deliver deliver){

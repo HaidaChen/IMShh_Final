@@ -67,6 +67,21 @@ public class TransactionAction {
 		return gson.toJson(pr);
 	}
 	
+	@RequestMapping(value ="/loadbyuser", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String loadByUser(Transaction transaction){
+		List<Transaction> res = service.queryByUser(transaction);
+		int count = service.countByUser(transaction);
+		
+		PageResult pr = new PageResult();
+		
+		pr.setTotal(count);
+		pr.setRows(res);
+		
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd hh:mm:ss").create();
+		return gson.toJson(pr);
+	}
+	
 	@RequestMapping(value ="/findbyorder", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String findByOrder(String orderIdentify){

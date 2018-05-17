@@ -6,7 +6,7 @@ import com.douniu.imshh.finance.account.domain.Payment;
 
 public interface IPaymentDao {
 	Payment statistics(String year);
-	List<Payment> statisticsBySupplier(String year);
+	List<Payment> statisticsBySupplier(String supplierName);
 	void addDebt(Payment payment);
 	void addPayment(Payment payment);
 }

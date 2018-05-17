@@ -28,6 +28,18 @@ public class ReceptionService implements IReceptionService{
 		Reception condition = LikeFlagUtil.appendLikeFlag(reception, new String[]{"condition"});
 		return dao.count(condition);
 	}
+		
+
+	@Override
+	public List<Reception> queryBySupplier(Reception reception) {
+		return dao.queryBySupplier(reception);
+	}
+
+	@Override
+	public int countBySupplier(Reception reception) {
+		// TODO Auto-generated method stub
+		return dao.countBySupplier(reception);
+	}
 
 	@Override
 	public Reception getById(String id) {
