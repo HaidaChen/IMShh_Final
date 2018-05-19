@@ -3,33 +3,35 @@ package com.douniu.imshh.finance.order.domain;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.douniu.imshh.common.BaseQO;
 
 public class Order extends BaseQO {
 	private String id;
 	private String identify; /*订单编号*/
-	private String custId;   /*客户ID*/
 	private String custName; /*客户名称*/
-	@DateTimeFormat(pattern = "yyyy-MM-dd") 
 	private Date orderDate;  /*订单生成日期*/
-	private float amount;    /*订单总金额*/
+	private Date deliveryTerm; /*交货日期*/
+	private float exchangeRate; /*约定汇率*/
+	private float amountRMB;    /*订单总金额*/
+	private float amountDollar;    /*订单总金额*/
 	private int state = 1;   /*订单状态*/
-	private List<OrderDetail> details;  /*订单明细*/
+	private List<OrderDetail> details;  /*订单明细*/	
 	
 	private String remark;
 	private int status = 1;
 	
 	public Order(){}
 	
-	public Order(String id, String identify, String custName, Date orderDate, float amount, String remark) {
+	public Order(String id, String identify, String custName, Date orderDate, Date deliveryTerm, float exchangeRate, float amountRMB, float amountDollar, String remark) {
 		super();
 		this.id = id;
 		this.identify = identify;
 		this.custName = custName;
 		this.orderDate = orderDate;
-		this.amount = amount;
+		this.deliveryTerm = deliveryTerm;
+		this.exchangeRate = exchangeRate;
+		this.amountRMB = amountRMB;	
+		this.amountDollar = amountDollar;
 		this.remark = remark;
 	}
 	public String getId() {
@@ -43,13 +45,7 @@ public class Order extends BaseQO {
 	}
 	public void setIdentify(String identify) {
 		this.identify = identify;
-	}
-	public String getCustId() {
-		return custId;
-	}
-	public void setCustId(String custId) {
-		this.custId = custId;
-	}
+	}	
 	public String getCustName() {
 		return custName;
 	}
@@ -62,12 +58,23 @@ public class Order extends BaseQO {
 	public void setOrderDate(Date orderDate) {
 		this.orderDate = orderDate;
 	}
-	public float getAmount() {
-		return amount;
+	
+	public float getAmountRMB() {
+		return amountRMB;
 	}
-	public void setAmount(float amount) {
-		this.amount = amount;
+
+	public void setAmountRMB(float amountRMB) {
+		this.amountRMB = amountRMB;
 	}
+
+	public float getAmountDollar() {
+		return amountDollar;
+	}
+
+	public void setAmountDollar(float amountDollar) {
+		this.amountDollar = amountDollar;
+	}
+
 	public int getState() {
 		return state;
 	}
@@ -92,10 +99,29 @@ public class Order extends BaseQO {
 	public void setStatus(int status) {
 		this.status = status;
 	}
+	
+	public Date getDeliveryTerm() {
+		return deliveryTerm;
+	}
+
+	public void setDeliveryTerm(Date deliveryTerm) {
+		this.deliveryTerm = deliveryTerm;
+	}
+
+	public float getExchangeRate() {
+		return exchangeRate;
+	}
+
+	public void setExchangeRate(float exchangeRate) {
+		this.exchangeRate = exchangeRate;
+	}
+
 	@Override
 	public String toString() {
-		return "Order [id=" + id + ", identify=" + identify + ", custId=" + custId + ", custName=" + custName
-				+ ", orderDate=" + orderDate + ", amount=" + amount + ", state=" + state + ", details=" + details
-				+ ", remark=" + remark + ", status=" + status + "]";
-	}	
+		return "Order [id=" + id + ", identify=" + identify + ", custName=" + custName
+				+ ", orderDate=" + orderDate + ", amountRMB=" + amountRMB + ", amountDollar=" + amountDollar
+				+ ", state=" + state + ", details=" + details + ", deliveryTerm=" + deliveryTerm + ", exchangeRate="
+				+ exchangeRate + ", remark=" + remark + ", status=" + status + "]";
+	}
+	
 }

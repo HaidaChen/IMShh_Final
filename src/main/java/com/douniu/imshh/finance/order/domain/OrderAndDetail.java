@@ -6,7 +6,10 @@ public class OrderAndDetail {
 	private String identify; 
 	private String custName;
 	private Date orderDate;
-	private float amount;
+	private Date deliveryTerm;
+	private float exchangeRate;
+	private float amountRMB;
+	private float amountDollar;
 	private String remark;
 	private String pdtNo;
 	private String pdtName;
@@ -14,20 +17,23 @@ public class OrderAndDetail {
 	private int quantity;
 	private float priceRMB;
 	private float priceDollar;
-	private float totlemnt;
-	private float progress;
+	private float totlmentRMB;
+	private float totlmentDollar;
 	private String detailRemark;
 	
 	public OrderAndDetail(){super();}	
 	
-	public OrderAndDetail(String identify, String custName, Date orderDate, float amount, String remark, String pdtNo,
-			String pdtName, String content, int quantity, float priceRMB, float priceDollar, float totlemnt,
-			float progress, String detailRemark) {
+	public OrderAndDetail(String identify, String custName, Date orderDate, Date deliveryTerm, float exchangeRate, float amountRMB, float amountDollar, String remark, String pdtNo,
+			String pdtName, String content, int quantity, float priceRMB, float priceDollar, float totlemntRMB, float totlemntDollar,
+			String detailRemark) {
 		super();
 		this.identify = identify;
 		this.custName = custName;
 		this.orderDate = orderDate;
-		this.amount = amount;
+		this.deliveryTerm = deliveryTerm;
+		this.exchangeRate = exchangeRate;
+		this.amountRMB = amountRMB;
+		this.amountDollar = amountDollar;
 		this.remark = remark;
 		this.pdtNo = pdtNo;
 		this.pdtName = pdtName;
@@ -35,8 +41,8 @@ public class OrderAndDetail {
 		this.quantity = quantity;
 		this.priceRMB = priceRMB;
 		this.priceDollar = priceDollar;
-		this.totlemnt = totlemnt;
-		this.progress = progress;
+		this.totlmentRMB = totlemntRMB;
+		this.totlmentDollar = totlemntDollar;
 		this.detailRemark = detailRemark;
 	}
 
@@ -60,12 +66,7 @@ public class OrderAndDetail {
 	public void setOrderDate(Date orderDate) {
 		this.orderDate = orderDate;
 	}
-	public float getAmount() {
-		return amount;
-	}
-	public void setAmount(float amount) {
-		this.amount = amount;
-	}
+	
 	public String getRemark() {
 		return remark;
 	}
@@ -102,18 +103,7 @@ public class OrderAndDetail {
 	public void setPriceDollar(float priceDollar) {
 		this.priceDollar = priceDollar;
 	}
-	public float getTotlemnt() {
-		return totlemnt;
-	}
-	public void setTotlemnt(float totlemnt) {
-		this.totlemnt = totlemnt;
-	}
-	public float getProgress() {
-		return progress;
-	}
-	public void setProgress(float progress) {
-		this.progress = progress;
-	}
+	
 	public String getDetailRemark() {
 		return detailRemark;
 	}
@@ -126,6 +116,54 @@ public class OrderAndDetail {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	
+
+	public Date getDeliveryTerm() {
+		return deliveryTerm;
+	}
+
+	public void setDeliveryTerm(Date deliveryTerm) {
+		this.deliveryTerm = deliveryTerm;
+	}
+
+	public float getExchangeRate() {
+		return exchangeRate;
+	}
+
+	public void setExchangeRate(float exchangeRate) {
+		this.exchangeRate = exchangeRate;
+	}
+
+	public float getAmountRMB() {
+		return amountRMB;
+	}
+
+	public void setAmountRMB(float amountRMB) {
+		this.amountRMB = amountRMB;
+	}
+
+	public float getAmountDollar() {
+		return amountDollar;
+	}
+
+	public void setAmountDollar(float amountDollar) {
+		this.amountDollar = amountDollar;
+	}
+
+	public float getTotlmentRMB() {
+		return totlmentRMB;
+	}
+
+	public void setTotlmentRMB(float totlmentRMB) {
+		this.totlmentRMB = totlmentRMB;
+	}
+
+	public float getTotlmentDollar() {
+		return totlmentDollar;
+	}
+
+	public void setTotlmentDollar(float totlmentDollar) {
+		this.totlmentDollar = totlmentDollar;
+	}
+
 	
 }

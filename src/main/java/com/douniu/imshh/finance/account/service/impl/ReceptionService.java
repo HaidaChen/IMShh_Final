@@ -30,7 +30,6 @@ public class ReceptionService implements IReceptionService{
 	@Override
 	public void addReception(Deliver deliver) {
 		Order order = orderService.getByNo(deliver.getOrderIdentify());
-		String customerId = order.getCustId();
 		String customerName = order.getCustName();
 		DateFormat format = new SimpleDateFormat("yyyy-MM");  
         String month = format.format(deliver.getDeliverDate());  
@@ -42,7 +41,6 @@ public class ReceptionService implements IReceptionService{
 			}
 		}
 		Reception reception = new Reception();
-		reception.setCustomerId(customerId);
 		reception.setCustomerName(customerName);
 		reception.setMonth(month);
 		reception.setReception(amount);

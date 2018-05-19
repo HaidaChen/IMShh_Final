@@ -2,16 +2,17 @@ package com.douniu.imshh.finance.order.domain;
 
 public class OrderDetail {
 	private String id;
-	private String orderId;  /*订单编号*/
+	private String orderIdentify;  /*订单编号*/
 	private String pdtNo; /*货号*/
-	private String pdtId;    /*产品编号*/
 	private String pdtName;  /*产品名称*/
 	private String content;  /*产品含量*/
 	private int quantity;    /*产品数量*/
 	private float priceRMB;  /*人民币单价*/
 	private float priceDollar; /*美元单价*/
-	private float totlemnt;    /*合计*/
-	private float progress;  /*交付进度*/
+	private float totlmentRMB;    /*合计*/
+	private float totlmentDollar;    /*合计*/
+	private int inStorageQuantity;  /*生产数量*/
+	private int deliverQuantity;  /*交付数量*/
 	
 	private String remark;
 	private int status = 1;
@@ -19,18 +20,19 @@ public class OrderDetail {
 	public OrderDetail(){}
 	
 	
-	public OrderDetail(String id, String orderId, String pdtNo, String pdtName, String content, int quantity, float priceRMB, float priceDollar,
-			float totlemnt, String remark) {
+	public OrderDetail(String id, String orderIdentify, String pdtNo, String pdtName, String content, int quantity, float priceRMB, float priceDollar,
+			float totlmentRMB, float totlmentDollar, String remark) {
 		super();
 		this.id = id;
-		this.orderId = orderId;
+		this.orderIdentify = orderIdentify;
 		this.pdtNo = pdtNo;
 		this.pdtName = pdtName;
 		this.content = content;
 		this.quantity = quantity;
 		this.priceRMB = priceRMB;
 		this.priceDollar = priceDollar;
-		this.totlemnt = totlemnt;
+		this.totlmentRMB = totlmentRMB;
+		this.totlmentDollar = totlmentDollar;
 		this.remark = remark;
 	}
 
@@ -41,23 +43,22 @@ public class OrderDetail {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getOrderId() {
-		return orderId;
+		
+	public String getOrderIdentify() {
+		return orderIdentify;
 	}
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
-	}	
+
+
+	public void setOrderIdentify(String orderIdentify) {
+		this.orderIdentify = orderIdentify;
+	}
+
+
 	public String getPdtNo() {
 		return pdtNo;
 	}
 	public void setPdtNo(String pdtNo) {
 		this.pdtNo = pdtNo;
-	}
-	public String getPdtId() {
-		return pdtId;
-	}
-	public void setPdtId(String pdtId) {
-		this.pdtId = pdtId;
 	}
 	public String getPdtName() {
 		return pdtName;
@@ -84,18 +85,46 @@ public class OrderDetail {
 		this.priceDollar = priceDollar;
 	}
 	
-	public float getTotlemnt() {
-		return totlemnt;
+	public float getTotlmentRMB() {
+		return totlmentRMB;
 	}
-	public void setTotlemnt(float totlemnt) {
-		this.totlemnt = totlemnt;
+
+
+	public void setTotlmentRMB(float totlmentRMB) {
+		this.totlmentRMB = totlmentRMB;
 	}
-	public float getProgress() {
-		return progress;
+
+
+	public float getTotlmentDollar() {
+		return totlmentDollar;
 	}
-	public void setProgress(float progress) {
-		this.progress = progress;
+
+
+	public void setTotlmentDollar(float totlmentDollar) {
+		this.totlmentDollar = totlmentDollar;
 	}
+
+
+	public int getInStorageQuantity() {
+		return inStorageQuantity;
+	}
+
+
+	public void setInStorageQuantity(int inStorageQuantity) {
+		this.inStorageQuantity = inStorageQuantity;
+	}
+
+
+	public int getDeliverQuantity() {
+		return deliverQuantity;
+	}
+
+
+	public void setDeliverQuantity(int deliverQuantity) {
+		this.deliverQuantity = deliverQuantity;
+	}
+
+
 	public String getRemark() {
 		return remark;
 	}
@@ -121,11 +150,11 @@ public class OrderDetail {
 
 	@Override
 	public String toString() {
-		return "OrderDetail [id=" + id + ", orderId=" + orderId + ", pdtNo=" + pdtNo + ", pdtId=" + pdtId + ", pdtName="
+		return "OrderDetail [id=" + id + ", orderIdentify=" + orderIdentify + ", pdtNo=" + pdtNo + ", pdtName="
 				+ pdtName + ", content=" + content + ", quantity=" + quantity + ", priceRMB=" + priceRMB
-				+ ", priceDollar=" + priceDollar + ", totlemnt=" + totlemnt + ", progress=" + progress + ", remark="
+				+ ", priceDollar=" + priceDollar + ", totlmentRMB=" + totlmentRMB + ", totlmentDollar=" + totlmentDollar
+				+ ", inStorageQuantity=" + inStorageQuantity + ", deliverQuantity=" + deliverQuantity + ", remark="
 				+ remark + ", status=" + status + "]";
 	}
-
-
+	
 }

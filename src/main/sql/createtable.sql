@@ -1,6 +1,6 @@
 CREATE TABLE T_CUSTOMER(
     id varchar(20) not null,
-    name varchar(20) not null,
+    name varchar(128) not null,
     address varchar(256),
     phone varchar(20),
     eMail varchar(20),
@@ -55,11 +55,13 @@ CREATE TABLE T_MATERIAL(
 
 CREATE TABLE T_ORDER(
     id varchar(20) not null,
-    identify varchar(20) not null unique,
-    custID varchar(20),
-    custName varchar(20),    
+    identify varchar(64) not null unique,
+    custName varchar(128),    
     orderDate date,
-    amount numeric(10,2),
+    deliveryTerm date,
+    exchangeRate numeric(14,7),
+    amountRMB numeric(14,4),
+    amountDollar numeric(14,4),
     state char(1),
     modifyDate datetime,
     remark varchar(1024),
@@ -68,17 +70,15 @@ CREATE TABLE T_ORDER(
 
 CREATE TABLE T_ORDERDETAIL(
     id varchar(20) not null,
-    orderId varchar(20) not null,
-    pdtNo varchar(20) not null unique,
+    orderIdentify varchar(64) not null,
     pdtNo varchar(20) not null,
-    pdtID varchar(20),
     pdtName varchar(20),   
     content varchar(20), 
     quantity int,
-    priceRMB numeric(10,2),
-    priceDollar numeric(10,2),
-    totlemnt numeric(10,2),
-    progress int,    
+    priceRMB numeric(12,4),
+    priceDollar numeric(12,4),
+    totlmentRMB numeric(14,4),
+    totlmentDollar numeric(14,4),
     
     modifyDate datetime,
     remark varchar(1024),

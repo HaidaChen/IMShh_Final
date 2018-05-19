@@ -4,6 +4,14 @@
 var FillForm = function(){
 	var oFillForm = new Object();
 	
+	oFillForm.fillByData = function(filter, data, type){
+		var container = $(filter);
+		var attr = container.attr("fieldAttr");
+		var perfix = container.attr("fieldPerfix");
+		
+		fillData(data, container, attr, perfix, type);
+	}
+	
 	oFillForm.fill = function(filter, type, urlparam){
 		var container = $(filter);
 		var url = getProjectName() + container.attr("url");

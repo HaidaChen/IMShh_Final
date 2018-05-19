@@ -163,13 +163,13 @@
 									<div class="form-group">
 									    <label class="col-md-3 control-label">￥单价</label> 
 									    <div class="col-md-7">
-									    	<input type="text" name="priceRMB" class="form-control" value="">
+									    	<input type="text" name="priceRMB" class="form-control" value="0" default="0">
 									    </div>
 									</div>
 									<div class="form-group">
 									    <label class="col-md-3 control-label">$ 单价</label> 
 									    <div class="col-md-7">
-									    	<input type="text" name="priceDollar" class="form-control" value="">
+									    	<input type="text" name="priceDollar" class="form-control" value="0" default="0">
 									    </div>
 									</div>
 									<div class="form-group">
@@ -179,9 +179,15 @@
 									    </div>
 									</div>
 									<div class="form-group">
-									    <label class="col-md-3 control-label">合计</label> 
+									    <label class="col-md-3 control-label">￥合计</label> 
 									    <div class="col-md-7">
-									    	<input type="text" name="totlemnt" class="form-control" value="" readonly>
+									    	<input type="text" name="totlmentRMB" class="form-control" value="0"  default="0" readonly>
+									    </div>
+									</div>
+									<div class="form-group">
+									    <label class="col-md-3 control-label">$合计</label> 
+									    <div class="col-md-7">
+									    	<input type="text" name="totlmentDollar" class="form-control" value="0"  default="0" readonly>
 									    </div>
 									</div>										
 								</form>
@@ -226,7 +232,7 @@
 												    	
 												    	<span class="pull-right col-md-4" >
 															<div class="input-group" >
-																<input type="text" name="condition" class="form-control" placeholder="查询条件"/>
+																<input type="text" name="condition" class="form-control" placeholder="订单编号、者订购客"/>
 																<div class="input-group-btn">
 																	<button type="button" id="btn_datapriod" class="btn btn-default dropdown-toggle" data-toggle="dropdown">所有数据<span class="caret"></span></button>
 																	<ul id="dataperiod" class="dropdown-menu" >
@@ -254,9 +260,11 @@
 											<div class='col-md-12'>
 												<div class="box">
 													<div class="box-title">
-														<h4><i class="fa fa-shopping-cart"></i>订单</h4>
+														<h4><i class="fa fa-shopping-cart"></i>订单<span id="view_orderId" class='text-muted'></span></h4>
 														<div class="tools">
-															
+															<a href="javascript:;" >
+																<i class="fa fa-wrench"></i>
+															</a>
 															<a href="javascript:;" class="vgoback">
 																<i class="fa fa-times"></i>
 															</a>
@@ -264,85 +272,43 @@
 													</div>
 													<div class="box-body">
 														<div class="panel panel-default">
-														  <div class="panel-body">
-															<div class='row'>
-																<div class='col-md-12'>
-																	<div class="invoice-header clearfix">
-																		<h3 class='pull-left'>
-																		  <i class='fa fa-money'></i>
-																		  <span>订单</span>
-																		  <span id="view_orderId" class='text-muted'></span>
-																		</h3>
-																		<div class='pull-right'>
-																		  <div id="groupstate" class='btn-group'>
-																		  	<a class="btn btn-default" href="javascript:;">
-																			新的订单
-																			</a>
-																			<a class="btn btn-default" href="javascript:;">
-																			已发货
-																			</a>
-																			<a class="btn btn-default" href="javascript:;">
-																			已收款
-																			</a>
-																		  </div>
-																		</div>
-																	</div>
-																</div>
-															</div>
-															<hr>
-															<div class='row'>																
-																<div class='col-sm-4 buyer'>
-																  <div class='invoice-title'>客户信息</div>
-																  <i class='fa fa-male'></i>
-																  <address>
-																	<strong id="view_custname"></strong>																	
-																	<br>
-																	<span id="view_custaddress"></span>
-																	<br>																	
-																	<small ><a id="view_custemail" href="mailto:jane@doe.com"></a></small>
-																	<br>
-																	<small id="view_custphone"></small>
-																  </address>
-																</div>
-																<div class='col-sm-4 seller'>
-																  <div class='invoice-title'>发货明细</div>
-																  <div id="deliverCarousel" class="well carousel slide" data-wrap="false">
-																	  
-																	
-																  </div>
-																</div>
-																<div class='col-sm-4 payment-info'>
-																  <div class='invoice-title text-muted'>支付明细</div>
-																  <div id="receiveCarousel" class="well carousel slide" data-wrap="false">
-																	  
-																  </div>
-																</div>
-															  </div>
-														</div>
-														<table id="tbl_orderItems" class="table table-striped table-hover font-400 font-14">
-										
-									  					</table>
-									  					<hr>
-														  <div class="panel-body">
-															  <div class='row'>
-																<div class='col-sm-12'>
-																  <div class='text-right font-400 font-14'>
-																	<h2 id="view_totlment" class="amount"></h2>
-																  <br/>
-																  <div class='btn-group hidden-xs pull-right invoice-btn-group'>
-																	  <a class="btn btn-lg btn-default" onclick="javascript:window.print();"><i class="fa fa-print"></i> 打印订单</a>
-																	  
-																  </div>
-																  <div class='btn-group visible-xs pull-right invoice-btn-group'>
-																	  <a class="btn btn-default" onclick="javascript:window.print();"><i class="fa fa-print"></i> 打印订单</a>
-																	  
-																  </div>
-																  </div>
-																  
-																</div>
-															  </div>
-														  </div>
-													</div>
+														    <div class="panel-body">
+														        <div class="row">
+														            <div class="col-md-3">
+														            	<div class="list-group viewForm" fieldAttr="id" fieldPerfix="view_">
+														            		<a class="list-group-item">订购客户：  <span id="view_custName" class="formItem"></span></a>
+														            		<a class="list-group-item">订购日期：  <span id="view_orderDate" class="formItem" valuetype="date" valueformatter="yyyy-MM-dd"></span></a>
+														            		<a class="list-group-item">交付期限：  <span id="view_deliveryTerm" class="formItem" valuetype="date" valueformatter="yyyy-MM-dd"></span></a>
+														            		<a class="list-group-item">约定汇率：  <span id="view_exchangeRate" class="formItem"></span></a>
+														            		<a class="list-group-item">订单金额(¥)：  <span id="view_amountRMB" class="formItem"></span></a>
+														            		<a class="list-group-item">订单金额($)：  <span id="view_amountDollar" class="formItem"></span></a>
+														                </div>
+														                <form id="orderUpdateForm" method="post" fieldAttr="name">
+															                <div class="list-group " fieldAttr="name">
+															            		<a class="list-group-item">订购客户：<input type="text" name="custName" class="formItem" style="width: 60%">
+															            		                                   <input type="hidden" name="id" class="formItem"></a>
+															            		<a class="list-group-item">订购日期：  <input type="text" name="orderDate" valuetype="date" valueformatter="yyyy-MM-dd" class="selectData formItem" style="width: 60%"></a>
+															            		<a class="list-group-item">交付期限：  <input type="text" name="deliveryTerm" valuetype="date" valueformatter="yyyy-MM-dd" class="selectData formItem" style="width: 60%"></a>
+															            		<a class="list-group-item">约定汇率：  <input type="text" name="exchangeRate" class="formItem" style="width: 60%"></a>
+															            		<a class="list-group-item">订单金额(¥)： <input type="text" name="amountRMB" class="formItem" style="width: 55%"></a>
+															            		<a class="list-group-item">订单金额($)：  <input type="text" name="amountDollar" class="formItem" style="width: 55%"></a>
+															                </div>
+														                </form>
+														            </div>
+														            <div class="col-md-9">
+														                <div class="box border blue">
+																			<div class="box-title">
+																			    <h4><i class="fa fa-ellipsis-v"></i>订单项明细</h4>
+																			</div>
+																			<div class="box-body">
+																				<table id="tbl_orderItems" class="table table-striped table-hover font-400 font-14">
+																				</table>
+																			</div>
+																		</div>														            	
+														            </div>
+															   </div>
+																							  					
+													      </div>
 												</div>
 										</div>
 											
@@ -354,8 +320,8 @@
 								    <div class='col-md-12'>
 									    <div class="box">
 									        <div class="box-title">
-												<div class="tools">
-													
+									        	<h4><i class="fa fa-edit"></i>新的订单</h4>
+												<div class="tools">													
 													<a href="javascript:;" class="egoback">
 														<i class="fa fa-times"></i>
 													</a>
@@ -369,19 +335,12 @@
 														<form id="formOrder" class="form-horizontal" method="post">
 															<div class="row">
 																<div class="col-md-12">
-																	<h4 style="margin-left:10px"><i class="fa fa-edit"></i>&nbsp;新的订单</h4>
-																	<hr />
+																	
 																	<div class="form-group">
 																	    <label class="col-md-3 control-label">订单编号</label> 
 																	    <div class="col-md-4">
 																	    	<input type="hidden" name="id" value="">
-																	    	<input type="text" name="identify" class="form-control" value="">
-																	    </div>
-																	</div>
-																	<div class="form-group">
-																	    <label class="col-md-3 control-label">订购日期</label> 
-																	    <div class="col-md-4">
-																	    	<input type="text" name="orderDate" class="form-control selectData" value="">
+																	    	<input type="text" name="identify" class="form-control" value="" >
 																	    </div>
 																	</div>
 																	<div class="form-group">
@@ -392,9 +351,33 @@
 																	    </div>
 																	</div>
 																	<div class="form-group">
-																	    <label class="col-md-3 control-label">订单金额</label> 
+																	    <label class="col-md-3 control-label">订购日期</label> 
 																	    <div class="col-md-4">
-																	    	<input type="text" name="amount" class="form-control" value="" readonly="readonly">
+																	    	<input type="text" name="orderDate" class="form-control selectData" value="">
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																	    <label class="col-md-3 control-label">交付日期</label> 
+																	    <div class="col-md-4">
+																	    	<input type="text" name="deliveryTerm" class="form-control selectData" value="">
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																	    <label class="col-md-3 control-label">约定汇率</label> 
+																	    <div class="col-md-4">
+																	    	<input type="text" name="exchangeRate" class="form-control" value="">
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																	    <label class="col-md-3 control-label">订单金额($)</label> 
+																	    <div class="col-md-4">
+																	    	<input type="text" name="amountDollar" class="form-control" value="" readonly="readonly">
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																	    <label class="col-md-3 control-label">订单金额(￥)</label> 
+																	    <div class="col-md-4">
+																	    	<input type="text" name="amountRMB" class="form-control" value="" readonly="readonly">
 																	    </div>
 																	</div>
 																	<div class="form-group">
@@ -411,22 +394,8 @@
 															<div class="col-md-12">
 																<h4 style="margin-left:10px"><i class="fa fa-list" ></i>&nbsp;订单项列表</h4>
 																<hr>
-																<table id="tbl_orderitem" class='table table-hover' data-data='[]'>
-																	<thead>
-																		<tr>																		  
-																		    <th data-field="pdtNo">货号</th>
-																			<th data-field="pdtName">品名</th>
-																			<th data-field="content">含量</th>
-																			<th data-field="priceRMB">￥单价</th>
-																			<th data-field="priceDollar">$ 单价</th>
-																			<th data-field="quantity">数量</th>
-																			<th data-field="totlemnt">合计</th>
-																		    <th data-formatter="return 'a'">操作</th>
-																		</tr>
-																	</thead>
-																	<tbody>
-																		
-																	</tbody>
+																<table id="tbl_orderitem_new" class='table table-hover' data-data='[]'>
+																	
 																</table>
 															</div>
 														</div>
@@ -457,6 +426,7 @@
 	<script src="../js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="../bootstrap-dist/js/bootstrap.js"></script>
 	<script src="../bootstrap-table/bootstrap-table.js"></script>
+	<script src="../bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
 	<script src="../js/jQuery-Cookie/jquery.cookie.min.js"></script>
 	<script src="../js/bootstrapvalidator/js/bootstrapValidator.min.js"></script>		
 	<script src="../js/bootstrapvalidator/js/language/zh_CN.js"></script>

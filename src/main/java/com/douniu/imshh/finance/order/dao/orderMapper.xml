@@ -5,10 +5,12 @@
     <resultMap type="Order" id="ordermap">
         <id property="id" column="id"/>
         <result property="identify" column="identify"/>
-        <result property="custId" column="custId"/>
         <result property="custName" column="custName"/>
         <result property="orderDate" column="orderDate"/>
-        <result property="amount" column="amount"/>
+        <result property="deliveryTerm" column="deliveryTerm"/>
+        <result property="exchangeRate" column="exchangeRate"/>
+        <result property="amountRMB" column="amountRMB"/>
+        <result property="amountDollar" column="amountDollar"/>
         <result property="state" column="state"/>
         <result property="remark" column="remark"/>
         <result property="status" column="status"/>        
@@ -16,37 +18,40 @@
     <resultMap type="Order" id="orderdtlmap">
         <id property="id" column="id"/>
         <result property="identify" column="identify"/>
-        <result property="custId" column="custId"/>
         <result property="custName" column="custName"/>
         <result property="orderDate" column="orderDate"/>
-        <result property="amount" column="amount"/>
+        <result property="deliveryTerm" column="deliveryTerm"/>
+        <result property="exchangeRate" column="exchangeRate"/>
+        <result property="amountRMB" column="amountRMB"/>
+        <result property="amountDollar" column="amountDollar"/>
         <result property="state" column="state"/>
         <result property="remark" column="remark"/>
         <result property="status" column="status"/>
         
         <collection property="details" ofType="OrderDetail">
             <id property="id" column="detailId"/>
-	        <result property="orderId" column="orderId"/>
+	        <result property="orderIdentify" column="orderIdentify"/>
 	        <result property="pdtNo" column="pdtNo"/>
-	        <result property="pdtId" column="pdtId"/>
 	        <result property="pdtName" column="pdtName"/>
+	        <result property="content" column="content"/>
 	        <result property="quantity" column="quantity"/>
 	        <result property="priceRMB" column="priceRMB"/>
 	        <result property="priceDollar" column="priceDollar"/>
-	        <result property="content" column="content"/>
-	        <result property="totlemnt" column="totlemnt"/>
-	        <result property="progress" column="progress"/>
+	        <result property="totlmentRMB" column="totlmentRMB"/>
+	        <result property="totlmentDollar" column="totlmentDollar"/>
+	        <result property="inStorageQuantity" column="inStorageQuantity"/>
+	        <result property="deliverQuantity" column="deliverQuantity"/>
 	        <result property="remark" column="detailremark"/>
 	        <result property="status" column="status"/>
         </collection>
     </resultMap>
     
     <select id="findById" parameterType="String" resultMap="orderdtlmap">
-        select *, t_orderdetail.id as detailId from t_order left join t_orderdetail on t_order.id = t_orderdetail.orderid where t_order.id = #{id}
+        select *, t_orderdetail.id as detailId from t_order left join t_orderdetail on t_order.identify = t_orderdetail.orderidentify where t_order.id = #{id}
     </select>
     
     <select id="findByNo" parameterType="String" resultMap="orderdtlmap">
-        select *, t_orderdetail.id as detailId from t_order left join t_orderdetail on t_order.id = t_orderdetail.orderid where t_order.identify = #{no}
+        select *, t_orderdetail.id as detailId from t_order left join t_orderdetail on t_order.identify = t_orderdetail.orderidentify where t_order.identify = #{no}
     </select>
     
     <select id="query" parameterType="Order" resultMap="ordermap">
@@ -107,16 +112,16 @@
         </if> 
     </select>   
     <insert id="insert" parameterType="Order">
-        insert into t_Order(id, identify, custid, custName, orderDate, amount, state, modifydate, remark, status) 
-          values(#{id}, #{identify}, #{custId}, #{custName}, #{orderDate}, #{amount}, #{state}, sysdate(), #{remark}, #{status})
+        insert into t_Order(id, identify, custName, orderDate, deliveryTerm, exchangeRate, amountRMB, amountDollar, state, modifydate, remark, status)  
+          values(#{id}, #{identify}, #{custName}, #{orderDate}, #{deliveryTerm}, #{exchangeRate}, #{amountRMB}, #{amountDollar}, #{state}, sysdate(), #{remark}, #{status})
     </insert>
     
     <insert id="batchInsert" parameterType="java.util.List">
         
-        insert into t_Order(id, identify, custid, custName, orderDate, amount, state, modifydate, remark, status) 
+        insert into t_Order(id, identify, custName, orderDate, deliveryTerm, exchangeRate, amountRMB, amountDollar, state, modifydate, remark, status) 
              values
              <foreach collection="list" item="order" index="index" separator=",">
-                 (#{order.id} , #{order.identify}, #{order.custId}, #{order.custName}, #{order.orderDate}, #{order.amount}, #{order.state}, sysdate(), #{order.remark}, '1')
+                 (#{order.id} , #{order.identify}, #{order.custName}, #{order.orderDate}, #{order.deliveryTerm}, #{order.exchangeRate}, #{order.amountRMB}, #{order.amountDollar}, #{order.state}, sysdate(), #{order.remark}, '1')
              </foreach>
     </insert>
     
@@ -125,7 +130,10 @@
           identify = #{identify},
           custName = #{custName},
           orderDate = #{orderDate},
-          amount = #{amount},
+          deliveryTerm = #{deliveryTerm},
+          exchangeRate = #{exchangeRate},
+          amountRMB = #{amountRMB},
+          amountDollar = #{amountDollar},
           remark = #{remark},
           modifydate = sysdate()
     where id = #{id}

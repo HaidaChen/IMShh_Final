@@ -65,14 +65,14 @@ public class OrderService implements IOrderService{
 			order.setId(orderId);
 			order.setStatus(1);
 			for(OrderDetail detail : order.getDetails()){
-				detail.setOrderId(orderId);
+				detail.setOrderIdentify(order.getIdentify());
 			}
 			detailService.batchAdd(order.getDetails());
 			dao.insert(order);
 		}else{
 			detailService.killByOrderId(order.getId());
 			for(OrderDetail detail : order.getDetails()){
-				detail.setOrderId(order.getId());
+				detail.setOrderIdentify(order.getIdentify());;
 			}
 			detailService.batchAdd(order.getDetails());
 			dao.update(order);
@@ -100,19 +100,19 @@ public class OrderService implements IOrderService{
 			String identify = orderAndDetail.getIdentify();
 			if (!identifys.contains(identify)){
 				String orderId = System.currentTimeMillis() + "" + index++;
-				Order order = new Order(orderId, orderAndDetail.getIdentify(), orderAndDetail.getCustName(), orderAndDetail.getOrderDate(), orderAndDetail.getAmount(), orderAndDetail.getRemark());
+				Order order = new Order(orderId, orderAndDetail.getIdentify(), orderAndDetail.getCustName(), orderAndDetail.getOrderDate(), orderAndDetail.getDeliveryTerm(), orderAndDetail.getExchangeRate(), orderAndDetail.getAmountRMB(), orderAndDetail.getAmountDollar(), orderAndDetail.getRemark());
 				orders.add(order);
 				identifys.add(identify);
 			}
 			String detailId = System.currentTimeMillis() + "" + index++;
-			String orderId = "";
+			String orderIdentify = "";
 			for (Order order : orders){
 				if (order.getIdentify().equals(orderAndDetail.getIdentify())){
-					orderId = order.getId();
+					orderIdentify = order.getIdentify();
 					break;
 				}
 			}
-			OrderDetail detail = new OrderDetail(detailId, orderId, orderAndDetail.getPdtNo(), orderAndDetail.getPdtName(), orderAndDetail.getContent(),orderAndDetail.getQuantity(), orderAndDetail.getPriceRMB(), orderAndDetail.getPriceDollar(), orderAndDetail.getTotlemnt(), orderAndDetail.getDetailRemark() );
+			OrderDetail detail = new OrderDetail(detailId, orderIdentify, orderAndDetail.getPdtNo(), orderAndDetail.getPdtName(), orderAndDetail.getContent(),orderAndDetail.getQuantity(), orderAndDetail.getPriceRMB(), orderAndDetail.getPriceDollar(), orderAndDetail.getTotlmentRMB(), orderAndDetail.getTotlmentDollar(),orderAndDetail.getDetailRemark() );
 			details.add(detail);
 		}
 		
@@ -125,9 +125,9 @@ public class OrderService implements IOrderService{
 		for (Order order : orderList){
 			for (OrderDetail detail : order.getDetails()){
 				OrderAndDetail orderAndDetail = new OrderAndDetail(order.getIdentify(), order.getCustName(), 
-						order.getOrderDate(), order.getAmount(), order.getRemark(), detail.getPdtNo(),
+						order.getOrderDate(), order.getDeliveryTerm(), order.getExchangeRate(), order.getAmountRMB(), order.getAmountDollar(), order.getRemark(), detail.getPdtNo(),
 						detail.getPdtName(), detail.getContent(), detail.getQuantity(), detail.getPriceRMB(), 
-						detail.getPriceDollar(), detail.getTotlemnt(), detail.getProgress(), detail.getRemark());
+						detail.getPriceDollar(), detail.getTotlmentRMB(), detail.getTotlmentDollar(), detail.getRemark());
 				orderAndDetails.add(orderAndDetail);
 			} 
 		}
@@ -142,6 +142,4 @@ public class OrderService implements IOrderService{
 		this.detailService = detailService;
 	}
 	
-	
-
 }

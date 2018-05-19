@@ -10,11 +10,6 @@ public class OrderDetailService implements IOrderDetailService{
 	private IOrderDetailDao dao;
 	
 	@Override
-	public List<OrderDetail> queryByOrder(String orderId) {
-		return dao.queryByOrder(orderId);
-	}
-	
-	@Override
 	public OrderDetail findById(String id){
 		return dao.findById(id);
 	}

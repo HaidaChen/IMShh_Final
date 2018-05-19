@@ -3,52 +3,46 @@
 
 <mapper namespace="com.douniu.imshh.finance.order.dao.IOrderDetailDao">
     <resultMap type="OrderDetail" id="orderdtlmap">
-        <result property="id" column="id"/>
-        <result property="orderId" column="orderId"/>
-        <result property="pdtNo" column="pdtNo"/>
-        <result property="pdtId" column="pdtId"/>
-        <result property="pdtName" column="pdtName"/>
-        <result property="quantity" column="quantity"/>
-        <result property="priceRMB" column="priceRMB"/>
-        <result property="priceDollar" column="priceDollar"/>
-        <result property="totlemnt" column="totlemnt"/>
-        <result property="progress" column="progress"/>
-        <result property="remark" column="remark"/>
-        <result property="status" column="status"/>
+        <id property="id" column="detailId"/>
+	        <result property="orderIdentify" column="orderIdentify"/>
+	        <result property="pdtNo" column="pdtNo"/>
+	        <result property="pdtName" column="pdtName"/>
+	        <result property="content" column="content"/>
+	        <result property="quantity" column="quantity"/>
+	        <result property="priceRMB" column="priceRMB"/>
+	        <result property="priceDollar" column="priceDollar"/>
+	        <result property="totlmentRMB" column="totlemntRMB"/>
+	        <result property="totlmentDollar" column="totlemntDollar"/>
+	        <result property="inStorageQuantity" column="inStorageQuantity"/>
+	        <result property="deliverQuantity" column="deliverQuantity"/>
+	        <result property="remark" column="detailremark"/>
+	        <result property="status" column="status"/>
     </resultMap>
-    
-    <select id="queryByOrder" parameterType="String" resultMap="orderdtlmap">
-        select * from t_OrderDetail where orderId = #{orderId}
-          order by modifydate desc
-    </select>
     
     <select id="findById" parameterType="String" resultType="OrderDetail">
         select * from t_OrderDetail where id = #{id}
     </select>
-    <!-- <insert id="insert" parameterType="OrderDetail">
-        insert into t_OrderDetail(id, orderId, pdtNo, pdtId, pdtName, content, quantity, priceRMB, priceDollar, totlemnt, progress, modifyDate, remark, status) 
-          values(#{id}, #{orderId}, #{pdtNo}, #{pdtId}, #{pdtName}, #{content}, #{quantity}, #{priceRMB}, #{priceDollar}, #{totlemnt}, #{progress}, sysdate(), #{remark}, #{status})
-    </insert> -->
     
     <insert id="batchInsert" parameterType="java.util.List">
         
-        insert into t_OrderDetail(id, orderId, pdtNo, pdtId, pdtName, content, quantity, priceRMB, priceDollar, totlemnt, progress, modifyDate, remark, status) 
+        insert into t_OrderDetail(id, orderIdentify, pdtNo, pdtName, content, quantity, priceRMB, priceDollar, totlmentRMB, totlmentDollar, modifyDate, remark, status) 
              values
              <foreach collection="list" item="orderdtl" index="index" separator=",">
-                 (CONCAT(current_timestamp()+1, #{index}) , #{orderdtl.orderId}, #{orderdtl.pdtNo}, #{orderdtl.pdtId}, #{orderdtl.pdtName}, #{orderdtl.content}, #{orderdtl.quantity}, #{orderdtl.priceRMB}, #{orderdtl.priceDollar}, #{orderdtl.totlemnt}, #{orderdtl.progress}, sysdate(), #{orderdtl.remark}, '1')
+                 (CONCAT(current_timestamp()+1, #{index}) , #{orderdtl.orderIdentify}, #{orderdtl.pdtNo}, #{orderdtl.pdtName}, #{orderdtl.content}, #{orderdtl.quantity}, #{orderdtl.priceRMB}, #{orderdtl.priceDollar}, #{orderdtl.totlmentRMB}, #{orderdtl.totlmentDollar}, sysdate(), #{orderdtl.remark}, '1')
              </foreach>
     </insert>
     
     <update id="update" parameterType="OrderDetail">
         update t_OrderDetail set 
-          pdtNo = #{pdtNo},
-          pdtId = #{pdtId},          
+          orderIdentify = #{orderIdentify},
+          pdtNo = #{pdtNo},          
           pdtName = #{pdtName},
+          content = #{content},
           quantity = #{quantity},
           priceRMB = #{priceRMB},
           priceDollar = #{priceDollar},
-          totlemnt = #{totlemnt},
-          progress = #{progress},
+          totlmentRMB = #{totlmentRMB},
+          totlmentDollar = #{totlmentDollar},
           remark = #{remark},
           modifydate = sysdate()
     where id = #{id}
