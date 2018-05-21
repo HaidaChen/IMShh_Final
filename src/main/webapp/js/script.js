@@ -3476,11 +3476,28 @@ var App = function () {
 		});
 		
 		var orderItems = [];
-		$("#tbl_orderItems").bootstrapTable({
+		$("#tbl_view_orderItems").bootstrapTable({
 			data: orderItems,
 			cache: false,
 			columns: [
-			{field: 'pdtNo',title: '货号'}, 
+			{field: 'pdtNo',
+			 title: '货号', 
+			 editable:{
+				type: 'select2',
+				select2:{
+					allowClear: true,
+					placeholder: '请选择货号',
+					ajax: {
+						url: getProjectName() + "/pdt/loadallpdt.do",
+						dataType: 'json',
+						results: function (data, page){
+							return { results: data };  
+						}
+					},
+					formatResult: function (item) { return "<option value='"+obj.code+"'>"+ obj.code + "-" + obj.name + "-" + obj.specification +"</option>"; }
+				}
+				
+			}}, 
 			{field: 'pdtName',title: '品名'}, 
 			{field: 'content',title: '含量'}, 
 			{field: 'priceRMB',title: '￥单价'}, 
@@ -3500,31 +3517,31 @@ var App = function () {
 				var fillForm = new FillForm();
 				fillForm.fillByData("div .viewForm", data, 0);
 				fillForm.fillByData("#orderUpdateForm" , data, 1);
-				$("#tbl_orderItems").bootstrapTable("refreshOptions", {data: orderItems, cache: false});
+				$("#tbl_view_orderItems").bootstrapTable("refreshOptions", {data: orderItems, cache: false});
 				
 				$("#orderList").slideToggle();
-				$("#orderDetail").slideToggle();
+				$("#orderView").slideToggle();
 			});			
 	    });  
 		
 		$('a.vgoback').click(function(){
 			$("#orderList").slideToggle();
-			$("#orderDetail").slideToggle();
+			$("#orderView").slideToggle();
 		});
 		
 		$('#btn_add').click(function(){
 			$("#orderList").slideToggle();
-			$("#orderEdit").slideToggle();
+			$("#orderNew").slideToggle();
 		});
-		$('a.egoback').click(function(){
+		$('a.ngoback').click(function(){
 			$("#orderList").slideToggle();
-			$("#orderEdit").slideToggle();
+			$("#orderNew").slideToggle();
 		});
 		
 		
 		
 		
-		$("#tbl_orderitem_new").bootstrapTable({columns: [
+		$("#tbl_new_orderitem").bootstrapTable({columns: [
 			{field: 'pdtNo',title: '货号'}, 
 			{field: 'pdtName',title: '品名'}, 
 			{field: 'content',title: '含量'}, 
@@ -3580,12 +3597,12 @@ var App = function () {
 	        bv.validate();
 			if(bv.isValid()){
 				var orderitem = getJSONObjByForm($("#orderitemform"));
-				var orderitems = $("#tbl_orderitem_new").attr("data-data");
+				var orderitems = $("#tbl_new_orderitem").attr("data-data");
 				
 				var oorderitems = JSON.parse(orderitems);
 				oorderitems[oorderitems.length] = orderitem;
-				$("#tbl_orderitem_new").attr("data-data", JSON.stringify(oorderitems));
-				$("#tbl_orderitem_new").bootstrapTable("refreshOptions", {data: oorderitems});
+				$("#tbl_new_orderitem").attr("data-data", JSON.stringify(oorderitems));
+				$("#tbl_new_orderitem").bootstrapTable("refreshOptions", {data: oorderitems});
 				
 				var totlmentRMB = 0;
 				var totlmentDollar = 0;
@@ -3640,7 +3657,7 @@ var App = function () {
 			var bv = $("#formOrder").data('bootstrapValidator');
 	        bv.validate();
 			if(bv.isValid()){
-				$("input[name=orderDetails]").val($("#tbl_orderitem_new").attr("data-data"));
+				$("input[name=orderDetails]").val($("#tbl_new_orderitem").attr("data-data"));
 				$("#formOrder").ajaxSubmit({
 					url: getProjectName()+"/order/save.do",
 					success: function(){
@@ -5427,11 +5444,11 @@ var App = function () {
 /*	Order Moduel Script
 /*-----------------------------------------------------------------------------------*/
 var deleteOrderItem = function(index){
-	var orderitems = $("#tbl_orderitem_new").attr("data-data");
+	var orderitems = $("#tbl_new_orderitem").attr("data-data");
 	var oorderitems = JSON.parse(orderitems);
 	oorderitems.splice(index, 1);
-	$("#tbl_orderitem_new").attr("data-data", JSON.stringify(oorderitems));
-	$("#tbl_orderitem_new").bootstrapTable("refreshOptions", {data: oorderitems});
+	$("#tbl_new_orderitem").attr("data-data", JSON.stringify(oorderitems));
+	$("#tbl_new_orderitem").bootstrapTable("refreshOptions", {data: oorderitems});
 }
 
 
