@@ -3195,6 +3195,8 @@ var App = function () {
 		    todayBtn: true,          //今天按钮  
 		    todayHighlight: true,    //今天高亮  
 		    weekStart: 0              //星期几是开始  
+		}).on('changeDate', function(ev){
+			$(ev.target).trigger('select'); 
 		}); 
 	}
 	
@@ -3602,7 +3604,9 @@ var App = function () {
 				$.getJSON(getProjectName() + "/pdt/findbycode.do?code="+pdtno, function (pdt){
 					
 					$("input[name=pdtName]").val(pdt.name);
+					$("input[name=pdtName]").focus();
 					$("input[name=content]").val(pdt.specification);
+					$("input[name=content]").focus();
 				});
 			}
 			
@@ -3611,8 +3615,8 @@ var App = function () {
 		$("#orderitemform").bootstrapValidator({
 			fields: {
 				pdtNo : {validators: {notEmpty : {}}},
-				pdtName : {validators: {notEmpty : {}}},
-				content: {validators: {notEmpty : {}}},
+				pdtName : {validators: {trigger: "focus", notEmpty : {}}},
+				content: {validators: {trigger: "focus", notEmpty : {}}},
 				priceRMB: {validators: {numeric : {}}},
 				priceDollar: {validators: {numeric : {}}},
 				quantity: {validators: {notEmpty : {}, integer : {}}}
