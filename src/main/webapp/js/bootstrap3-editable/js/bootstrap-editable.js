@@ -807,7 +807,6 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
                    /*jslint eqeq: false*/
                }
            });
-           
            return result;
        },
        

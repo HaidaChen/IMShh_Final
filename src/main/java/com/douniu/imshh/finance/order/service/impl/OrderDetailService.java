@@ -20,13 +20,13 @@ public class OrderDetailService implements IOrderDetailService{
 	}	
 	
 	@Override
-	public void killByOrderId(String orderId) {
-		dao.killByOrderId(orderId);
+	public void killByOrderIdentify(String orderIdentify) {
+		dao.killByOrderIdentify(orderIdentify);
 	}
 
 	@Override
-	public void deleteByOrderId(String orderId) {
-		dao.deleteByOrderId(orderId);
+	public void deleteByOrderIdentify(String orderIdentify) {
+		dao.deleteByOrderIdentify(orderIdentify);
 	}
 
 	public void setDao(IOrderDetailDao dao) {

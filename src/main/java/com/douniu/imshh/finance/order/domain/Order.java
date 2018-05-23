@@ -11,9 +11,9 @@ public class Order extends BaseQO {
 	private String custName; /*客户名称*/
 	private Date orderDate;  /*订单生成日期*/
 	private Date deliveryTerm; /*交货日期*/
-	private float exchangeRate; /*约定汇率*/
-	private float amountRMB;    /*订单总金额*/
-	private float amountDollar;    /*订单总金额*/
+	private Float exchangeRate; /*约定汇率*/
+	private Float amountRMB;    /*订单总金额*/
+	private Float amountDollar;    /*订单总金额*/
 	private int state = 1;   /*订单状态*/
 	private List<OrderDetail> details;  /*订单明细*/	
 	
@@ -22,7 +22,7 @@ public class Order extends BaseQO {
 	
 	public Order(){}
 	
-	public Order(String id, String identify, String custName, Date orderDate, Date deliveryTerm, float exchangeRate, float amountRMB, float amountDollar, String remark) {
+	public Order(String id, String identify, String custName, Date orderDate, Date deliveryTerm, Float exchangeRate, Float amountRMB, Float amountDollar, String remark) {
 		super();
 		this.id = id;
 		this.identify = identify;
@@ -59,19 +59,19 @@ public class Order extends BaseQO {
 		this.orderDate = orderDate;
 	}
 	
-	public float getAmountRMB() {
+	public Float getAmountRMB() {
 		return amountRMB;
 	}
 
-	public void setAmountRMB(float amountRMB) {
+	public void setAmountRMB(Float amountRMB) {
 		this.amountRMB = amountRMB;
 	}
 
-	public float getAmountDollar() {
+	public Float getAmountDollar() {
 		return amountDollar;
 	}
 
-	public void setAmountDollar(float amountDollar) {
+	public void setAmountDollar(Float amountDollar) {
 		this.amountDollar = amountDollar;
 	}
 
@@ -108,11 +108,11 @@ public class Order extends BaseQO {
 		this.deliveryTerm = deliveryTerm;
 	}
 
-	public float getExchangeRate() {
+	public Float getExchangeRate() {
 		return exchangeRate;
 	}
 
-	public void setExchangeRate(float exchangeRate) {
+	public void setExchangeRate(Float exchangeRate) {
 		this.exchangeRate = exchangeRate;
 	}
 

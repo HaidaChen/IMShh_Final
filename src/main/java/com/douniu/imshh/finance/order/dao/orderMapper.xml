@@ -85,7 +85,7 @@
     </select> 
     <select id="queryOrderAndDetail" parameterType="Order" resultMap="orderdtlmap">
         <!-- select t_order.id, identify, custName, orderDate, amount, t_Order.remark, orderId, t_orderdetail.id as detailid, pdtno,content,pdtName, quantity,priceRMB,priceDollar,totlemnt,t_orderdetail.remark as detailremark  from t_Order, t_orderdetail where t_Order.id = t_orderdetail.orderid and t_Order.status = 1 -->
-        select * from t_order left join t_orderdetail on t_order.id = t_orderdetail.orderid where t_Order.status = 1
+        select * from t_order left join t_orderdetail on t_order.identify = t_orderdetail.orderidentify where t_Order.status = 1
         <if test="condition != null and condition !=''">
           and (identify like #{condition}
             or custName like #{condition})

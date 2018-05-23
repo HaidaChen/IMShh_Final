@@ -48,16 +48,16 @@
     where id = #{id}
     </update>
     
-    <update id="deleteByOrderId" parameterType="String">
+    <update id="deleteByOrderIdentify" parameterType="String">
         update t_OrderDetail set 
                status = '0',
                modifydate = sysdate()
-         where orderId = #{orderId}
+         where orderIdentify = #{orderIdentify}
     </update>
     
-    <update id="killByOrderId" parameterType="String">
+    <update id="killByOrderIdentify" parameterType="String">
         delete from t_OrderDetail 
-         where orderId = #{orderId}
+         where orderIdentify = #{orderIdentify}
     </update>
     
 </mapper>

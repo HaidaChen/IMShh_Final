@@ -17,6 +17,7 @@
 	<link rel="stylesheet" href="../js/bootstrapvalidator/css/bootstrapValidator.min.css" >
 	<link rel="stylesheet" href="../js/datepicker/bootstrap-datepicker.css" />
 	<link rel="stylesheet" href="../js/uniform/css/uniform.default.min.css" />
+	<link rel="stylesheet" href="../js/bootstrap-wizard/wizard.css" />
 	<link rel="stylesheet" href="../js/select2/select2.min.css" />
 	<!-- STYLESHEETS --><!--[if lt IE 9]><script src="js/flot/excanvas.min.js"></script><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
 	<link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
@@ -137,14 +138,15 @@
 					    <div class="modal-content">
 							<div class="modal-header">
 							    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-							    <h4 class="modal-title">新的订单项</h4>
+							    <h4 class="modal-title">订单项</h4>
 							</div>
 							<div class="modal-body">
-								<form id="orderitemform" class="form-horizontal" action="#">
+								<form id="orderitemform" class="form-horizontal" action="#" fieldAttr="name">
 									<div class="form-group">
 									    <label class="col-md-3 control-label">货号</label> 
 									    <div class="col-md-7">
-									    	<select id="relpdt" name="pdtNo" class="col-md-12">
+									        <input type="hidden" name="id" class="formItem">
+									    	<select id="relpdt" name="pdtNo" class="col-md-12 formItem">
 											</select>
 									    	
 									    </div>
@@ -152,43 +154,43 @@
 									<div class="form-group">
 									    <label class="col-md-3 control-label">品名</label> 
 									    <div class="col-md-7">
-									    	<input type="text" name="pdtName" class="form-control" value="">
+									    	<input type="text" name="pdtName" class="form-control formItem" value="">
 									    </div>
 									</div>
 									<div class="form-group">
 									    <label class="col-md-3 control-label">含量</label> 
 									    <div class="col-md-7">
-									    	<input type="text" name="content" class="form-control" value="">
+									    	<input type="text" name="content" class="form-control formItem" value="">
 									    </div>
 									</div>
 									<div class="form-group">
 									    <label class="col-md-3 control-label">￥单价</label> 
 									    <div class="col-md-7">
-									    	<input type="text" name="priceRMB" class="form-control" value="0" default="0">
+									    	<input type="text" name="priceRMB" class="form-control formItem" value="">
 									    </div>
 									</div>
 									<div class="form-group">
 									    <label class="col-md-3 control-label">$ 单价</label> 
 									    <div class="col-md-7">
-									    	<input type="text" name="priceDollar" class="form-control" value="0" default="0">
+									    	<input type="text" name="priceDollar" class="form-control formItem" value="">
 									    </div>
 									</div>
 									<div class="form-group">
 									    <label class="col-md-3 control-label">数量</label> 
 									    <div class="col-md-7">
-									    	<input type="text" name="quantity" class="form-control" value="">
+									    	<input type="text" name="quantity" class="form-control formItem" value="">
 									    </div>
 									</div>
 									<div class="form-group">
 									    <label class="col-md-3 control-label">￥合计</label> 
 									    <div class="col-md-7">
-									    	<input type="text" name="totlmentRMB" class="form-control" value="0"  default="0" readonly>
+									    	<input type="text" name="totlmentRMB" class="form-control formItem" value=""  readonly>
 									    </div>
 									</div>
 									<div class="form-group">
 									    <label class="col-md-3 control-label">$合计</label> 
 									    <div class="col-md-7">
-									    	<input type="text" name="totlmentDollar" class="form-control" value="0"  default="0" readonly>
+									    	<input type="text" name="totlmentDollar" class="form-control formItem" value="" readonly>
 									    </div>
 									</div>										
 								</form>
@@ -196,6 +198,7 @@
 							<div class="modal-footer">
 							    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 							    <button id="btn_save_orderitem" type="button" class="btn btn-primary">保存</button>
+							    <button id="btn_save_orderitem_for_view" type="button" class="btn btn-primary" style="display:none">保存</button>
 							</div>
 					    </div>
 					</div>
@@ -263,7 +266,7 @@
 													<div class="box-title">
 														<h4><i class="fa fa-shopping-cart"></i>订单<span id="view_orderId" class='text-muted'></span></h4>
 														<div class="tools">
-															<a href="javascript:;" >
+															<a href="javascript:;" class="editOrder">
 																<i class="fa fa-wrench"></i>
 															</a>
 															<a href="javascript:;" class="vgoback">
@@ -276,24 +279,28 @@
 														    <div class="panel-body">
 														        <div class="row">
 														            <div class="col-md-3">
-														            	<div class="list-group viewForm" fieldAttr="id" fieldPerfix="view_">
+														            	<div id="orderInfoView" class="list-group viewForm" fieldAttr="id" fieldPerfix="view_">
 														            		<a class="list-group-item">订购客户：  <span id="view_custName" class="formItem"></span></a>
 														            		<a class="list-group-item">订购日期：  <span id="view_orderDate" class="formItem" valuetype="date" valueformatter="yyyy-MM-dd"></span></a>
 														            		<a class="list-group-item">交付期限：  <span id="view_deliveryTerm" class="formItem" valuetype="date" valueformatter="yyyy-MM-dd"></span></a>
 														            		<a class="list-group-item">约定汇率：  <span id="view_exchangeRate" class="formItem"></span></a>
 														            		<a class="list-group-item">订单金额(¥)：  <span id="view_amountRMB" class="formItem"></span></a>
 														            		<a class="list-group-item">订单金额($)：  <span id="view_amountDollar" class="formItem"></span></a>
+														            		<a class="list-group-item">备注：  <span id="remark" class="formItem"></span></a>
 														                </div>
-														                <form id="orderUpdateForm" method="post" fieldAttr="name">
+														                <form id="orderUpdateForm" method="post" fieldAttr="name" style="display: none">
 															                <div class="list-group " fieldAttr="name">
 															            		<a class="list-group-item">订购客户：<input type="text" name="custName" class="formItem" style="width: 60%">
-															            		                                   <input type="hidden" name="id" class="formItem"></a>
+															            		                                   <input type="hidden" name="id" class="formItem">
+															            		                                   <input type="hidden" name="identify" class="formItem"></a>
 															            		<a class="list-group-item">订购日期：  <input type="text" name="orderDate" valuetype="date" valueformatter="yyyy-MM-dd" class="selectData formItem" style="width: 60%"></a>
 															            		<a class="list-group-item">交付期限：  <input type="text" name="deliveryTerm" valuetype="date" valueformatter="yyyy-MM-dd" class="selectData formItem" style="width: 60%"></a>
 															            		<a class="list-group-item">约定汇率：  <input type="text" name="exchangeRate" class="formItem" style="width: 60%"></a>
-															            		<a class="list-group-item">订单金额(¥)： <input type="text" name="amountRMB" class="formItem" style="width: 55%"></a>
-															            		<a class="list-group-item">订单金额($)：  <input type="text" name="amountDollar" class="formItem" style="width: 55%"></a>
+															            		<a class="list-group-item">订单金额(¥)： <input type="text" name="amountRMB" class="formItem" style="width: 50%" readonly="readonly"></a>
+															            		<a class="list-group-item">订单金额($)：  <input type="text" name="amountDollar" class="formItem" style="width: 50%" readonly="readonly"></a>
+															            		<a class="list-group-item">备注：  <textarea name="remark" class="formItem" ></textarea></a>
 															                </div>
+															                <input type="hidden" name="orderDetails">
 														                </form>
 														            </div>
 														            <div class="col-md-9">
@@ -302,26 +309,205 @@
 																			    <h4><i class="fa fa-ellipsis-v"></i>订单项明细</h4>
 																			</div>
 																			<div class="box-body">
-																				<table id="tbl_view_orderItems" class="table table-striped table-hover font-400 font-14">
+																				<table id="tbl_view_orderItems" class="table table-striped table-hover font-400 font-14" data-data='[]'>
 																				</table>
 																			</div>
 																		</div>														            	
 														            </div>
 															   </div>
-																							  					
+															   <div id="form_footer" class="form-actions clearfix" style="display: none"> 
+															   		<input id="btn_update_cancel" type="button" value="取消" class="btn btn-primary pull-right">
+																	<input id="btn_update_order" type="button" value="保存" style="margin: 0px 8px;" class="btn btn-primary pull-right">
+																</div>							  					
 													      </div>
+													</div>
 												</div>
+											</div>
 										</div>
-											
-										  
 									</div>
-								</div>
-								
-								
-								
-						</div>
-						<div id="orderNew" style="display:none">
-						    <div class='col-md-12'>
+						<div class="row" >
+							<div class="col-md-12">
+								<div class="box border blue" id="orderNew" style="display:none">
+									<div class="box-title">
+										<h4><i class="fa fa-bars"></i>新的订单</h4>
+										<div class="tools hidden-xs">
+											<a href="javascript:;" class="ngoback">
+												<i class="fa fa-times"></i>
+											</a>
+										</div>
+									</div>
+									<div class="box-body form">
+										<form id="formOrder" action="#" class="form-horizontal" method="post" >
+										<div class="wizard-form">
+										   <div class="wizard-content">
+											  <ul class="nav nav-pills nav-justified steps">
+												 <li>
+													<a href="#tab_orderInfo" data-toggle="tab" class="wiz-step">
+													<span class="step-number">1</span>
+													<span class="step-name"><i class="fa fa-check"></i> 订单基本信息 </span>   
+													</a>
+												 </li>
+
+												 <li>
+													<a href="#tab_orderItemInfo" data-toggle="tab" class="wiz-step active">
+													<span class="step-number">2</span>
+													<span class="step-name"><i class="fa fa-check"></i> 订单项列表</span>   
+													</a>
+												 </li>
+												 <li>
+													<a href="#tab_confirm" data-toggle="tab" class="wiz-step">
+													<span class="step-number">3</span>
+													<span class="step-name"><i class="fa fa-check"></i> 保存订单 </span>   
+													</a> 
+												 </li>
+											  </ul>
+											  <div id="bar" class="progress progress-striped progress-sm active" role="progressbar">
+												 <div class="progress-bar progress-bar-warning"></div>
+											  </div>
+											  <div class="tab-content">
+												 <div class="alert alert-danger display-none">
+													<a class="close" aria-hidden="true" href="#" data-dismiss="alert">×</a>
+													<span id="alter_error">请按照提示，正确的填写订单信息！</span>
+												 </div>
+												 <div class="alert alert-success display-none">
+													<a class="close" aria-hidden="true" href="#" data-dismiss="alert">×</a>
+													信息验证成功!
+												 </div>
+												 <div class="tab-pane active" id="tab_orderInfo">
+												    <div class="form-group">
+										         		<label class="col-md-3 control-label">订单编号</label> 
+													    <div class="col-md-4">
+													    	<input type="hidden" name="id" value="">
+													    	<input type="text" name="identify" class="form-control" value="" >
+													    </div>
+													</div>
+													<div class="form-group">
+													    <label class="col-md-3 control-label">目标客户</label> 
+													    <div class="col-md-4">
+													    	<select id="relcust" name="custName" class="col-md-12">
+								                            </select>
+													    </div>
+													</div>
+													<div class="form-group">
+													    <label class="col-md-3 control-label">订购日期</label> 
+													    <div class="col-md-4">
+													    	<input type="text" name="orderDate" class="form-control selectData" value="" readonly="readonly">
+													    </div>
+													</div>
+													<div class="form-group">
+													    <label class="col-md-3 control-label">交付日期</label> 
+													    <div class="col-md-4">
+													    	<input type="text" name="deliveryTerm" class="form-control selectData" value="" readonly="readonly">
+													    </div>
+													</div>
+													<div class="form-group">
+													    <label class="col-md-3 control-label">约定汇率</label> 
+													    <div class="col-md-4">
+													    	<input type="text" name="exchangeRate" class="form-control" value="">
+													    </div>
+													</div>
+													<input type="hidden" name="amountRMB">
+													<input type="hidden" name="amountDollar">
+													<div class="form-group">
+													    <label class="col-md-3 control-label">备注</label> 
+													    <div class="col-md-4">
+													    	<textarea name="remark" class="form-control" rows="3"></textarea>
+													    </div>
+													</div>
+												</div>
+												
+												<div class="tab-pane" id="tab_orderItemInfo">
+													<span class="input-btn">
+												        <button class="btn btn-default btn-sm" type="button" data-toggle="modal" data-target="#modalorderitem">
+												            <i class="fa fa-plus"></i> 添加订单项
+														</button>
+												    </span>
+													<hr>
+													<input type="hidden" name="orderDetails" value="[]">
+													<table id="tbl_new_orderitem" class='table table-hover' data-data='[]'>
+													</table>
+												</div>
+												
+												<div class="tab-pane" id="tab_confirm">
+													<h3 class="block">请确认订单信息是否正确</h3>
+													<h4 class="form-section">订单信息</h4>
+													<div class="well">
+														<div class="form-group">
+														   <label class="control-label col-md-3">订单号:</label>
+														   <div class="col-md-4">
+															  <p class="form-control-static" data-display="identify"></p>
+														   </div>
+														</div>
+														<div class="form-group">
+														   <label class="control-label col-md-3">订购客户:</label>
+														   <div class="col-md-4">
+															  <p class="form-control-static" data-display="custName"></p>
+														   </div>
+														</div>
+														<div class="form-group">
+														   <label class="control-label col-md-3">订购日期:</label>
+														   <div class="col-md-4">
+															  <p class="form-control-static" data-display="orderDate"></p>
+														   </div>
+														</div>
+														<div class="form-group">
+														   <label class="control-label col-md-3">交付日期:</label>
+														   <div class="col-md-4">
+															  <p class="form-control-static" data-display="deliveryTerm"></p>
+														   </div>
+														</div>
+														<div class="form-group">
+														   <label class="control-label col-md-3">约定汇率:</label>
+														   <div class="col-md-4">
+															  <p class="form-control-static" data-display="exchangeRate"></p>
+														   </div>
+														</div>
+														<div class="form-group">
+														   <label class="control-label col-md-3">订单金额($):</label>
+														   <div class="col-md-4">
+															  <p class="form-control-static" data-display="amountDollar"></p>
+														   </div>
+														</div>
+														<div class="form-group">
+														   <label class="control-label col-md-3">订单金额(¥) &nbsp;<span id="new_exchange" style="display: none" title="按汇率计算人民币金额">(<a href="javascript:;"><i class="fa fa-exchange"></i></a>)</span>:</label>
+														   <div class="col-md-4">
+															  <p class="form-control-static" data-display="amountRMB"></p>
+														   </div>
+														</div>
+														<div class="form-group">
+														   <label class="control-label col-md-3">备注:</label>
+														   <div class="col-md-4">
+															  <p class="form-control-static" data-display="remark"></p>
+														   </div>
+														</div>
+													</div>
+													<h4 class="form-section">订单项信息</h4>
+													<div class="well">														
+														<table id="tbl_new_view_orderItems" class="table table-striped table-hover font-400 font-14" data-data='[]'>
+														</table>
+													</div>
+												</div>
+											</div>	
+										</div>
+										<div class="wizard-buttons">
+										  <div class="row">
+											 <div class="col-md-12">
+												<div class="col-md-offset-3 col-md-9">
+												   <a href="javascript:;" class="btn btn-default prevBtn">
+													<i class="fa fa-arrow-circle-left"></i> 上一步 
+												   </a>
+												   <a href="javascript:;" class="btn btn-primary nextBtn">
+													下一步 <i class="fa fa-arrow-circle-right"></i>
+												   </a>
+												   <a href="javascript:;" class="btn btn-success submitBtn">
+													保存 <i class="fa fa-arrow-circle-right"></i>
+												   </a>                            
+												</div>
+											 </div>
+										  </div>
+									   </div>
+										 	
+						    <!-- <div class='col-md-12'>
 							    <div class="box">
 							        <div class="box-title">
 							        	<h4><i class="fa fa-edit"></i>新的订单</h4>
@@ -412,7 +598,7 @@
 									  </div>
 							    </div>
 							</div>
-						</div>
+						</div> -->
 						<!-- /BOX -->
 					</div>
 					
@@ -435,15 +621,22 @@
 	<script src="../js/bootstrapvalidator/js/bootstrapValidator.min.js"></script>		
 	<script src="../js/bootstrapvalidator/js/language/zh_CN.js"></script>
 	<script src="../js/datepicker/bootstrap-datepicker.js"></script>
+	<script src="../js/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
+	<script src="../js/jquery-validate/jquery.validate.min.js"></script>
+	<script src="../js/jquery-validate/additional-methods.min.js"></script>
+	<script src="../js/jquery-validate/message_cn.js"></script>
+	<script src="../js/bootbox/bootbox.min.js"></script>
 	<script src="../js/select2/select2.min.js"></script>
 	<script src="../js/jquery-form/jquery.form.js"></script>
 	<script src="../js/importModal.js"></script>
 	<script src="../js/fillForm.js"></script>
 	<script src="../js/script.js"></script>
+	<script src="../js/bootstrap-wizard/form-wizard.js"></script>
 	<script>
 		jQuery(document).ready(function() {		
 			App.setPage("order");
-			App.init(); 
+			App.init();
+			FormWizard.init();
 		});
 	</script>
 	<!-- /JAVASCRIPTS -->

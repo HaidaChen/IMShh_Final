@@ -3425,6 +3425,7 @@ var App = function () {
 			method: "get",
 			pagination: true,
 			sidePagination: "server", 
+			clickToSelect: true,
 			columns: [{
                 field: 'identify',
                 title: '订单编号'
@@ -3480,24 +3481,7 @@ var App = function () {
 			data: orderItems,
 			cache: false,
 			columns: [
-			{field: 'pdtNo',
-			 title: '货号', 
-			 editable:{
-				type: 'select2',
-				select2:{
-					allowClear: true,
-					placeholder: '请选择货号',
-					ajax: {
-						url: getProjectName() + "/pdt/loadallpdt.do",
-						dataType: 'json',
-						results: function (data, page){
-							return { results: data };  
-						}
-					},
-					formatResult: function (item) { return "<option value='"+obj.code+"'>"+ obj.code + "-" + obj.name + "-" + obj.specification +"</option>"; }
-				}
-				
-			}}, 
+			{field: 'pdtNo',title: '货号' }, 
 			{field: 'pdtName',title: '品名'}, 
 			{field: 'content',title: '含量'}, 
 			{field: 'priceRMB',title: '￥单价'}, 
@@ -3505,9 +3489,37 @@ var App = function () {
 			{field: 'quantity',title: '数量'}, 
 			{field: 'deliverQuantity',title: '已交付数'},
 			{field: 'totlmentRMB',title: '￥合计'},
-			{field: 'totlmentDollar',title: '$合计'}
-			]});
+			{field: 'totlmentDollar',title: '$合计'},
+			{field: 'operation', title: '操作', formatter: function (value, row, index) {
+                return '<a id="tbl_opt_add" href="javascript:;"><i class="fa fa-plus"></i></a> '+
+                	   '<a id="tbl_opt_delete" dataid="'+index+'" href="javascript:;"><i class="fa fa-minus"></i></a> '+
+                	   '<a id="tbl_opt_update" dataid="'+index+'" href="javascript:;"><i class="fa fa-edit"></i></a>';
+            }}
+		]});
 		
+		$('#tbl_view_orderItems').on('click', '#tbl_opt_add', function(){
+			$("#modalorderitem").modal('show');
+			$("#btn_save_orderitem").hide();
+			$("#btn_save_orderitem_for_view").show();
+		});
+		
+		$('#tbl_view_orderItems').on('click', '#tbl_opt_delete', function(){
+			var index = $(this).attr("dataid");		
+			deleteOrderItem("#tbl_view_orderItems", index);
+		});
+		
+		$('#tbl_view_orderItems').on('click', '#tbl_opt_update', function(){
+			var index = $(this).attr("dataid");
+			var items = $('#tbl_view_orderItems').attr("data-data");
+			items = JSON.parse(items);
+			var fillForm = new FillForm();
+			fillForm.fillByData("#orderitemform" , items[index], 1);
+			$("#modalorderitem").modal('show');
+			$("#btn_save_orderitem").hide();
+			$("#btn_save_orderitem_for_view").show();
+		});
+		
+		$('#tbl_view_orderItems').bootstrapTable('hideColumn', 'operation');
 		
 		$('#tbl_order').on('click-row.bs.table', function (e, row, element){  
 			$.getJSON(getProjectName() + "/order/findById.do?id="+row.id, function (data){
@@ -3517,6 +3529,8 @@ var App = function () {
 				var fillForm = new FillForm();
 				fillForm.fillByData("div .viewForm", data, 0);
 				fillForm.fillByData("#orderUpdateForm" , data, 1);
+				var data_table = JSON.stringify(orderItems);
+				$("#tbl_view_orderItems").attr("data-data", data_table);
 				$("#tbl_view_orderItems").bootstrapTable("refreshOptions", {data: orderItems, cache: false});
 				
 				$("#orderList").slideToggle();
@@ -3537,9 +3551,21 @@ var App = function () {
 			$("#orderList").slideToggle();
 			$("#orderNew").slideToggle();
 		});
+		$('a.editOrder').click(function(){
+			$('#tbl_view_orderItems').bootstrapTable('showColumn', 'operation');
+			$('#orderInfoView').hide();
+			$('#orderUpdateForm').show();
+			$('#form_footer').show();
+		});
 		
 		
 		
+		$("#btn_update_cancel").click(function(){
+			$('#tbl_view_orderItems').bootstrapTable('hideColumn', 'operation');
+			$('#orderInfoView').show();
+			$('#orderUpdateForm').hide();
+			$('#form_footer').hide();
+		});
 		
 		$("#tbl_new_orderitem").bootstrapTable({columns: [
 			{field: 'pdtNo',title: '货号'}, 
@@ -3551,7 +3577,7 @@ var App = function () {
 			{field: 'totlmentRMB',title: '￥合计'}, 
 			{field: 'totlmentDollar',title: '$合计'},
 			{field: '', title: '操作', formatter: function(value,row,index){
-				return '<a href="javascript:;" onclick="deleteOrderItem(' + index + ')"><i class="fa fa-cut (alias)"></a>';
+				return '<a href="javascript:;" onclick="deleteOrderItem(\'#tbl_new_orderitem\', ' + index + ')"><i class="fa fa-cut (alias)"></a>';
 			}}]});
 		
 		
@@ -3593,16 +3619,34 @@ var App = function () {
 	        }
 		});
 		$("#btn_save_orderitem").click(function(){
+			saveOrderItemInLocal($("#tbl_new_orderitem"), $("#formOrder"));			
+		});
+		$("#btn_save_orderitem_for_view").click(function(){
+			saveOrderItemInLocal($("#tbl_view_orderItems"), $("#orderUpdateForm"));
+		});
+		var saveOrderItemInLocal = function(table, form){
 			var bv = $("#orderitemform").data('bootstrapValidator');
 	        bv.validate();
 			if(bv.isValid()){
 				var orderitem = getJSONObjByForm($("#orderitemform"));
-				var orderitems = $("#tbl_new_orderitem").attr("data-data");
-				
+				var orderitems = form.find("input[name=orderDetails]").val();//table.attr("data-data");
 				var oorderitems = JSON.parse(orderitems);
-				oorderitems[oorderitems.length] = orderitem;
-				$("#tbl_new_orderitem").attr("data-data", JSON.stringify(oorderitems));
-				$("#tbl_new_orderitem").bootstrapTable("refreshOptions", {data: oorderitems});
+				
+				if (orderitem.id != ""){
+					$.each(oorderitems, function(index, item){
+						if (orderitem.id == item.id){
+							oorderitems[index] = orderitem;
+							return false;
+						}
+					})
+				}else{
+					oorderitems[oorderitems.length] = orderitem;
+				}
+				
+				var detail = fillNumWhenEmpty(["priceRMB", "priceDollar", "totlmentRMB", "totlmentDollar", "inStorageQuantity", "deliverQuantity"], JSON.stringify(oorderitems));
+				form.find("input[name=orderDetails]").val(detail);
+				//table.attr("data-data", JSON.stringify(oorderitems));
+				table.bootstrapTable("refreshOptions", {data: oorderitems});
 				
 				var totlmentRMB = 0;
 				var totlmentDollar = 0;
@@ -3612,16 +3656,18 @@ var App = function () {
 					if (item.totlmentDollar != '')
 					totlmentDollar += parseFloat(item.totlmentDollar);
 				});
-				
-				
-				$("#formOrder input[name=amountRMB]").val(totlmentRMB);
-				$("#formOrder input[name=amountDollar]").val(totlmentDollar);
+				form.find("input[name=amountRMB]").val(totlmentRMB);
+				form.find("input[name=amountDollar]").val(totlmentDollar);
 				
 				$('#modalorderitem').modal('hide');
 			}
-		});
+		}
+		
+		
 		$('#modalorderitem').on("hide.bs.modal", function(){
 			removeFormData($("#orderitemform"));
+			$("#btn_save_orderitem").show();
+			$("#btn_save_orderitem_for_view").hide();
 		});
 		$("input[name=priceRMB],input[name=quantity]").change(function(){
 			if ($("input[name=priceRMB]").val()!="" && $("input[name=quantity]").val()!=""){
@@ -3646,7 +3692,7 @@ var App = function () {
 			});
 		});
 		
-		$("#formOrder").bootstrapValidator({
+		$("#formOrder, #orderUpdateForm").bootstrapValidator({
 			fields: {
 				identify : {validators: {notEmpty : {}}},
 				orderDate : {validators: {notEmpty : {}}},
@@ -3657,7 +3703,9 @@ var App = function () {
 			var bv = $("#formOrder").data('bootstrapValidator');
 	        bv.validate();
 			if(bv.isValid()){
-				$("input[name=orderDetails]").val($("#tbl_new_orderitem").attr("data-data"));
+				var detail = fillNumWhenEmpty(["priceRMB", "priceDollar", "totlmentRMB", "totlmentDollar", "inStorageQuantity", "deliverQuantity"], $("#tbl_new_orderitem").attr("data-data"));
+				alert(detail);
+				$("#formOrder input[name=orderDetails]").val(detail);
 				$("#formOrder").ajaxSubmit({
 					url: getProjectName()+"/order/save.do",
 					success: function(){
@@ -3665,6 +3713,23 @@ var App = function () {
 					}
 				});
 			}
+		})
+		
+		$("#btn_update_order").click(function(){
+			var bv = $("#orderUpdateForm").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				var detail = fillNumWhenEmpty(["priceRMB", "priceDollar", "totlmentRMB", "totlmentDollar", "inStorageQuantity", "deliverQuantity"], $("#tbl_view_orderItems").attr("data-data"));
+				$("#orderUpdateForm input[name=orderDetails]").val(detail);
+				$("#orderUpdateForm").ajaxSubmit({
+					url: getProjectName()+"/order/save.do",
+					success: function(){
+						window.location.reload();
+					}
+				});
+			}
+			
+			
 		})
 		
 		
@@ -5443,12 +5508,12 @@ var App = function () {
 /*-----------------------------------------------------------------------------------*/
 /*	Order Moduel Script
 /*-----------------------------------------------------------------------------------*/
-var deleteOrderItem = function(index){
-	var orderitems = $("#tbl_new_orderitem").attr("data-data");
+var deleteOrderItem = function(tableId, index){
+	var orderitems = $(tableId).attr("data-data");
 	var oorderitems = JSON.parse(orderitems);
 	oorderitems.splice(index, 1);
-	$("#tbl_new_orderitem").attr("data-data", JSON.stringify(oorderitems));
-	$("#tbl_new_orderitem").bootstrapTable("refreshOptions", {data: oorderitems});
+	$(tableId).attr("data-data", JSON.stringify(oorderitems));
+	$(tableId).bootstrapTable("refreshOptions", {data: oorderitems});
 }
 
 
@@ -5735,6 +5800,17 @@ function viewTransaction(user){
 /*-----------------------------------------------------------------------------------*/
 /*	公共函数
 /*-----------------------------------------------------------------------------------*/
+var fillNumWhenEmpty = function(fields, src){
+	var datas = JSON.parse(src);
+	$.each(datas, function(index, data){
+		$.each(fields, function(i, field){
+			if (data[field] == null || data[field] == "undifined" || data[field] == "" || data[field] == "null" ){
+				data[field] = 0;
+			}
+		});
+	});
+	return JSON.stringify(datas);
+}
 var getCookie = function(c_name)
 {
 	if (document.cookie.length>0)

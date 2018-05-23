@@ -7,24 +7,24 @@ public class OrderAndDetail {
 	private String custName;
 	private Date orderDate;
 	private Date deliveryTerm;
-	private float exchangeRate;
-	private float amountRMB;
-	private float amountDollar;
+	private Float exchangeRate;
+	private Float amountRMB;
+	private Float amountDollar;
 	private String remark;
 	private String pdtNo;
 	private String pdtName;
 	private String content;
 	private int quantity;
-	private float priceRMB;
-	private float priceDollar;
-	private float totlmentRMB;
-	private float totlmentDollar;
+	private Float priceRMB;
+	private Float priceDollar;
+	private Float totlmentRMB;
+	private Float totlmentDollar;
 	private String detailRemark;
 	
 	public OrderAndDetail(){super();}	
 	
-	public OrderAndDetail(String identify, String custName, Date orderDate, Date deliveryTerm, float exchangeRate, float amountRMB, float amountDollar, String remark, String pdtNo,
-			String pdtName, String content, int quantity, float priceRMB, float priceDollar, float totlemntRMB, float totlemntDollar,
+	public OrderAndDetail(String identify, String custName, Date orderDate, Date deliveryTerm, Float exchangeRate, Float amountRMB, Float amountDollar, String remark, String pdtNo,
+			String pdtName, String content, int quantity, Float priceRMB, Float priceDollar, Float totlemntRMB, Float totlemntDollar,
 			String detailRemark) {
 		super();
 		this.identify = identify;
@@ -91,16 +91,16 @@ public class OrderAndDetail {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-	public float getPriceRMB() {
+	public Float getPriceRMB() {
 		return priceRMB;
 	}
-	public void setPriceRMB(float priceRMB) {
+	public void setPriceRMB(Float priceRMB) {
 		this.priceRMB = priceRMB;
 	}
-	public float getPriceDollar() {
+	public Float getPriceDollar() {
 		return priceDollar;
 	}
-	public void setPriceDollar(float priceDollar) {
+	public void setPriceDollar(Float priceDollar) {
 		this.priceDollar = priceDollar;
 	}
 	
@@ -125,43 +125,43 @@ public class OrderAndDetail {
 		this.deliveryTerm = deliveryTerm;
 	}
 
-	public float getExchangeRate() {
+	public Float getExchangeRate() {
 		return exchangeRate;
 	}
 
-	public void setExchangeRate(float exchangeRate) {
+	public void setExchangeRate(Float exchangeRate) {
 		this.exchangeRate = exchangeRate;
 	}
 
-	public float getAmountRMB() {
+	public Float getAmountRMB() {
 		return amountRMB;
 	}
 
-	public void setAmountRMB(float amountRMB) {
+	public void setAmountRMB(Float amountRMB) {
 		this.amountRMB = amountRMB;
 	}
 
-	public float getAmountDollar() {
+	public Float getAmountDollar() {
 		return amountDollar;
 	}
 
-	public void setAmountDollar(float amountDollar) {
+	public void setAmountDollar(Float amountDollar) {
 		this.amountDollar = amountDollar;
 	}
 
-	public float getTotlmentRMB() {
+	public Float getTotlmentRMB() {
 		return totlmentRMB;
 	}
 
-	public void setTotlmentRMB(float totlmentRMB) {
+	public void setTotlmentRMB(Float totlmentRMB) {
 		this.totlmentRMB = totlmentRMB;
 	}
 
-	public float getTotlmentDollar() {
+	public Float getTotlmentDollar() {
 		return totlmentDollar;
 	}
 
-	public void setTotlmentDollar(float totlmentDollar) {
+	public void setTotlmentDollar(Float totlmentDollar) {
 		this.totlmentDollar = totlmentDollar;
 	}
 

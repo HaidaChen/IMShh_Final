@@ -27,7 +27,9 @@
     <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">    
 	    <property name="converters">    
 	         <list>    
-	             <bean class="com.douniu.imshh.utils.DateConverter" />    
+	             <bean class="com.douniu.imshh.utils.DateConverter" /> 
+	             <bean class="com.douniu.imshh.utils.IntegerConverter" /> 
+	             <bean class="com.douniu.imshh.utils.FloatConverter" />    
 	         </list>    
 	     </property>    
 	  </bean> 

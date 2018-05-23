@@ -70,7 +70,7 @@ public class OrderService implements IOrderService{
 			detailService.batchAdd(order.getDetails());
 			dao.insert(order);
 		}else{
-			detailService.killByOrderId(order.getId());
+			detailService.killByOrderIdentify(order.getIdentify());
 			for(OrderDetail detail : order.getDetails()){
 				detail.setOrderIdentify(order.getIdentify());;
 			}
@@ -86,7 +86,8 @@ public class OrderService implements IOrderService{
 
 	@Override
 	public void delete(String id) {
-		detailService.deleteByOrderId(id);
+		Order order = this.getById(id);
+		detailService.deleteByOrderIdentify(order.getIdentify());
 		dao.deleteById(id);
 	}
 

@@ -7,10 +7,10 @@ public class OrderDetail {
 	private String pdtName;  /*产品名称*/
 	private String content;  /*产品含量*/
 	private int quantity;    /*产品数量*/
-	private float priceRMB;  /*人民币单价*/
-	private float priceDollar; /*美元单价*/
-	private float totlmentRMB;    /*合计*/
-	private float totlmentDollar;    /*合计*/
+	private Float priceRMB;  /*人民币单价*/
+	private Float priceDollar; /*美元单价*/
+	private Float totlmentRMB;    /*合计*/
+	private Float totlmentDollar;    /*合计*/
 	private int inStorageQuantity;  /*生产数量*/
 	private int deliverQuantity;  /*交付数量*/
 	
@@ -20,8 +20,8 @@ public class OrderDetail {
 	public OrderDetail(){}
 	
 	
-	public OrderDetail(String id, String orderIdentify, String pdtNo, String pdtName, String content, int quantity, float priceRMB, float priceDollar,
-			float totlmentRMB, float totlmentDollar, String remark) {
+	public OrderDetail(String id, String orderIdentify, String pdtNo, String pdtName, String content, int quantity, Float priceRMB, Float priceDollar,
+			Float totlmentRMB, Float totlmentDollar, String remark) {
 		super();
 		this.id = id;
 		this.orderIdentify = orderIdentify;
@@ -72,35 +72,35 @@ public class OrderDetail {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-	public float getPriceRMB() {
+	public Float getPriceRMB() {
 		return priceRMB;
 	}
-	public void setPriceRMB(float priceRMB) {
+	public void setPriceRMB(Float priceRMB) {
 		this.priceRMB = priceRMB;
 	}
-	public float getPriceDollar() {
+	public Float getPriceDollar() {
 		return priceDollar;
 	}
-	public void setPriceDollar(float priceDollar) {
+	public void setPriceDollar(Float priceDollar) {
 		this.priceDollar = priceDollar;
 	}
 	
-	public float getTotlmentRMB() {
+	public Float getTotlmentRMB() {
 		return totlmentRMB;
 	}
 
 
-	public void setTotlmentRMB(float totlmentRMB) {
+	public void setTotlmentRMB(Float totlmentRMB) {
 		this.totlmentRMB = totlmentRMB;
 	}
 
 
-	public float getTotlmentDollar() {
+	public Float getTotlmentDollar() {
 		return totlmentDollar;
 	}
 
 
-	public void setTotlmentDollar(float totlmentDollar) {
+	public void setTotlmentDollar(Float totlmentDollar) {
 		this.totlmentDollar = totlmentDollar;
 	}
 

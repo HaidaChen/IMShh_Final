@@ -28,6 +28,18 @@ var FillForm = function(){
 		});
 	}
 	
+	oFillForm.exchange = function(form, view, viewele, viewAttr){
+		var formitems = form.find("input, select, textarea");
+		$.each(formitems, function(index, item){
+			var field = $(item).attr("name");
+			var value = $(item).val();
+			var viewItem = view.find(viewele+"["+viewAttr+"="+field+"]");
+			if (viewItem){
+				viewItem.html(value);
+			}
+		});
+	}
+	
 	return oFillForm;
 };
 
