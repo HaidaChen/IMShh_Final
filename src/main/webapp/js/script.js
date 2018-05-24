@@ -3380,7 +3380,8 @@ var App = function () {
 		$("#dataperiod li").click(function(){
 			var btnDatapriod = $("#btn_datapriod");
 			var index = $("#dataperiod li").index(this);
-			if (index != 3){
+			
+			if (index < 3){
 				if ($(this).children().html() != btnDatapriod.html()){
 					btnDatapriod.html($(this).children().html());
 					var current = new Date();
@@ -3422,6 +3423,7 @@ var App = function () {
 	/*	Load Order data
 	/*-----------------------------------------------------------------------------------*/	
 	var initOrderModule = function(){
+		
 		$("#tbl_order").bootstrapTable({
 			url: getProjectName() + "/order/loadorder.do",
 			method: "get",
@@ -3464,18 +3466,70 @@ var App = function () {
                 title: '备注'
             }],
             queryParams: function(params){
+            	var orderType = $("#modaldatepicker input[name=orderType]:checked");
+            	var orderState  = $("#modaldatepicker input[name=orderState]:checked");
+            	
+            	var orderTypeValues = [];
+            	var orderStateValues = [];
+            	$.each(orderType, function(index, obj){
+            		orderTypeValues.push($(obj).val());
+            	});
+            	
+            	$.each(orderState, function(index, obj){
+            		orderStateValues.push($(obj).val());
+            	});
+            	
+            	var condition_orderType = '';
+            	var condition_orderState = '';
+            	if (orderTypeValues.length == 1){
+            		if (orderTypeValues[0] == "1")
+            			condition_orderType = "国内订单";
+            		else
+            			condition_orderType = "海外订单";
+            	}
+            	if (orderStateValues.length == 1){
+            		condition_orderState = orderStateValues[0];
+            	}
+            	
             	return {
                     pageSize: params.limit,
                     pageOffset: params.offset,                    
                     condition: $("input[name=condition]").val(),
                     startDate: $("#startDate").val(),
-                    endDate: $("#endDate").val()
+                    endDate: $("#endDate").val(),
+                    state: condition_orderState,
+                    orderType: condition_orderType
                 }
             }
 		});	
 		
 		$("input[name=condition]").change(function(){
 			$("#tbl_order").bootstrapTable("refresh", {url: getProjectName() + "/order/loadorder.do", cache: false});
+		});
+		
+		$("#dataperiod input[name=orderType],input[name=orderState]").change(function(){
+			var name = $(this).attr("name");
+			var val = $(this).val();
+			
+			var target = $("#modaldatepicker input[name="+name+"][value="+val+"]");
+			if ($(this).prop('checked')){
+				target.prop("checked","checked");
+			}else{
+				target.removeAttr("checked");
+			}
+			$("#tbl_order").bootstrapTable("refresh", {url: getProjectName() + "/order/loadorder.do", cache: false});
+		});
+		
+		$("#modaldatepicker input[name=orderType],input[name=orderState]").change(function(){
+			var name = $(this).attr("name");
+			var val = $(this).val();
+			
+			var target = $("#dataperiod input[name="+name+"][value="+val+"]");
+			if ($(this).prop('checked')){
+				target.prop("checked","checked");
+			}else{
+				target.removeAttr("checked");
+			}
 		});
 		
 		var orderItems = [];
@@ -3500,25 +3554,27 @@ var App = function () {
 		]});
 		
 		$('#tbl_view_orderItems').on('click', '#tbl_opt_add', function(){
+			$("#orderitemform").children("#sourceForm").val("#orderUpdateForm");
+			$("#orderitemform").children("#sourceTable").val("#tbl_view_orderItems");
 			$("#modalorderitem").modal('show');
-			$("#btn_save_orderitem").hide();
-			$("#btn_save_orderitem_for_view").show();
 		});
 		
 		$('#tbl_view_orderItems').on('click', '#tbl_opt_delete', function(){
 			var index = $(this).attr("dataid");		
-			deleteOrderItem("#tbl_view_orderItems", index);
+			deleteOrderItem("#orderUpdateForm", "#tbl_view_orderItems", index);
 		});
 		
 		$('#tbl_view_orderItems').on('click', '#tbl_opt_update', function(){
 			var index = $(this).attr("dataid");
-			var items = $('#tbl_view_orderItems').attr("data-data");
+			var items = $('#orderUpdateForm input[name=orderDetails]').val();
 			items = JSON.parse(items);
 			var fillForm = new FillForm();
 			fillForm.fillByData("#orderitemform" , items[index], 1);
+			
+			$("#orderitemform").children("#sourceForm").val("#orderUpdateForm");
+			$("#orderitemform").children("#sourceTable").val("#tbl_view_orderItems");
 			$("#modalorderitem").modal('show');
-			$("#btn_save_orderitem").hide();
-			$("#btn_save_orderitem_for_view").show();
+			
 		});
 		
 		$('#tbl_view_orderItems').bootstrapTable('hideColumn', 'operation');
@@ -3526,14 +3582,17 @@ var App = function () {
 		$('#tbl_order').on('click-row.bs.table', function (e, row, element){  
 			$.getJSON(getProjectName() + "/order/findById.do?id="+row.id, function (data){
 				orderItems = data.details;
-				
 				$("#view_orderId").html("#" + data.identify);			
 				var fillForm = new FillForm();
 				fillForm.fillByData("div .viewForm", data, 0);
 				fillForm.fillByData("#orderUpdateForm" , data, 1);
-				var data_table = JSON.stringify(orderItems);
-				$("#tbl_view_orderItems").attr("data-data", data_table);
+				var orderDetails = JSON.stringify(orderItems);
+				$("#orderUpdateForm").find("input[name=orderDetails]").val(orderDetails);
 				$("#tbl_view_orderItems").bootstrapTable("refreshOptions", {data: orderItems, cache: false});
+				
+				var states = $("#themes label");
+				$(states[data.state-1]).addClass("active");
+				states.not($(states[data.state-1])).removeClass("active");
 				
 				$("#orderList").slideToggle();
 				$("#orderView").slideToggle();
@@ -3543,6 +3602,11 @@ var App = function () {
 		$('a.vgoback').click(function(){
 			$("#orderList").slideToggle();
 			$("#orderView").slideToggle();
+			
+			$('#tbl_view_orderItems').bootstrapTable('hideColumn', 'operation');
+			$('#orderInfoView').show();
+			$('#orderUpdateForm').hide();
+			$('#form_footer').hide();
 		});
 		
 		$('#btn_add').click(function(){
@@ -3560,13 +3624,31 @@ var App = function () {
 			$('#form_footer').show();
 		});
 		
-		
+		$("#btn_add_orderItem").click(function(){
+			$("#orderitemform").children("#sourceForm").val("#formOrder");
+			$("#orderitemform").children("#sourceTable").val("#tbl_new_orderitem");
+			$("#modalorderitem").modal('show');
+		});
 		
 		$("#btn_update_cancel").click(function(){
 			$('#tbl_view_orderItems').bootstrapTable('hideColumn', 'operation');
 			$('#orderInfoView').show();
 			$('#orderUpdateForm').hide();
 			$('#form_footer').hide();
+		});
+		
+		
+		$("#themes label").click(function(){
+			var identify = $("#orderUpdateForm input[name=identify]").val();
+			var index = $("#themes label").index(this)+1;
+			$.ajax({
+				url: getProjectName() + "/order/updatestate.do?identify="+identify+"&state="+index,
+				method: "post",
+				success: function(){
+					$("#tbl_order").bootstrapTable("refresh", {url: getProjectName() + "/order/loadorder.do", cache: false});
+					alert("订单状态修改成功");
+				}
+			});
 		});
 		
 		$("#tbl_new_orderitem").bootstrapTable({columns: [
@@ -3579,14 +3661,14 @@ var App = function () {
 			{field: 'totlmentRMB',title: '￥合计'}, 
 			{field: 'totlmentDollar',title: '$合计'},
 			{field: '', title: '操作', formatter: function(value,row,index){
-				return '<a href="javascript:;" onclick="deleteOrderItem(\'#tbl_new_orderitem\', ' + index + ')"><i class="fa fa-cut (alias)"></a>';
+				return '<a href="javascript:;" onclick="deleteOrderItem(\'#formOrder\', \'#tbl_new_orderitem\', ' + index + ')"><i class="fa fa-cut (alias)"></a>';
 			}}]});
 		
 		
 		
 		
 		$.getJSON(getProjectName() + "/pdt/loadallpdt.do", function (data){
-			$("#relpdt").append("<option></option>");
+			$("#relpdt").append("<option value=''></option>");
 			$.each(data, function(index, obj){
 				$("#relpdt").append("<option value='"+obj.code+"'>"+ obj.code + "-" + obj.name + "-" + obj.specification +"</option>");
 			});
@@ -3604,9 +3686,9 @@ var App = function () {
 				$.getJSON(getProjectName() + "/pdt/findbycode.do?code="+pdtno, function (pdt){
 					
 					$("input[name=pdtName]").val(pdt.name);
-					$("input[name=pdtName]").focus();
+					$("input[name=pdtName]").change();
 					$("input[name=content]").val(pdt.specification);
-					$("input[name=content]").focus();
+					$("input[name=content]").change();
 				});
 			}
 			
@@ -3615,19 +3697,19 @@ var App = function () {
 		$("#orderitemform").bootstrapValidator({
 			fields: {
 				pdtNo : {validators: {notEmpty : {}}},
-				pdtName : {validators: {trigger: "focus", notEmpty : {}}},
-				content: {validators: {trigger: "focus", notEmpty : {}}},
-				priceRMB: {validators: {numeric : {}}},
-				priceDollar: {validators: {numeric : {}}},
+				pdtName : {trigger: "change", validators: {notEmpty : {}}},
+				content: {trigger: "change", validators: {notEmpty : {}}},
+				priceRMB: {validators: {notEmpty : {}, numeric : {}}},
+				priceDollar: {validators: {notEmpty : {}, numeric : {}}},
 				quantity: {validators: {notEmpty : {}, integer : {}}}
 	        }
 		});
 		$("#btn_save_orderitem").click(function(){
-			saveOrderItemInLocal($("#tbl_new_orderitem"), $("#formOrder"));			
+			var tableId = $("#sourceTable").val();
+			var formId = $("#sourceForm").val();
+			saveOrderItemInLocal($(tableId), $(formId));			
 		});
-		$("#btn_save_orderitem_for_view").click(function(){
-			saveOrderItemInLocal($("#tbl_view_orderItems"), $("#orderUpdateForm"));
-		});
+		
 		var saveOrderItemInLocal = function(table, form){
 			var bv = $("#orderitemform").data('bootstrapValidator');
 	        bv.validate();
@@ -3650,7 +3732,7 @@ var App = function () {
 				var detail = fillNumWhenEmpty(["priceRMB", "priceDollar", "totlmentRMB", "totlmentDollar", "inStorageQuantity", "deliverQuantity"], JSON.stringify(oorderitems));
 				form.find("input[name=orderDetails]").val(detail);
 				//table.attr("data-data", JSON.stringify(oorderitems));
-				table.bootstrapTable("refreshOptions", {data: oorderitems});
+				table.bootstrapTable("refreshOptions", {data: JSON.parse(detail)});
 				
 				var totlmentRMB = 0;
 				var totlmentDollar = 0;
@@ -3659,7 +3741,8 @@ var App = function () {
 					totlmentRMB += parseFloat(item.totlmentRMB);
 					if (item.totlmentDollar != '')
 					totlmentDollar += parseFloat(item.totlmentDollar);
-				});
+				});				
+				
 				form.find("input[name=amountRMB]").val(totlmentRMB);
 				form.find("input[name=amountDollar]").val(totlmentDollar);
 				
@@ -3668,10 +3751,27 @@ var App = function () {
 		}
 		
 		
+		$('#modalorderitem').on("show.bs.modal", function(){
+			var srcForm = $("#sourceForm").val();
+			var orderType = $(srcForm + ' select[name=orderType]').val();
+			
+			if (orderType == '海外订单'){
+				$("#orderitemform #priceDollarField").show();
+				$("#orderitemform #totlmentDollarField").show();
+				$("#orderitemform #priceRMBField").hide();
+				$("#orderitemform #totlmentRMBField").hide();
+			}
+			
+			if (orderType == '国内订单'){
+				$("#orderitemform #priceDollarField").hide();
+				$("#orderitemform #totlmentDollarField").hide();
+				$("#orderitemform #priceRMBField").show();
+				$("#orderitemform #totlmentRMBField").show();
+			}
+			
+		});
 		$('#modalorderitem').on("hide.bs.modal", function(){
 			removeFormData($("#orderitemform"));
-			$("#btn_save_orderitem").show();
-			$("#btn_save_orderitem_for_view").hide();
 		});
 		$("input[name=priceRMB],input[name=quantity]").change(function(){
 			if ($("input[name=priceRMB]").val()!="" && $("input[name=quantity]").val()!=""){
@@ -3680,13 +3780,21 @@ var App = function () {
 		});
 		$("input[name=priceDollar],input[name=quantity]").change(function(){
 			if ($("input[name=priceDollar]").val()!="" && $("input[name=quantity]").val()!=""){
-				$("input[name=totlmentDollar]").val(parseInt($("input[name=quantity]").val()) * parseFloat($("input[name=priceDollar]").val()));
+				var totlmentDollar = parseInt($("input[name=quantity]").val()) * parseFloat($("input[name=priceDollar]").val());
+				$("input[name=totlmentDollar]").val(totlmentDollar);
+				var srcForm = $("#sourceForm").val();
+				var orderType = $(srcForm).find("select[name=orderType]").val();
+				var exchangeRate = $(srcForm).find("input[name=exchangeRate]").val();
+				
+				if (orderType == '海外订单' && exchangeRate != ''){
+					$("input[name=totlmentRMB]").val(totlmentDollar*exchangeRate);
+				}
 			}
 		});
 		
 		
 		$.getJSON(getProjectName() + "/cust/loadallcust.do", function (data){
-			$("#relcust").append("<option></option>");
+			$("#relcust").append("<option value=''></option>");
 			$.each(data, function(index, obj){
 				$("#relcust").append("<option value='"+obj.name+"'>"+ obj.name + "</option>");
 			});
@@ -3707,13 +3815,10 @@ var App = function () {
 			var bv = $("#formOrder").data('bootstrapValidator');
 	        bv.validate();
 			if(bv.isValid()){
-				var detail = fillNumWhenEmpty(["priceRMB", "priceDollar", "totlmentRMB", "totlmentDollar", "inStorageQuantity", "deliverQuantity"], $("#tbl_new_orderitem").attr("data-data"));
-				alert(detail);
-				$("#formOrder input[name=orderDetails]").val(detail);
 				$("#formOrder").ajaxSubmit({
 					url: getProjectName()+"/order/save.do",
 					success: function(){
-						window.location.reload();
+						window.location.reload(true);
 					}
 				});
 			}
@@ -3723,8 +3828,10 @@ var App = function () {
 			var bv = $("#orderUpdateForm").data('bootstrapValidator');
 	        bv.validate();
 			if(bv.isValid()){
-				var detail = fillNumWhenEmpty(["priceRMB", "priceDollar", "totlmentRMB", "totlmentDollar", "inStorageQuantity", "deliverQuantity"], $("#tbl_view_orderItems").attr("data-data"));
-				$("#orderUpdateForm input[name=orderDetails]").val(detail);
+				if($("#orderUpdateForm input[name=orderDetails]").val() == "[]"){
+					alert("必须包含订单项！");
+					return false;
+				}
 				$("#orderUpdateForm").ajaxSubmit({
 					url: getProjectName()+"/order/save.do",
 					success: function(){
@@ -3744,8 +3851,33 @@ var App = function () {
 			oImportModal.createModal();  
 		});
 		
-		$("#btn_export").click(function(){			
-			window.open(getProjectName() + "/order/exportorder.do?condition="+$("input[name=condition]").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()); 
+		$("#btn_export").click(function(){
+			var orderType = $("#modaldatepicker input[name=orderType]:checked");
+        	var orderState  = $("#modaldatepicker input[name=orderState]:checked");
+        	
+        	var orderTypeValues = [];
+        	var orderStateValues = [];
+        	$.each(orderType, function(index, obj){
+        		orderTypeValues.push($(obj).val());
+        	});
+        	
+        	$.each(orderState, function(index, obj){
+        		orderStateValues.push($(obj).val());
+        	});
+        	
+        	var condition_orderType = '';
+        	var condition_orderState = '';
+        	if (orderTypeValues.length == 1){
+        		if (orderTypeValues[0] == "1")
+        			condition_orderType = "国内订单";
+        		else
+        			condition_orderType = "海外订单";
+        	}
+        	if (orderStateValues.length == 1){
+        		condition_orderState = orderStateValues[0];
+        	}
+        	
+			window.open(getProjectName() + "/order/exportorder.do?state="+condition_orderState+"&orderType="+condition_orderType+"&condition="+$("input[name=condition]").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()); 
 		});
 	}
 	
@@ -5512,12 +5644,26 @@ var App = function () {
 /*-----------------------------------------------------------------------------------*/
 /*	Order Moduel Script
 /*-----------------------------------------------------------------------------------*/
-var deleteOrderItem = function(tableId, index){
-	var orderitems = $(tableId).attr("data-data");
+var deleteOrderItem = function(form, tableId, index){
+	
+	var orderitems = $(form).find("input[name=orderDetails]").val();
 	var oorderitems = JSON.parse(orderitems);
+	var itemofdelete = oorderitems[index];
 	oorderitems.splice(index, 1);
-	$(tableId).attr("data-data", JSON.stringify(oorderitems));
+	
+	$(form).find("input[name=orderDetails]").val(JSON.stringify(oorderitems));	
 	$(tableId).bootstrapTable("refreshOptions", {data: oorderitems});
+	
+	var amountRMB = $(form).find("input[name=amountRMB]").val();
+	var amountDollar = $(form).find("input[name=amountDollar]").val();
+	if (amountRMB != ''){
+		amountRMB = parseFloat(amountRMB) - itemofdelete.totlmentRMB;
+		$(form).find("input[name=amountRMB]").val(amountRMB);
+	}
+	if (amountDollar != ''){
+		amountDollar = parseFloat(amountDollar) - itemofdelete.totlmentDollar;
+		$(form).find("input[name=amountDollar]").val(amountDollar);
+	}
 }
 
 
@@ -5851,7 +5997,7 @@ var getJSONObjByForm = function(form){
 }
 	
 var removeFormData = function(form){
-	var formitems = form.find("input,textarea");
+	var formitems = form.find("input,textarea,select");
 	$.each(formitems, function(index, item){
 		if (item.tagName == 'INPUT' && ($(item).attr('type') == 'radio' || $(item).attr('type') == 'checkbox')){
 			$(item).removeAttr("checked");

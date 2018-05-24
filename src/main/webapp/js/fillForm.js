@@ -73,8 +73,11 @@ var fillData = function(data, container, fieldAttr, fieldPerfix, formType){
 				}
 			})
 		}
-		else{			
-			if (formType == 0){				
+		else{	
+			if (dataValue == undefined)
+				dataValue = '';
+			if (formType == 0){	
+				
 				$(e).html(dataValue);
 			}else{
 				$(e).val(dataValue);

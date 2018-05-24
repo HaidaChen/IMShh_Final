@@ -3,7 +3,8 @@ package com.douniu.imshh.finance.order.domain;
 import java.util.Date;
 
 public class OrderAndDetail {
-	private String identify; 
+	private String identify;
+	private String orderType;
 	private String custName;
 	private Date orderDate;
 	private Date deliveryTerm;
@@ -23,11 +24,12 @@ public class OrderAndDetail {
 	
 	public OrderAndDetail(){super();}	
 	
-	public OrderAndDetail(String identify, String custName, Date orderDate, Date deliveryTerm, Float exchangeRate, Float amountRMB, Float amountDollar, String remark, String pdtNo,
+	public OrderAndDetail(String identify, String orderType, String custName, Date orderDate, Date deliveryTerm, Float exchangeRate, Float amountRMB, Float amountDollar, String remark, String pdtNo,
 			String pdtName, String content, int quantity, Float priceRMB, Float priceDollar, Float totlemntRMB, Float totlemntDollar,
 			String detailRemark) {
 		super();
 		this.identify = identify;
+		this.orderType = orderType;
 		this.custName = custName;
 		this.orderDate = orderDate;
 		this.deliveryTerm = deliveryTerm;
@@ -163,6 +165,14 @@ public class OrderAndDetail {
 
 	public void setTotlmentDollar(Float totlmentDollar) {
 		this.totlmentDollar = totlmentDollar;
+	}
+
+	public String getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(String orderType) {
+		this.orderType = orderType;
 	}
 
 	

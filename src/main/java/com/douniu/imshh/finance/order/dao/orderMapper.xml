@@ -5,6 +5,7 @@
     <resultMap type="Order" id="ordermap">
         <id property="id" column="id"/>
         <result property="identify" column="identify"/>
+        <result property="orderType" column="orderType"/>
         <result property="custName" column="custName"/>
         <result property="orderDate" column="orderDate"/>
         <result property="deliveryTerm" column="deliveryTerm"/>
@@ -18,6 +19,7 @@
     <resultMap type="Order" id="orderdtlmap">
         <id property="id" column="id"/>
         <result property="identify" column="identify"/>
+        <result property="orderType" column="orderType"/>
         <result property="custName" column="custName"/>
         <result property="orderDate" column="orderDate"/>
         <result property="deliveryTerm" column="deliveryTerm"/>
@@ -59,7 +61,13 @@
         <if test="condition != null and condition !=''">
           and (identify like #{condition}
             or custName like #{condition})
-        </if>        
+        </if> 
+        <if test="orderType != null and orderType !=''">
+          and orderType = #{orderType}
+        </if> 
+        <if test="state != null and state !=''">
+          and state = #{state}
+        </if>       
         <if test="startDate != null">
           and orderDate &gt;= #{startDate}
         </if>
@@ -75,6 +83,12 @@
           and (identify like #{condition}
             or custName like #{condition})
         </if>   
+        <if test="orderType != null and orderType !=''">
+          and orderType = #{orderType}
+        </if> 
+        <if test="state != null and state !=''">
+          and state = #{state}
+        </if>
         <if test="startDate != null">
           and orderDate &gt;= #{startDate}
         </if>
@@ -90,6 +104,12 @@
           and (identify like #{condition}
             or custName like #{condition})
         </if>
+        <if test="orderType != null and orderType !=''">
+          and orderType = #{orderType}
+        </if> 
+        <if test="state != null and state !=''">
+          and state = #{state}
+        </if>
         <if test="startDate != null">
           and orderDate &gt;= #{startDate}
         </if>
@@ -104,6 +124,12 @@
           and (identify like #{condition}
             or custName like #{condition})
         </if>
+        <if test="orderType != null and orderType !=''">
+          and orderType = #{orderType}
+        </if> 
+        <if test="state != null and state !=''">
+          and state = #{state}
+        </if>
         <if test="startDate != null">
           and orderDate &gt;= #{startDate}
         </if>
@@ -112,22 +138,23 @@
         </if> 
     </select>   
     <insert id="insert" parameterType="Order">
-        insert into t_Order(id, identify, custName, orderDate, deliveryTerm, exchangeRate, amountRMB, amountDollar, state, modifydate, remark, status)  
-          values(#{id}, #{identify}, #{custName}, #{orderDate}, #{deliveryTerm}, #{exchangeRate}, #{amountRMB}, #{amountDollar}, #{state}, sysdate(), #{remark}, #{status})
+        insert into t_Order(id, identify, orderType, custName, orderDate, deliveryTerm, exchangeRate, amountRMB, amountDollar, state, modifydate, remark, status)  
+          values(#{id}, #{identify}, #{orderType}, #{custName}, #{orderDate}, #{deliveryTerm}, #{exchangeRate}, #{amountRMB}, #{amountDollar}, #{state}, sysdate(), #{remark}, #{status})
     </insert>
     
     <insert id="batchInsert" parameterType="java.util.List">
         
-        insert into t_Order(id, identify, custName, orderDate, deliveryTerm, exchangeRate, amountRMB, amountDollar, state, modifydate, remark, status) 
+        insert into t_Order(id, identify, orderType, custName, orderDate, deliveryTerm, exchangeRate, amountRMB, amountDollar, state, modifydate, remark, status) 
              values
              <foreach collection="list" item="order" index="index" separator=",">
-                 (#{order.id} , #{order.identify}, #{order.custName}, #{order.orderDate}, #{order.deliveryTerm}, #{order.exchangeRate}, #{order.amountRMB}, #{order.amountDollar}, #{order.state}, sysdate(), #{order.remark}, '1')
+                 (#{order.id} , #{order.identify}, #{order.orderType}, #{order.custName}, #{order.orderDate}, #{order.deliveryTerm}, #{order.exchangeRate}, #{order.amountRMB}, #{order.amountDollar}, #{order.state}, sysdate(), #{order.remark}, '1')
              </foreach>
     </insert>
     
     <update id="update" parameterType="Order">
         update t_Order set 
           identify = #{identify},
+          orderType = #{orderType},
           custName = #{custName},
           orderDate = #{orderDate},
           deliveryTerm = #{deliveryTerm},

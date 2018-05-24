@@ -8,13 +8,14 @@ import com.douniu.imshh.common.BaseQO;
 public class Order extends BaseQO {
 	private String id;
 	private String identify; /*订单编号*/
+	private String orderType;
 	private String custName; /*客户名称*/
 	private Date orderDate;  /*订单生成日期*/
 	private Date deliveryTerm; /*交货日期*/
 	private Float exchangeRate; /*约定汇率*/
 	private Float amountRMB;    /*订单总金额*/
 	private Float amountDollar;    /*订单总金额*/
-	private int state = 1;   /*订单状态*/
+	private String state = "1";   /*订单状态*/
 	private List<OrderDetail> details;  /*订单明细*/	
 	
 	private String remark;
@@ -22,10 +23,11 @@ public class Order extends BaseQO {
 	
 	public Order(){}
 	
-	public Order(String id, String identify, String custName, Date orderDate, Date deliveryTerm, Float exchangeRate, Float amountRMB, Float amountDollar, String remark) {
+	public Order(String id, String identify, String orderType, String custName, Date orderDate, Date deliveryTerm, Float exchangeRate, Float amountRMB, Float amountDollar, String remark) {
 		super();
 		this.id = id;
 		this.identify = identify;
+		this.orderType = orderType;
 		this.custName = custName;
 		this.orderDate = orderDate;
 		this.deliveryTerm = deliveryTerm;
@@ -40,6 +42,14 @@ public class Order extends BaseQO {
 	public void setId(String id) {
 		this.id = id;
 	}
+	public String getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(String orderType) {
+		this.orderType = orderType;
+	}
+
 	public String getIdentify() {
 		return identify;
 	}
@@ -75,10 +85,10 @@ public class Order extends BaseQO {
 		this.amountDollar = amountDollar;
 	}
 
-	public int getState() {
+	public String getState() {
 		return state;
 	}
-	public void setState(int state) {
+	public void setState(String state) {
 		this.state = state;
 	}
 	public List<OrderDetail> getDetails() {
@@ -118,10 +128,10 @@ public class Order extends BaseQO {
 
 	@Override
 	public String toString() {
-		return "Order [id=" + id + ", identify=" + identify + ", custName=" + custName
-				+ ", orderDate=" + orderDate + ", amountRMB=" + amountRMB + ", amountDollar=" + amountDollar
-				+ ", state=" + state + ", details=" + details + ", deliveryTerm=" + deliveryTerm + ", exchangeRate="
-				+ exchangeRate + ", remark=" + remark + ", status=" + status + "]";
+		return "Order [id=" + id + ", identify=" + identify + ", orderType=" + orderType + ", custName=" + custName
+				+ ", orderDate=" + orderDate + ", deliveryTerm=" + deliveryTerm + ", exchangeRate=" + exchangeRate
+				+ ", amountRMB=" + amountRMB + ", amountDollar=" + amountDollar + ", state=" + state + ", details="
+				+ details + ", remark=" + remark + ", status=" + status + "]";
 	}
-	
+		
 }

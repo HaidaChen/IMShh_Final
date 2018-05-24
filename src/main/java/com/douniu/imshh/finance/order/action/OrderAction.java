@@ -41,7 +41,8 @@ import com.google.gson.reflect.TypeToken;
 public class OrderAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{
-		mapper.add(new ExcelBean("订单编号","identify",0));  
+		mapper.add(new ExcelBean("订单编号","identify",0));
+		mapper.add(new ExcelBean("订单类型","orderType",0));
 		mapper.add(new ExcelBean("订购客户","custName",0));  
 		mapper.add(new ExcelBean("订购日期","orderDate",0));
 		mapper.add(new ExcelBean("交货期限","deliveryTerm",0));
@@ -164,14 +165,20 @@ public class OrderAction {
   
         Workbook workbook=null;  
         try {
+        	String condition = request.getParameter("condition");
         	String identify = request.getParameter("identify");
         	String custName = request.getParameter("custName");
+        	String state = request.getParameter("state");
+        	String orderType = request.getParameter("orderType");
         	Date startDate = DateUtil.string2Date(request.getParameter("startDate"));
         	Date endDate = DateUtil.string2Date(request.getParameter("endDate"));
         	
         	Order order = new Order();
+        	order.setCondition(condition);
         	order.setIdentify(identify);
         	order.setCustName(custName);
+        	order.setState(state);
+        	order.setOrderType(orderType);
         	order.setStartDate(startDate);
         	order.setEndDate(endDate);
         	

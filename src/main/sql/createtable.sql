@@ -56,6 +56,7 @@ CREATE TABLE T_MATERIAL(
 CREATE TABLE T_ORDER(
     id varchar(20) not null,
     identify varchar(64) not null unique,
+    orderType varchar(20),
     custName varchar(128),    
     orderDate date,
     deliveryTerm date,

@@ -101,7 +101,7 @@ public class OrderService implements IOrderService{
 			String identify = orderAndDetail.getIdentify();
 			if (!identifys.contains(identify)){
 				String orderId = System.currentTimeMillis() + "" + index++;
-				Order order = new Order(orderId, orderAndDetail.getIdentify(), orderAndDetail.getCustName(), orderAndDetail.getOrderDate(), orderAndDetail.getDeliveryTerm(), orderAndDetail.getExchangeRate(), orderAndDetail.getAmountRMB(), orderAndDetail.getAmountDollar(), orderAndDetail.getRemark());
+				Order order = new Order(orderId, orderAndDetail.getIdentify(), orderAndDetail.getOrderType(), orderAndDetail.getCustName(), orderAndDetail.getOrderDate(), orderAndDetail.getDeliveryTerm(), orderAndDetail.getExchangeRate(), orderAndDetail.getAmountRMB(), orderAndDetail.getAmountDollar(), orderAndDetail.getRemark());
 				orders.add(order);
 				identifys.add(identify);
 			}
@@ -125,7 +125,7 @@ public class OrderService implements IOrderService{
 		List<OrderAndDetail> orderAndDetails = new ArrayList<OrderAndDetail>();
 		for (Order order : orderList){
 			for (OrderDetail detail : order.getDetails()){
-				OrderAndDetail orderAndDetail = new OrderAndDetail(order.getIdentify(), order.getCustName(), 
+				OrderAndDetail orderAndDetail = new OrderAndDetail(order.getIdentify(), order.getOrderType(),order.getCustName(), 
 						order.getOrderDate(), order.getDeliveryTerm(), order.getExchangeRate(), order.getAmountRMB(), order.getAmountDollar(), order.getRemark(), detail.getPdtNo(),
 						detail.getPdtName(), detail.getContent(), detail.getQuantity(), detail.getPriceRMB(), 
 						detail.getPriceDollar(), detail.getTotlmentRMB(), detail.getTotlmentDollar(), detail.getRemark());
