@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.douniu.imshh.finance.reception.dao.IReceptionDao">
-    <resultMap type="Reception" id="receptionmap">
+<mapper namespace="com.douniu.imshh.finance.storage.dao.IMaterialInDao">
+    <resultMap type="MaterialIn" id="materialinmap">
         <result property="id" column="id"/>
         <result property="receiveDate" column="receiveDate"/>
         <result property="orderIdentify" column="orderIdentify"/>
@@ -22,12 +22,12 @@
     </resultMap>
     
     
-    <select id="query" parameterType="Reception" resultMap="receptionmap">
-    	select * from T_RECEPTION where status = 1
+    <select id="query" parameterType="MaterialIn" resultMap="materialinmap">
+    	select * from T_MATERIALIN where status = 1
         <if test="condition != null and condition !=''">
           and (orderIdentify like #{condition}
             or supplierName like #{condition}
-            or supplierName like #{condition})
+            or materialName like #{condition})
         </if>
         <if test="startDate != null">
           and receiveDate &gt;= #{startDate}
@@ -39,12 +39,12 @@
           limit #{pageOffset},#{pageSize}
     </select>
     
-    <select id="queryNoPage" parameterType="Reception" resultMap="receptionmap">
-    	select * from T_RECEPTION where status = 1
+    <select id="queryNoPage" parameterType="MaterialIn" resultMap="materialinmap">
+    	select * from T_MATERIALIN where status = 1
         <if test="condition != null and condition !=''">
           and (orderIdentify like #{condition}
             or supplierName like #{condition}
-            or supplierName like #{condition})
+            or materialName like #{condition})
         </if>
         <if test="startDate != null">
           and receiveDate &gt;= #{startDate}
@@ -54,12 +54,12 @@
         </if>
     </select>
     
-    <select id="count" parameterType="Reception" resultType="int">
-    	select count(1) from T_RECEPTION where status = 1
+    <select id="count" parameterType="MaterialIn" resultType="int">
+    	select count(1) from T_MATERIALIN where status = 1
         <if test="condition != null and condition !=''">
           and (orderIdentify like #{condition}
             or supplierName like #{condition}
-            or supplierName like #{condition})
+            or materialName like #{condition})
         </if>
         <if test="startDate != null">
           and receiveDate &gt;= #{startDate}
@@ -69,8 +69,8 @@
         </if>
     </select>
     
-    <select id="queryBySupplier" parameterType="Reception" resultMap="receptionmap">
-    	select * from T_RECEPTION where status = 1
+    <select id="queryBySupplier" parameterType="MaterialIn" resultMap="materialinmap">
+    	select * from T_MATERIALIN where status = 1
         <if test="supplierName != null and supplierName !=''">
           and supplierName like #{supplierName}
         </if>
@@ -84,8 +84,8 @@
           limit #{pageOffset},#{pageSize}
     </select>
     
-    <select id="countBySupplier" parameterType="Reception" resultType="int">
-    	select count(1) from T_RECEPTION where status = 1
+    <select id="countBySupplier" parameterType="MaterialIn" resultType="int">
+    	select count(1) from T_MATERIALIN where status = 1
         <if test="supplierName != null and supplierName !=''">
           and supplierName like #{supplierName}
         </if>
@@ -97,24 +97,24 @@
         </if>
     </select>
     
-    <select id="findById" parameterType="String" resultType="Reception">
-        select * from T_RECEPTION where id = #{id}
+    <select id="findById" parameterType="String" resultType="MaterialIn">
+        select * from T_MATERIALIN where id = #{id}
     </select>
     
-    <insert id="insert" parameterType="Reception">        
-        insert into T_RECEPTION(id, receiveDate, orderIdentify, supplierId, supplierName, materialName, materialId, specification1, specification2, specification3, formula, unit, meterage, unitPrice, amount, totlemnt, modifyDate, status) 
+    <insert id="insert" parameterType="MaterialIn">        
+        insert into T_MATERIALIN(id, receiveDate, orderIdentify, supplierId, supplierName, materialName, materialId, specification1, specification2, specification3, formula, unit, meterage, unitPrice, amount, totlemnt, modifyDate, status) 
              values (#{id} , #{receiveDate}, #{orderIdentify}, #{supplierId}, #{supplierName}, #{materialName}, #{materialId}, #{specification1}, #{specification2}, #{specification3}, #{formula}, #{unit}, #{meterage}, #{unitPrice}, #{amount}, #{totlemnt}, sysdate(), '1')
     </insert>
     
     <insert id="batchInsert" parameterType="java.util.List">        
-        insert into T_RECEPTION(id, receiveDate, orderIdentify, supplierId, supplierName, materialName, materialId, specification1, specification2, specification3, formula, unit, meterage, unitPrice, amount, totlemnt, modifyDate, status) 
+        insert into T_MATERIALIN(id, receiveDate, orderIdentify, supplierId, supplierName, materialName, materialId, specification1, specification2, specification3, formula, unit, meterage, unitPrice, amount, totlemnt, modifyDate, status) 
              values 
              <foreach collection="list" item="rep" index="index" separator=",">
              	(CONCAT(current_timestamp()+1, #{index}), #{rep.receiveDate}, #{rep.orderIdentify}, #{rep.supplierId}, #{rep.supplierName}, #{rep.materialName}, #{rep.materialId}, #{rep.specification1}, #{rep.specification2}, #{rep.specification3}, #{rep.formula}, #{rep.unit}, #{rep.meterage}, #{rep.unitPrice}, #{rep.amount}, #{rep.totlemnt}, sysdate(), '1')
     		 </foreach>
     </insert>
     
-    <update id="update" parameterType="Reception">
+    <update id="update" parameterType="MaterialIn">
         update t_deliverDetail set 
           deliverDate = #{deliverDate},
           orderIdentify = #{orderIdentify},

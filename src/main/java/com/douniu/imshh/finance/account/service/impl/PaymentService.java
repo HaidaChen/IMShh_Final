@@ -8,7 +8,7 @@ import com.douniu.imshh.finance.account.dao.IPaymentDao;
 import com.douniu.imshh.finance.account.domain.Payment;
 import com.douniu.imshh.finance.account.domain.Transaction;
 import com.douniu.imshh.finance.account.service.IPaymentService;
-import com.douniu.imshh.finance.reception.domain.Reception;
+import com.douniu.imshh.finance.storage.domain.MaterialIn;
 
 public class PaymentService implements IPaymentService{
 
@@ -25,7 +25,7 @@ public class PaymentService implements IPaymentService{
 	}
 
 	@Override
-	public void addDebt(Reception reception) {
+	public void addDebt(MaterialIn reception) {
 		DateFormat format = new SimpleDateFormat("yyyy-MM");  
         String month = format.format(reception.getReceiveDate());  
         

@@ -40,6 +40,16 @@ var FillForm = function(){
 		});
 	}
 	
+	oFillForm.autoFill = function(form, data){
+		var formitems = $(form).find("input, select, textarea");
+		$.each(formitems, function(index, item){
+			var field = $(item).attr("name");
+			
+			var value = data[field];
+			$(item).val(value);
+		});
+	}
+	
 	return oFillForm;
 };
 

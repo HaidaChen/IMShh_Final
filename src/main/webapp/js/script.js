@@ -3883,11 +3883,11 @@ var App = function () {
 	
 	
 	/*-----------------------------------------------------------------------------------*/
-	/*	Load ReceiptConsum data
+	/*	Load MaterialIn data
 	/*-----------------------------------------------------------------------------------*/	
-	var initReceiptConsModule = function(){
-		$("#tbl_receiptCons").bootstrapTable({
-			url: getProjectName() + "/reception/loadreception.do",
+	var initMaterialInModule = function(){
+		$("#tbl_materialIn").bootstrapTable({
+			url: getProjectName() + "/materialin/loadmaterialin.do",
 			method: "get",
 			pagination: true,
 			sidePagination: "server", 
@@ -3948,7 +3948,7 @@ var App = function () {
 		});
 		
 		$("input[name=condition]").change(function(){
-			$("#tbl_receiptCons").bootstrapTable("refresh", {url: getProjectName() + "/reception/loadreception.do", cache: false});
+			$("#tbl_materialIn").bootstrapTable("refresh", {url: getProjectName() + "/materialin/loadmaterialin.do", cache: false});
 		});
 		
 		
@@ -3982,6 +3982,11 @@ var App = function () {
 			});
 		});
 		
+		$('#btn_add,a.ngoback').click(function(){
+			$("#materialInList").slideToggle();
+			$("#materialInNew").slideToggle();
+		});
+		
 		$("#relmaterial").change(function(){
 			var mtlId = $("#relmaterial option:selected").attr("id");
 			$.getJSON(getProjectName() + "/mtl/edit.do?id="+mtlId, function (data){
@@ -4010,7 +4015,7 @@ var App = function () {
 			calculateTotlment();
 		});
 		
-		$("#receptionForm").bootstrapValidator({
+		$("#materialInForm").bootstrapValidator({
 			fields: {
 				receiptDate : {validators: {notEmpty : {}}},
 				supplierName : {validators: {notEmpty : {}}},
@@ -4020,28 +4025,39 @@ var App = function () {
 	        }
 		});
 		
-		$("#btn_save_reception").click(function(){
-			var bv = $("#receptionForm").data('bootstrapValidator');
+		$("#btn_save_materialIn").click(function(){
+			var bv = $("#materialInForm").data('bootstrapValidator');
 	        bv.validate();
 			if(bv.isValid()){
-				$("#receptionForm").ajaxSubmit({
-					url: getProjectName()+"/reception/save.do",
+				$("#materialInForm").ajaxSubmit({
+					url: getProjectName()+"/materialin/save.do",
 					success: function(){
 						window.location.reload();
+						
 					}
 				});
 			}
 		});
 		
+		$('#tbl_materialIn').on('click-row.bs.table', function (e, row, element){  
+			$.getJSON(getProjectName() + "/materialin/findById.do?id="+row.id, function (data){
+				var fillForm = new FillForm();
+				fillForm.autoFill("#materialInForm" , data);
+				
+				$("#materialInList").slideToggle();
+				$("#materialInNew").slideToggle();
+			});			
+	    });  
+		
 		$("#btn_import").click(function(){			
-			var oImportModal = new ImportModal(getProjectName() + "/reception/importreception.do", function(){
-				$("#tbl_receiptCons").bootstrapTable("refresh", {url: getProjectName() + "/reception/loadreception.do", cache: false});
+			var oImportModal = new ImportModal(getProjectName() + "/materialin/importmaterialin.do", function(){
+				$("#tbl_materialIn").bootstrapTable("refresh", {url: getProjectName() + "/materialin/loadmaterialin.do", cache: false});
         	}, getProjectName() + "/templaters/材料接收单.xlsx");
 			oImportModal.createModal();  
 		});
 		
 		$("#btn_export").click(function(){			
-			window.open(getProjectName() + "/reception/exportreception.do?condition="+$("input[name=condition]").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()); 
+			window.open(getProjectName() + "/materialin/exportmaterialin.do?condition="+$("input[name=condition]").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()); 
 		});
 		
 		
@@ -4665,7 +4681,7 @@ var App = function () {
 		});
 		
 		$("#btn_query_reception").click(function(){
-			$("#tbl_reception").bootstrapTable('refresh', {url: getProjectName() + "/reception/loadbysupplier.do", cash:false});
+			$("#tbl_reception").bootstrapTable('refresh', {url: getProjectName() + "/materialin/loadbysupplier.do", cash:false});
 		});
 	}
 
@@ -5442,13 +5458,13 @@ var App = function () {
             if (App.isPage("materialIn")){
             	handleMenu("material_in_storage.html");
             	handleDatePicker();
-            	handleDatePriod($("#tbl_receiptCons"), "/reception/loadreception.do");
-            	initReceiptConsModule(); 
+            	handleDatePriod($("#tbl_materialIn"), "/materialin/loadmaterialin.do");
+            	initMaterialInModule(); 
             }
             if (App.isPage("materialOut")){
             	handleMenu("material_out_storage.html");
             	handleDatePicker();
-            	handleDatePriod($("#tbl_receiptCons"), "/reception/loadreception.do");
+            	handleDatePriod($("#tbl_materialIn"), "/materialin/loadmaterialin.do");
             	initReceiptConsModule(); 
             }
             if (App.isPage("productOut")){
@@ -5850,7 +5866,7 @@ function viewDeliver(customer){
 function viewReceptionM(supplier){
 	$("#modalReception").modal('show');
 	$("#tbl_reception").bootstrapTable({
-		url: getProjectName() + "/reception/loadbysupplier.do",
+		url: getProjectName() + "/materialin/loadbysupplier.do",
 		method: "get",
 		pagination: true,
 		sidePagination: "server", 

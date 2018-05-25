@@ -65,11 +65,11 @@ xsi:schemaLocation="
       </bean>
       
       
-      <bean name="receptionService" class="com.douniu.imshh.finance.reception.service.impl.ReceptionService">
-          <property name="dao" ref="receptionDao"></property>
+      <bean name="materialInService" class="com.douniu.imshh.finance.storage.service.impl.MaterialInService">
+          <property name="dao" ref="materialInDao"></property>
       </bean>
-      <bean id="receptionDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.finance.reception.dao.IReceptionDao"/>
+      <bean id="materialInDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.storage.dao.IMaterialInDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       

@@ -136,20 +136,7 @@
 								<div class="page-header">
 									<div class="clearfix">
 										<h3 class="content-title pull-left">原材料接收明细</h3>
-										<span class="date-range pull-right col-md-4" >
-											<div class="input-group" >
-												<input type="text" name="condition" class="form-control" placeholder="查询条件"/>
-												<div class="input-group-btn">
-													<button type="button" id="btn_datapriod" class="btn btn-default dropdown-toggle" data-toggle="dropdown">所有数据<span class="caret"></span></button>
-													<ul id="dataperiod" class="dropdown-menu" >
-													  <li><a href="javascript:;">所有数据</a></li>
-													  <li><a href="javascript:;">本月</a></li>
-													  <li><a href="javascript:;">今年</a></li>																  
-													  <li><a data-toggle="modal" data-target="#modaldatepicker"><i class="fa fa-calendar"></i>&nbsp指定日期</a></li>
-													</ul>
-												  </div>
-											</div>
-										</span>
+										
 									</div>
 									<div class="description">原材料接收明细，是代付款的数据来源</div>
 								</div>
@@ -158,187 +145,213 @@
 						
 						<div class="row">
 							<div class="col-md-12">
-								<div class="box border orange">
-									<div class="box-title" >
-										<div class="dropdown" style="display: inline-block; z-index: 99;">
-											<a href="javascript:;" data-toggle="dropdown" ><h4><i class="fa fa-cogs"></i></h4></a>
-										    <ul class="dropdown-menu context"  style="text-align: left; ">
-										    	<li>
-										            <a id="btn_import" href="javascript:;"><i class="fa fa-chain (alias)"></i>&nbsp导入</a>
-										        </li>
-										        <li>
-										            <a id="btn_export" href="javascript:;"><i class="fa fa-external-link"></i>&nbsp导出</a>
-										        </li>
-										    </ul>
-										</div>										
-										<h4><span >接收明细</span></h4>
-									</div>
+								<div class="box">
 									<div class="box-body">
-										<div class="tabbable header-tabs user-profile">
-											<ul class="nav nav-tabs">
-											   <li><a href="#receiptCons_edit" data-toggle="tab"><i class="fa fa-edit"></i> <span class="hidden-inline-mobile">新的接收单</span></a></li>
-											   <li class="active"><a href="#receiptCons_overview" data-toggle="tab"><i class="fa fa-dot-circle-o"></i> <span class="hidden-inline-mobile">浏览</span></a></li>
-											</ul>
-											<div class="tab-content">
-												<div class="tab-pane fade in active" id="receiptCons_overview">
-													<table id="tbl_receiptCons" class='table table-hover'>														
-													</table>														
+										<div id="materialInList" class="panel panel-default">
+											<div class="panel-body">
+											<div class='row'>
+												<div class='col-md-12'>
+													<div class="invoice-header clearfix">
+														<div class="btn-group">
+												    		<button id="btn_import" type="button" class="btn btn-default"><i class="fa fa-chain (alias)"></i>导入</button>
+												    		<button id="btn_add" type="button" class="btn btn-default"><i class="fa  fa-pencil"></i>新增</button>
+												    		<button id="btn_export" type="button" class="btn btn-default"><i class="fa  fa-external-link"></i>导出</button>
+												    	</div>
+												    	
+												    	<span class="pull-right col-md-4" >
+															<div class="input-group" >
+																<input type="text" name="condition" class="form-control" placeholder="订单编号、供应商、品名"/>
+																<div class="input-group-btn">
+																	<button type="button" id="btn_datapriod" class="btn btn-default dropdown-toggle" data-toggle="dropdown">所有数据<span class="caret"></span></button>
+																	<ul id="dataperiod" class="dropdown-menu" >
+																	  <li><a href="javascript:;">所有数据</a></li>
+																	  <li><a href="javascript:;">本月</a></li>
+																	  <li><a href="javascript:;">今年</a></li>																  
+																	  <li><a data-toggle="modal" data-target="#modaldatepicker"><i class="fa fa-calendar"></i>&nbsp指定日期</a></li>
+																	</ul>																	
+																</div>
+																
+															</div>
+														</span>
+													</div>
 												</div>
+											</div>
 											
-												<div class="tab-pane fade" id="receiptCons_edit">
-													<form class="form-horizontal" id="receptionForm" method="post">														
-														<div class="form-group">
-															<label class="col-md-3 control-label">接收日期</label> 
-															<div class="col-md-4">
-																<input type="hidden" name="id" value="">
-														    	<input type="text" name="receiveDate" class="form-control selectData" value="">
-														    </div>
+										  </div>
+										  <table id="tbl_materialIn" class='table table-hover'>														
+										  </table>
+										</div>
+										
+										<div id="materialInNew" class='row' style="display: none">
+											<div class='col-md-12'>
+												<div class="box border blue">
+													<div class="box-title">
+														<h4><i class="fa fa-bars"></i>新的入库单</h4>
+														<div class="tools hidden-xs">
+															<a href="javascript:;" class="ngoback">
+																<i class="fa fa-times"></i>
+															</a>
 														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">关联订单</label> 
-															<div class="col-md-4">
-																<select id="relorder" name="orderIdentify" class="col-md-12">
-																</select>
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">供应商名称</label> 
-															<div class="col-md-4">
-														    	<input type="text" name="supplierName" class="form-control" value="">
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">品名</label> 
-															<div class="col-md-4">
-																<select id="relmaterial" name="materialName" class="col-md-12">
-																</select>
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">规格1</label> 
-															<div class="col-md-4">
-																<input type="text" label="规格1" name="specification1"  class="form-control" value="" >																
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">规格2</label> 
-															<div class="col-md-4">
-																<input type="text" label="规格2" name="specification2"  class="form-control" value="" >																
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">规格3</label> 
-															<div class="col-md-4">
-																<input type="text" label="规格3" name="specification3"  class="form-control" value="" >																
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">计量公式</label> 
-															<div class="col-md-4">
-																<div class="input-group">
-																	<input type="text" name="formula" class="form-control formItem" value="">
-																	<span id="btn_showformula" class="input-group-addon" style="cursor: pointer;"><i class="fa fa-keyboard-o"></i></span>
-																</div>
-														    </div>
-														</div>
-														<div id="formulabox" class="form-group" style="display: none;">
-															<label class="col-md-3 control-label"></label> 
-															<div class="col-md-7">
-																<div class="box-container">
-																<!-- BOX WITH TOOLBOX-->
-																	<div class="box border green">
-																		
-																		<div class="toolbox">
-																			<div id="grp_factor" class="btn-group">
-																			  <button type="button" class="btn btn-default">规格1</button>
-																			  <button type="button" class="btn btn-default">规格2</button>
-																			  <button type="button" class="btn btn-default">规格3</button>															  
-																			</div>
-																		</div>
-																		<div class="toolbox">
-																			<div id="grp_number" class="btn-group">
-																			  <button type="button" class="btn btn-default">0</button>
-																			  <button type="button" class="btn btn-default">1</button>
-																			  <button type="button" class="btn btn-default">2</button>
-																			  <button type="button" class="btn btn-default">3</button>
-																			  <button type="button" class="btn btn-default">4</button>
-																			  <button type="button" class="btn btn-default">5</button>
-																			  <button type="button" class="btn btn-default">6</button>
-																			  <button type="button" class="btn btn-default">7</button>
-																			  <button type="button" class="btn btn-default">8</button>
-																			  <button type="button" class="btn btn-default">9</button>
-																			  <button type="button" class="btn btn-default">.</button>
-																			</div>
-																		</div>
-																		<div class="toolbox">
-																			<div id="grp_operation" class="btn-group">
-																			  <button type="button" class="btn btn-default">+</button>
-																			  <button type="button" class="btn btn-default">-</button>
-																			  <button type="button" class="btn btn-default">*</button>
-																			  <button type="button" class="btn btn-default">/</button>
-																			  <button type="button" class="btn btn-default">(</button>
-																			  <button type="button" class="btn btn-default">)</button>
-																			</div>
-																		</div>
-																		<div class="box-body">
-																			<div class="scroller" data-height="165px" data-always-visible="1" data-rail-visible="1">
-																				<p id="calculation"></p>
-																			</div>
-																		</div>
-																		<div class="toolbox bottom">
-																			<div class="btn-group">
-																			  <button id="btn_reback" type="button" class="btn btn-default"><i class="fa fa-mail-reply (alias)"></i></button>
-																			  <button id="btn_clear" type="button" class="btn btn-default"><i class="fa fa-eraser"></i></button>	
-																			  <button id="btn_save" type="button" class="btn btn-default"><i class="fa fa-save (alias)"></i></button>										  
-																			</div>
-																		</div>
-																		
+													</div>
+													<div class="box-body">
+														<div class="panel panel-default">
+														    <div class="panel-body">
+																<form class="form-horizontal" id="materialInForm" method="post" autocomplete="off">														
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">接收日期</label> 
+																		<div class="col-md-4">
+																			<input type="hidden" name="id" value="">
+																	    	<input type="text" name="receiveDate" class="form-control selectData" value="">
+																	    </div>
 																	</div>
-																	<!-- /BOX WITH TOOLBOX-->
-																</div>
-														    </div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">关联订单</label> 
+																		<div class="col-md-4">
+																			<select id="relorder" name="orderIdentify" class="col-md-12">
+																			</select>
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">供应商名称</label> 
+																		<div class="col-md-4">
+																	    	<input type="text" name="supplierName" class="form-control" value="">
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">品名</label> 
+																		<div class="col-md-4">
+																			<select id="relmaterial" name="materialName" class="col-md-12">
+																			</select>
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">规格1</label> 
+																		<div class="col-md-4">
+																			<input type="text" label="规格1" name="specification1"  class="form-control" value="" >																
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">规格2</label> 
+																		<div class="col-md-4">
+																			<input type="text" label="规格2" name="specification2"  class="form-control" value="" >																
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">规格3</label> 
+																		<div class="col-md-4">
+																			<input type="text" label="规格3" name="specification3"  class="form-control" value="" >																
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">计量公式</label> 
+																		<div class="col-md-4">
+																			<div class="input-group">
+																				<input type="text" name="formula" class="form-control formItem" value="">
+																				<span id="btn_showformula" class="input-group-addon" style="cursor: pointer;"><i class="fa fa-keyboard-o"></i></span>
+																			</div>
+																	    </div>
+																	</div>
+																	<div id="formulabox" class="form-group" style="display: none;">
+																		<label class="col-md-3 control-label"></label> 
+																		<div class="col-md-7">
+																			<div class="box-container">
+																			<!-- BOX WITH TOOLBOX-->
+																				<div class="box border green">
+																					
+																					<div class="toolbox">
+																						<div id="grp_factor" class="btn-group">
+																						  <button type="button" class="btn btn-default">规格1</button>
+																						  <button type="button" class="btn btn-default">规格2</button>
+																						  <button type="button" class="btn btn-default">规格3</button>															  
+																						</div>
+																					</div>
+																					<div class="toolbox">
+																						<div id="grp_number" class="btn-group">
+																						  <button type="button" class="btn btn-default">0</button>
+																						  <button type="button" class="btn btn-default">1</button>
+																						  <button type="button" class="btn btn-default">2</button>
+																						  <button type="button" class="btn btn-default">3</button>
+																						  <button type="button" class="btn btn-default">4</button>
+																						  <button type="button" class="btn btn-default">5</button>
+																						  <button type="button" class="btn btn-default">6</button>
+																						  <button type="button" class="btn btn-default">7</button>
+																						  <button type="button" class="btn btn-default">8</button>
+																						  <button type="button" class="btn btn-default">9</button>
+																						  <button type="button" class="btn btn-default">.</button>
+																						</div>
+																					</div>
+																					<div class="toolbox">
+																						<div id="grp_operation" class="btn-group">
+																						  <button type="button" class="btn btn-default">+</button>
+																						  <button type="button" class="btn btn-default">-</button>
+																						  <button type="button" class="btn btn-default">*</button>
+																						  <button type="button" class="btn btn-default">/</button>
+																						  <button type="button" class="btn btn-default">(</button>
+																						  <button type="button" class="btn btn-default">)</button>
+																						</div>
+																					</div>
+																					<div class="box-body">
+																						<div class="scroller" data-height="165px" data-always-visible="1" data-rail-visible="1">
+																							<p id="calculation"></p>
+																						</div>
+																					</div>
+																					<div class="toolbox bottom">
+																						<div class="btn-group">
+																						  <button id="btn_reback" type="button" class="btn btn-default"><i class="fa fa-mail-reply (alias)"></i></button>
+																						  <button id="btn_clear" type="button" class="btn btn-default"><i class="fa fa-eraser"></i></button>	
+																						  <button id="btn_save" type="button" class="btn btn-default"><i class="fa fa-save (alias)"></i></button>										  
+																						</div>
+																					</div>
+																					
+																				</div>
+																				<!-- /BOX WITH TOOLBOX-->
+																			</div>
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">记量数</label> 
+																		<div class="col-md-4">
+																			<input type="text" name="meterage" class="form-control" value="" readonly="readonly">
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">计量单位</label> 
+																		<div class="col-md-4">
+																			<input type="text" name="unit" class="form-control" value="" >
+																	    </div>
+																	</div>														
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">数量</label> 
+																		<div class="col-md-4">
+																			<input type="text" name="amount" class="form-control" value="">
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">单价</label> 
+																		<div class="col-md-4">
+																			<input type="text" name="unitPrice" class="form-control" value="" >
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">合计</label> 
+																		<div class="col-md-4">
+																			<input type="text" name="totlemnt" class="form-control" value="" readonly="readonly">
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">备注</label> 
+																		<div class="col-md-4">
+																			<textarea name="remark" class="form-control" rows="3"></textarea>
+																	    </div>
+																	</div>																													
+																	<div class="form-actions clearfix"> <input type="button" id="btn_save_materialIn" value="保存" class="btn btn-primary pull-right"> </div>
+																</form>
+															</div>
 														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">记量数</label> 
-															<div class="col-md-4">
-																<input type="text" name="meterage" class="form-control" value="" readonly="readonly">
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">计量单位</label> 
-															<div class="col-md-4">
-																<input type="text" name="unit" class="form-control" value="" >
-														    </div>
-														</div>														
-														<div class="form-group">
-															<label class="col-md-3 control-label">数量</label> 
-															<div class="col-md-4">
-																<input type="text" name="amount" class="form-control" value="">
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">单价</label> 
-															<div class="col-md-4">
-																<input type="text" name="unitPrice" class="form-control" value="" >
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">合计</label> 
-															<div class="col-md-4">
-																<input type="text" name="totlemnt" class="form-control" value="" readonly="readonly">
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">备注</label> 
-															<div class="col-md-4">
-																<textarea name="remark" class="form-control" rows="3"></textarea>
-														    </div>
-														</div>																													
-														<div class="form-actions clearfix"> <input type="button" id="btn_save_reception" value="保存" class="btn btn-primary pull-right"> </div>
-													</form>
+													</div>
 												</div>
-											</div>												
-										</div>											
+											</div>
+										</div>									
 									</div>
 								</div>
 							</div>
@@ -354,6 +367,7 @@
 	<script src="../js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="../bootstrap-dist/js/bootstrap.min.js"></script>
 	<script src="../bootstrap-table/bootstrap-table.js"></script>
+	<script src="../bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
 	<script src="../js/datepicker/bootstrap-datepicker.js"></script>
 	<script src="../js/select2/select2.min.js"></script>
 	<script src="../js/math/math.min.js"></script>
@@ -362,6 +376,7 @@
 	<script src="../js/bootstrapvalidator/js/language/zh_CN.js"></script>
 	<script src="../js/jquery-form/jquery.form.js"></script>
 	<script src="../js/importModal.js"></script>
+	<script src="../js/fillForm.js"></script>
 	<script src="../js/script.js"></script>
 	<script>
 		jQuery(document).ready(function() {		

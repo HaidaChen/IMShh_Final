@@ -87,7 +87,7 @@ CREATE TABLE T_ORDERDETAIL(
 );
 
 
-CREATE TABLE T_RECEPTION(
+CREATE TABLE T_MATERIALIN(
     id varchar(20) not null,
     receiveDate date not null,
     orderIdentify varchar(20),
