@@ -9,6 +9,8 @@
         <typeAlias alias="Order" type="com.douniu.imshh.finance.order.domain.Order"/>
         <typeAlias alias="OrderDetail" type="com.douniu.imshh.finance.order.domain.OrderDetail"/>
         <typeAlias alias="MaterialIn" type="com.douniu.imshh.finance.storage.domain.MaterialIn"/>
+        <typeAlias alias="MaterialOut" type="com.douniu.imshh.finance.storage.domain.MaterialOut"/>
+        <typeAlias alias="MaterialStorage" type="com.douniu.imshh.finance.storage.domain.MaterialStorage"/>
         <typeAlias alias="Invoice" type="com.douniu.imshh.finance.invoice.domain.Invoice"/>
         
         <typeAlias alias="AccountReception" type="com.douniu.imshh.finance.account.domain.Reception"/>
@@ -33,6 +35,8 @@
         <mapper resource="/com/douniu/imshh/finance/order/dao/orderMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/order/dao/orderDetailMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/storage/dao/materialInMapper.xml"/>
+        <mapper resource="/com/douniu/imshh/finance/storage/dao/materialOutMapper.xml"/>
+        <mapper resource="/com/douniu/imshh/finance/storage/dao/materialStorageMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/invoice/dao/invoiceMapper.xml"/>
         
         <mapper resource="/com/douniu/imshh/finance/account/dao/receptionMapper.xml"/>

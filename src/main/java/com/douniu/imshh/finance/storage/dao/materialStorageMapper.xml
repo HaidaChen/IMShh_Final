@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.finance.storage.dao.IMaterialStorageDao">
+    <resultMap type="MaterialStorage" id="mstrgmap">
+        <result property="materialName" column="materialName"/>
+        <result property="specification1" column="specification1"/>
+        <result property="specification2" column="specification2"/>
+        <result property="specification3" column="specification3"/>
+        <result property="storage" column="storage"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+    </resultMap>     
+    
+    
+    <select id="statisticsStorage" parameterType="MaterialStorage" resultMap="mstrgmap">
+        select t1.materialName, t1.specification1, t1.specification2, t1.specification3, t1.amount - (case when t2.amount is null then 0 else t2.amount end) as amount from
+        (select materialName, specification1, specification2, specification3, sum(amount) as amount from t_materialin where status = 1 
+          group by materialName, specification1, specification2, specification3
+          order by modifydate desc
+        ) t1
+        left join 
+        (select materialName, specification1, specification2, specification3, sum(outAmount) - sum(returnAmount) as amount from t_materialout where status = 1
+         group by materialName, specification1, specification2, specification3
+         order by modifydate desc
+        ) t2
+         on t1.materialName = t2.materialName
+        and t1.specification1 = t2.specification1 
+        and t1.specification2 = t2.specification2 
+        and t1.specification3 = t2.specification3
+        where 1 = 1 
+        <if test="materialName != null and materialName !=''">
+          and t1.materialName like #{materialName}           
+        </if> 
+          limit #{pageOffset},#{pageSize}
+    </select>
+    
+    <select id="countStorage" parameterType="MaterialStorage" resultType="int">
+        select count(1) from (
+        select materialName, specification1, specification2, specification3, sum(amount) as amount from t_materialin where status = 1 
+        <if test="materialName != null and materialName !=''">
+          and materialName like #{materialName}           
+        </if> 
+        <if test="startDate != null">
+          and storageDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and storageDate &lt;= #{endDate}
+        </if>
+          group by materialName, specification1, specification2, specification3) tmp
+    </select>
+</mapper>

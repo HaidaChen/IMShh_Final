@@ -19,6 +19,7 @@
         <result property="amount" column="amount"/>
         <result property="unitPrice" column="unitPrice"/>        
         <result property="totlemnt" column="totlemnt"/>
+        <result property="remark" column="remark"/>
     </resultMap>
     
     
@@ -102,21 +103,21 @@
     </select>
     
     <insert id="insert" parameterType="MaterialIn">        
-        insert into T_MATERIALIN(id, receiveDate, orderIdentify, supplierId, supplierName, materialName, materialId, specification1, specification2, specification3, formula, unit, meterage, unitPrice, amount, totlemnt, modifyDate, status) 
-             values (#{id} , #{receiveDate}, #{orderIdentify}, #{supplierId}, #{supplierName}, #{materialName}, #{materialId}, #{specification1}, #{specification2}, #{specification3}, #{formula}, #{unit}, #{meterage}, #{unitPrice}, #{amount}, #{totlemnt}, sysdate(), '1')
+        insert into T_MATERIALIN(id, receiveDate, orderIdentify, supplierId, supplierName, materialName, materialId, specification1, specification2, specification3, formula, unit, meterage, unitPrice, amount, totlemnt, remark, modifyDate, status) 
+             values (#{id} , #{receiveDate}, #{orderIdentify}, #{supplierId}, #{supplierName}, #{materialName}, #{materialId}, #{specification1}, #{specification2}, #{specification3}, #{formula}, #{unit}, #{meterage}, #{unitPrice}, #{amount}, #{totlemnt}, #{remark}, sysdate(), '1')
     </insert>
     
     <insert id="batchInsert" parameterType="java.util.List">        
-        insert into T_MATERIALIN(id, receiveDate, orderIdentify, supplierId, supplierName, materialName, materialId, specification1, specification2, specification3, formula, unit, meterage, unitPrice, amount, totlemnt, modifyDate, status) 
+        insert into T_MATERIALIN(id, receiveDate, orderIdentify, supplierId, supplierName, materialName, materialId, specification1, specification2, specification3, formula, unit, meterage, unitPrice, amount, totlemnt, remark, modifyDate, status) 
              values 
              <foreach collection="list" item="rep" index="index" separator=",">
-             	(CONCAT(current_timestamp()+1, #{index}), #{rep.receiveDate}, #{rep.orderIdentify}, #{rep.supplierId}, #{rep.supplierName}, #{rep.materialName}, #{rep.materialId}, #{rep.specification1}, #{rep.specification2}, #{rep.specification3}, #{rep.formula}, #{rep.unit}, #{rep.meterage}, #{rep.unitPrice}, #{rep.amount}, #{rep.totlemnt}, sysdate(), '1')
+             	(CONCAT(current_timestamp()+1, #{index}), #{rep.receiveDate}, #{rep.orderIdentify}, #{rep.supplierId}, #{rep.supplierName}, #{rep.materialName}, #{rep.materialId}, #{rep.specification1}, #{rep.specification2}, #{rep.specification3}, #{rep.formula}, #{rep.unit}, #{rep.meterage}, #{rep.unitPrice}, #{rep.amount}, #{rep.totlemnt}, #{rep.remark}, sysdate(), '1')
     		 </foreach>
     </insert>
     
     <update id="update" parameterType="MaterialIn">
-        update t_deliverDetail set 
-          deliverDate = #{deliverDate},
+        update T_MATERIALIN set 
+          receiveDate = #{receiveDate},
           orderIdentify = #{orderIdentify},
           supplierId = #{supplierId},          
           supplierName = #{supplierName},
@@ -127,16 +128,17 @@
           specification3 = #{specification3},
           formula = #{formula},
           unit = #{unit},
-          meterage = #{meterage}
+          meterage = #{meterage},
           amount = #{amount},
-          unitPrice = #{unitPrice}
-          totlemnt = #{totlemnt}
-          modifydate = sysdate()
+          unitPrice = #{unitPrice},
+          totlemnt = #{totlemnt},
+          modifydate = sysdate(),
+          remark = #{remark}
     where id = #{id}
     </update>    
     
     <update id="delete" parameterType="String">
-        update t_deliverDetail set 
+        update T_MATERIALIN set 
                status = '0',
                modifydate = sysdate()
          where id = #{id}

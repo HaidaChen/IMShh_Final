@@ -186,7 +186,7 @@
 											<div class='col-md-12'>
 												<div class="box border blue">
 													<div class="box-title">
-														<h4><i class="fa fa-bars"></i>新的入库单</h4>
+														<h4><i class="fa fa-bars"></i>原材料入库单</h4>
 														<div class="tools hidden-xs">
 															<a href="javascript:;" class="ngoback">
 																<i class="fa fa-times"></i>
@@ -201,13 +201,13 @@
 																		<label class="col-md-3 control-label">接收日期</label> 
 																		<div class="col-md-4">
 																			<input type="hidden" name="id" value="">
-																	    	<input type="text" name="receiveDate" class="form-control selectData" value="">
+																	    	<input type="text" name="receiveDate" class="form-control selectData" valuetype="date" valueformatter="yyyy-MM-dd" value="">
 																	    </div>
 																	</div>
 																	<div class="form-group">
 																		<label class="col-md-3 control-label">关联订单</label> 
 																		<div class="col-md-4">
-																			<select id="relorder" name="orderIdentify" class="col-md-12">
+																			<select id="relorder" name="orderIdentify" valuetype="select2" class="col-md-12">
 																			</select>
 																	    </div>
 																	</div>
@@ -220,7 +220,7 @@
 																	<div class="form-group">
 																		<label class="col-md-3 control-label">品名</label> 
 																		<div class="col-md-4">
-																			<select id="relmaterial" name="materialName" class="col-md-12">
+																			<select id="relmaterial" name="materialName" valuetype="select2" class="col-md-12">
 																			</select>
 																	    </div>
 																	</div>
@@ -344,9 +344,10 @@
 																			<textarea name="remark" class="form-control" rows="3"></textarea>
 																	    </div>
 																	</div>																													
-																	<div class="form-actions clearfix"> <input type="button" id="btn_save_materialIn" value="保存" class="btn btn-primary pull-right"> </div>
+																	
 																</form>
 															</div>
+															<div class="form-actions clearfix"> <input type="button" id="btn_save_materialIn" value="保存" class="btn btn-primary pull-right"> </div>
 														</div>
 													</div>
 												</div>

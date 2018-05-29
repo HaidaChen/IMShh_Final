@@ -41,12 +41,17 @@ var FillForm = function(){
 	}
 	
 	oFillForm.autoFill = function(form, data){
-		var formitems = $(form).find("input, select, textarea");
+		var formitems = $(form).find("select, input, textarea");
 		$.each(formitems, function(index, item){
 			var field = $(item).attr("name");
-			
-			var value = data[field];
-			$(item).val(value);
+			var valuetype = $(item).attr("valuetype");
+			var valueformatter = $(item).attr("valueformatter");
+			var value = getFieldValue(data, field, valuetype, valueformatter);
+			if (valuetype == 'select2'){
+				$(item).val(value).select2();
+			}else{
+				$(item).val(value);
+			}			
 		});
 	}
 	

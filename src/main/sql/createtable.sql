@@ -110,6 +110,24 @@ CREATE TABLE T_MATERIALIN(
     status char(1)
 );
 
+CREATE TABLE T_MATERIALOUT(
+    id varchar(20) not null,
+    outDate date not null,
+    handMan varchar(20),
+    orderIdentify varchar(20),
+    materialId varchar(20),
+    materialName varchar(20) not null,
+    specification1 varchar(20),
+    specification2 varchar(20),
+    specification3 varchar(20),    
+    outAmount int not null,    
+    returnAmount int,
+    
+    modifyDate datetime,
+    remark varchar(1024),
+    status char(1)
+);
+
 CREATE TABLE T_INVOICE(
     id varchar(20) not null,
     invoiceDate date not null,

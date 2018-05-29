@@ -3982,9 +3982,16 @@ var App = function () {
 			});
 		});
 		
-		$('#btn_add,a.ngoback').click(function(){
+		$('#btn_add').click(function(){
 			$("#materialInList").slideToggle();
 			$("#materialInNew").slideToggle();
+		});
+		
+		$('a.ngoback').click(function(){
+			$("#materialInList").slideToggle();
+			$("#materialInNew").slideToggle();
+			removeFormData($("#materialInForm"));
+			$("#calculation").html("");
 		});
 		
 		$("#relmaterial").change(function(){
@@ -4043,7 +4050,7 @@ var App = function () {
 			$.getJSON(getProjectName() + "/materialin/findById.do?id="+row.id, function (data){
 				var fillForm = new FillForm();
 				fillForm.autoFill("#materialInForm" , data);
-				
+				$("#calculation").html(data["formula"]);
 				$("#materialInList").slideToggle();
 				$("#materialInNew").slideToggle();
 			});			
@@ -4052,7 +4059,7 @@ var App = function () {
 		$("#btn_import").click(function(){			
 			var oImportModal = new ImportModal(getProjectName() + "/materialin/importmaterialin.do", function(){
 				$("#tbl_materialIn").bootstrapTable("refresh", {url: getProjectName() + "/materialin/loadmaterialin.do", cache: false});
-        	}, getProjectName() + "/templaters/材料接收单.xlsx");
+        	}, getProjectName() + "/templaters/原材料入库单.xlsx");
 			oImportModal.createModal();  
 		});
 		
@@ -4100,6 +4107,10 @@ var App = function () {
 		$("#btn_save").click(function(){
 			$("input[name=formula]").val($("#calculation").html());
 			$("#formulabox").hide();
+			if ($("input[name=formula]").val() != ''){
+				calculateMeterage();
+				calculateTotlment();
+			}
 		});
 		
 		var calculateMeterage = function(){
@@ -4137,7 +4148,197 @@ var App = function () {
 			return exp;
 		}
 	}
-	
+
+
+	/*-----------------------------------------------------------------------------------*/
+	/*	Load MaterialOut data
+	/*-----------------------------------------------------------------------------------*/	
+	var initMaterialOutModule = function(){
+		$("#tbl_materialOut").bootstrapTable({
+			url: getProjectName() + "/materialout/loadmaterialout.do",
+			method: "get",
+			pagination: true,
+			sidePagination: "server", 
+			columns: [{
+                field: 'outDate',
+                title: '出库日期'
+            }, {
+                field: 'handMan',
+                title: '经手人'
+            }, {
+                field: 'orderIdentify',
+                title: '关联订单号'
+            }, {
+                field: 'materialName',
+                title: '品名'
+            }, {
+                field: '',
+                title: '规格',
+                formatter: function(value, row, index){
+                	
+                	var specification = row.specification1;
+                	if (row.specification2 && row.specification2 != ''){
+                		specification += '*' + row.specification2;
+                	}
+                	if (row.specification3 && row.specification3 != ''){
+                		specification += '*' + row.specification3;
+                	}
+                	return specification;
+                }
+            }, {
+                field: 'outAmount',
+                title: '出库数量'
+            }, {
+                field: 'returnAmount',
+                title: '归还数量',
+                editable: {
+                	type: 'text',
+                	validate: function(value){
+                		if (!value) return '归还数不能为空';
+                		
+                		var r = /^\-?[1-9][0-9]*$/;
+                		if (!r.test(value)) return '归还数必须为整数';
+                	}
+                }
+            }, {
+                field: 'remark',
+                title: '备注'
+            }, {
+            	field: '', 
+            	title: '操作', 
+            	formatter: function(value,row,index){
+            		return '<a href="javascript:;" onclick="editMaterialOut(\''+row.id+'\')"><i class="fa fa-edit (alias)"></i></a>';    				
+    			}            	
+            }],
+            onEditableSave: function (field, row, oldValue, $el) {
+            	$.ajax({
+            		type: "post",
+                    url: getProjectName() + "/materialout/return.do",
+                    data: row,
+                    dataType: 'JSON',
+                    success: function (data, status) {
+                        if (status == "success") {
+                            alert('归还选材料成功');
+                        }
+                    },
+                    error: function () {
+                        alert('归还选材料失败');
+                    }
+                });
+            },
+            queryParams: function(params){
+            	return {
+                    pageSize: params.limit,
+                    pageOffset: params.offset,                    
+                    condition: $("input[name=condition]").val(),
+                    startDate: $("#startDate").val(),
+                    endDate: $("#endDate").val()
+                }
+            }
+		});
+		
+		$("input[name=condition]").change(function(){
+			$("#tbl_materialOut").bootstrapTable("refresh", {url: getProjectName() + "/materialout/loadmaterialout.do", cache: false});
+		});
+		
+		
+		//----------表单-----------------------
+		$('#btn_add').click(function(){
+			$("#materialOutList").slideToggle();
+			$("#materialOutNew").slideToggle();
+		});
+		
+		$('a.ngoback').click(function(){
+			$("#materialOutList").slideToggle();
+			$("#materialOutNew").slideToggle();
+			removeFormData($("#materialOutForm"));
+		});
+		
+		$.getJSON(getProjectName() + "/order/loadallorder.do", function (data){
+			$("#relorder").append("<option></option>");
+			$.each(data, function(index, obj){
+				$("#relorder").append("<option value='"+obj.identify+"'>"+ obj.identify +"</option>");
+			});
+			$("#relorder").select2({
+			    placeholder: "关联订单",
+			    allowClear: true
+			});
+		});
+		
+		$.getJSON(getProjectName() + "/mtl/loadallmtl.do", function (data){
+			$("#relmaterial").append("<option></option>");
+			$.each(data, function(index, obj){
+				var specification = obj.specification1;
+            	if (obj.specification2 && obj.specification2 != ''){
+            		specification += '*' + obj.specification2;
+            	}
+            	if (obj.specification3 && obj.specification3 != ''){
+            		specification += '*' + obj.specification3;
+            	}
+				$("#relmaterial").append("<option id='"+obj.id+"' value='"+obj.name+"'>"+ obj.name + " " + specification +"</option>");
+			});
+			$("#relmaterial").select2({
+			    placeholder: "关联原材料",
+			    allowClear: true
+			});
+		});
+		
+				
+		$("#relmaterial").change(function(){
+			var mtlId = $("#relmaterial option:selected").attr("id");
+			$.getJSON(getProjectName() + "/mtl/edit.do?id="+mtlId, function (data){
+				if(data!=null){
+					$("input[name=specification1]").val(data["specification1"]);
+					$("input[name=specification2]").val(data["specification2"]);
+					$("input[name=specification3]").val(data["specification3"]);					
+				}else{
+					$("input[name=specification1]").val("");
+					$("input[name=specification2]").val("");
+					$("input[name=specification3]").val("");
+				}
+			});
+		});
+		
+		$("#materialOutForm").bootstrapValidator({
+			fields: {
+				outDate : {validators: {notEmpty : {}}},
+				handMan : {validators: {notEmpty : {}}},
+				materialName : {validators: {notEmpty : {}}},
+				outAmount : {validators: {notEmpty : {}, integer:{}}}
+	        }
+		});
+		
+		$("#btn_save_materialOut").click(function(){
+			var bv = $("#materialOutForm").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				$("#materialOutForm").ajaxSubmit({
+					url: getProjectName()+"/materialout/save.do",
+					success: function(){
+						window.location.reload();
+						
+					}
+				});
+			}
+		});
+		
+		$('#tbl_materialIn').on('click-row.bs.table', function (e, row, element){  
+			$.getJSON(getProjectName() + "/materialin/findById.do?id="+row.id, function (data){
+				var fillForm = new FillForm();
+				fillForm.autoFill("#materialInForm" , data);
+				$("#calculation").html(data["formula"]);
+				$("#materialInList").slideToggle();
+				$("#materialInNew").slideToggle();
+			});			
+	    });  
+		
+		
+		$("#btn_export").click(function(){			
+			window.open(getProjectName() + "/materialout/exportmaterialout.do?condition="+$("input[name=condition]").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()); 
+		});
+		
+		
+	}
 
 	/*-----------------------------------------------------------------------------------*/
 	/*	init Deliver data
@@ -5464,8 +5665,8 @@ var App = function () {
             if (App.isPage("materialOut")){
             	handleMenu("material_out_storage.html");
             	handleDatePicker();
-            	handleDatePriod($("#tbl_materialIn"), "/materialin/loadmaterialin.do");
-            	initReceiptConsModule(); 
+            	handleDatePriod($("#tbl_materialOut"), "/materialout/loadmaterialout.do");
+            	initMaterialOutModule(); 
             }
             if (App.isPage("productOut")){
             	handleMenu("product_out_storage.html");
@@ -5680,6 +5881,21 @@ var deleteOrderItem = function(form, tableId, index){
 		amountDollar = parseFloat(amountDollar) - itemofdelete.totlmentDollar;
 		$(form).find("input[name=amountDollar]").val(amountDollar);
 	}
+}
+
+/*-----------------------------------------------------------------------------------*/
+/*	Material Out Moduel Script
+/*-----------------------------------------------------------------------------------*/
+var editMaterialOut = function(id){	
+	
+	$.getJSON(getProjectName() + "/materialout/findById.do?id="+id, function (data){
+		var fillForm = new FillForm();
+		fillForm.autoFill("#materialOutForm" , data);
+	});
+	
+	$("#materialOutList").slideToggle();
+	$("#materialOutNew").slideToggle();
+	
 }
 
 
@@ -6017,6 +6233,9 @@ var removeFormData = function(form){
 	$.each(formitems, function(index, item){
 		if (item.tagName == 'INPUT' && ($(item).attr('type') == 'radio' || $(item).attr('type') == 'checkbox')){
 			$(item).removeAttr("checked");
+		}
+		else if ($(item).attr("valuetype") == 'select2'){
+			$(item).val('').select2();
 		}
 		else{
 			if($(item).attr("default"))

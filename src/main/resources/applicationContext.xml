@@ -73,6 +73,22 @@ xsi:schemaLocation="
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       
+      <bean name="materialOutService" class="com.douniu.imshh.finance.storage.service.impl.MaterialOutService">
+          <property name="dao" ref="materialOutDao"></property>
+      </bean>
+      <bean id="materialOutDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.storage.dao.IMaterialOutDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="materialStorageService" class="com.douniu.imshh.finance.storage.service.impl.MaterialStorageService">
+          <property name="dao" ref="materialStorageDao"></property>
+      </bean>
+      <bean id="materialStorageDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.storage.dao.IMaterialStorageDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
       <bean name="invoiceService" class="com.douniu.imshh.finance.invoice.service.impl.InvoiceService">
           <property name="dao" ref="invoiceDao"></property>
       </bean>

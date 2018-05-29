@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.finance.storage.dao.IMaterialOutDao">
+    <resultMap type="MaterialOut" id="materialoutmap">
+        <result property="id" column="id"/>
+        <result property="outDate" column="outDate"/>
+        <result property="handMan" column="handMan"/>
+        <result property="orderIdentify" column="orderIdentify"/>
+        <result property="materialId" column="materialId"/>
+        <result property="materialName" column="materialName"/>
+        <result property="specification1" column="specification1"/>
+        <result property="specification2" column="specification2"/>
+        <result property="specification3" column="specification3"/>
+        <result property="outAmount" column="outAmount"/>
+        <result property="returnAmount" column="returnAmount"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+    
+    
+    <select id="query" parameterType="MaterialOut" resultMap="materialoutmap">
+    	select * from T_MATERIALOUT where status = 1
+        <if test="condition != null and condition !=''">
+          and (orderIdentify like #{condition}
+            or handMan like #{condition}
+            or materialName like #{condition})
+        </if>
+        <if test="startDate != null">
+          and outDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and outDate &lt;= #{endDate}
+        </if>
+          order by modifydate desc
+          limit #{pageOffset},#{pageSize}
+    </select>
+    
+    <select id="queryNoPage" parameterType="MaterialOut" resultMap="materialoutmap">
+    	select * from T_MATERIALOUT where status = 1
+        <if test="condition != null and condition !=''">
+          and (orderIdentify like #{condition}
+            or handMan like #{condition}
+            or materialName like #{condition})
+        </if>
+        <if test="startDate != null">
+          and outDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and outDate &lt;= #{endDate}
+        </if>
+    </select>
+    
+    <select id="count" parameterType="MaterialOut" resultType="int">
+    	select count(1) from T_MATERIALOUT where status = 1
+        <if test="condition != null and condition !=''">
+          and (orderIdentify like #{condition}
+            or handMan like #{condition}
+            or materialName like #{condition})
+        </if>
+        <if test="startDate != null">
+          and outDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          and outDate &lt;= #{endDate}
+        </if>
+    </select>
+    
+    
+    <select id="findById" parameterType="String" resultType="MaterialOut">
+        select * from T_MATERIALOUT where id = #{id}
+    </select>
+    
+    <insert id="insert" parameterType="MaterialOut">        
+        insert into T_MATERIALOUT(id, outDate, handMan, orderIdentify, materialId, materialName, specification1, specification2, specification3, outAmount, returnAmount, remark, modifyDate, status) 
+             values (#{id} , #{outDate}, #{handMan}, #{orderIdentify}, #{materialId}, #{materialName}, #{specification1}, #{specification2}, #{specification3}, #{outAmount}, #{returnAmount}, #{remark}, sysdate(), '1')
+    </insert>
+    
+    <insert id="batchInsert" parameterType="java.util.List">        
+        insert into T_MATERIALOUT(id, outDate, handMan, orderIdentify, materialId, materialName, specification1, specification2, specification3, outAmount, returnAmount, remark, modifyDate, status) 
+             values 
+             <foreach collection="list" item="out" index="index" separator=",">
+             	(CONCAT(current_timestamp()+1, #{index}), #{out.outDate}, #{out.handMan}, #{out.orderIdentify}, #{out.materialId}, #{out.materialName}, #{out.specification1}, #{out.specification2}, #{out.specification3}, #{out.outAmount}, #{out.returnAmount}, #{out.remark}, sysdate(), '1')
+    		 </foreach>
+    </insert>
+    
+    <update id="update" parameterType="MaterialOut">
+        update T_MATERIALOUT set 
+          outDate = #{outDate},
+          handMan = #{handMan},
+          orderIdentify = #{orderIdentify},
+          materialName = #{materialName},
+          materialId = #{materialId},
+          specification1 = #{specification1},
+          specification2 = #{specification2},
+          specification3 = #{specification3},
+          outAmount = #{outAmount},
+          returnAmount = #{returnAmount},
+          modifydate = sysdate(),
+          remark = #{remark}
+    where id = #{id}
+    </update>    
+    
+    <update id="delete" parameterType="String">
+        update T_MATERIALOUT set 
+               status = '0',
+               modifydate = sysdate()
+         where id = #{id}
+    </update>
+    
+</mapper>
