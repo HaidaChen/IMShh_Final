@@ -5,8 +5,8 @@
     <resultMap type="Invoice" id="invmap">
         <result property="id" column="id"/>
         <result property="invoiceDate" column="invoiceDate"/>
-        <result property="customerId" column="customerId"/>
-        <result property="customerName" column="customerName"/>
+        <result property="orderIdentify" column="orderIdentify"/>
+        <result property="customerName" column="customerName"/>        
         <result property="amountWithTax" column="amountWithTax"/>
         <result property="valueAddTax" column="valueAddTax"/>
         <result property="exciseTax" column="exciseTax"/>
@@ -31,8 +31,9 @@
     
     <select id="query" parameterType="Invoice" resultMap="invmap">
         select * from t_invoice where status = 1
-        <if test="customerName != null and customerName !=''">
-          and customerName like #{customerName}           
+        <if test="condition != null and condition !=''">       	   
+          and (customerName like #{condition}
+            or orderIdentify like #{condition})           
         </if>       
         
         <if test="startDate != null">
@@ -46,9 +47,10 @@
     </select> 
     <select id="queryNoPage" parameterType="Invoice" resultMap="invmap">
         select * from t_invoice where status = 1
-        <if test="customerName != null and customerName !=''">
-          and customerName like #{customerName}           
-        </if>       
+        <if test="condition != null and condition !=''">       	   
+          and (customerName like #{condition}
+            or orderIdentify like #{condition})           
+        </if>    
         
         <if test="startDate != null">
           and invoiceDate &gt;= #{startDate}
@@ -60,8 +62,9 @@
     </select>
     <select id="count" parameterType="Invoice" resultType="int">
         select count(1) from t_invoice where status = 1
-        <if test="customerName != null and customerName !=''">
-          and customerName like #{customerName}           
+        <if test="condition != null and condition !=''">       	   
+          and (customerName like #{condition}
+            or orderIdentify like #{condition})           
         </if>       
         
         <if test="startDate != null">
@@ -72,22 +75,23 @@
         </if>
     </select>   
     <insert id="insert" parameterType="Invoice">
-        insert into t_invoice(id, invoiceDate, customerId, customerName, amountWithTax, valueAddTax, exciseTax, constructionTax, educationFee, totalTax, drawback, valueAddTaxCal, exciseTaxCal, constructionTaxCal, educationFeeCal, totalTaxCal, drawbackCal, modifydate, remark, status) 
-          values(#{id}, #{invoiceDate}, #{customerId}, #{customerName}, #{amountWithTax}, #{valueAddTax}, #{exciseTax}, #{constructionTax}, #{educationFee}, #{totalTax}, #{drawback}, #{valueAddTaxCal}, #{exciseTaxCal}, #{constructionTaxCal}, #{educationFeeCal}, #{totalTaxCal}, #{drawbackCal}, sysdate(), #{remark}, #{status})
+        insert into t_invoice(id, invoiceDate, orderIdentify, customerName, amountWithTax, valueAddTax, exciseTax, constructionTax, educationFee, totalTax, drawback, valueAddTaxCal, exciseTaxCal, constructionTaxCal, educationFeeCal, totalTaxCal, drawbackCal, modifydate, remark, status) 
+          values(#{id}, #{invoiceDate}, #{orderIdentify}, #{customerName}, #{amountWithTax}, #{valueAddTax}, #{exciseTax}, #{constructionTax}, #{educationFee}, #{totalTax}, #{drawback}, #{valueAddTaxCal}, #{exciseTaxCal}, #{constructionTaxCal}, #{educationFeeCal}, #{totalTaxCal}, #{drawbackCal}, sysdate(), #{remark}, #{status})
     </insert>
     
     <insert id="batchInsert" parameterType="java.util.List">
         
-        insert into t_invoice(id, invoiceDate, customerId, customerName, amountWithTax, valueAddTax, exciseTax, constructionTax, educationFee, totalTax, drawback, modifydate, remark, status) 
+        insert into t_invoice(id, invoiceDate, orderIdentify, customerName, amountWithTax, valueAddTax, exciseTax, constructionTax, educationFee, totalTax, drawback, modifydate, remark, status) 
              values
              <foreach collection="list" item="inv" index="index" separator=",">
-                 (CONCAT(current_timestamp()+1, #{index}), #{inv.invoiceDate}, #{inv.customerId}, #{inv.customerName}, #{inv.amountWithTax}, #{inv.valueAddTax}, #{inv.exciseTax}, #{inv.constructionTax}, #{inv.educationFee}, #{inv.totalTax}, #{inv.drawback}, sysdate(), #{inv.remark}, '1')
+                 (CONCAT(current_timestamp()+1, #{index}), #{inv.invoiceDate}, #{inv.orderIdentify}, #{inv.customerName}, #{inv.amountWithTax}, #{inv.valueAddTax}, #{inv.exciseTax}, #{inv.constructionTax}, #{inv.educationFee}, #{inv.totalTax}, #{inv.drawback}, sysdate(), #{inv.remark}, '1')
              </foreach>
     </insert>
     
     <update id="update" parameterType="Invoice">
         update t_invoice set 
-          invoiceDate = #{invoiceDate},          
+          invoiceDate = #{invoiceDate},   
+          orderIdentify = #{orderIdentify},       
           customerName = #{customerName},
           amountWithTax = #{amountWithTax},
           valueAddTax = #{valueAddTax},

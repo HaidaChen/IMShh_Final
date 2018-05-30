@@ -38,6 +38,7 @@ public class InvoiceAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{
 		mapper.add(new ExcelBean("开票日期","invoiceDate",0));  
+		mapper.add(new ExcelBean("订单编号","orderIdentify",0));  
 		mapper.add(new ExcelBean("客户名称","customerName",0));  
 		mapper.add(new ExcelBean("价税合计","amountWithTax",0));   
 		mapper.add(new ExcelBean("应交增值税","valueAddTax",0));  

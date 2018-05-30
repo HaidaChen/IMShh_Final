@@ -158,8 +158,8 @@ CREATE TABLE T_PRODUCTOUT (
 CREATE TABLE T_INVOICE(
     id varchar(20) not null,
     invoiceDate date not null,
-    customerId varchar(20),
-    customerName varchar(20) not null,
+    orderIdentify varchar(20) not null,
+    customerName varchar(128) not null,    
     amountWithTax  numeric(10,2),
     valueAddTax  numeric(10,2),
     exciseTax  numeric(10,2),

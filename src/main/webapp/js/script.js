@@ -4553,7 +4553,8 @@ var App = function () {
 			var identify = $(this).val();
 			if (identify!=''){
 				$.getJSON(getProjectName() + "/order/findbyidentify.do?identify="+identify, function (data){
-					$("input[name=customerName]").val(data.custName);					
+					$("input[name=customerName]").val(data.custName);
+					$("input[name=customerName]").change();
 				})
 			}else{
 				$("input[name=customerName]").val('');
@@ -4625,6 +4626,9 @@ var App = function () {
                 field: 'customerName',
                 title: '客户名称'
             }, {
+                field: 'orderIdentify',
+                title: '订单编号'
+            }, {
                 field: 'amountWithTax',
                 title: '价税合计'
             }, {
@@ -4648,12 +4652,18 @@ var App = function () {
             },{
                 field: 'remark',
                 title: '备注'
+            }, {
+            	field: '',
+            	title: '操作',
+            	formatter: function(value,row,index){
+            		return '<a href="javascript:;" onclick="editInvoice(\''+row.id+'\')"><i class="fa fa-edit (alias)"></i></a>';
+            	}
             }],
             queryParams: function(params){
             	return {
                     pageSize: params.limit,
                     pageOffset: params.offset,                    
-                    customerName: $("input[name=condition]").val(),
+                    condition: $("input[name=condition]").val(),
                     startDate: $("#startDate").val(),
                     endDate: $("#endDate").val()
                 }
@@ -4703,10 +4713,44 @@ var App = function () {
 		
 		
 		//---------------表单-----------------
+		$('#btn_add').click(function(){
+			$("#invoiceList").slideToggle();
+			$("#invoiceNew").slideToggle();
+		});
+		
+		$('a.ngoback').click(function(){
+			$("#invoiceList").slideToggle();
+			$("#invoiceNew").slideToggle();
+			removeFormData($("#invoiceForm"));
+		});	
+		
+		$.getJSON(getProjectName() + "/order/loadallorder.do", function (data){
+			$("#relorder").append("<option></option>");
+			$.each(data, function(index, obj){
+				$("#relorder").append("<option value='"+obj.identify+"'>"+ obj.identify +"</option>");
+			});
+			$("#relorder").select2({
+			    placeholder: "关联订单",
+			    allowClear: true
+			});
+		});
+		
+		$("#relorder").change(function(){
+			var identify = $(this).val();
+			if (identify!=''){
+				$.getJSON(getProjectName() + "/order/findbyidentify.do?identify="+identify, function (data){
+					$("input[name=customerName]").val(data.custName);
+					$("input[name=customerName]").change();
+				})
+			}else{
+				$("input[name=customerName]").val('');
+			}
+		});
 		$("#invoiceForm").bootstrapValidator({
 			fields: {
-				invoiceDate : {validators: {notEmpty : {}}},
-				customerName : {validators: {notEmpty : {}}},
+				invoiceDate : {trigger: "change", validators: {notEmpty : {}}},
+				orderIdentify : {trigger: "change", validators: {notEmpty : {}}},
+				customerName : {trigger: "change", validators: {notEmpty : {}}},
 				amountWithTax: {validators: {notEmpty : {}},
 								regexp: {
 				                    regexp: /^[0-9\.]+$/,
@@ -5959,6 +6003,19 @@ var editProductOut = function(id){
 	
 }
 
+/*-----------------------------------------------------------------------------------*/
+/*	Product Out Moduel Script
+/*-----------------------------------------------------------------------------------*/
+var editInvoice = function(id){
+	$.getJSON(getProjectName() + "/invoice/edit.do?id="+id, function (data){		
+		var fillForm = new FillForm();
+		fillForm.autoFill("#invoiceForm" , data);		
+	});
+	
+	$("#invoiceList").slideToggle();
+	$("#invoiceNew").slideToggle();
+	
+}
 
 /*-----------------------------------------------------------------------------------*/
 /*	Customer Moduel Script
@@ -6292,6 +6349,8 @@ var getJSONObjByForm = function(form){
 var removeFormData = function(form){
 	var formitems = form.find("input,textarea,select");
 	$.each(formitems, function(index, item){
+		if ($(item).attr("ignorermv"))
+			return true;
 		if (item.tagName == 'INPUT' && ($(item).attr('type') == 'radio' || $(item).attr('type') == 'checkbox')){
 			$(item).removeAttr("checked");
 		}

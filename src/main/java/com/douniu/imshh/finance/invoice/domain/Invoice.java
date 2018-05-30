@@ -8,8 +8,8 @@ import com.douniu.imshh.common.BaseQO;
 public class Invoice extends BaseQO{
 	private String id;
 	private Date invoiceDate;               
-	private String customerId;              
-	private String customerName;            
+	private String customerName;  
+	private String orderIdentify;
 	private float amountWithTax;            /*价税合计*/
 	private float valueAddTax;              /*应交增值税*/
 	private String valueAddTaxCal;           /*应交增值税计算公式*/
@@ -38,17 +38,17 @@ public class Invoice extends BaseQO{
 	public void setInvoiceDate(Date invoiceDate) {
 		this.invoiceDate = invoiceDate;
 	}
-	public String getCustomerId() {
-		return customerId;
-	}
-	public void setCustomerId(String customerId) {
-		this.customerId = customerId;
-	}
 	public String getCustomerName() {
 		return customerName;
 	}
 	public void setCustomerName(String customerName) {
 		this.customerName = customerName;
+	}
+	public String getOrderIdentify() {
+		return orderIdentify;
+	}
+	public void setOrderIdentify(String orderIdentify) {
+		this.orderIdentify = orderIdentify;
 	}
 	public float getAmountWithTax() {
 		return amountWithTax;
@@ -143,17 +143,17 @@ public class Invoice extends BaseQO{
 	public void setDrawbackCal(String drawbackCal) {
 		this.drawbackCal = drawbackCal;
 	}
+	
 	@Override
 	public String toString() {
-		return "Invoice [id=" + id + ", invoiceDate=" + invoiceDate + ", customerId=" + customerId + ", customerName="
-				+ customerName + ", amountWithTax=" + amountWithTax + ", valueAddTax=" + valueAddTax
-				+ ", valueAddTaxCal=" + valueAddTaxCal + ", exciseTax=" + exciseTax + ", exciseTaxCal=" + exciseTaxCal
-				+ ", constructionTax=" + constructionTax + ", constructionTaxCal=" + constructionTaxCal
+		return "Invoice [id=" + id + ", invoiceDate=" + invoiceDate + ", customerName=" + customerName
+				+ ", orderIdentify=" + orderIdentify + ", amountWithTax=" + amountWithTax + ", valueAddTax="
+				+ valueAddTax + ", valueAddTaxCal=" + valueAddTaxCal + ", exciseTax=" + exciseTax + ", exciseTaxCal="
+				+ exciseTaxCal + ", constructionTax=" + constructionTax + ", constructionTaxCal=" + constructionTaxCal
 				+ ", educationFee=" + educationFee + ", educationFeeCal=" + educationFeeCal + ", totalTax=" + totalTax
 				+ ", totalTaxCal=" + totalTaxCal + ", drawback=" + drawback + ", drawbackCal=" + drawbackCal
 				+ ", remark=" + remark + ", status=" + status + "]";
 	}
-	
 	private float decimalMoney(float src){
 		BigDecimal b = new BigDecimal(src);  		
 		return b.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();  

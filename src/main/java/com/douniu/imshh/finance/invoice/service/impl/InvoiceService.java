@@ -13,21 +13,21 @@ public class InvoiceService implements IInvoiceService{
 	@Override
 	public List<Invoice> query(Invoice invoice) {
 		// TODO Auto-generated method stub
-		Invoice condition = LikeFlagUtil.appendLikeFlag(invoice, new String[]{"customerName"});
+		Invoice condition = LikeFlagUtil.appendLikeFlag(invoice, new String[]{"condition"});
 		return dao.query(condition);
 	}
 
 	@Override
 	public List<Invoice> queryNoPage(Invoice invoice) {
 		// TODO Auto-generated method stub
-		Invoice condition = LikeFlagUtil.appendLikeFlag(invoice, new String[]{"customerName"});
+		Invoice condition = LikeFlagUtil.appendLikeFlag(invoice, new String[]{"condition"});
 		return dao.queryNoPage(condition);
 	}
 
 	@Override
 	public int count(Invoice invoice) {
 		// TODO Auto-generated method stub
-		Invoice condition = LikeFlagUtil.appendLikeFlag(invoice, new String[]{"customerName"});
+		Invoice condition = LikeFlagUtil.appendLikeFlag(invoice, new String[]{"condition"});
 		return dao.count(condition);
 	}
 
