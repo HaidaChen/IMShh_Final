@@ -134,129 +134,117 @@
 							<div class="col-sm-12">
 								<div class="page-header">
 									<div class="clearfix">
-										<h3 class="content-title pull-left">发货单</h3>
-										<span class="date-range pull-right col-md-4" >
-											<div class="input-group" >
-												<input type="text" name="condition" class="form-control" placeholder="查询条件"/>
-												<div class="input-group-btn">
-													<button type="button" id="btn_datapriod" class="btn btn-default dropdown-toggle" data-toggle="dropdown">所有数据<span class="caret"></span></button>
-													<ul id="dataperiod" class="dropdown-menu" >
-													  <li><a href="javascript:;">所有数据</a></li>
-													  <li><a href="javascript:;">本月</a></li>
-													  <li><a href="javascript:;">今年</a></li>																  
-													  <li><a data-toggle="modal" data-target="#modaldatepicker"><i class="fa fa-calendar"></i>&nbsp指定日期</a></li>
-													</ul>
-												  </div>
-											</div>
-										</span>
+										<h3 class="content-title pull-left">成品出库明细</h3>
+										
 									</div>
-									<div class="description">发货明细，是待收款的基本数据</div>
+									<div class="description">成品出库明细</div>
 								</div>
 							</div>
 						</div>
 						
 						<div class="row">
 							<div class="col-md-12">
-								<div class="box border blue">
-									<div class="box-title" >
-										<div class="dropdown" style="display: inline-block; z-index: 99;">
-											<a href="javascript:;" data-toggle="dropdown" ><h4><i class="fa fa-cogs"></i></h4></a>
-										    <ul class="dropdown-menu context"  style="text-align: left; ">
-										    	<li>
-										            <a id="btn_import" href="javascript:;"><i class="fa fa-chain (alias)"></i>&nbsp导入</a>
-										        </li>
-										        <li>
-										            <a id="btn_export" href="javascript:;"><i class="fa fa-external-link"></i>&nbsp导出</a>
-										        </li>
-										    </ul>
-										</div>										
-										<h4><span >发货明细</span></h4>
-									</div>
+								<div class="box">
 									<div class="box-body">
-										<div class="tabbable header-tabs user-profile">
-											<ul class="nav nav-tabs">
-											   <li><a href="#deliver_edit" data-toggle="tab"><i class="fa fa-edit"></i> <span class="hidden-inline-mobile">新的出库单</span></a></li>
-											   <li class="active"><a href="#deliver_overview" data-toggle="tab"><i class="fa fa-dot-circle-o"></i> <span class="hidden-inline-mobile">浏览</span></a></li>
-											</ul>
-											<div class="tab-content">
-												<div class="tab-pane fade in active" id="deliver_overview">
-													<table id="tbl_deliver" class='table table-hover'>														
-													</table>														
-												</div>
-											
-												<div class="tab-pane fade" id="deliver_edit">
-													<form id="deliverForm" class="form-horizontal" method="post">
-														
-														<div class="form-group">
-															<label class="col-md-3 control-label">发货日期</label> 
-															<div class="col-md-4">
-																<input type="hidden" name="id" value="">
-														    	<input type="text" name="deliverDate" class="form-control selectData" value="">
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">关联订单</label> 
-															<div class="col-md-4">
-																<select id="relorder" name="orderIdentify" class="col-md-12">
-																</select>
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">接收客户</label> 
-															<div class="col-md-4">
-																<input type="text" name="customerName" class="form-control" value="">
-														    </div>
-														</div>
-														<div class="form-group" id="orderItems" style="display: none">
-															<label class="col-md-3 control-label">订单项</label> 
-															<div class="col-md-4">
-																<select id="relorderDetail" class="form-control">
-																</select>
+										<div id="productOutList" class="panel panel-default">
+											<div class="panel-body">
+											<div class='row'>
+												<div class='col-md-12'>
+													<div class="invoice-header clearfix">
+														<div class="btn-group">
+												    		<button id="btn_import" type="button" class="btn btn-default"><i class="fa fa-chain (alias)"></i>导入</button>
+												    		<button id="btn_add" type="button" class="btn btn-default"><i class="fa  fa-pencil"></i>新增</button>
+												    		<button id="btn_export" type="button" class="btn btn-default"><i class="fa  fa-external-link"></i>导出</button>
+												    	</div>
+												    	
+												    	<span class="pull-right col-md-4" >
+															<div class="input-group" >
+																<input type="text" name="condition" class="form-control" placeholder="订单编号、货号、客户"/>
+																<div class="input-group-btn">
+																	<button type="button" id="btn_datapriod" class="btn btn-default dropdown-toggle" data-toggle="dropdown">所有数据<span class="caret"></span></button>
+																	<ul id="dataperiod" class="dropdown-menu" >
+																	  <li><a href="javascript:;">所有数据</a></li>
+																	  <li><a href="javascript:;">本月</a></li>
+																	  <li><a href="javascript:;">今年</a></li>																  
+																	  <li><a data-toggle="modal" data-target="#modaldatepicker"><i class="fa fa-calendar"></i>&nbsp指定日期</a></li>
+																	</ul>																	
+																</div>
 																
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">货号</label> 
-															<div class="col-md-4">
-																<input type="text" name="pdtNo" class="form-control" value="">
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">含量</label> 
-															<div class="col-md-4">
-																<input type="text" name="content" class="form-control" value="">
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">单价</label> 
-															<div class="col-md-4">
-																<input type="text" name="price" class="form-control" value="">
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">数量</label> 
-															<div class="col-md-4">
-																<input type="text" name="amount" class="form-control" value="">
-														    </div>
-														</div>														
-														<div class="form-group">
-															<label class="col-md-3 control-label">合计</label> 
-															<div class="col-md-4">
-																<input type="text" name="totlment" class="form-control" value="">
-														    </div>
-														</div>
-														<div class="form-group">
-															<label class="col-md-3 control-label">备注</label> 
-															<div class="col-md-4">
-																<textarea name="remark" class="form-control" rows="3"></textarea>
-														    </div>
-														</div>
-																													
-														<div class="form-actions clearfix"> <input id="btn_save_deliver" type="button" value="保存" class="btn btn-primary pull-right"> </div>
-													</form>
+															</div>
+														</span>
+													</div>
 												</div>
-											</div>												
-										</div>											
+											</div>
+											
+										  </div>
+										  <table id="tbl_productOut" class='table table-hover'>														
+										  </table>
+										</div>
+										<div id="productOutNew" class='row' style="display: none">
+											<div class='col-md-12'>
+												<div class="box border blue">
+													<div class="box-title">
+														<h4><i class="fa fa-bars"></i>成品出库单</h4>
+														<div class="tools hidden-xs">
+															<a href="javascript:;" class="ngoback">
+																<i class="fa fa-times"></i>
+															</a>
+														</div>
+													</div>
+													<div class="box-body">
+														<div class="panel panel-default">
+														    <div class="panel-body">
+														    	<form id="productOutForm" class="form-horizontal" method="post" autocomplete="off">
+														
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">发货日期</label> 
+																		<div class="col-md-4">
+																			<input type="hidden" name="id" value="">
+																	    	<input type="text" name="deliverDate" class="form-control selectData" value="" valuetype="date" valueformatter="yyyy-MM-dd">
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">关联订单</label> 
+																		<div class="col-md-4">
+																			<select id="relorder" name="orderIdentify" class="col-md-12" valuetype="select2">
+																			</select>
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">接收客户</label> 
+																		<div class="col-md-4">
+																			<input type="text" name="customerName" class="form-control" value="">
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">货号</label> 
+																		<div class="col-md-4">
+																			<select id="relpdt" name="pdtNo" class="col-md-12" valuetype="select2">
+																			</select>
+																	    </div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">含量</label> 
+																		<div class="col-md-4">
+																			<input type="text" name="content" class="form-control" value="">
+																	    </div>
+																	</div>																	
+																	<div class="form-group">
+																		<label class="col-md-3 control-label">备注</label> 
+																		<div class="col-md-4">
+																			<textarea name="remark" class="form-control" rows="3"></textarea>
+																	    </div>
+																	</div>
+																																
+																	
+																</form>
+														    	<div class="form-actions clearfix"> <input id="btn_save_deliver" type="button" value="保存" class="btn btn-primary pull-right"> </div>
+														    </div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>																				
 									</div>
 								</div>
 							</div>
@@ -279,6 +267,7 @@
 	<script src="../js/bootstrapvalidator/js/language/zh_CN.js"></script>
 	<script src="../js/jquery-form/jquery.form.js"></script>
 	<script src="../js/importModal.js"></script>
+	<script src="../js/fillForm.js"></script>
 	<script src="../js/script.js"></script>
 	<script>
 		jQuery(document).ready(function() {		

@@ -11,7 +11,7 @@ import com.douniu.imshh.finance.account.service.IReceptionService;
 import com.douniu.imshh.finance.order.domain.Order;
 import com.douniu.imshh.finance.order.domain.OrderDetail;
 import com.douniu.imshh.finance.order.service.IOrderService;
-import com.douniu.imshh.finance.storage.domain.Deliver;
+import com.douniu.imshh.finance.storage.domain.ProductOut;
 
 public class ReceptionService implements IReceptionService{
 	private IReceptionDao dao;
@@ -28,7 +28,7 @@ public class ReceptionService implements IReceptionService{
 	}
 
 	@Override
-	public void addReception(Deliver deliver) {
+	public void addReception(ProductOut deliver) {
 		Order order = orderService.getByNo(deliver.getOrderIdentify());
 		String customerName = order.getCustName();
 		DateFormat format = new SimpleDateFormat("yyyy-MM");  

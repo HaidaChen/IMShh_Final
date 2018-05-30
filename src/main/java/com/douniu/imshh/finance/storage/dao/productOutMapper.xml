@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.douniu.imshh.finance.storage.dao.IDeliverDao">
-    <resultMap type="StorageDeliver" id="dlvrmap">
+<mapper namespace="com.douniu.imshh.finance.storage.dao.IProductOutDao">
+    <resultMap type="ProductOut" id="pdtoutmap">
         <result property="id" column="id"/>
         <result property="deliverDate" column="deliverDate"/>
         <result property="orderIdentify" column="orderIdentify"/>
-        <result property="customerId" column="customerId"/>
         <result property="customerName" column="customerName"/>
         <result property="pdtNo" column="pdtNo"/>
         <result property="content" column="content"/>
         <result property="amount" column="amount"/>
-        <result property="price" column="price"/>
-        <result property="totlment" column="totlment"/>
         <result property="remark" column="remark"/>
         <result property="status" column="status"/>
     </resultMap>
     
     
-    <select id="queryDeliverDetail" parameterType="StorageDeliver" resultMap="dlvrmap">
-        select * from t_storage_deliver 
+    <select id="queryDeliverDetail" parameterType="ProductOut" resultMap="pdtoutmap">
+        select * from t_productout 
           where status = 1
         <if test="condition != null and condition !=''">
           and (pdtNo like #{condition}
-            or orderIdentify like #{condition},
+            or orderIdentify like #{condition}
             or customername like #{condition})             
         </if> 
         <if test="startDate != null">
@@ -36,8 +33,8 @@
           limit #{pageOffset},#{pageSize}
     </select>    
     
-    <select id="queryByCustomer" parameterType="StorageDeliver" resultMap="dlvrmap">
-        select * from t_storage_deliver 
+    <select id="queryByCustomer" parameterType="ProductOut" resultMap="pdtoutmap">
+        select * from t_productout 
           where status = 1
         <if test="customerName != null and customerName !=''">
           and customername like #{customerName}           
@@ -52,12 +49,12 @@
           limit #{pageOffset},#{pageSize}
     </select>
     
-    <select id="queryDeliverNoPage" parameterType="StorageDeliver" resultMap="dlvrmap">
-        select * from t_storage_deliver 
+    <select id="queryDeliverNoPage" parameterType="ProductOut" resultMap="pdtoutmap">
+        select * from t_productout 
           where status = 1
         <if test="condition != null and condition !=''">
           and (pdtNo like #{condition}
-            or orderIdentify like #{condition},
+            or orderIdentify like #{condition}
             or customername like #{condition})           
         </if> 
         <if test="startDate != null">
@@ -69,11 +66,11 @@
           order by modifydate desc
     </select>
     
-    <select id="countDeliverDetail" parameterType="StorageDeliver" resultType="int">
-        select count(1) from t_storage_deliver where status = 1
+    <select id="countDeliverDetail" parameterType="ProductOut" resultType="int">
+        select count(1) from t_productout where status = 1
         <if test="condition != null and condition !=''">
           and (pdtNo like #{condition}
-            or orderIdentify like #{condition},
+            or orderIdentify like #{condition}
             or customername like #{condition})           
         </if>
         <if test="startDate != null">
@@ -84,8 +81,8 @@
         </if>
     </select>
     
-    <select id="countByCustomer" parameterType="StorageDeliver" resultType="int">
-        select count(1) from t_storage_deliver 
+    <select id="countByCustomer" parameterType="ProductOut" resultType="int">
+        select count(1) from t_productout 
           where status = 1
         <if test="customerName != null and customerName !=''">
           and customername like #{customerName}           
@@ -98,29 +95,29 @@
         </if>
     </select>
     
-    <select id="findDeliverById" parameterType="String" resultMap="dlvrmap">
-        select * from t_storage_deliver where status = 1 and id = #{id}
+    <select id="findDeliverById" parameterType="String" resultMap="pdtoutmap">
+        select * from t_productout where status = 1 and id = #{id}
     </select>
     
-    <select id="findByOrder" parameterType="String" resultMap="dlvrmap">
-        select * from t_storage_deliver where orderIdentify = #{orderIdentify}
+    <select id="findByOrder" parameterType="String" resultMap="pdtoutmap">
+        select * from t_productout where orderIdentify = #{orderIdentify}
     </select>
     
-    <insert id="insert" parameterType="StorageDeliver">
-        insert into t_storage_deliver(id, deliverDate, orderIdentify, customerId, customerName, pdtNo, content, amount, price, totlment, modifyDate, remark, status) 
-          values(#{id}, #{deliverDate}, #{orderIdentify}, #{customerId}, #{customerName}, #{pdtNo}, #{content}, #{amount}, #{price}, #{totlment}, sysdate(), #{remark}, #{status})
+    <insert id="insert" parameterType="ProductOut">
+        insert into t_productout(id, deliverDate, orderIdentify, customerName, pdtNo, content, amount, modifyDate, remark, status) 
+          values(#{id}, #{deliverDate}, #{orderIdentify}, #{customerName}, #{pdtNo}, #{content}, #{amount}, sysdate(), #{remark}, #{status})
     </insert>
     
     <insert id="batchInsert" parameterType="java.util.List">
-        insert into t_storage_deliver(id, deliverDate, orderIdentify, customerId, customerName, pdtNo, content, amount, price, totlment, modifyDate, remark, status) 
+        insert into t_productout(id, deliverDate, orderIdentify, customerName, pdtNo, content, amount, modifyDate, remark, status) 
           values
           <foreach collection="list" item="dlvr" index="index" separator=",">
-          (CONCAT(current_timestamp()+1, #{index}), #{dlvr.deliverDate}, #{dlvr.orderIdentify}, #{dlvr.customerId}, #{dlvr.customerName}, #{dlvr.pdtNo}, #{dlvr.content}, #{dlvr.amount}, #{dlvr.price}, #{dlvr.totlment}, sysdate(), #{dlvr.remark}, '1')
+          (CONCAT(current_timestamp()+1, #{index}), #{dlvr.deliverDate}, #{dlvr.orderIdentify}, #{dlvr.customerName}, #{dlvr.pdtNo}, #{dlvr.content}, #{dlvr.amount}, sysdate(), #{dlvr.remark}, '1')
     	  </foreach>
     </insert>
 
-    <update id="update" parameterType="StorageDeliver">
-        update t_storage_deliver set 
+    <update id="update" parameterType="ProductOut">
+        update t_productout set 
           deliverDate = #{deliverDate},                    
           pdtNo = #{pdtNo},
           content = #{content},
@@ -131,7 +128,7 @@
     where id = #{id}
     </update>
     <update id="deleteById" parameterType="String">
-        update t_storage_deliver set 
+        update t_productout set 
           status = '0',
           modifydate = sysdate()
         where id = #{id}

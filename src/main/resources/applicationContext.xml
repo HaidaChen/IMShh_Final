@@ -97,11 +97,11 @@ xsi:schemaLocation="
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
            
-      <bean name="deliverService" class="com.douniu.imshh.finance.storage.service.impl.DeliverService">
-          <property name="dao" ref="deliverDao"></property>
+      <bean name="productOutService" class="com.douniu.imshh.finance.storage.service.impl.ProductOutService">
+          <property name="dao" ref="productOutDao"></property>
       </bean>
-      <bean id="deliverDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.finance.storage.dao.IDeliverDao"/>
+      <bean id="productOutDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.storage.dao.IProductOutDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       

@@ -141,17 +141,16 @@ CREATE TABLE T_PRODUCTIN (
     status char(1)
 );
 
-CREATE TABLE T_STORAGE_DELIVER (
+CREATE TABLE T_PRODUCTOUT (
     id varchar(20) not null,
     deliverDate date not null,
     orderIdentify varchar(20),
-    customerId varchar(20),
-    customerName varchar(64),
+    customerName varchar(128),
     pdtNo varchar(20) not null,
     content varchar(20) not null,
     amount int not null,
-    price numeric(10,2),
-    totlment numeric(10,2)
+    
+    modifyDate datetime,
     remark varchar(1024),
     status char(1)
 );

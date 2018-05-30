@@ -23,8 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.douniu.imshh.common.PageResult;
-import com.douniu.imshh.finance.storage.domain.Deliver;
-import com.douniu.imshh.finance.storage.service.IDeliverService;
+import com.douniu.imshh.finance.storage.domain.ProductOut;
+import com.douniu.imshh.finance.storage.service.IProductOutService;
 import com.douniu.imshh.utils.DateUtil;
 import com.douniu.imshh.utils.ExcelBean;
 import com.douniu.imshh.utils.ExcelUtil;
@@ -33,44 +33,42 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @Controller
-@RequestMapping("/deliver")
-public class DeliverAction {
+@RequestMapping("/pdtout")
+public class ProductOutAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{
 		mapper.add(new ExcelBean("出库日期","deliverDate",0)); 
 		mapper.add(new ExcelBean("关联订单号","orderIdentify",0));
-		mapper.add(new ExcelBean("接收客户", "customerName"));
+		mapper.add(new ExcelBean("接收客户", "customerName",0));
 		mapper.add(new ExcelBean("货号","pdtNo",0));  
-		mapper.add(new ExcelBean("含量","content",0)); 
-		mapper.add(new ExcelBean("单价","price",0));
-		mapper.add(new ExcelBean("合计","totlment",0));
+		mapper.add(new ExcelBean("含量","content",0));
 		mapper.add(new ExcelBean("数量","amount",0));  
 		mapper.add(new ExcelBean("备注","remark",0));
 	}
 	
 	@Autowired
-	private IDeliverService service;
+	private IProductOutService service;
 	
 	
-	@RequestMapping(value="/edit", produces = "application/json; charset=utf-8")
+	@RequestMapping(value="/findbyid", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String edit(Deliver deliver){
-		Deliver oDeliver = service.getById(deliver.getId());
+	public String findById(ProductOut deliver){
+		ProductOut oDeliver = service.getById(deliver.getId());
 		Gson gson = new Gson();
         return gson.toJson(oDeliver);
 	}
 	
 	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public int save(Deliver deliver){
+	public int save(ProductOut deliver){
 		service.save(deliver);
         return 1;
 	}	
 	
-	@RequestMapping(value ="/loaddeliver", produces = "application/json; charset=utf-8")
+	@RequestMapping(value ="/loadproductout", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String loadDeliver(Deliver deliver){
-		List<Deliver> res = service.query(deliver);
+	public String loadProductOut(ProductOut deliver){
+		List<ProductOut> res = service.query(deliver);
 		int count = service.countByCustomer(deliver);
 		
 		PageResult pr = new PageResult();
@@ -84,8 +82,8 @@ public class DeliverAction {
 	
 	@RequestMapping(value ="/loadbycust", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String loadByCust(Deliver deliver){
-		List<Deliver> res = service.queryByCustomer(deliver);
+	public String loadByCust(ProductOut deliver){
+		List<ProductOut> res = service.queryByCustomer(deliver);
 		int count = service.countByCustomer(deliver);
 		
 		PageResult pr = new PageResult();
@@ -100,7 +98,7 @@ public class DeliverAction {
 	@RequestMapping(value ="/findbyorder", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String findbyOrder(String orderIdentify){
-		List<Deliver> res = service.findByOrder(orderIdentify);
+		List<ProductOut> res = service.findByOrder(orderIdentify);
 		
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		return gson.toJson(res);
@@ -114,9 +112,9 @@ public class DeliverAction {
 	
 	
 	
-    @RequestMapping(value="importdeliver",method={RequestMethod.GET,RequestMethod.POST})  
+    @RequestMapping(value="importproductout",method={RequestMethod.GET,RequestMethod.POST})  
     @ResponseBody  
-    public  void  importDeliver(HttpServletRequest request,HttpServletResponse response) throws Exception {  
+    public  void  importProductOut(HttpServletRequest request,HttpServletResponse response) throws Exception {  
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;    
           
         InputStream in =null;  
@@ -127,13 +125,13 @@ public class DeliverAction {
           
         in = file.getInputStream();  
         List<List<Object>>  data = ExcelUtil.parseExcel(in, file.getOriginalFilename());
-        List<Deliver> delivers = POIExcelAdapter.toDomainList(data, mapper, Deliver.class);
+        List<ProductOut> delivers = POIExcelAdapter.toDomainList(data, mapper, ProductOut.class);
         service.batchAdd(delivers);
     }  
     
-    @RequestMapping(value = "exportdeliver", method = RequestMethod.GET)  
+    @RequestMapping(value = "exportproductout", method = RequestMethod.GET)  
     @ResponseBody  
-    public void exportDeliver(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
+    public void exportProductOut(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
     	response.reset();  
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");  
         String dateStr = sdf.format(new Date());  
@@ -150,13 +148,13 @@ public class DeliverAction {
         	Date startDate = DateUtil.string2Date(request.getParameter("startDate"));
         	Date endDate = DateUtil.string2Date(request.getParameter("endDate"));
         	
-        	Deliver deliver = new Deliver();
+        	ProductOut deliver = new ProductOut();
         	deliver.setCondition(condition);
         	deliver.setStartDate(startDate);
         	deliver.setEndDate(endDate);
         	
-            List<Deliver> delivers = service.queryNoPage(deliver);
-            workbook = POIExcelAdapter.toWorkBook(delivers, mapper, Deliver.class); 
+            List<ProductOut> delivers = service.queryNoPage(deliver);
+            workbook = POIExcelAdapter.toWorkBook(delivers, mapper, ProductOut.class); 
         } catch (Exception e) {  
             e.printStackTrace();  
         }  
