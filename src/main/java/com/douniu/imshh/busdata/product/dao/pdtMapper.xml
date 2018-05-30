@@ -41,6 +41,12 @@
         </if>        
           order by modifydate desc
     </select>
+    
+    <select id="queryByOrder" parameterType="String" resultMap="pdtmap">
+        select * from t_product where code in (select pdtno from t_orderdetail where orderidentify = #{orderIdt})     
+          order by modifydate desc
+    </select>
+    
     <select id="count" parameterType="Product" resultType="int">
         select count(1) from t_product where status = 1
         <if test="condition != null and condition !=''">

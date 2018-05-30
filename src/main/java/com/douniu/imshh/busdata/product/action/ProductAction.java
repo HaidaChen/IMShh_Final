@@ -93,6 +93,15 @@ public class ProductAction {
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
         String resJson = gson.toJson(res);
 		return resJson;
+	}	
+	
+	@RequestMapping(value ="/loadpdtbyorder", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String queryByOrder(String identify){
+		List<Product> res = service.queryByOrder(identify);
+		
+		Gson gson = new Gson();
+        return gson.toJson(res);
 	}
 	
 	@RequestMapping("/delete")

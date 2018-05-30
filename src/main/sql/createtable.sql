@@ -128,6 +128,34 @@ CREATE TABLE T_MATERIALOUT(
     status char(1)
 );
 
+CREATE TABLE T_PRODUCTIN (
+    id varchar(20) not null,
+    storageDate date not null,
+    orderIdentify varchar(20),
+    pdtNo varchar(20) not null,
+    content varchar(20) not null,
+    amount int not null,
+    
+    modifyDate datetime,
+    remark varchar(1024),
+    status char(1)
+);
+
+CREATE TABLE T_STORAGE_DELIVER (
+    id varchar(20) not null,
+    deliverDate date not null,
+    orderIdentify varchar(20),
+    customerId varchar(20),
+    customerName varchar(64),
+    pdtNo varchar(20) not null,
+    content varchar(20) not null,
+    amount int not null,
+    price numeric(10,2),
+    totlment numeric(10,2)
+    remark varchar(1024),
+    status char(1)
+);
+
 CREATE TABLE T_INVOICE(
     id varchar(20) not null,
     invoiceDate date not null,
@@ -203,33 +231,7 @@ CREATE TABLE T_TRANSACTION (
     status char(1)
 );
 
-CREATE TABLE T_STORAGE (
-    id varchar(20) not null,
-    storageDate date not null,
-    orderIdentify varchar(20),
-    pdtNo varchar(20) not null,
-    content varchar(20) not null,
-    amount int not null,
-    
-    modifyDate datetime,
-    remark varchar(1024),
-    status char(1)
-);
 
-CREATE TABLE T_STORAGE_DELIVER (
-    id varchar(20) not null,
-    deliverDate date not null,
-    orderIdentify varchar(20),
-    customerId varchar(20),
-    customerName varchar(64),
-    pdtNo varchar(20) not null,
-    content varchar(20) not null,
-    amount int not null,
-    price numeric(10,2),
-    totlment numeric(10,2)
-    remark varchar(1024),
-    status char(1)
-);
 
 CREATE TABLE T_USER(
 	id varchar(20) not null,

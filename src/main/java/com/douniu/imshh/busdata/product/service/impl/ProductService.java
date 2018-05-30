@@ -24,6 +24,12 @@ public class ProductService implements IProductService{
 	}
 
 	@Override
+	public List<Product> queryByOrder(String orderIdt) {
+		// TODO Auto-generated method stub
+		return dao.queryByOrder(orderIdt);
+	}
+
+	@Override
 	public int count(Product product) {
 		Product condition = LikeFlagUtil.appendLikeFlag(product, new String[]{"condition"});
 		return dao.count(condition);

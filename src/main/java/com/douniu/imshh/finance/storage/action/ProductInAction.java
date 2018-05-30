@@ -23,8 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.douniu.imshh.common.PageResult;
-import com.douniu.imshh.finance.storage.domain.Storage;
-import com.douniu.imshh.finance.storage.service.IStorageService;
+import com.douniu.imshh.finance.storage.domain.ProductIn;
+import com.douniu.imshh.finance.storage.service.IProductInService;
 import com.douniu.imshh.utils.DateUtil;
 import com.douniu.imshh.utils.ExcelBean;
 import com.douniu.imshh.utils.ExcelUtil;
@@ -33,8 +33,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @Controller
-@RequestMapping("/storage")
-public class StorageAction {
+@RequestMapping("/pdtin")
+public class ProductInAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{
 		mapper.add(new ExcelBean("入库日期","storageDate",0));  
@@ -46,28 +46,28 @@ public class StorageAction {
 	}
 	
 	@Autowired
-	private IStorageService service;
+	private IProductInService service;
 	
 	
 	@RequestMapping(value="/edit", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String edit(Storage storage){
-		Storage oStorage = service.getById(storage.getId());
+	public String edit(ProductIn storage){
+		ProductIn oStorage = service.getById(storage.getId());
 		Gson gson = new Gson();
         return gson.toJson(oStorage);
 	}
 	
 	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public int save(Storage storage){
+	public int save(ProductIn storage){
 		service.save(storage);
         return 1;
 	}
 	
 	@RequestMapping(value ="/loadstorage", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String loadStorage(Storage storage){
-		List<Storage> res = service.queryDetail(storage);
+	public String loadStorage(ProductIn storage){
+		List<ProductIn> res = service.queryDetail(storage);
 		int count = service.count(storage);
 		
 		PageResult pr = new PageResult();
@@ -99,7 +99,7 @@ public class StorageAction {
           
         in = file.getInputStream();  
         List<List<Object>>  data = ExcelUtil.parseExcel(in, file.getOriginalFilename());
-        List<Storage> storages = POIExcelAdapter.toDomainList(data, mapper, Storage.class);
+        List<ProductIn> storages = POIExcelAdapter.toDomainList(data, mapper, ProductIn.class);
         service.batchAdd(storages);
     }  
     
@@ -122,13 +122,13 @@ public class StorageAction {
         	Date startDate = DateUtil.string2Date(request.getParameter("startDate"));
         	Date endDate = DateUtil.string2Date(request.getParameter("endDate"));
         	
-        	Storage storage = new Storage();
+        	ProductIn storage = new ProductIn();
         	storage.setCondition(condition);
         	storage.setStartDate(startDate);
         	storage.setEndDate(endDate);
         	
-            List<Storage> storages = service.queryDetailNoPage(storage);
-        	workbook = POIExcelAdapter.toWorkBook(storages, mapper, Storage.class); 
+            List<ProductIn> storages = service.queryDetailNoPage(storage);
+        	workbook = POIExcelAdapter.toWorkBook(storages, mapper, ProductIn.class); 
         } catch (Exception e) {  
             e.printStackTrace();  
         }  
@@ -148,8 +148,8 @@ public class StorageAction {
     
     @RequestMapping(value ="/loadstatistics", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String loadStatistics(Storage storage){
-		List<Storage> res = service.statisticsStorage(storage);
+	public String loadStatistics(ProductIn storage){
+		List<ProductIn> res = service.statisticsStorage(storage);
 		int count = service.countStorage(storage);
 		
 		PageResult pr = new PageResult();

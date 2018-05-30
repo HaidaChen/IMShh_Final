@@ -4496,7 +4496,7 @@ var App = function () {
 	/*	init Storage data
 	/*-----------------------------------------------------------------------------------*/	
 	var initStorageModule = function(){
-		$("#tbl_storagedetail").bootstrapTable({
+		$("#tbl_productIn").bootstrapTable({
 			url: getProjectName() + "/storage/loadstorage.do",
 			method: "get",
 			pagination: true,
@@ -4531,11 +4531,26 @@ var App = function () {
             }
 		});	
 		
-		$("#tbl_storage").bootstrapTable({
-			url: getProjectName() + "/storage/loadstatistics.do",
-			method: "get",
-			pagination: true,
-			sidePagination: "server", 
+		$("input[name=condition]").change(function(){
+			$("#tbl_storagedetail").bootstrapTable("refresh", {url: getProjectName() + "/storage/loadstorage.do", cache: false});
+		});
+		
+		/*表单部分*/
+		$('#btn_add').click(function(){
+			$("#productInList").slideToggle();
+			$("#productInNew").slideToggle();
+		});
+		
+		$('a.ngoback').click(function(){
+			$("#productInList").slideToggle();
+			$("#productInNew").slideToggle();
+			removeFormData($("#productInForm"));
+		});
+		
+		var orderItems = [];
+		$("#tbl_orderItem").bootstrapTable({
+			data: orderItems,
+			pagination: false,
 			columns: [{
                 field: 'pdtNo',
                 title: '货号'
@@ -4543,36 +4558,29 @@ var App = function () {
                 field: 'content',
                 title: '含量'
             }, {
-                field: 'amount',
-                title: '库存'
+                field: 'quantity',
+                title: '订单数量'
+            }, {
+                field: 'inStorageQuantity',
+                title: '已入库数'
+            }, {
+                field: '',
+                title: '入库数',
+                formatter: function(value, row, index){
+                	return '<input type="text" name="inStorageQuantity" value="" size="4">';
+                }
             }],
             queryParams: function(params){
             	return {
                     pageSize: params.limit,
                     pageOffset: params.offset,                    
-                    pdtNo: $("input[name=condition_pdtNo]").val()
+                    condition: $("input[name=condition]").val(),
+                    startDate: $("#startDate").val(),
+                    endDate: $("#endDate").val()
                 }
             }
-		});	
-		
-		$("input[name=condition]").change(function(){
-			$("#tbl_storagedetail").bootstrapTable("refresh", {url: getProjectName() + "/storage/loadstorage.do", cache: false});
-		});
-		
-		$("input[name=condition_pdtNo]").change(function(){
-			$("#tbl_storage").bootstrapTable("refresh", {url: getProjectName() + "/storage/loadstatistics.do", cache: false});
-		});
-		
-		
-		$("#storageForm").bootstrapValidator({
-			fields: {
-				storageDate : {validators: {notEmpty : {}}},
-				pdtNo : {validators: {notEmpty : {}}},
-				content : {validators: {notEmpty : {}}},
-				amount : {validators: {notEmpty : {}, integer:{}}}
-	        }
-		});
-		
+		});			
+			
 		$.getJSON(getProjectName() + "/order/loadallorder.do", function (data){
 			$("#relorder").append("<option></option>");
 			$.each(data, function(index, obj){
@@ -4584,11 +4592,66 @@ var App = function () {
 			});
 		});
 		
-		$("#btn_save_storagedtl").click(function(){
-			var bv = $("#storageForm").data('bootstrapValidator');
-	        bv.validate();
-			if(bv.isValid()){
-				$("#storageForm").ajaxSubmit({
+		$.getJSON(getProjectName() + "/pdt/loadallpdt.do", function (data){
+			$("#relpdt").append("<option></option>");
+			$.each(data, function(index, obj){
+				$("#relpdt").append("<option value='"+obj.code+"' data='"+obj.model+"'>"+ obj.code +" "+ obj.name + " " + obj.model +"</option>");
+			});
+			$("#relpdt").select2({
+			    placeholder: "请选择货号",
+			    allowClear: true
+			});
+		});
+		
+		$("#relorder").change(function(){
+			var identify = $(this).val();
+			var url = "";
+			if (identify == ""){
+				url = getProjectName() + "/pdt/loadallpdt.do";
+			}else{
+				url = getProjectName() + "/pdt/loadpdtbyorder.do?identify="+identify;
+			}
+			
+			$.getJSON(url, function (data){
+				$("#relpdt").empty();
+				$("#relpdt").append("<option></option>");
+				$.each(data, function(index, obj){
+					$("#relpdt").append("<option value='"+obj.code+"' data='"+obj.model+"'>"+ obj.code +" "+ obj.name + " " + obj.model +"</option>");
+				});
+				$("#relpdt").select2({
+				    placeholder: "请选择货号",
+				    allowClear: true
+				});
+			});
+		});
+		
+		$("#relpdt").change(function(){
+			var pdtNo = $(this).val();
+			if (pdtNo == ''){
+				$("input[name=content]").val("");
+			}else{
+				var data = $("#relpdt option:selected").attr("data");
+				$("input[name=content]").val(data);
+				$("input[name=content]").change();
+			}
+			
+		});
+		
+		$("#productInForm").bootstrapValidator({
+			fields: {
+				storageDate : {trigger: "change", validators: {notEmpty : {}}},
+				pdtNo : {trigger: "change", validators: {notEmpty : {}}},
+				content : {trigger: "change", validators: {notEmpty : {}}},
+				amount : {validators: {notEmpty : {}, integer:{}}}
+	        }
+		});
+		
+		$("#btn_save_productIn").click(function(){
+			var bv = $("#productInForm").data('bootstrapValidator');
+	        bv.validate();        
+	        
+			if(bv.isValid()){				
+				$("#productInForm").ajaxSubmit({
 					url: getProjectName()+"/storage/save.do",
 					success: function(){
 						removeFormData($("#storageForm"));
@@ -4601,7 +4664,7 @@ var App = function () {
 		$("#btn_import").click(function(){			
 			var oImportModal = new ImportModal(getProjectName() + "/storage/importstorage.do", function(){
 				$("#tbl_storagedetail").bootstrapTable("refresh", {url: getProjectName() + "/storage/loadstorage.do", cache: false});
-        	}, getProjectName() + "/templaters/入库单.xlsx");
+        	}, getProjectName() + "/templaters/成品入库单.xlsx");
 			oImportModal.createModal();  
 		});
 		

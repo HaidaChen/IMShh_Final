@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.douniu.imshh.finance.storage.dao.IStorageDao">
-    <resultMap type="Storage" id="strgmap">
+<mapper namespace="com.douniu.imshh.finance.storage.dao.IProductInDao">
+    <resultMap type="ProductIn" id="pdtinmap">
         <result property="id" column="id"/>
         <result property="storageDate" column="storageDate"/>
         <result property="orderIdentify" column="orderIdentify"/>
@@ -14,8 +14,8 @@
     </resultMap>
     
     
-    <select id="queryDetail" parameterType="Storage" resultMap="strgmap">
-        select * from t_storage where status = 1
+    <select id="queryDetail" parameterType="ProductIn" resultMap="pdtinmap">
+        select * from t_productin where status = 1
         <if test="condition != null and condition !=''">
           and (pdtNo like #{condition}
             or orderIdentify like #{condition})             
@@ -30,8 +30,8 @@
           limit #{pageOffset},#{pageSize}
     </select>
     
-    <select id="queryDetailNoPage" parameterType="Storage" resultMap="strgmap">
-        select * from t_storage where status = 1
+    <select id="queryDetailNoPage" parameterType="ProductIn" resultMap="pdtinmap">
+        select * from t_productin where status = 1
         <if test="condition != null and condition !=''">
           and (pdtNo like #{condition}
             or orderIdentify like #{condition})             
@@ -45,8 +45,8 @@
           order by modifydate desc
     </select>
     
-    <select id="countDetail" parameterType="Storage" resultType="int">
-        select count(1) from t_storage where status = 1
+    <select id="countDetail" parameterType="ProductIn" resultType="int">
+        select count(1) from t_productin where status = 1
         <if test="condition != null and condition !=''">
           and (pdtNo like #{condition}
             or orderIdentify like #{condition})             
@@ -59,25 +59,25 @@
         </if>
     </select>
     
-    <select id="findDetailById" parameterType="String" resultMap="strgmap">
-        select * from t_storage where id = #{id}
+    <select id="findDetailById" parameterType="String" resultMap="pdtinmap">
+        select * from t_productin where id = #{id}
     </select>
     
-    <insert id="insert" parameterType="Storage">
-        insert into t_storage(id, storageDate, orderIdentify, pdtNo, content, amount, modifyDate, remark, status) 
+    <insert id="insert" parameterType="ProductIn">
+        insert into t_productin(id, storageDate, orderIdentify, pdtNo, content, amount, modifyDate, remark, status) 
           values(#{id}, #{storageDate}, #{pdtNo}, #{orderIdentify}, #{content}, #{amount}, sysdate(), #{remark}, #{status})
     </insert>
     
     <insert id="batchInsert" parameterType="java.util.List">
-        insert into t_storage(id, storageDate, orderIdentify, pdtNo, content, amount, modifyDate, remark, status) 
+        insert into t_productin(id, storageDate, orderIdentify, pdtNo, content, amount, modifyDate, remark, status) 
           values
           <foreach collection="list" item="strg" index="index" separator=",">
           (CONCAT(current_timestamp()+1, #{index}), #{strg.storageDate}, #{strg.orderIdentify}, #{strg.pdtNo}, #{strg.content}, #{strg.amount}, sysdate(), #{strg.remark}, '1')
     	  </foreach>
     </insert>
 
-    <update id="update" parameterType="Storage">
-        update t_storage set 
+    <update id="update" parameterType="ProductIn">
+        update t_productin set 
           storageDate = #{storageDate},          
           pdtNo = #{pdtNo},
           content = #{content},
@@ -88,20 +88,20 @@
     where id = #{id}
     </update>
     <update id="deleteById" parameterType="String">
-        update t_storage set 
+        update t_productin set 
           status = '0',
           modifydate = sysdate()
         where id = #{id}
     </update>
     
-    <select id="statisticsStorage" parameterType="Storage" resultMap="strgmap">
+    <select id="statisticsStorage" parameterType="ProductIn" resultMap="pdtinmap">
         select t1.pdtNo, t1.content, t1.amount - (case when t2.amount is null then 0 else t2.amount end) as amount from
-        (select pdtNo, content, sum(amount) as amount from t_storage where status = 1
+        (select pdtNo, content, sum(amount) as amount from t_productin where status = 1
           group by pdtNo, content
           order by modifydate desc
         ) t1 
         left join 
-        (select pdtNo, content, sum(amount) as amount from t_storage_deliver where status = 1 
+        (select pdtNo, content, sum(amount) as amount from t_productin_deliver where status = 1 
           group by pdtNo, content
           order by modifydate desc
         ) t2 
@@ -113,9 +113,9 @@
           limit #{pageOffset},#{pageSize}
     </select>
     
-    <select id="countStorage" parameterType="Storage" resultType="int">
+    <select id="countStorage" parameterType="ProductIn" resultType="int">
         select count(1) from (
-        select pdtNo, content, sum(amount) from t_storage where status = 1
+        select pdtNo, content, sum(amount) from t_productin where status = 1
         <if test="pdtNo != null and pdtNo !=''">
           and pdtNo like #{pdtNo}           
         </if> 

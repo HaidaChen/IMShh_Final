@@ -11,15 +11,15 @@
         <typeAlias alias="MaterialIn" type="com.douniu.imshh.finance.storage.domain.MaterialIn"/>
         <typeAlias alias="MaterialOut" type="com.douniu.imshh.finance.storage.domain.MaterialOut"/>
         <typeAlias alias="MaterialStorage" type="com.douniu.imshh.finance.storage.domain.MaterialStorage"/>
+        <typeAlias alias="ProductIn" type="com.douniu.imshh.finance.storage.domain.ProductIn"/>
+        <typeAlias alias="StorageDeliver" type="com.douniu.imshh.finance.storage.domain.Deliver"/>
         <typeAlias alias="Invoice" type="com.douniu.imshh.finance.invoice.domain.Invoice"/>
-        
+                
         <typeAlias alias="AccountReception" type="com.douniu.imshh.finance.account.domain.Reception"/>
         <typeAlias alias="AccountPayment" type="com.douniu.imshh.finance.account.domain.Payment"/>
-        
         <typeAlias alias="Account" type="com.douniu.imshh.finance.account.domain.Account"/>
         <typeAlias alias="Transaction" type="com.douniu.imshh.finance.account.domain.Transaction"/>
-        <typeAlias alias="Storage" type="com.douniu.imshh.finance.storage.domain.Storage"/>
-        <typeAlias alias="StorageDeliver" type="com.douniu.imshh.finance.storage.domain.Deliver"/>
+        
         <typeAlias alias="User" type="com.douniu.imshh.sys.domain.User"/>
         <typeAlias alias="Role" type="com.douniu.imshh.sys.domain.Role"/>
         <typeAlias alias="Authority" type="com.douniu.imshh.sys.domain.Authority"/>
@@ -37,6 +37,8 @@
         <mapper resource="/com/douniu/imshh/finance/storage/dao/materialInMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/storage/dao/materialOutMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/storage/dao/materialStorageMapper.xml"/>
+        <mapper resource="/com/douniu/imshh/finance/storage/dao/productInMapper.xml"/>
+        <mapper resource="/com/douniu/imshh/finance/storage/dao/deliverMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/invoice/dao/invoiceMapper.xml"/>
         
         <mapper resource="/com/douniu/imshh/finance/account/dao/receptionMapper.xml"/>
@@ -44,8 +46,7 @@
         
         <mapper resource="/com/douniu/imshh/finance/account/dao/accountMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/account/dao/transactionMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/finance/storage/dao/storageMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/finance/storage/dao/deliverMapper.xml"/>
+        
         <mapper resource="/com/douniu/imshh/sys/dao/userMapper.xml"/>
         <mapper resource="/com/douniu/imshh/sys/dao/roleMapper.xml"/>
         <mapper resource="/com/douniu/imshh/sys/dao/authorityMapper.xml"/>

@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.douniu.imshh.common.BaseQO;
 
-public class Storage extends BaseQO{
+public class ProductIn extends BaseQO{
 	private String id;
 	private Date storageDate;
 	private String orderIdentify;
