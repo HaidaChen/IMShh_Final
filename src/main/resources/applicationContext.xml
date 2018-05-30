@@ -89,6 +89,22 @@ xsi:schemaLocation="
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       
+      <bean name="productInService" class="com.douniu.imshh.finance.storage.service.impl.ProductInService">
+          <property name="dao" ref="productInDao"></property>
+      </bean>
+      <bean id="productInDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.storage.dao.IProductInDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+           
+      <bean name="deliverService" class="com.douniu.imshh.finance.storage.service.impl.DeliverService">
+          <property name="dao" ref="deliverDao"></property>
+      </bean>
+      <bean id="deliverDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.storage.dao.IDeliverDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
       <bean name="invoiceService" class="com.douniu.imshh.finance.invoice.service.impl.InvoiceService">
           <property name="dao" ref="invoiceDao"></property>
       </bean>
@@ -129,22 +145,7 @@ xsi:schemaLocation="
           <property name="mapperInterface" value="com.douniu.imshh.finance.account.dao.ITransactionDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
-      
-      <bean name="storageService" class="com.douniu.imshh.finance.storage.service.impl.StorageService">
-          <property name="dao" ref="storageDao"></property>
-      </bean>
-      <bean id="storageDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.finance.storage.dao.IStorageDao"/>
-          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean>
            
-      <bean name="deliverService" class="com.douniu.imshh.finance.storage.service.impl.DeliverService">
-          <property name="dao" ref="deliverDao"></property>
-      </bean>
-      <bean id="deliverDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.finance.storage.dao.IDeliverDao"/>
-          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean>
       
       
       <!--  -->

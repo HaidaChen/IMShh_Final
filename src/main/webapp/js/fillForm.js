@@ -48,7 +48,7 @@ var FillForm = function(){
 			var valueformatter = $(item).attr("valueformatter");
 			var value = getFieldValue(data, field, valuetype, valueformatter);
 			if (valuetype == 'select2'){
-				$(item).val(value).select2();
+				$(item).val(value).select2({allowClear: true});
 			}else{
 				$(item).val(value);
 			}			

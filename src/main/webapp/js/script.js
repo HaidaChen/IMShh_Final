@@ -4495,9 +4495,9 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/
 	/*	init Storage data
 	/*-----------------------------------------------------------------------------------*/	
-	var initStorageModule = function(){
+	var initProductInModule = function(){
 		$("#tbl_productIn").bootstrapTable({
-			url: getProjectName() + "/storage/loadstorage.do",
+			url: getProjectName() + "/pdtin/loadproductin.do",
 			method: "get",
 			pagination: true,
 			sidePagination: "server", 
@@ -4519,6 +4519,12 @@ var App = function () {
             }, {
                 field: 'remark',
                 title: '备注'
+            }, {
+            	field: '',
+            	title: '操作',
+            	formatter: function(value,row,index){
+            		return '<a href="javascript:;" onclick="editProductIn(\''+row.id+'\')"><i class="fa fa-edit (alias)"></i></a>';
+            	}
             }],
             queryParams: function(params){
             	return {
@@ -4532,53 +4538,20 @@ var App = function () {
 		});	
 		
 		$("input[name=condition]").change(function(){
-			$("#tbl_storagedetail").bootstrapTable("refresh", {url: getProjectName() + "/storage/loadstorage.do", cache: false});
+			$("#tbl_productIn").bootstrapTable("refresh", {url: getProjectName() + "/pdtin/loadproductin.do", cache: false});
 		});
 		
 		/*表单部分*/
 		$('#btn_add').click(function(){
 			$("#productInList").slideToggle();
 			$("#productInNew").slideToggle();
+			refreshPdtSelect();
 		});
 		
 		$('a.ngoback').click(function(){
 			$("#productInList").slideToggle();
 			$("#productInNew").slideToggle();
 			removeFormData($("#productInForm"));
-		});
-		
-		var orderItems = [];
-		$("#tbl_orderItem").bootstrapTable({
-			data: orderItems,
-			pagination: false,
-			columns: [{
-                field: 'pdtNo',
-                title: '货号'
-            }, {
-                field: 'content',
-                title: '含量'
-            }, {
-                field: 'quantity',
-                title: '订单数量'
-            }, {
-                field: 'inStorageQuantity',
-                title: '已入库数'
-            }, {
-                field: '',
-                title: '入库数',
-                formatter: function(value, row, index){
-                	return '<input type="text" name="inStorageQuantity" value="" size="4">';
-                }
-            }],
-            queryParams: function(params){
-            	return {
-                    pageSize: params.limit,
-                    pageOffset: params.offset,                    
-                    condition: $("input[name=condition]").val(),
-                    startDate: $("#startDate").val(),
-                    endDate: $("#endDate").val()
-                }
-            }
 		});			
 			
 		$.getJSON(getProjectName() + "/order/loadallorder.do", function (data){
@@ -4591,38 +4564,13 @@ var App = function () {
 			    allowClear: true
 			});
 		});
+				
+		refreshPdtSelect();
 		
-		$.getJSON(getProjectName() + "/pdt/loadallpdt.do", function (data){
-			$("#relpdt").append("<option></option>");
-			$.each(data, function(index, obj){
-				$("#relpdt").append("<option value='"+obj.code+"' data='"+obj.model+"'>"+ obj.code +" "+ obj.name + " " + obj.model +"</option>");
-			});
-			$("#relpdt").select2({
-			    placeholder: "请选择货号",
-			    allowClear: true
-			});
-		});
 		
 		$("#relorder").change(function(){
 			var identify = $(this).val();
-			var url = "";
-			if (identify == ""){
-				url = getProjectName() + "/pdt/loadallpdt.do";
-			}else{
-				url = getProjectName() + "/pdt/loadpdtbyorder.do?identify="+identify;
-			}
-			
-			$.getJSON(url, function (data){
-				$("#relpdt").empty();
-				$("#relpdt").append("<option></option>");
-				$.each(data, function(index, obj){
-					$("#relpdt").append("<option value='"+obj.code+"' data='"+obj.model+"'>"+ obj.code +" "+ obj.name + " " + obj.model +"</option>");
-				});
-				$("#relpdt").select2({
-				    placeholder: "请选择货号",
-				    allowClear: true
-				});
-			});
+			refreshPdtSelect(identify);
 		});
 		
 		$("#relpdt").change(function(){
@@ -4652,9 +4600,9 @@ var App = function () {
 	        
 			if(bv.isValid()){				
 				$("#productInForm").ajaxSubmit({
-					url: getProjectName()+"/storage/save.do",
+					url: getProjectName()+"/pdtin/save.do",
 					success: function(){
-						removeFormData($("#storageForm"));
+						removeFormData($("#productInForm"));
 						window.location.reload();
 					}
 				});
@@ -4662,14 +4610,14 @@ var App = function () {
 		});
 		
 		$("#btn_import").click(function(){			
-			var oImportModal = new ImportModal(getProjectName() + "/storage/importstorage.do", function(){
-				$("#tbl_storagedetail").bootstrapTable("refresh", {url: getProjectName() + "/storage/loadstorage.do", cache: false});
+			var oImportModal = new ImportModal(getProjectName() + "/pdtin/importproductin.do", function(){
+				$("#tbl_productIn").bootstrapTable("refresh", {url: getProjectName() + "/pdtin/loadproductin.do", cache: false});
         	}, getProjectName() + "/templaters/成品入库单.xlsx");
 			oImportModal.createModal();  
 		});
 		
 		$("#btn_export").click(function(){			
-			window.open(getProjectName() + "/storage/exportstorage.do?condition="+$("input[name=condition]").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()); 
+			window.open(getProjectName() + "/pdtin/exportproductin.do?condition="+$("input[name=condition]").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()); 
 		});
 	}
 
@@ -5740,8 +5688,8 @@ var App = function () {
             if (App.isPage("productIn")){
             	handleMenu("product_in_storage.html");
             	handleDatePicker();
-            	handleDatePriod($("#tbl_storagedetail"), "/storage/loadstorage.do");
-            	initStorageModule();
+            	handleDatePriod($("#tbl_productIn"), "/pdtin/loadproductin.do");
+            	initProductInModule();
             }
             if (App.isPage("invoice")){
             	handleMenu("invoice.html");
@@ -5962,6 +5910,48 @@ var editMaterialOut = function(id){
 }
 
 
+/*-----------------------------------------------------------------------------------*/
+/*	Product In Moduel Script
+/*-----------------------------------------------------------------------------------*/
+var editProductIn = function(id){
+	$.getJSON(getProjectName() + "/pdtin/findbyid.do?id="+id, function (data){
+		refreshPdtSelect(data.orderIdentify, function(){
+			var fillForm = new FillForm();
+			fillForm.autoFill("#productInForm" , data);
+		});
+		
+	});
+	
+	$("#productInList").slideToggle();
+	$("#productInNew").slideToggle();
+	
+	refreshPdtSelect('');
+	
+}
+
+var refreshPdtSelect = function(orderIdt, success){
+	var url = '';
+	if (orderIdt && orderIdt != ''){
+		url = getProjectName() + "/pdt/loadpdtbyorder.do?identify="+orderIdt;
+	}else{
+		url = getProjectName() + "/pdt/loadallpdt.do";
+	}
+	$.getJSON(url, function (data){
+		$("#relpdt").empty();
+		$("#relpdt").append("<option></option>");
+		$.each(data, function(index, obj){
+			$("#relpdt").append("<option value='"+obj.code+"' data='"+obj.model+"'>"+ obj.code +" "+ obj.name + " " + obj.model +"</option>");
+		});
+		$("#relpdt").select2({
+		    placeholder: "请选择货号",
+		    allowClear: true
+		});
+		
+		if (success){
+			success();
+		}
+	});
+}
 /*-----------------------------------------------------------------------------------*/
 /*	Customer Moduel Script
 /*-----------------------------------------------------------------------------------*/
@@ -6298,7 +6288,7 @@ var removeFormData = function(form){
 			$(item).removeAttr("checked");
 		}
 		else if ($(item).attr("valuetype") == 'select2'){
-			$(item).val('').select2();
+			$(item).val("-1").select2({allowClear: true});
 		}
 		else{
 			if($(item).attr("default"))

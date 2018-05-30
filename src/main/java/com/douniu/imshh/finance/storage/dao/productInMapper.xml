@@ -65,7 +65,7 @@
     
     <insert id="insert" parameterType="ProductIn">
         insert into t_productin(id, storageDate, orderIdentify, pdtNo, content, amount, modifyDate, remark, status) 
-          values(#{id}, #{storageDate}, #{pdtNo}, #{orderIdentify}, #{content}, #{amount}, sysdate(), #{remark}, #{status})
+          values(#{id}, #{storageDate}, #{orderIdentify}, #{pdtNo}, #{content}, #{amount}, sysdate(), #{remark}, #{status})
     </insert>
     
     <insert id="batchInsert" parameterType="java.util.List">

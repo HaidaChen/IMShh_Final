@@ -49,10 +49,10 @@ public class ProductInAction {
 	private IProductInService service;
 	
 	
-	@RequestMapping(value="/edit", produces = "application/json; charset=utf-8")
+	@RequestMapping(value="/findbyid", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String edit(ProductIn storage){
-		ProductIn oStorage = service.getById(storage.getId());
+	public String findById(String id){
+		ProductIn oStorage = service.getById(id);
 		Gson gson = new Gson();
         return gson.toJson(oStorage);
 	}
@@ -64,7 +64,7 @@ public class ProductInAction {
         return 1;
 	}
 	
-	@RequestMapping(value ="/loadstorage", produces = "application/json; charset=utf-8")
+	@RequestMapping(value ="/loadproductin", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String loadStorage(ProductIn storage){
 		List<ProductIn> res = service.queryDetail(storage);
@@ -86,9 +86,9 @@ public class ProductInAction {
 	}
 	
 	
-    @RequestMapping(value="importstorage",method={RequestMethod.GET,RequestMethod.POST})  
+    @RequestMapping(value="importproductin",method={RequestMethod.GET,RequestMethod.POST})  
     @ResponseBody  
-    public  void  importStorage(HttpServletRequest request,HttpServletResponse response) throws Exception {  
+    public  void  importProductIn(HttpServletRequest request,HttpServletResponse response) throws Exception {  
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;    
           
         InputStream in =null;  
@@ -103,9 +103,9 @@ public class ProductInAction {
         service.batchAdd(storages);
     }  
     
-    @RequestMapping(value = "exportstorage", method = RequestMethod.GET)  
+    @RequestMapping(value = "exportproductin", method = RequestMethod.GET)  
     @ResponseBody  
-    public void downloadExcel(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
+    public void exportProductIn(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
     	response.reset();  
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");  
         String dateStr = sdf.format(new Date());  

@@ -160,7 +160,7 @@
 												    	
 												    	<span class="pull-right col-md-4" >
 															<div class="input-group" >
-																<input type="text" name="condition" class="form-control" placeholder="订单编号、供应商、品名"/>
+																<input type="text" name="condition" class="form-control" placeholder="订单编号、货号"/>
 																<div class="input-group-btn">
 																	<button type="button" id="btn_datapriod" class="btn btn-default dropdown-toggle" data-toggle="dropdown">所有数据<span class="caret"></span></button>
 																	<ul id="dataperiod" class="dropdown-menu" >
@@ -200,13 +200,13 @@
 																		<label class="col-md-3 control-label">入库日期</label> 
 																		<div class="col-md-4">
 																			<input type="hidden" name="id" value=""/>
-																	    	<input type="text" name="storageDate" class="form-control selectData">											    	
+																	    	<input type="text" name="storageDate" class="form-control selectData" valuetype="date" valueformatter="yyyy-MM-dd">											    	
 																	    </div>
 																	</div>
 																	<div class="form-group">
 																		<label class="col-md-3 control-label">关联订单</label> 
 																		<div class="col-md-4">
-																			<select id="relorder" name="orderIdentify" class="col-md-12">
+																			<select id="relorder" name="orderIdentify" class="col-md-12" valuetype="select2">
 																			</select>
 																	    </div>
 																	</div>
@@ -215,7 +215,7 @@
 																	<div id="block_pdtNo" class="form-group">
 																		<label class="col-md-3 control-label">货号</label> 
 																		<div class="col-md-4">
-																			<select id="relpdt" name="pdtNo" class="col-md-12">
+																			<select id="relpdt" name="pdtNo" class="col-md-12" valuetype="select2">
 																			</select>
 																	    </div>
 																	</div>
@@ -270,6 +270,7 @@
 	<script src="../js/bootstrapvalidator/js/language/zh_CN.js"></script>
 	<script src="../js/jquery-form/jquery.form.js"></script>
 	<script src="../js/importModal.js"></script>
+	<script src="../js/fillForm.js"></script>
 	<script src="../js/script.js"></script>
 	<script>
 		jQuery(document).ready(function() {		
