@@ -1,30 +1,32 @@
-package com.douniu.imshh.finance.account.service.impl;
+package com.douniu.imshh.finance.reception.service.impl;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import com.douniu.imshh.finance.account.dao.IReceptionDao;
-import com.douniu.imshh.finance.account.domain.Reception;
 import com.douniu.imshh.finance.account.domain.Transaction;
-import com.douniu.imshh.finance.account.service.IReceptionService;
 import com.douniu.imshh.finance.order.domain.Order;
 import com.douniu.imshh.finance.order.domain.OrderDetail;
 import com.douniu.imshh.finance.order.service.IOrderService;
+import com.douniu.imshh.finance.reception.dao.IReceptionDao;
+import com.douniu.imshh.finance.reception.domain.Reception;
+import com.douniu.imshh.finance.reception.service.IReceptionService;
 import com.douniu.imshh.finance.storage.domain.ProductOut;
+import com.douniu.imshh.utils.LikeFlagUtil;
 
 public class ReceptionService implements IReceptionService{
 	private IReceptionDao dao;
 	private IOrderService orderService;
 	
 	@Override
-	public Reception statistics(String year) {
-		return dao.statistics(year);
+	public Reception statistics(Reception reception) {
+		return dao.statistics(reception);
 	}
 
 	@Override
-	public List<Reception> statisticsByCustomer(String customerName) {
-		return dao.statisticsByCustomer("%"+customerName+"%");
+	public List<Reception> statisticsByOrder(Reception reception) {
+		Reception condition = LikeFlagUtil.appendLikeFlag(reception, new String[]{"orderIdentify"});
+		return dao.statisticsByOrder(condition);
 	}
 
 	@Override
@@ -42,7 +44,7 @@ public class ReceptionService implements IReceptionService{
 		}
 		Reception reception = new Reception();
 		reception.setCustomerName(customerName);
-		reception.setMonth(month);
+		//reception.setMonth(month);
 		reception.setReception(amount);
 		dao.addReception(reception);
 	}
@@ -54,7 +56,7 @@ public class ReceptionService implements IReceptionService{
 		
 		DateFormat format = new SimpleDateFormat("yyyy-MM");  
         String month = format.format(transaction.getTranDate());  
-		reception.setMonth(month);
+		//reception.setMonth(month);
 		reception.setPayment(transaction.getTranAmount());
 		dao.addPayment(reception);
 	}

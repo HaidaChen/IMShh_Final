@@ -35,7 +35,7 @@
       and month = #{month}
     </update>
     
-    <update id="addPayment" parameterType="AccountReception">
+    <update id="addPayment" parameterType="Reception">
         update T_ACCOUNT_PAYMENT set 
           payment = payment + #{payment}
     where supplierName = #{supplierName} 

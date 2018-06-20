@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.finance.reception.dao.ISettlementDao">
+    <resultMap type="ReceptionSettlement" id="settlementnmap">
+        <result property="id" column="id"/>
+        <result property="settlementDate" column="settlementDate"/>
+        <result property="lastSettlement" column="lastSettlement"/>
+        <result property="reception" column="reception"/>
+        <result property="payment" column="payment"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+    
+    <resultMap type="ReceptionSettlement" id="settlementdtlnmap">
+        <id property="id" column="id"/>
+        <result property="settlementDate" column="settlementDate"/>
+        <result property="lastSettlement" column="lastSettlement"/>
+        <result property="reception" column="reception"/>
+        <result property="payment" column="payment"/>
+        <result property="remark" column="remark"/>
+        
+        <collection property="details" ofType="RcptSettlementDetail">
+        	<result property="settlementId" column="settlementId"/>
+        	<result property="orderIdentify" column="orderIdentify"/>
+        	<result property="custName" column="custName"/>
+	        <result property="orderDate" column="orderDate"/>
+	        <result property="amountRMB" column="amountRMB"/>
+        	<result property="amountDollar" column="amountDollar"/>
+        	<result property="paid" column="paid"/>
+        </collection>
+    </resultMap>
+    
+    <select id="query" parameterType="ReceptionSettlement" resultMap="settlementnmap">
+        select * from T_RECEPTION_SETTLEMENT 
+         where date &gt;= #{startDate}
+           and date &lt;= #{endDate}
+           and status = 1
+    </select> 
+    
+    <select id="findById" parameterType="String" resultType="settlementdtlnmap">
+        select s.*, (case when t.paid is null then 0 else t.paid end) paid from 
+	        (select st.*, sd.*, o.custName, o.orderDate, o.amountRMB, o.amountDollar
+	          from T_RECEPTION_SETTLEMENT st, 
+	               t_reception_settlement_detail sd, 
+	               t_order o               
+	         where st.id = sd.settlementId
+	           and sd.orderIdentify = o.identify
+	           and set.id = #{id}
+	         ) s
+	      left join
+	         (select orderIdentify, sum(tranAmount) as paid 
+	            from t_transaction 
+	           where tranType= '1'
+	           group by orderIdentify) t
+	        on s.orderIdentify = t.orderIdentify
+         
+    </select>     
+    
+    <select id="findLastOne" resultType="ReceptionSettlement">
+    	select * from t_reception_settlement 
+    	 order by settlementDate desc 
+    	 limit 1
+    </select>
+    
+    <update id="insert" parameterType="ReceptionSettlement">
+        insert into t_reception_settlement(id, settlementDate, lastSettlement, reception, payment, modifydate, remark, status) 
+               values(#{id}, #{settlementDate}, #{lastSettlement}, #{reception}, #{payment}, sysdate(), #{remark}, '1')
+    </update>
+    
+    <insert id="insertDetails" parameterType="java.util.List">
+        insert into t_reception_settlement_detail(settlementId, orderIdentify) 
+             values
+             <foreach collection="list" item="settdtl" index="index" separator=",">
+                 (#{settdtl.settlementId}, #{settdtl.orderIdentify})
+             </foreach>
+    </insert>
+    
+    <update id="update" parameterType="ReceptionSettlement">
+        update T_RECEPTION_SETTLEMENT set 
+          reception = #{reception},
+          payment = #{payment},
+          remark = #{remark},
+          modifydate = sysdate()
+         where id = #{id}
+    </update>
+    
+    <update id="delete" parameterType="ReceptionSettlement">
+        update T_RECEPTION_SETTLEMENT set 
+          status = '0',
+          modifydate = sysdate()
+         where id = #{id}
+    </update>
+    
+</mapper>

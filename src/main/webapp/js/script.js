@@ -4826,14 +4826,24 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initReceivableModule = function(){
 		var date = new Date();
+		$("input[name=startDate]").val(date.getFullYear()+"-01-01");
+		$("input[name=endDate]").val(date.getFullYear()+"-12-31");
+		$("#currentYear").html(date.getFullYear());
+		loadStatisticsData(date.getFullYear());
 		$("#tbl_receivable").bootstrapTable({
-			url: getProjectName() + "/accountrpt/statisticsByCustomer.do",
+			url: getProjectName() + "/reception/statisticsByOrder.do",
 			method: "get",
 			pagination: false,
 			sidePagination: "server", 
 			columns: [{
-                field: 'customerName',
-                title: '客户单位'
+                field: 'orderIdentify',
+                title: '订单编号',
+                formatter: function(value,row,index){
+                	if (row.settlement)
+                		return '<a href="javascript:;" onclick="viewSettlement(\''+row.orderIdentify+'\')">'+value+'</a>';
+                	else
+                		return '<a href="javascript:;" onclick="viewOrder(\''+row.orderIdentify+'\')">'+value+'</a>';
+                }
             }, {
                 field: 'reception',
                 title: '截止当前应收款'
@@ -4846,22 +4856,30 @@ var App = function () {
                 formatter: function(value,row,index){
                 	return row.reception - row.payment;
                 }
-            }, {
-            	field: '',
-            	title: '查看',
-            	formatter: function(value,row,index){
-            		return '<a href="javascript:;" onclick="viewDeliver(\''+row.customerName+'\')" title="发货明细"><i class="fa fa-truck"></i></a>&nbsp; <a href="javascript:;" onclick="viewTransaction(\''+row.customerName+'\')" title="收款明细"><i class="fa fa-money"></i></a>';
-            	}
             }],
             queryParams: function(params){
             	return {   
-                    customerName: $("input[name=customerName]").val()
+                    orderIdentify: $("input[name=orderIdentify]").val(),
+                    startDate: $("input[name=startDate]").val(),
+                    endDate: $("input[name=endDate]").val()
                 }
             }
 		});
 		
-		$("input[name=customerName]").change(function(){
-			$("#tbl_receivable").bootstrapTable('refresh', {url: getProjectName() + "/accountrpt/statisticsByCustomer.do", cash:false});
+		$("input[name=orderIdentify]").change(function(){
+			$("#tbl_receivable").bootstrapTable('refresh', {url: getProjectName() + "/reception/statisticsByOrder.do", cash:false});
+		});
+		
+		$("#btn_preYear").click(function(){
+			var currentYear = new Date($("input[name=startDate]").val()).getFullYear();
+			var preYear = currentYear - 1;
+			loadDataByYear(preYear);
+		});
+		
+		$("#btn_nextYear").click(function(){
+			var currentYear = new Date($("input[name=startDate]").val()).getFullYear();
+			var nextYear = currentYear + 1;
+			loadDataByYear(nextYear);
 		});
 		
 		$("#btn_query_tran").click(function(){
@@ -4873,11 +4891,37 @@ var App = function () {
 		});
 	}	
 	
+	var loadDataByYear = function(year){
+		$("#currentYear").html(year);
+		$("input[name=startDate]").val(year + "-01-01");
+		$("input[name=endDate]").val(year + "-12-31");
+		$("#tbl_receivable").bootstrapTable('refresh', {url: getProjectName() + "/reception/statisticsByOrder.do", cash:false});
+		loadStatisticsData(year);
+	}
+	
+	var loadStatisticsData = function(year){
+		$("#totle_receivable, #totle_received, #totle_balance").html(0);
+		$.ajax({
+			url: getProjectName() + "/reception/statistics.do",
+			type: "POST",
+			dataType: "json",
+			data: {
+				startDate: year + "-01-01",
+				endDate: year + "-12-31"
+			},
+			success: function(statistics){				
+				$("#totle_receivable").html(statistics.reception);
+				$("#totle_received").html(statistics.payment);
+				$("#totle_balance").html(statistics.reception - statistics.payment);
+			}
+		});
+	}
 	/*-----------------------------------------------------------------------------------*/
 	/*	init Payment data
 	/*-----------------------------------------------------------------------------------*/	
 	var initPaymentModule = function(){
 		var date = new Date();
+		
 		$("#tbl_payment").bootstrapTable({
 			url: getProjectName() + "/accountpmt/statisticsBySupplier.do",
 			method: "get",

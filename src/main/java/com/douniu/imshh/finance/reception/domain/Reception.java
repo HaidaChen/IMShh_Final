@@ -1,28 +1,32 @@
-package com.douniu.imshh.finance.account.domain;
+package com.douniu.imshh.finance.reception.domain;
 
-public class Reception {
-	private String customerId;
+import com.douniu.imshh.common.BaseQO;
+
+public class Reception extends BaseQO{
 	private String customerName;
-	private String month;
+	private String orderIdentify;
 	private float reception;
 	private float payment;
-	public String getCustomerId() {
-		return customerId;
+	private boolean settlement;
+	
+	
+	public boolean isSettlement() {
+		return settlement;
 	}
-	public void setCustomerId(String customerId) {
-		this.customerId = customerId;
+	public void setSettlement(boolean settlement) {
+		this.settlement = settlement;
+	}
+	public String getOrderIdentify() {
+		return orderIdentify;
+	}
+	public void setOrderIdentify(String orderIdentify) {
+		this.orderIdentify = orderIdentify;
 	}
 	public String getCustomerName() {
 		return customerName;
 	}
 	public void setCustomerName(String customerName) {
 		this.customerName = customerName;
-	}
-	public String getMonth() {
-		return month;
-	}
-	public void setMonth(String month) {
-		this.month = month;
 	}
 	public float getReception() {
 		return reception;
@@ -38,9 +42,8 @@ public class Reception {
 	}
 	@Override
 	public String toString() {
-		return "Reception [customerId=" + customerId + ", customerName=" + customerName + ", month=" + month
+		return "Reception [customerName=" + customerName + ", orderIdentify=" + orderIdentify 
 				+ ", reception=" + reception + ", payment=" + payment + "]";
 	}
-	
 	
 }

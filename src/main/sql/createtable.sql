@@ -180,12 +180,20 @@ CREATE TABLE T_INVOICE(
     status char(1)
 );
 
-CREATE TABLE T_ACCOUNT_RECEPTION(
-    customerId varchar(20),
-    customerName varchar(128) not null,
-    month varchar(20) not null,
-    reception numeric(10,2),
-    payment numeric(10,2)
+CREATE TABLE T_RECEPTION_SETTLEMENT(
+    id varchar(20) not null,
+    settlementDate date not null,
+    lastSettlement date,
+    reception numeric(10,2) not null,
+    payment numeric(10,2),
+    modifyDate datetime,
+    remark varchar(1024),
+    status char(1)
+);
+
+CREATE TABLE T_RECEPTION_SETTLEMENT_DETAIL(
+    settlementId varchar(20),
+    orderIdentify varchar(20)
 );
 
 CREATE TABLE T_ACCOUNT_PAYMENT(

@@ -15,6 +15,7 @@ public class Order extends BaseQO {
 	private Float exchangeRate; /*约定汇率*/
 	private Float amountRMB;    /*订单总金额*/
 	private Float amountDollar;    /*订单总金额*/
+	private float paid;
 	private String state = "1";   /*订单状态*/
 	private List<OrderDetail> details;  /*订单明细*/	
 	
@@ -124,6 +125,14 @@ public class Order extends BaseQO {
 
 	public void setExchangeRate(Float exchangeRate) {
 		this.exchangeRate = exchangeRate;
+	}
+
+	public float getPaid() {
+		return paid;
+	}
+
+	public void setPaid(float paid) {
+		this.paid = paid;
 	}
 
 	@Override

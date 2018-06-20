@@ -15,7 +15,8 @@
         <typeAlias alias="ProductOut" type="com.douniu.imshh.finance.storage.domain.ProductOut"/>
         <typeAlias alias="Invoice" type="com.douniu.imshh.finance.invoice.domain.Invoice"/>
                 
-        <typeAlias alias="AccountReception" type="com.douniu.imshh.finance.account.domain.Reception"/>
+        <typeAlias alias="Reception" type="com.douniu.imshh.finance.reception.domain.Reception"/>
+        <typeAlias alias="ReceptionSettlement" type="com.douniu.imshh.finance.reception.domain.Settlement"/>
         <typeAlias alias="AccountPayment" type="com.douniu.imshh.finance.account.domain.Payment"/>
         <typeAlias alias="Account" type="com.douniu.imshh.finance.account.domain.Account"/>
         <typeAlias alias="Transaction" type="com.douniu.imshh.finance.account.domain.Transaction"/>
@@ -41,7 +42,8 @@
         <mapper resource="/com/douniu/imshh/finance/storage/dao/productOutMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/invoice/dao/invoiceMapper.xml"/>
         
-        <mapper resource="/com/douniu/imshh/finance/account/dao/receptionMapper.xml"/>
+        <mapper resource="/com/douniu/imshh/finance/reception/dao/receptionMapper.xml"/>
+        <mapper resource="/com/douniu/imshh/finance/reception/dao/settlementMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/account/dao/paymentMapper.xml"/>
         
         <mapper resource="/com/douniu/imshh/finance/account/dao/accountMapper.xml"/>

@@ -12,6 +12,7 @@
         <result property="exchangeRate" column="exchangeRate"/>
         <result property="amountRMB" column="amountRMB"/>
         <result property="amountDollar" column="amountDollar"/>
+        <result property="paid" column="paid"/>
         <result property="state" column="state"/>
         <result property="remark" column="remark"/>
         <result property="status" column="status"/>        
@@ -26,6 +27,7 @@
         <result property="exchangeRate" column="exchangeRate"/>
         <result property="amountRMB" column="amountRMB"/>
         <result property="amountDollar" column="amountDollar"/>
+        <result property="paid" column="paid"/>
         <result property="state" column="state"/>
         <result property="remark" column="remark"/>
         <result property="status" column="status"/>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.finance.reception.dao.IReceptionDao">
+    <resultMap type="Reception" id="receptionmap">
+        <result property="orderIdentify" column="orderIdentify"/>
+        <result property="customerName" column="customerName"/>
+        <result property="month" column="month"/>
+        <result property="reception" column="reception"/>
+        <result property="payment" column="payment"/>
+    </resultMap>
+    
+    <select id="statistics" parameterType="Reception" resultType="Reception">
+        select sum(s.reception) as reception, sum(s.payment) as payment from(
+        select r.orderIdentify, r.custName as customerName, r.reception as reception, (case when p.payment is null then 0 else p.payment end) as payment from 
+             (select o.identify as orderIdentify, o.custName as custName, (case when od.priceRMB = 0 then sum(d.amount * od.priceDollar)*o.exchangeRate else sum(d.amount * od.priceRMB) end) as reception 
+              from t_productout d, t_order o, t_orderDetail od
+             where d.orderIdentify = o.identify 
+               and d.pdtno = od.pdtno
+               and d.deliverDate &gt;= #{startDate}
+               and d.deliverDate &lt;= #{endDate}
+             group by o.identify)r 
+          left join 
+           (select tranuser, sum(tranamount) payment 
+              from t_transaction 
+             where trantype = 1 group by tranuser)p 
+            on r.custName = p.tranuser
+        ) s  
+    </select> 
+    
+    <select id="statisticsByOrder" parameterType="Reception" resultMap="receptionmap">
+        select r.orderIdentify, r.custName as customerName, r.reception as reception, (case when p.payment is null then 0 else p.payment end) as payment from 
+             (select o.identify as orderIdentify, o.custName as custName, (case when od.priceRMB = 0 then sum(d.amount * od.priceDollar)*o.exchangeRate else sum(d.amount * od.priceRMB) end) as reception 
+              from t_productout d, t_order o, t_orderDetail od
+             where d.orderIdentify = o.identify 
+               and d.pdtno = od.pdtno
+               and d.deliverDate &gt;= #{startDate}
+               and d.deliverDate &lt;= #{endDate}
+             group by o.identify)r 
+          left join 
+           (select tranuser, sum(tranamount) payment 
+              from t_transaction 
+             where trantype = 1 group by tranuser)p 
+            on r.custName = p.tranuser
+         where 1 = 1
+         <if test="orderIdentify != null and orderIdentify !=''">
+          and orderIdentify like #{orderIdentify}
+        </if>
+         
+    </select>     
+    
+    <update id="addReception" parameterType="Reception">
+        update T_ACCOUNT_RECEPTION set 
+          reception = reception + #{reception}
+    where customerName = #{customerName} 
+      and month = #{month}
+    </update>
+    
+    <update id="addPayment" parameterType="Reception">
+        update T_ACCOUNT_RECEPTION set 
+          payment = payment + #{payment}
+    where customerName = #{customerName} 
+      and month = #{month}
+    </update>
+    
+</mapper>
