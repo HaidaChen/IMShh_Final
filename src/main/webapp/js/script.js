@@ -4840,7 +4840,7 @@ var App = function () {
                 title: '订单编号',
                 formatter: function(value,row,index){
                 	if (row.settlement)
-                		return '<a href="javascript:;" onclick="viewSettlement(\''+row.orderIdentify+'\')">'+value+'</a>';
+                		return '<a href="javascript:;" onclick="viewSettlement(\''+row.customerName+'\')">'+value+'</a>';
                 	else
                 		return '<a href="javascript:;" onclick="viewOrder(\''+row.orderIdentify+'\')">'+value+'</a>';
                 }
@@ -4880,6 +4880,56 @@ var App = function () {
 			var currentYear = new Date($("input[name=startDate]").val()).getFullYear();
 			var nextYear = currentYear + 1;
 			loadDataByYear(nextYear);
+		});
+		
+		
+		$("#tbl_settlement").bootstrapTable({
+			data: [],
+			pagination: false,
+			columns: [{
+                field: 'orderIdentify',
+                title: '订单编号'
+            }, {
+                field: 'custName',
+                title: '订购客户'
+            }, {
+                field: 'orderDate',
+                title: '订购日期'
+            }, {
+                field: 'amountRMB',
+                title: '人民币金额'
+            }, {
+                field: 'amountDollar',
+                title: '美元金额'
+            }, {
+                field: 'paid',
+                title: '已支付金额'
+            }]
+		});
+		$("#btn_settlement").click(function(){
+			$("#modalSettlementEdit").modal('show');
+			$("#opt_settlement").show();
+			$.ajax({
+				type: 'GET',
+				url: getProjectName() + '/reception/perSettlement.do',
+				success: function(result){
+					var fillForm = new FillForm();
+					fillForm.autoFill("#settlementForm" , result);
+					
+					$("#settlementForm input[name=settDetails]").val(JSON.stringify(result.details));
+					$("#tbl_settlement").bootstrapTable("refreshOptions", {data: result.details, cache: false});
+				}
+			});
+		});
+		
+		$("#btn_save_settlement").click(function(){
+			$("#settlementForm").ajaxSubmit({
+				url: getProjectName()+"/reception/settlement.do",
+				success: function(){
+					removeFormData($("#settlementForm"));
+					window.location.reload();
+				}
+			});
 		});
 		
 		$("#btn_query_tran").click(function(){
@@ -6195,6 +6245,24 @@ function loadAuTree(roleId){
 }
 
 /*-----------------------------------------------------------------------------------*/
+/*	reception Moduel Script
+/*-----------------------------------------------------------------------------------*/
+function viewSettlement(settlementId){
+	$("#modalSettlementEdit").modal('show');
+	$("#opt_settlement").hide();
+	$.ajax({
+		type: 'GET',
+		url: getProjectName() + '/reception/findSettlement.do?id='+settlementId,
+		success: function(result){
+			var fillForm = new FillForm();
+			fillForm.autoFill("#settlementForm" , result);
+			
+			$("#tbl_settlement").bootstrapTable("refreshOptions", {data: result.details, cache: false});
+		}
+	});
+}
+
+/*-----------------------------------------------------------------------------------*/
 /*	account Moduel Script
 /*-----------------------------------------------------------------------------------*/
 function viewDeliver(customer){
@@ -6241,7 +6309,7 @@ function viewDeliver(customer){
 	});
 }
 
-function viewReceptionM(supplier){
+/*function viewReceptionM(supplier){
 	$("#modalReception").modal('show');
 	$("#tbl_reception").bootstrapTable({
 		url: getProjectName() + "/materialin/loadbysupplier.do",
@@ -6294,9 +6362,9 @@ function viewReceptionM(supplier){
             }
         }
 	});
-}
+}*/
 
-function viewTransaction(user){
+/*function viewTransaction(user){
 	$("#modalTransaction").modal('show');
 	$("#tbl_transaction").bootstrapTable({
 		url: getProjectName() + "/transaction/loadbyuser.do",
@@ -6339,7 +6407,7 @@ function viewTransaction(user){
             }
         }
 	});
-}
+}*/
 
 /*-----------------------------------------------------------------------------------*/
 /*	公共函数

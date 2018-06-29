@@ -1,8 +1,8 @@
 package com.douniu.imshh.finance.reception.action;
 
-import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,7 @@ import com.douniu.imshh.finance.reception.domain.Settlement;
 import com.douniu.imshh.finance.reception.service.IReceptionService;
 import com.douniu.imshh.finance.reception.service.ISettlementService;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 @Controller
@@ -34,7 +35,8 @@ public class ReceptionAction {
 	
 	@RequestMapping(value ="/statistics", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String statistics(Reception reception){
+	public String statistics(Reception reception){		
+		reception.setStartDate(getLaterDate(reception));
 		Reception _reception = serivce.statistics(reception);
 		Gson gson = new Gson();
         return gson.toJson(_reception);
@@ -45,7 +47,7 @@ public class ReceptionAction {
 	public String statisticsByOrder(Reception reception){
 		List<Reception> result = new ArrayList<>();
 		
-		Settlement condition = new Settlement();
+		Settlement condition = new Settlement();		
 		condition.setStartDate(reception.getStartDate());
 		condition.setEndDate(reception.getEndDate());
 		List<Settlement> settlements = setService.query(condition);
@@ -55,11 +57,13 @@ public class ReceptionAction {
 			String date = sdf.format(settlement.getSettlementDate());
 			rep.setOrderIdentify(date + "结转");
 			rep.setSettlement(true);
+			rep.setCustomerName(settlement.getId());
 			rep.setReception(settlement.getReception());
 			rep.setPayment(settlement.getPayment());
 			result.add(rep);
 		}
 		
+		reception.setStartDate(getLaterDate(reception));
 		List<Reception> receptions = serivce.statisticsByOrder(reception);
 		result.addAll(receptions);
 		PageResult pr = new PageResult();
@@ -72,7 +76,7 @@ public class ReceptionAction {
 	
 	@RequestMapping(value ="/perSettlement", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String perSettlement(Settlement settlement){
+	public String perSettlement(){
 		Settlement perSett = new Settlement();
 		Settlement lastOne = setService.findLastOne();
 		
@@ -80,8 +84,9 @@ public class ReceptionAction {
 		float paid = 0;
 		
 		Order condition = new Order();
-		condition.setStartDate(settlement.getStartDate());
-		condition.setEndDate(settlement.getEndDate());
+		if (lastOne != null)
+		condition.setStartDate(lastOne.getSettlementDate());
+		condition.setEndDate(new Date(System.currentTimeMillis()));
 		condition.setState("1");
 		List<Order> orders = orderService.queryNoPage(condition);
 		List<SettDetail> details = new ArrayList<>();
@@ -95,6 +100,7 @@ public class ReceptionAction {
 			detail.setPaid(order.getPaid());
 			reception += order.getAmountRMB();
 			paid += order.getPaid();
+			details.add(detail);
 		}
 		
 		perSett.setSettlementDate(new Date(System.currentTimeMillis()));
@@ -104,14 +110,14 @@ public class ReceptionAction {
 		perSett.setPayment(paid);
 		perSett.setDetails(details);
 		
-		Gson gson = new Gson();
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		return gson.toJson(perSett);
 	}
 	
 	@RequestMapping(value="/settlement", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public int settlement(Settlement settlement, String settDetails){
-		Gson gson = new Gson();
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		List<SettDetail> details =gson.fromJson(settDetails, new TypeToken<List<SettDetail>>() {}.getType());
 		settlement.setDetails(details);
 		setService.insert(settlement);
@@ -122,7 +128,23 @@ public class ReceptionAction {
 	@ResponseBody
 	public String findSettlement(String id){
 		Settlement sett = setService.findById(id);
-		Gson gson = new Gson();
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		return gson.toJson(sett);
+	}
+	
+	private Date getLaterDate(Reception reception){
+		Date startDate = null;
+		Settlement lastone = setService.findLastOne();
+		if (lastone == null){
+			startDate = reception.getStartDate();
+		}else{
+			if (lastone.getSettlementDate().getTime() - reception.getStartDate().getTime() > 0){
+				startDate = lastone.getSettlementDate();
+			}else{
+				startDate = reception.getStartDate();
+			}
+		}
+		reception.setStartDate(startDate);
+		return startDate;
 	}
 }

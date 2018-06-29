@@ -3,6 +3,7 @@ package com.douniu.imshh.finance.reception.service.impl;
 import java.util.List;
 
 import com.douniu.imshh.finance.reception.dao.ISettlementDao;
+import com.douniu.imshh.finance.reception.domain.SettDetail;
 import com.douniu.imshh.finance.reception.domain.Settlement;
 import com.douniu.imshh.finance.reception.service.ISettlementService;
 
@@ -27,6 +28,11 @@ public class SettlementService implements ISettlementService{
 
 	@Override
 	public void insert(Settlement settlement) {
+		String id = System.currentTimeMillis() + "";
+		settlement.setId(id);
+		for (SettDetail detail : settlement.getDetails()){
+			detail.setSettlementId(id);
+		}
 		dao.insertDetails(settlement.getDetails());
 		dao.insert(settlement);
 	}

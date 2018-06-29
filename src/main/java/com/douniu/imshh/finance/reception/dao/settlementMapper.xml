@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.douniu.imshh.finance.reception.dao.ISettlementDao">
-    <resultMap type="ReceptionSettlement" id="settlementnmap">
+    <resultMap type="ReceptionSettlement" id="settlementmap">
         <result property="id" column="id"/>
         <result property="settlementDate" column="settlementDate"/>
         <result property="lastSettlement" column="lastSettlement"/>
@@ -11,7 +11,7 @@
         <result property="remark" column="remark"/>
     </resultMap>
     
-    <resultMap type="ReceptionSettlement" id="settlementdtlnmap">
+    <resultMap type="ReceptionSettlement" id="settlementdtlmap">
         <id property="id" column="id"/>
         <result property="settlementDate" column="settlementDate"/>
         <result property="lastSettlement" column="lastSettlement"/>
@@ -30,14 +30,14 @@
         </collection>
     </resultMap>
     
-    <select id="query" parameterType="ReceptionSettlement" resultMap="settlementnmap">
+    <select id="query" parameterType="ReceptionSettlement" resultMap="settlementmap">
         select * from T_RECEPTION_SETTLEMENT 
-         where date &gt;= #{startDate}
-           and date &lt;= #{endDate}
+         where settlementDate &gt;= #{startDate}
+           and settlementDate &lt;= #{endDate}
            and status = 1
     </select> 
     
-    <select id="findById" parameterType="String" resultType="settlementdtlnmap">
+    <select id="findById" parameterType="String" resultMap="settlementdtlmap">
         select s.*, (case when t.paid is null then 0 else t.paid end) paid from 
 	        (select st.*, sd.*, o.custName, o.orderDate, o.amountRMB, o.amountDollar
 	          from T_RECEPTION_SETTLEMENT st, 
@@ -45,7 +45,7 @@
 	               t_order o               
 	         where st.id = sd.settlementId
 	           and sd.orderIdentify = o.identify
-	           and set.id = #{id}
+	           and st.id = #{id}
 	         ) s
 	      left join
 	         (select orderIdentify, sum(tranAmount) as paid 

@@ -49,18 +49,4 @@
          
     </select>     
     
-    <update id="addReception" parameterType="Reception">
-        update T_ACCOUNT_RECEPTION set 
-          reception = reception + #{reception}
-    where customerName = #{customerName} 
-      and month = #{month}
-    </update>
-    
-    <update id="addPayment" parameterType="Reception">
-        update T_ACCOUNT_RECEPTION set 
-          payment = payment + #{payment}
-    where customerName = #{customerName} 
-      and month = #{month}
-    </update>
-    
 </mapper>

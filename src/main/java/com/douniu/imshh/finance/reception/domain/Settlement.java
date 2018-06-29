@@ -1,13 +1,16 @@
 package com.douniu.imshh.finance.reception.domain;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.douniu.imshh.common.BaseQO;
 
 public class Settlement extends BaseQO{
 	private String id;
 	private Date settlementDate;
+	@DateTimeFormat(pattern = "yyyy-MM-dd") 
 	private Date lastSettlement;
 	private float reception;
 	private float payment;

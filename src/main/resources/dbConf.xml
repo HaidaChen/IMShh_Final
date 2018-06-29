@@ -17,6 +17,7 @@
                 
         <typeAlias alias="Reception" type="com.douniu.imshh.finance.reception.domain.Reception"/>
         <typeAlias alias="ReceptionSettlement" type="com.douniu.imshh.finance.reception.domain.Settlement"/>
+        <typeAlias alias="RcptSettlementDetail" type="com.douniu.imshh.finance.reception.domain.SettDetail"/>
         <typeAlias alias="AccountPayment" type="com.douniu.imshh.finance.account.domain.Payment"/>
         <typeAlias alias="Account" type="com.douniu.imshh.finance.account.domain.Account"/>
         <typeAlias alias="Transaction" type="com.douniu.imshh.finance.account.domain.Transaction"/>
