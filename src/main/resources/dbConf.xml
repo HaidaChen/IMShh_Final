@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <typeAliases>
-        <typeAlias alias="Customer" type="com.douniu.imshh.busdata.customer.domain.Customer"/>
-        <typeAlias alias="Supplier" type="com.douniu.imshh.busdata.supplier.domain.Supplier"/>
-        <typeAlias alias="Product" type="com.douniu.imshh.busdata.product.domain.Product"/>
-        <typeAlias alias="Material" type="com.douniu.imshh.busdata.material.domain.Material"/>
+	<typeAliases>
+        
         <typeAlias alias="Order" type="com.douniu.imshh.finance.order.domain.Order"/>
         <typeAlias alias="OrderDetail" type="com.douniu.imshh.finance.order.domain.OrderDetail"/>
         <typeAlias alias="MaterialIn" type="com.douniu.imshh.finance.storage.domain.MaterialIn"/>
@@ -18,9 +15,19 @@
         <typeAlias alias="Reception" type="com.douniu.imshh.finance.reception.domain.Reception"/>
         <typeAlias alias="ReceptionSettlement" type="com.douniu.imshh.finance.reception.domain.Settlement"/>
         <typeAlias alias="RcptSettlementDetail" type="com.douniu.imshh.finance.reception.domain.SettDetail"/>
-        <typeAlias alias="AccountPayment" type="com.douniu.imshh.finance.account.domain.Payment"/>
+        <typeAlias alias="Payment" type="com.douniu.imshh.finance.payment.domain.Payment"/>
+        <typeAlias alias="ProductView" type="com.douniu.imshh.finance.dashboard.domain.ProductStatistics"></typeAlias>
+        <typeAlias alias="ProductIndicators" type="com.douniu.imshh.finance.dashboard.domain.ProductIndicators"></typeAlias>
+        <typeAlias alias="MaterialView" type="com.douniu.imshh.finance.dashboard.domain.MaterialStatistics"></typeAlias>
+        <typeAlias alias="MaterialIndicators" type="com.douniu.imshh.finance.dashboard.domain.MaterialIndicators"></typeAlias>
+        
         <typeAlias alias="Account" type="com.douniu.imshh.finance.account.domain.Account"/>
         <typeAlias alias="Transaction" type="com.douniu.imshh.finance.account.domain.Transaction"/>
+        
+        <typeAlias alias="Customer" type="com.douniu.imshh.busdata.customer.domain.Customer"/>
+        <typeAlias alias="Supplier" type="com.douniu.imshh.busdata.supplier.domain.Supplier"/>
+        <typeAlias alias="Product" type="com.douniu.imshh.busdata.product.domain.Product"/>
+        <typeAlias alias="Material" type="com.douniu.imshh.busdata.material.domain.Material"/>
         
         <typeAlias alias="User" type="com.douniu.imshh.sys.domain.User"/>
         <typeAlias alias="Role" type="com.douniu.imshh.sys.domain.Role"/>
@@ -29,11 +36,7 @@
     </typeAliases>
     
      
-    <mappers>
-        <mapper resource="/com/douniu/imshh/busdata/customer/dao/custMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/busdata/supplier/dao/suppMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/busdata/product/dao/pdtMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/busdata/material/dao/mtlMapper.xml"/>
+    <mappers>        
         <mapper resource="/com/douniu/imshh/finance/order/dao/orderMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/order/dao/orderDetailMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/storage/dao/materialInMapper.xml"/>
@@ -45,14 +48,22 @@
         
         <mapper resource="/com/douniu/imshh/finance/reception/dao/receptionMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/reception/dao/settlementMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/finance/account/dao/paymentMapper.xml"/>
+        <mapper resource="/com/douniu/imshh/finance/payment/dao/paymentMapper.xml"/>
+        <mapper resource="/com/douniu/imshh/finance/dashboard/dao/productViewMapper.xml"/>
+        <mapper resource="/com/douniu/imshh/finance/dashboard/dao/materialViewMapper.xml"/>
         
         <mapper resource="/com/douniu/imshh/finance/account/dao/accountMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/account/dao/transactionMapper.xml"/>
+        
+        <mapper resource="/com/douniu/imshh/busdata/customer/dao/custMapper.xml"/>
+        <mapper resource="/com/douniu/imshh/busdata/supplier/dao/suppMapper.xml"/>
+        <mapper resource="/com/douniu/imshh/busdata/product/dao/pdtMapper.xml"/>
+        <mapper resource="/com/douniu/imshh/busdata/material/dao/mtlMapper.xml"/>
         
         <mapper resource="/com/douniu/imshh/sys/dao/userMapper.xml"/>
         <mapper resource="/com/douniu/imshh/sys/dao/roleMapper.xml"/>
         <mapper resource="/com/douniu/imshh/sys/dao/authorityMapper.xml"/>
     </mappers>
+    
     
 </configuration>

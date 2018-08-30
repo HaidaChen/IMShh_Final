@@ -3206,46 +3206,105 @@ var App = function () {
 	var handleMenu = function(current){
 		
 		var menuContainer = $("#menubar");		
-		var menuStr = getCookie('userMenu');
-		
-		var menus = JSON.parse(menuStr);		
-		$.each(menus, function(index, obj) {
-			var item = $("<li>");
-			var itemLink = $("<a  href='javascript:;' class=''></a>");
-			var icon = obj.icon;
-			if (icon && icon != '' && icon.indexOf('+') > -1){
-				icon = icon.replace(/\+/g, ' ');
-			}
-			var itemContent = $("<i class='" + icon + "'></i><span class='menu-text'>" + obj.name +"</span><span class='arrow'></span>");
-			
-			itemLink.append(itemContent);
-			item.append(itemLink);
-			menuContainer.append(item);
-			
-			if (obj.submenu){
-				item.attr("class", "has-sub");
-				var subcontainer = $("<ul class='sub'>");
-				$.each(obj.submenu, function(index, submenu){
-					var subItem = '';
-					if (submenu.url == current){
-						subItem = $("<li><a class='' href='" + getProjectName() + "/page/" + submenu.url + "'><span class='sub-menu-text'>" + submenu.name + "</span></a></li>");
-						item.attr("class", "has-sub active");
-						itemLink.html("<i class='" + obj.icon + "'></i><span class='menu-text'>" + obj.name +"</span><span class='arrow open'></span><span class='selected'></span>");
+		$.ajax({url:getProjectName()+"/login/getUserMemu.do",
+			success:function(menus){
+				$.each(menus, function(index, obj) {
+					var item = $("<li>");
+					var itemLink = $("<a  href='javascript:;' class=''></a>");
+					var icon = obj.icon;
+					if (icon && icon != '' && icon.indexOf('+') > -1){
+						icon = icon.replace(/\+/g, ' ');
 					}
-					else{
-						subItem = $("<li class='current'><a class='' href='" + getProjectName() + "/page/" + submenu.url + "'><span class='sub-menu-text'>" + submenu.name + "</span></a></li>");
-					} 
-					subcontainer.append(subItem);
-				  
+					var itemContent = $("<i class='" + icon + "'></i><span class='menu-text'>" + obj.name +"</span><span class='arrow'></span>");
+					
+					itemLink.append(itemContent);
+					item.append(itemLink);
+					menuContainer.append(item);
+					
+					if (obj.submenu){
+						item.attr("class", "has-sub");
+						var subcontainer = $("<ul class='sub'>");
+						$.each(obj.submenu, function(index, submenu){
+							var subItem = '';
+							if (submenu.url == current){
+								subItem = $("<li><a class='' href='" + getProjectName() + "/page/" + submenu.url + "'><span class='sub-menu-text'>" + submenu.name + "</span></a></li>");
+								item.attr("class", "has-sub active");
+								itemLink.html("<i class='" + obj.icon + "'></i><span class='menu-text'>" + obj.name +"</span><span class='arrow open'></span><span class='selected'></span>");
+							}
+							else{
+								subItem = $("<li class='current'><a class='' href='" + getProjectName() + "/page/" + submenu.url + "'><span class='sub-menu-text'>" + submenu.name + "</span></a></li>");
+							} 
+							subcontainer.append(subItem);
+						  
+						});
+						item.append(subcontainer);
+						
+					}else{
+						itemLink.attr("href", obj.url);
+					}				
 				});
-				item.append(subcontainer);
-				
-			}else{
-				itemLink.attr("href", obj.url);
-			}				
-		});
+			}});			
+		
 	}
 
+	/*-----------------------------------------------------------------------------------*/
+	/*	Sparklines
+	/*-----------------------------------------------------------------------------------*/
+	var handleSparkline = function () {
+		//Sparkline bar
+		$(".sparkline").each(function() {
+		  var barSpacing, barWidth, color, height;
+		  color = $(this).attr("data-color") || "red";
+		  height = "18px";
+		  if ($(this).hasClass("big")) {
+			barWidth = "5px";
+			barSpacing = "2px";
+			height = "40px";
+		  }
+		  return $(this).sparkline("html", {
+			type: "bar",
+			barColor: Theme.colors[color],
+			height: height,
+			barWidth: barWidth,
+			barSpacing: barSpacing,
+			zeroAxis: false
+		  });
+		});
+		//Sparkline Pie
+		$(".sparklinepie").each(function() {
+		  var height;
+		  height = "50px";
+		  if ($(this).hasClass("big")) {
+			height = "70px";
+		  }
+		  return $(this).sparkline("html", {
+			type: "pie",
+			height: height,
+			sliceColors: [Theme.colors.blue, Theme.colors.red, Theme.colors.green, Theme.colors.orange]
+		  });
+		});
+		//Sparkline Line
+		$(".linechart").each(function() {
+		  var height;
+		  height = "18px";
+		  if ($(this).hasClass("linechart-lg")) {
+			height = "30px";
+		  }
+		  return $(this).sparkline("html", {
+			type: "line",
+			height: height,
+			width: "150px",
+			minSpotColor: Theme.colors.red,
+			maxSpotColor: Theme.colors.green,
+			spotRadius: 3,
+			lineColor: Theme.colors.primary,
+			fillColor: "rgba(94,135,176,0.1)",
+			lineWidth: 1.2,
+			highlightLineColor: Theme.colors.red,
+			highlightSpotColor: Theme.colors.yellow
+		  });
+		});
+	}
 	/*-----------------------------------------------------------------------------------*/
 	/*	Init Login Function
 	/*-----------------------------------------------------------------------------------*/	
@@ -3449,19 +3508,6 @@ var App = function () {
                 field: 'amountDollar',
                 title: '订单金额($)'
             }, {
-                field: 'state',
-                title: '订单状态',
-                formatter: function(value, row, index){
-                	if (value == 1)
-                		return '新的订单';
-                	else if (value == 2)
-                		return '已发货';
-                	else if (value == 3)
-                		return '已收款';
-                	else
-                		return '';
-                }
-            }, {
             	field: 'remark',
                 title: '备注'
             }],
@@ -3543,7 +3589,6 @@ var App = function () {
 			{field: 'priceRMB',title: '￥单价'}, 
 			{field: 'priceDollar',title: '$单价'}, 
 			{field: 'quantity',title: '数量'}, 
-			{field: 'deliverQuantity',title: '已交付数'},
 			{field: 'totlmentRMB',title: '￥合计'},
 			{field: 'totlmentDollar',title: '$合计'},
 			{field: 'operation', title: '操作', formatter: function (value, row, index) {
@@ -4973,7 +5018,7 @@ var App = function () {
 		var date = new Date();
 		
 		$("#tbl_payment").bootstrapTable({
-			url: getProjectName() + "/accountpmt/statisticsBySupplier.do",
+			url: getProjectName() + "/payment/loadpayment.do",
 			method: "get",
 			pagination: false,
 			sidePagination: "server", 
@@ -5021,7 +5066,235 @@ var App = function () {
 			$("#tbl_reception").bootstrapTable('refresh', {url: getProjectName() + "/materialin/loadbysupplier.do", cash:false});
 		});
 	}
+	
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	init Material View data
+	/*-----------------------------------------------------------------------------------*/	
+	var initMaterialViewModule = function(){
+		var date = new Date();
+		$("#currentYear").html(date.getFullYear());
+		
+		$("#btn_preYear").click(function(){
+			var currentYear = parseInt($("#currentYear").html());
+			var preYear = currentYear - 1;
+			$("#currentYear").html(preYear);
+			loadIndicators();
+			$("#tbl_materialview").bootstrapTable('refresh', {url: getProjectName() + "/materialView/loadmaterialview.do", cash:false});
+		});
+		
+		$("#btn_nextYear").click(function(){
+			var currentYear = parseInt($("#currentYear").html());
+			var nextYear = currentYear + 1;
+			$("#currentYear").html(nextYear);
+			loadIndicators();
+			$("#tbl_materialview").bootstrapTable('refresh', {url: getProjectName() + "/materialView/loadmaterialview.do", cash:false});
+		});		
+		
+		var loadView = function(){
+			$("#tbl_materialview").bootstrapTable({
+				url: getProjectName() + "/materialView/loadmaterialview.do",
+				method: "get",
+				sortName : 'orderQuantity',
+				sortOrder : 'desc',
+				pagination : true, // 分页
+				sidePagination : 'server',
+				pageNumber : 1,
+				pageSize : 10,
+				pageList : [ 10, 20, 50, 100 ],
+				showColumns : true,
+				search:true,
+				queryParamsType : 'limit',
+				columns: [{
+	                field: 'materialName',
+	                title: '品名'
+	            }, {
+	            	field: '',
+	                title: '规格',
+	                formatter: function(value, row, index){
+	                	
+	                	var specification = row.specification1;
+	                	if (row.specification2 && row.specification2 != ''){
+	                		specification += '*' + row.specification2;
+	                	}
+	                	if (row.specification3 && row.specification3 != ''){
+	                		specification += '*' + row.specification3;
+	                	}
+	                	return specification;
+	                }	
+	            }, {
+	                field: 'stock',
+	                title: '当前库存',
+	            	align : 'center',
+	            	sortable : true
+	            }, {
+	                field: 'orderQuantity',
+	                title: '采购数量',
+	                align : 'center',
+	                sortable : true
+	            }, {
+	                field: 'orderAmount',
+	                title: '采购金额',
+	                align : 'center',
+	                sortable : true
+	            }, {
+	                field: 'useQuantity',
+	                title: '消耗数量',
+	                align : 'center',
+	                sortable : true
+	            }],
+	            queryParams: function(params){
+	            	return {
+	                    pageSize: params.limit,
+	                    pageOffset: params.offset,   
+	                    orderBy: params.sort,
+	                    order: params.order,
+	                    materialName: params.search,
+	                    year: $("#currentYear").html()
+	                }
+	            }
+			});	
+		};
+		
+		$("div .bootstrap-table input").change(function(){
+			$("#tbl_materialview").bootstrapTable('refresh', {url: getProjectName() + "/materialView/loadmaterialview.do", cash:false});
+		});
+		
+		var loadIndicators = function(){
+			$.ajax({
+				url: getProjectName() + "/materialView/loadmaterialindicators.do?year="+$("#currentYear").html(),
+				success: function(indicators){
+					$("#ind_order_amount").html("¥"+((indicators.orderAmount/10000).toFixed(2)));
+					$("#ind_order_quantity").html(indicators.orderQuantity);
+					$("#ind_use_quantity").html(indicators.useQuantity);
+				}
+			});
+		};
+		
 
+		loadView();
+		loadIndicators();
+		
+	}
+	
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	init Product View data
+	/*-----------------------------------------------------------------------------------*/	
+	var initProductViewModule = function(){
+		var date = new Date();
+		$("#currentYear").html(date.getFullYear());
+		
+		$("#btn_preYear").click(function(){
+			var currentYear = parseInt($("#currentYear").html());
+			var preYear = currentYear - 1;
+			$("#currentYear").html(preYear);
+			loadIndicators();
+			$("#tbl_productview").bootstrapTable('refresh', {url: getProjectName() + "/productView/loadproductview.do", cash:false});
+		});
+		
+		$("#btn_nextYear").click(function(){
+			var currentYear = parseInt($("#currentYear").html());
+			var nextYear = currentYear + 1;
+			$("#currentYear").html(nextYear);
+			loadIndicators();
+			$("#tbl_productview").bootstrapTable('refresh', {url: getProjectName() + "/productView/loadproductview.do", cash:false});
+		});		
+		
+		var loadView = function(){
+			$("#tbl_productview").bootstrapTable({
+				url: getProjectName() + "/productView/loadproductview.do",
+				method: "get",
+				sortName : 'orderQuantity',
+				sortOrder : 'desc',
+				pagination : true, // 分页
+				sidePagination : 'server',
+				pageNumber : 1,
+				pageSize : 10,
+				pageList : [ 10, 20, 50, 100 ],
+				showColumns : true,
+				search:true,
+				queryParamsType : 'limit',
+				columns: [{
+	                field: 'pdtNo',
+	                title: '货号'
+	            }, {
+	                field: 'stock',
+	                title: '当前库存',
+	            	align : 'center',
+	            	sortable : true
+	            }, {
+	                field: 'orderQuantity',
+	                title: '订购数量',
+	                align : 'center',
+	                sortable : true
+	            }, {
+	                field: 'productionQuantity',
+	                title: '生产数量',
+	                align : 'center',
+	                sortable : true
+	            }, {
+	                field: 'deliverQuantity',
+	                title: '交付数量',
+	                align : 'center',
+	                sortable : true
+	            }, {
+	                field: '',
+	                title: '交付率',
+	                formatter: function(value,row,index){
+	                	if(row.orderQuantity == 0)
+	                		return '0.00%';
+	                	else
+	                		return (row.deliverQuantity/row.orderQuantity*100).toFixed(2)+'%';
+	            	},
+	            	align : 'center',
+	            	sortable : true
+	            }, {
+	                field: 'orderAmount',
+	                title: '订购金额',
+	                align : 'center',
+	                sortable : true
+	            }, {
+	                field: 'deliverAmount',
+	                title: '交付金额',
+	                align : 'center',
+	                sortable : true
+	            }],
+	            queryParams: function(params){
+	            	return {
+	                    pageSize: params.limit,
+	                    pageOffset: params.offset,   
+	                    orderBy: params.sort,
+	                    order: params.order,
+	                    pdtNo: params.search,
+	                    year: $("#currentYear").html()
+	                }
+	            }
+			});	
+		};
+		
+		$("div .bootstrap-table input").change(function(){
+			$("#tbl_productview").bootstrapTable('refresh', {url: getProjectName() + "/productView/loadproductview.do", cash:false});
+		});
+		
+		var loadIndicators = function(){
+			$.ajax({
+				url: getProjectName() + "/productView/loadProductIndicators.do?year="+$("#currentYear").html(),
+				success: function(indicators){
+					$("#ind_order_amount").html("¥"+((indicators.orderAmount/10000).toFixed(2)));
+					$("#ind_deliver_amount").html("¥"+((indicators.deliverAmount/10000).toFixed(2)));
+					$("#ind_order_quantity").html(indicators.orderQuantity);
+					$("#ind_deliver_quantity").html(indicators.deliverQuantity);
+				}
+			});
+		};
+		
+
+		loadView();
+		loadIndicators();
+		
+	}
+	
 	/*-----------------------------------------------------------------------------------*/
 	/*	init Account data
 	/*-----------------------------------------------------------------------------------*/	
@@ -5831,6 +6104,14 @@ var App = function () {
             	handleMenu("payment.html");
             	handleDatePicker();
             	initPaymentModule();
+            }
+            if (App.isPage("materialView")){
+            	handleMenu("material_view.html");
+            	initMaterialViewModule();
+            }
+            if (App.isPage("productView")){
+            	handleMenu("product_view.html");
+            	initProductViewModule()
             }
             if (App.isPage("account")){
             	handleMenu("account.html");

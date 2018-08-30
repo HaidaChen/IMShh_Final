@@ -1,9 +1,7 @@
 package com.douniu.imshh.sys.action;
 
-import java.net.URLEncoder;
 import java.util.List;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -44,11 +42,12 @@ public class LoginAction {
 			List<Authority> authorities = authorityService.queryByUser(oUser.getId());
 			httpSession.setAttribute("userAuthority", authorities);
 			
-			//保存用户菜单到cookies
+			//保存用户菜单到session
 			List<Menu> menus =authorityService.queryMenuTreeByUser(oUser.getId());
 			Gson gson = new Gson();
 			String menuStr = gson.toJson(menus);
-			menuStr = URLEncoder.encode(menuStr, "UTF-8");
+			httpSession.setAttribute("userMenu", menuStr);
+			/*menuStr = URLEncoder.encode(menuStr, "UTF-8");
 			Cookie usermenu = null;
 			if (request.getCookies() != null){
 				for (Cookie cookie :request.getCookies()){
@@ -68,7 +67,7 @@ public class LoginAction {
 				usermenu.setPath(request.getContextPath());
 				usermenu.setSecure(false);
 			}
-			response.addCookie(usermenu);
+			response.addCookie(usermenu);*/
 			
 			return 1;
 		}else{
@@ -82,9 +81,7 @@ public class LoginAction {
 	public int logout(User user, HttpServletRequest request, HttpSession httpSession){
 		httpSession.removeAttribute("user");
 		httpSession.removeAttribute("userAuthority");
-		for (Cookie cookie :request.getCookies()){
-			cookie.setMaxAge(0);
-		}
+		httpSession.removeAttribute("userMenu");
 		return 1;
 	}
 	
@@ -116,4 +113,15 @@ public class LoginAction {
 		return 0;
 	}
 	
+	@RequestMapping(value="/getUserMemu", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getUserMemu(HttpSession httpSession){
+		Object obj = httpSession.getAttribute("userMenu");
+		if (obj != null){
+			return obj.toString();
+		}else{
+			return "";
+		}
+			
+	}
 }

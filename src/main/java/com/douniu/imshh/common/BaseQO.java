@@ -15,6 +15,8 @@ public class BaseQO {
     private int pageOffset = 0;
     private int pageSize = 0;
     private String condition;
+    private String orderBy;
+    private String order;
     
     
     public int getDuration() {
@@ -79,10 +81,25 @@ public class BaseQO {
 	public void setCurrentPage(int currentPage) {
 		this.currentPage = currentPage;		
 	}
+	
+	public String getOrderBy() {
+		return orderBy;
+	}
+	public void setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+	}
+	public String getOrder() {
+		return order;
+	}
+	public void setOrder(String order) {
+		this.order = order;
+	}
 	@Override
 	public String toString() {
-		return "BaseQO [duration=" + duration + ", startDate=" + startDate + ", endDate=" + endDate + ", pageOffset="
-				+ pageOffset + ", pageSize=" + pageSize + ", condition=" + condition + "]";
-	}	
+		return "BaseQO [duration=" + duration + ", startDate=" + startDate + ", endDate=" + endDate + ", currentPage="
+				+ currentPage + ", pageOffset=" + pageOffset + ", pageSize=" + pageSize + ", condition=" + condition
+				+ ", orderBy=" + orderBy + ", order=" + order + "]";
+	}
+		
 	
 }

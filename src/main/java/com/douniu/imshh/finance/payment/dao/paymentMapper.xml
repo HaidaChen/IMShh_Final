@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.finance.account.dao.IPaymentDao">
+    <resultMap type="Payment" id="paymentmap">
+        <result property="supplierId" column="supplierId"/>
+        <result property="supplierName" column="supplierName"/>
+        <result property="month" column="month"/>
+        <result property="debt" column="debt"/>
+        <result property="payment" column="payment"/>
+        <result property="lastDebt" column="lastDebt"/>
+        <result property="lastPayment" column="lastPayment"/>
+        <result property="currentDebt" column="currentDebt"/>
+        <result property="currentPayment" column="currentPayment"/>
+    </resultMap>
+    
+    <select id="queryPayment" parameterType="Payment" resultMap="paymentmap">
+        
+        select supplierId, 
+               supp.supplierName,
+               debt,
+               payment,
+               lastDebt,
+               lastPayment,
+               currentDebt,
+               currentPayment 
+               <!-- 供应商为主表 -->
+          from (select id as supplierId, 
+                       name as supplierName 
+                  from t_supplier where status = 1
+                  <if test="supplierName != null and supplierName != ''">
+		          and name like #{supplierName}
+		          </if>) supp
+                  <!-- 查找指定月份的应付和已付 -->
+          left join (select sum(payable) as debt, 
+                            sum(paid) as payment, 
+                            supplierName 
+                       from view_payment 
+                      where str_to_date(month, '%Y-%m') = str_to_date(#{month}, '%Y-%m') 
+                      group by supplierName) pym
+             on supp.supplierName = pym.supplierName
+                 <!-- 查找截止指定月份的前一个月的应付和已付 --> 
+           left join (select sum(payable) as lastDebt, 
+                            sum(paid) as lastPayment, 
+                            supplierName 
+                       from view_payment 
+                      where str_to_date(month, '%Y-%m') &lt;= DATE_ADD(str_to_date(#{month}, '%Y-%m'), INTERVAL -1 MONTH) 
+                      group by supplierName) lpym
+              on supp.supplierName = lpym.supplierName
+                  <!-- 截止当前月的应付和已付 -->
+            left join (select sum(payable) as currentDebt, 
+                              sum(paid) as currentPayment, 
+                              supplierName 
+                         from view_payment 
+                        where str_to_date(month, '%Y-%m') &lt;= now() 
+                        group by supplierName) cpym
+               on supp.supplierName = cpym.supplierName;        
+    </select> 
+    
+    <select id="countPayment" parameterType="Payment" resultType="int">
+        select count(1) from t_supplier where status = 1
+         <if test="supplierName != null and supplierName != ''">
+           and name like #{supplierName}
+         </if>
+    </select>     
+    
+</mapper>

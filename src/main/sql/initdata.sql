@@ -17,6 +17,8 @@ INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0106', '开票', '01'
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('02', '综合查询', '0', '', 'fa fa-bar-chart-o');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0201', '应收', '02', 'receivable.html', '');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0202', '应付', '02', 'payment.html', '');
+INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0203', '原材料视图', '02', 'material_view.html', '');
+INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0204', '成品视图', '02', 'product_view.html', '');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('03', '账户交易', '0', 'account.html', 'fa fa-money');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('04', '业务数据', '0', '', 'fa fa-sitemap');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0401', '客户信息', '04', 'customer.html', '');
@@ -39,7 +41,9 @@ INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES (
 INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0106', '开票', '01', 'invoice/loadinvoice.do,invoice/save.do,invoice/edit.do,invoice/delete.do,invoice/importinvoice.do,invoice/exportinvoice.do', '', '拥有开票权限，可以查看，录入，修改和删除入开票信息');
 INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('02', '综合查询', '0', '', '', '');
 INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0201', '应收', '02', 'reception/statistics.do,reception/statisticsByOrder.do,reception/perSettlement.do,reception/settlement.do,reception/findSettlement.do', '', '拥有应收权限，可以查看应收情况');
-INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0202', '应付', '02', 'accountpmt/statistics.do,accountpmt/statisticsBySupplier.do', '', '拥有应付权限，可以查看应付情况');
+INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0202', '应付', '02', 'payment/loadpayment.do', '', '拥有应付权限，可以查看应付情况');
+INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0203', '原材料视图', '02', 'materialView/loadmaterialview.do,materialView/loadmaterialindicators.do', '', '拥有原材料视图权限，可以查看原材料的成本支出以及原材料库存');
+INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0204', '成品视图', '02', 'productView/loadproductview.do,productView/loadProductIndicators.do', '', '拥有成品视图权限，可以成品的收入情况以及成品的库存');
 INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('03', '账户交易', '0', 'account/query.do,account/querythird.do,account/queryByNo.do,account/save.do,account/delete.do,transaction/findbyid.do,transaction/save.do,transaction/loadtransaction.do,transaction/findbyorder.do', '', '拥有账户交易权限，可以维护银行账户，可以录入交易明细');
 INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('04', '业务数据', '0', '', '', '');
 INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0401', '客户信息', '04', 'cust/loadcust.do,cust/loadallcust.do,cust/save.do,cust/edit.do,cust/delete.do,cust/importcustomer.do,cust/findbyname.do,cust/exportcustomer.do', '', '拥有客户信息权限，可以查看，录入，修改和删除客户信息');
@@ -79,6 +83,8 @@ INSERT INTO `t_role_authority` VALUES ('02', '0106');
 INSERT INTO `t_role_authority` VALUES ('02', '02');
 INSERT INTO `t_role_authority` VALUES ('02', '0201');
 INSERT INTO `t_role_authority` VALUES ('02', '0202');
+INSERT INTO `t_role_authority` VALUES ('02', '0203');
+INSERT INTO `t_role_authority` VALUES ('02', '0204');
 INSERT INTO `t_role_authority` VALUES ('02', '03');
 INSERT INTO `t_role_authority` VALUES ('02', '04');
 INSERT INTO `t_role_authority` VALUES ('02', '0401');

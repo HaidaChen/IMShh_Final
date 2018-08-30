@@ -129,12 +129,28 @@ xsi:schemaLocation="
           <property name="mapperInterface" value="com.douniu.imshh.finance.reception.dao.ISettlementDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
-      
-      <bean name="accountPaymentService" class="com.douniu.imshh.finance.account.service.impl.PaymentService">
-          <property name="dao" ref="accountPaymentDao"></property>
+            
+      <bean name="paymentService" class="com.douniu.imshh.finance.payment.service.impl.PaymentService">
+          <property name="dao" ref="paymentDao"></property>
       </bean>
-      <bean id="accountPaymentDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.finance.account.dao.IPaymentDao"/>
+      <bean id="paymentDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.payment.dao.IPaymentDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+            
+      <bean name="materialViewService" class="com.douniu.imshh.finance.dashboard.service.impl.MaterialViewService">
+          <property name="dao" ref="materialViewDao"></property>
+      </bean>
+      <bean id="materialViewDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.dashboard.dao.IMaterialViewDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="productViewService" class="com.douniu.imshh.finance.dashboard.service.impl.ProductViewService">
+          <property name="dao" ref="productViewDao"></property>
+      </bean>
+      <bean id="productViewDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.dashboard.dao.IProductViewDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       
