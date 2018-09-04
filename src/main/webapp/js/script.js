@@ -4871,143 +4871,119 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initReceivableModule = function(){
 		var date = new Date();
-		$("input[name=startDate]").val(date.getFullYear()+"-01-01");
-		$("input[name=endDate]").val(date.getFullYear()+"-12-31");
-		$("#currentYear").html(date.getFullYear());
-		loadStatisticsData(date.getFullYear());
-		$("#tbl_receivable").bootstrapTable({
-			url: getProjectName() + "/reception/statisticsByOrder.do",
+		var year = date.getFullYear();
+		var month = date.getMonth() + 1;		
+		
+		var fullInfo = function(){
+			return year.toString() + '年' + month + '月止应收成品发货明细';
+		}		
+		
+		$("#currentMonth").html(fullInfo());
+		
+		$("#btn_preMonth").click(function(){
+			if (month == 1){
+				month = 12;
+				year = year - 1;
+			}else{
+				month = month - 1;
+			}
+			$("#currentMonth").html(fullInfo());
+			$("#tbl_reception").bootstrapTable('refreshOptions', 
+					{url: getProjectName() + "/reception/loadreception.do",
+				columns: [{field: 'orderIdentify', title: '订单编号'}, 
+					{field: 'lastDebt', title: '截止' + getLastMonth() + '应收款', align : 'center', sortable : true}, 
+					{field: 'debt', title: year + '年' + month + '月应收款', align : 'center', sortable : true}, 
+					{field: 'reception', title: year + '年' + month + '月收款', align : 'center', sortable : true}, 
+					{field: 'currentDebt', title: '截止' + date.getFullYear() + '年' + (date.getMonth() + 1) + '月应收款', align : 'center', sortable : true}],
+				cash:false});
+		});
+		
+		$("#btn_nextMonth").click(function(){
+			if (month == 12){
+				month = 1;
+				year = year + 1;
+			}else{
+				month = month + 1;
+			}
+			$("#currentMonth").html(fullInfo());
+			$("#tbl_reception").bootstrapTable('refreshOptions', 
+					{url: getProjectName() + "/reception/loadreception.do", 
+				columns: [{field: 'orderIdentify', title: '订单编号'}, 
+					{field: 'lastDebt', title: '截止' + getLastMonth() + '应收款', align : 'center', sortable : true}, 
+					{field: 'debt', title: year + '年' + month + '月应收款', align : 'center', sortable : true}, 
+					{field: 'reception', title: year + '年' + month + '月收款', align : 'center', sortable : true}, 
+					{field: 'currentDebt', title: '截止' + date.getFullYear() + '年' + (date.getMonth() + 1) + '月应收款', align : 'center', sortable : true}],
+				cash:false});
+		});	
+		
+		
+		var getLastMonth = function(){
+			var lastMonth = '';
+			var lastYear = year;
+			if (month == 1){
+				lastMonth = 12;
+				lastYear = year - 1;
+			}else{
+				lastMonth = month -1;
+			}
+			return lastYear + '年' + lastMonth + '月';
+		}
+		
+		$("#tbl_reception").bootstrapTable({
+			url: getProjectName() + "/reception/loadreception.do",
 			method: "get",
-			pagination: false,
-			sidePagination: "server", 
+			sortName : 'currentDebt',
+			sortOrder : 'desc',
+			pagination : true, // 分页
+			sidePagination : 'server',
+			pageNumber : 1,
+			pageSize : 10,
+			pageList : [ 10, 20, 50, 100 ], 
 			columns: [{
                 field: 'orderIdentify',
-                title: '订单编号',
-                formatter: function(value,row,index){
-                	if (row.settlement)
-                		return '<a href="javascript:;" onclick="viewSettlement(\''+row.customerName+'\')">'+value+'</a>';
-                	else
-                		return '<a href="javascript:;" onclick="viewOrder(\''+row.orderIdentify+'\')">'+value+'</a>';
-                }
+                title: '订单编号'
+            }, {
+                field: 'lastDebt',
+                title: '截止' + getLastMonth() + '应收款',
+                align : 'center',
+            	sortable : true
+            }, {
+                field: 'debt',
+                title: year + '年' + month + '月应收款',
+                align : 'center',
+            	sortable : true
             }, {
                 field: 'reception',
-                title: '截止当前应收款'
+                title: year + '年' + month + '月收款',
+                align : 'center',
+            	sortable : true
             }, {
-                field: 'payment',
-                title: '截止当前已收款'
-            }, {
-                field: '',
-                title: '截止当前待金额',
-                formatter: function(value,row,index){
-                	return row.reception - row.payment;
-                }
+                field: 'currentDebt',
+                title: '截止' + date.getFullYear() + '年' + (date.getMonth() + 1) + '月应收款',
+                align : 'center',
+            	sortable : true
             }],
             queryParams: function(params){
             	return {   
+            		pageSize: params.limit,
+                    pageOffset: params.offset,
+                    orderBy: params.sort,
+                    order: params.order,
                     orderIdentify: $("input[name=orderIdentify]").val(),
-                    startDate: $("input[name=startDate]").val(),
-                    endDate: $("input[name=endDate]").val()
+                    month: year.toString() + '-' + month.toString() + '-' + (new Date(year, month, 0)).getDate()
                 }
             }
 		});
 		
 		$("input[name=orderIdentify]").change(function(){
-			$("#tbl_receivable").bootstrapTable('refresh', {url: getProjectName() + "/reception/statisticsByOrder.do", cash:false});
-		});
-		
-		$("#btn_preYear").click(function(){
-			var currentYear = new Date($("input[name=startDate]").val()).getFullYear();
-			var preYear = currentYear - 1;
-			loadDataByYear(preYear);
-		});
-		
-		$("#btn_nextYear").click(function(){
-			var currentYear = new Date($("input[name=startDate]").val()).getFullYear();
-			var nextYear = currentYear + 1;
-			loadDataByYear(nextYear);
+			$("#tbl_reception").bootstrapTable('refresh', {url: getProjectName() + "/reception/loadreception.do", cash:false});
 		});
 		
 		
-		$("#tbl_settlement").bootstrapTable({
-			data: [],
-			pagination: false,
-			columns: [{
-                field: 'orderIdentify',
-                title: '订单编号'
-            }, {
-                field: 'custName',
-                title: '订购客户'
-            }, {
-                field: 'orderDate',
-                title: '订购日期'
-            }, {
-                field: 'amountRMB',
-                title: '人民币金额'
-            }, {
-                field: 'amountDollar',
-                title: '美元金额'
-            }, {
-                field: 'paid',
-                title: '已支付金额'
-            }]
-		});
-		$("#btn_settlement").click(function(){
-			$("#modalSettlementEdit").modal('show');
-			$("#opt_settlement").show();
-			$.ajax({
-				type: 'GET',
-				url: getProjectName() + '/reception/perSettlement.do',
-				success: function(result){
-					var fillForm = new FillForm();
-					fillForm.autoFill("#settlementForm" , result);
-					
-					$("#settlementForm input[name=settDetails]").val(JSON.stringify(result.details));
-					$("#tbl_settlement").bootstrapTable("refreshOptions", {data: result.details, cache: false});
-				}
-			});
-		});
-		
-		$("#btn_save_settlement").click(function(){
-			$("#settlementForm").ajaxSubmit({
-				url: getProjectName()+"/reception/settlement.do",
-				success: function(){
-					removeFormData($("#settlementForm"));
-					window.location.reload();
-				}
-			});
-		});
-		
-		$("#btn_query_tran").click(function(){
-			$("#tbl_transaction").bootstrapTable('refresh', {url: getProjectName() + "/transaction/loadbyuser.do", cash:false});
-		});
-		
-		$("#btn_query_deliver").click(function(){
-			$("#tbl_productOut").bootstrapTable('refresh', {url: getProjectName() + "/deliver/loadbycust.do", cash:false});
-		});
-	}	
-	
-	var loadDataByYear = function(year){
-		$("#currentYear").html(year);
-		$("input[name=startDate]").val(year + "-01-01");
-		$("input[name=endDate]").val(year + "-12-31");
-		$("#tbl_receivable").bootstrapTable('refresh', {url: getProjectName() + "/reception/statisticsByOrder.do", cash:false});
-		loadStatisticsData(year);
-	}
-	
-	var loadStatisticsData = function(year){
-		$("#totle_receivable, #totle_received, #totle_balance").html(0);
 		$.ajax({
-			url: getProjectName() + "/reception/statistics.do",
-			type: "POST",
-			dataType: "json",
-			data: {
-				startDate: year + "-01-01",
-				endDate: year + "-12-31"
-			},
-			success: function(statistics){				
-				$("#totle_receivable").html(statistics.reception);
-				$("#totle_received").html(statistics.payment);
-				$("#totle_balance").html(statistics.reception - statistics.payment);
+			url: getProjectName() + "/reception/gettotaldebt.do",
+			success: function(result){
+				$("#totalDebt").html(result);
 			}
 		});
 	}
@@ -5016,54 +4992,106 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initPaymentModule = function(){
 		var date = new Date();
+		var year = date.getFullYear();
+		var month = date.getMonth() + 1;		
+		
+		var fullInfo = function(){
+			return year.toString() + '年' + month + '月止应付材料往来明细';
+		}		
+		
+		$("#currentMonth").html(fullInfo());
+		
+		$("#btn_preMonth").click(function(){
+			if (month == 1){
+				month = 12;
+				year = year - 1;
+			}else{
+				month = month - 1;
+			}
+			$("#currentMonth").html(fullInfo());
+			$("#tbl_payment").bootstrapTable('refresh', {url: getProjectName() + "/payment/loadpayment.do", cash:false});
+		});
+		
+		$("#btn_nextMonth").click(function(){
+			if (month == 12){
+				month = 1;
+				year = year + 1;
+			}else{
+				month = month + 1;
+			}
+			$("#currentMonth").html(fullInfo());
+			$("#tbl_payment").bootstrapTable('refresh', {url: getProjectName() + "/payment/loadpayment.do", cash:false});
+		});	
+		
+		
+		var getLastMonth = function(){
+			var lastMonth = '';
+			var lastYear = year;
+			if (month == 1){
+				lastMonth = 12;
+				lastYear = year - 1;
+			}else{
+				lastMonth = month -1;
+			}
+			return lastYear + '年' + lastMonth + '月';
+		}
 		
 		$("#tbl_payment").bootstrapTable({
 			url: getProjectName() + "/payment/loadpayment.do",
 			method: "get",
-			pagination: false,
-			sidePagination: "server", 
+			sortName : 'currentDebt',
+			sortOrder : 'desc',
+			pagination : true, // 分页
+			sidePagination : 'server',
+			pageNumber : 1,
+			pageSize : 10,
+			pageList : [ 10, 20, 50, 100 ], 
 			columns: [{
                 field: 'supplierName',
                 title: '往来单位'
             }, {
+                field: 'lastDebt',
+                title: '截止' + getLastMonth() + '欠款',
+                align : 'center',
+            	sortable : true
+            }, {
                 field: 'debt',
-                title: '截止当前应付金额'
+                title: year + '年' + month + '月欠款',
+                align : 'center',
+            	sortable : true
             }, {
                 field: 'payment',
-                title: '截止当前已付金额',
-                formatter: function(value,row,index){
-                	return Math.abs(value);
-                }
+                title: year + '年' + month + '月还款',
+                align : 'center',
+            	sortable : true
             }, {
-                field: '',
-                title: '截止当前欠款金额',
-                formatter: function(value,row,index){
-                	return row.debt - Math.abs(row.payment);
-                }
-            }, {
-            	field: '',
-            	title: '查看',
-            	formatter: function(value,row,index){
-            		return '<a href="javascript:;" onclick="viewReceptionM(\''+row.supplierName+'\')" title="接收明细"><i class="fa fa-truck"></i></a> &nbsp; <a href="javascript:;" onclick="viewTransaction(\''+row.supplierName+'\')" title="付款明细"><i class="fa fa-money"></i></a>';
-            	}
+                field: 'currentDebt',
+                title: '截止' + date.getFullYear() + '年' + (date.getMonth() + 1) + '月欠款',
+                align : 'center',
+            	sortable : true
             }],
             queryParams: function(params){
             	return {   
-                    supplierName: $("input[name=supplierName]").val()
+            		pageSize: params.limit,
+                    pageOffset: params.offset,
+                    orderBy: params.sort,
+                    order: params.order,
+                    supplierName: $("input[name=supplierName]").val(),
+                    month: year.toString() + '-' + month.toString() + '-' + (new Date(year, month, 0)).getDate()
                 }
             }
 		});
 		
 		$("input[name=supplierName]").change(function(){
-			$("#tbl_payment").bootstrapTable('refresh', {url: getProjectName() + "/accountpmt/statisticsBySupplier.do", cash:false});
+			$("#tbl_payment").bootstrapTable('refresh', {url: getProjectName() + "/payment/loadpayment.do", cash:false});
 		});
 		
-		$("#btn_query_tran").click(function(){
-			$("#tbl_transaction").bootstrapTable('refresh', {url: getProjectName() + "/transaction/loadbyuser.do", cash:false});
-		});
 		
-		$("#btn_query_reception").click(function(){
-			$("#tbl_reception").bootstrapTable('refresh', {url: getProjectName() + "/materialin/loadbysupplier.do", cash:false});
+		$.ajax({
+			url: getProjectName() + "/payment/gettotaldebt.do",
+			success: function(result){
+				$("#totalDebt").html(result);
+			}
 		});
 	}
 	
@@ -7019,6 +7047,7 @@ function CreditCard(){
 	var clearFix = function(){
 		panelFooter.append($("<div class='clearfix'></div>"));
 	}
+	
 };
 
 

@@ -21,6 +21,11 @@ public class PaymentService implements IPaymentService{
 		Payment condition = LikeFlagUtil.appendLikeFlag(payment, new String[]{"supplierName"});
 		return dao.countPayment(condition);
 	}
+	
+	@Override
+	public float getTotalDebt() {
+		return dao.getTotalDebt();
+	}
 
 	public void setDao(IPaymentDao dao) {
 		this.dao = dao;

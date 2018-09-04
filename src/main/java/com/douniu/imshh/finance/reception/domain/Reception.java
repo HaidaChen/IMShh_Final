@@ -5,16 +5,16 @@ import com.douniu.imshh.common.BaseQO;
 public class Reception extends BaseQO{
 	private String customerName;
 	private String orderIdentify;
+	private String month;
+	private float debt;
 	private float reception;
-	private float payment;
-	private boolean settlement;
-	
-	
-	public boolean isSettlement() {
-		return settlement;
+	private float lastDebt;
+	private float currentDebt;
+	public String getCustomerName() {
+		return customerName;
 	}
-	public void setSettlement(boolean settlement) {
-		this.settlement = settlement;
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
 	}
 	public String getOrderIdentify() {
 		return orderIdentify;
@@ -22,11 +22,17 @@ public class Reception extends BaseQO{
 	public void setOrderIdentify(String orderIdentify) {
 		this.orderIdentify = orderIdentify;
 	}
-	public String getCustomerName() {
-		return customerName;
+	public String getMonth() {
+		return month;
 	}
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
+	public void setMonth(String month) {
+		this.month = month;
+	}
+	public float getDebt() {
+		return debt;
+	}
+	public void setDebt(float debt) {
+		this.debt = debt;
 	}
 	public float getReception() {
 		return reception;
@@ -34,16 +40,22 @@ public class Reception extends BaseQO{
 	public void setReception(float reception) {
 		this.reception = reception;
 	}
-	public float getPayment() {
-		return payment;
+	public float getLastDebt() {
+		return lastDebt;
 	}
-	public void setPayment(float payment) {
-		this.payment = payment;
+	public void setLastDebt(float lastDebt) {
+		this.lastDebt = lastDebt;
+	}
+	public float getCurrentDebt() {
+		return currentDebt;
+	}
+	public void setCurrentDebt(float currentDebt) {
+		this.currentDebt = currentDebt;
 	}
 	@Override
 	public String toString() {
-		return "Reception [customerName=" + customerName + ", orderIdentify=" + orderIdentify 
-				+ ", reception=" + reception + ", payment=" + payment + "]";
-	}
-	
+		return "Reception [customerName=" + customerName + ", orderIdentify=" + orderIdentify + ", month=" + month
+				+ ", debt=" + debt + ", reception=" + reception + ", lastDebt=" + lastDebt + ", currentDebt="
+				+ currentDebt + "]";
+	}	
 }

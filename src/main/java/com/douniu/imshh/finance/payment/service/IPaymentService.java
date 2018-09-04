@@ -7,4 +7,5 @@ import com.douniu.imshh.finance.payment.domain.Payment;
 public interface IPaymentService {
 	List<Payment> queryPayment(Payment payment);
 	int countPayment(Payment payment);
+	float getTotalDebt();
 }

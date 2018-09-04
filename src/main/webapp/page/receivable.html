@@ -93,161 +93,7 @@
 			</div>
 		</div>
 		
-		<div class="modal fade" id="modalSettlementEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-dialog">				
-			    <div class="modal-content">
-			    	
-					<div class="modal-body">
-						<h3 class="form-title">应收结算</h3>
-						
-						<form class="form-horizontal" id="settlementForm" method="post">														
-							<div class="form-group">
-								<label class="col-md-2 control-label">结算日期</label> 
-								<div class="col-md-4">
-							    	<input type="text" name="settlementDate" class="form-control selectData" value="" valuetype="date" valueformatter="yyyy-MM-dd" readonly="readonly">
-							    	<input type="hidden" name="id" value="">
-							    	<input type="hidden" name="settDetails" value="">							    	
-							    </div>
-							
-								<label class="col-md-2 control-label">上次结算日</label> 
-								<div class="col-md-4">
-									<input type="text" name="lastSettlement" class="form-control selectData" value="" valuetype="date" valueformatter="yyyy-MM-dd" readonly="readonly">
-							    </div>
-							</div>
-							
-							<div class="form-group">
-								<label class="col-md-2 control-label">应收合计</label> 
-								<div class="col-md-4">
-							    	<input type="text" name="reception" class="form-control" value="" >
-							    </div>
-							
-								<label class="col-md-2 control-label">已收合计</label> 
-								<div class="col-md-4">
-									<input type="text" name="payment" class="form-control" value="" >
-							    </div>
-							</div>
-							<div class="form-group">
-								<label class="col-md-2 control-label">备注</label> 
-								<div class="col-md-10">
-							    	<textarea name="remark" class="form-control" rows="3"></textarea>
-							    </div>
-							</div>
-							<div id="opt_settlement" class="form-group">
-								<div class="col-sm-offset-2 col-sm-10">
-								  <button type="button" id="btn_save_settlement" class="btn btn-primary">结算</button>
-								  <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-								</div>
-							</div>
-						</form>
-						
-						<div class="box">
-							<div class="box-title">
-								结算明细
-								<div class="tools">
-									<a href="javascript:;" class="collapse">
-										<i class="fa fa-chevron-up"></i>
-									</a>
-								</div>
-							</div>
-							<div class="box-body">
-								<table id="tbl_settlement" class="table table-striped table-hover font-400 font-14">
-								</table>
-							</div>
-						</div>  
-					</div>
-			    </div>
-			</div>
-		</div>
 		
-		<div class="modal fade" id="modalDeliver" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-dialog">				
-			    <div class="modal-content">
-					<div class="modal-body">
-						<div class="box">							
-							<div class="box-body">
-								<div class="panel panel-default">
-								  <div class="panel-body">
-									<div class='row'>
-										<div class='col-md-12'>
-											<div class="invoice-header clearfix">														
-												<div class='pull-right'>
-												    <div class="pull-right" >
-														<div class="form-group">
-															<div class="col-md-4">
-																<input type="text" id="startDate_dlv" class="form-control selectData" placeholder="开始日期"/>
-															</div>
-															
-															<div class="col-md-4">
-																<input type="text" id="endDate_dlv" class="form-control selectData" placeholder="结束日期"/>
-															</div>
-															<div class="col-md-2">
-																<input type="button" id="btn_query_deliver" class="btn btn-defaul" value="查询">
-															</div>
-														</div>
-												    </div>
-												</div>
-											</div>
-										</div>
-									</div>
-									
-								  </div>
-								  <!-- COST TABLE -->
-								  <table id="tbl_deliver" class="table table-striped table-hover font-400 font-14">
-									
-								  </table>
-								 
-								</div>
-							</div>
-						</div>
-					</div>
-			    </div>
-			</div>
-		</div>
-		
-		<div class="modal fade" id="modalTransaction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-dialog">				
-			    <div class="modal-content">
-					<div class="modal-body">
-						<div class="box">							
-							<div class="box-body">
-								<div class="panel panel-default">
-								  <div class="panel-body">
-									<div class='row'>
-										<div class='col-md-12'>
-											<div class="invoice-header clearfix">														
-												<div class='pull-right'>
-												    <div class="pull-right" >
-														<div class="form-group">
-															<div class="col-md-4">
-																<input type="text" id="startDate_tran" class="form-control selectData" placeholder="开始日期"/>
-															</div>
-															
-															<div class="col-md-4">
-																<input type="text" id="endDate_tran" class="form-control selectData" placeholder="结束日期"/>
-															</div>
-															<div class="col-md-2">
-																<input type="button" id="btn_query_deliver" class="btn btn-defaul" value="查询">
-															</div>
-														</div>
-												    </div>
-												</div>
-											</div>
-										</div>
-									</div>
-									
-								  </div>
-								  <!-- COST TABLE -->
-								  <table id="tbl_transaction" class="table table-striped table-hover font-400 font-14">
-									
-								  </table>
-								 
-								</div>
-							</div>
-						</div>
-					</div>
-			    </div>
-			</div>
-		</div>
 		<div id="sidebar" class="sidebar-fixed">
 			<div class="sidebar-menu nav-collapse">
 				<ul id="menubar">
@@ -263,14 +109,7 @@
 							<div class="col-sm-12">
 								<div class="page-header">
 									<div class="clearfix">
-										<h3 class="content-title pull-left">应收明细</h3>	
-										<span class="date-range pull-right">
-											<h4>
-											  <button id="btn_preYear"><i class="fa fa-angle-left"></i></button>
-											  <span id="currentYear"></span>年														  
-											  <button id="btn_nextYear"><i class="fa fa-angle-right"></i></button>
-											</h4>
-										</span>									
+										<h3 class="content-title pull-left">应收明细</h3>																			
 									</div>
 									<div class="description">应收明细</div>
 								</div>
@@ -286,37 +125,42 @@
 										    
 											<div class='row'>
 												<div class='col-md-12'>
-													<div class="invoice-header clearfix">
-														<div class="btn-group">
-															<button id="btn_settlement" type="button" class="btn btn-default"><i class="fa  fa-table"></i> 结算</button>
-												    		<button id="btn_export" type="button" class="btn btn-default"><i class="fa  fa-external-link"></i> 导出</button>
-												    	</div>												    	
-												    	<span class="pull-right col-md-3" >															
-															<input type="text" name="orderIdentify" class="form-control" placeholder="订单编号"/>
-															<input type="hidden" name="startDate" />
-															<input type="hidden" name="endDate" />
-														</span>
+													<div class="invoice-header clearfix">	
+													    <div class='pull-left'>
+														    <div class="pull-left" >
+																<h4>
+																  <button id="btn_preMonth"><i class="fa fa-angle-left"></i></button>
+																  <span id="currentMonth"></span>														  
+																  <button id="btn_nextMonth"><i class="fa fa-angle-right"></i></button>
+																</h4>
+														    </div>
+														</div>													
+														<div class='pull-right col-md-3'>
+														    <div class="pull-right" >
+														    	<div class="input-group">
+															      <input type="text" name="orderIdentify" class="form-control" placeholder="订单号">
+															      <span class="input-group-btn">
+															        <button class="btn btn-default" type="button" title="导出"><i class="fa  fa-external-link"></i></button>
+															      </span>
+															    </div>
+														    </div>
+														</div>
 													</div>
 												</div>
 											</div>
-											
-										  </div>
-										  <!-- COST TABLE -->
-										  <table id="tbl_receivable" class="table table-striped table-hover font-400 font-14">
-											
-										  </table>
-										  
-										  <div class="panel-body">
-											  <div class='row'>
-												<div class='col-sm-12'>
-												  <div class='text-right font-200 font-12'>
-													  <h4 class="amount">¥<span id="totle_receivable"></span> (应收合计) </h4>
-													  <h4 class="amount">¥<span id="totle_received"></span> (已收合计) </h4>
-													  <h4 class="amount">¥<span id="totle_balance"></span> (待收合计) </h4>
-												  </div>												  
-												</div>
+											<div class='row'>
+											  <div class='col-md-12'>
+											      <div class='text-right font-200 font-12'>																									
+												  <h4 class="amount">
+													    截止当前待收款合计：<span id="totalDebt"></span>元
+												  </h4>
+												  </div>
 											  </div>
-										  </div>
+											 </div>
+											 <table id="tbl_reception" class="table table-striped table-hover font-400 font-14">
+											
+										  	 </table>
+										  </div>										  
 										</div>
 									</div>
 								</div>

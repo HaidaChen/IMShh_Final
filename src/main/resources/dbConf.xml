@@ -13,8 +13,6 @@
         <typeAlias alias="Invoice" type="com.douniu.imshh.finance.invoice.domain.Invoice"/>
                 
         <typeAlias alias="Reception" type="com.douniu.imshh.finance.reception.domain.Reception"/>
-        <typeAlias alias="ReceptionSettlement" type="com.douniu.imshh.finance.reception.domain.Settlement"/>
-        <typeAlias alias="RcptSettlementDetail" type="com.douniu.imshh.finance.reception.domain.SettDetail"/>
         <typeAlias alias="Payment" type="com.douniu.imshh.finance.payment.domain.Payment"/>
         <typeAlias alias="ProductView" type="com.douniu.imshh.finance.dashboard.domain.ProductStatistics"></typeAlias>
         <typeAlias alias="ProductIndicators" type="com.douniu.imshh.finance.dashboard.domain.ProductIndicators"></typeAlias>
@@ -47,7 +45,6 @@
         <mapper resource="/com/douniu/imshh/finance/invoice/dao/invoiceMapper.xml"/>
         
         <mapper resource="/com/douniu/imshh/finance/reception/dao/receptionMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/finance/reception/dao/settlementMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/payment/dao/paymentMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/dashboard/dao/productViewMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/dashboard/dao/materialViewMapper.xml"/>

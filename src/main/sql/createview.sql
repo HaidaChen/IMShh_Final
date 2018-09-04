@@ -72,3 +72,23 @@ select payable,
 			   group by tranUser, month)tran 
 			      on mtlin.supplierName = tran.tranUser 
 				 and mtlin.month = tran.month;
+				 
+				 
+create or replace view view_productout as	
+select po.orderIdentify, 
+       concat(year(deliverDate), '-', month(deliverDate)) as delivermonth, 
+	   sum(po.amount * od.priceRMB) as debt 
+  from t_productout po, 
+	   t_orderDetail od 
+ where po.pdtNo = od.pdtNo 
+   and po.orderIdentify = od.orderIdentify 
+ group by orderIdentify, delivermonth
+ 
+create or replace view view_transactionin as
+select sum(tranAmount) reception, 
+       orderIdentify, 
+	   concat(year(tranDate), '-', month(tranDate)) tranmonth 
+  from t_transaction
+ where orderIdentify is not null  
+ group by orderIdentify, tranmonth
+		 

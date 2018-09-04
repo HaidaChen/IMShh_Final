@@ -33,4 +33,10 @@ public class PaymentAction {
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		return gson.toJson(pr);
 	}
+	
+	@RequestMapping(value ="/gettotaldebt", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getTotalDebt(){
+		return service.getTotalDebt() + "";
+	}
 }

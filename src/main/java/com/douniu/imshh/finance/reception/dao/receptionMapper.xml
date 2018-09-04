@@ -6,47 +6,94 @@
         <result property="orderIdentify" column="orderIdentify"/>
         <result property="customerName" column="customerName"/>
         <result property="month" column="month"/>
+        <result property="debt" column="debt"/>
         <result property="reception" column="reception"/>
-        <result property="payment" column="payment"/>
+        <result property="lastDebt" column="lastDebt"/>
+        <result property="currentDebt" column="currentDebt"/>
     </resultMap>
     
-    <select id="statistics" parameterType="Reception" resultType="Reception">
-        select sum(s.reception) as reception, sum(s.payment) as payment from(
-        select r.orderIdentify, r.custName as customerName, r.reception as reception, (case when p.payment is null then 0 else p.payment end) as payment from 
-             (select o.identify as orderIdentify, o.custName as custName, (case when od.priceRMB = 0 then sum(d.amount * od.priceDollar)*o.exchangeRate else sum(d.amount * od.priceRMB) end) as reception 
-              from t_productout d, t_order o, t_orderDetail od
-             where d.orderIdentify = o.identify 
-               and d.pdtno = od.pdtno
-               and d.deliverDate &gt;= #{startDate}
-               and d.deliverDate &lt;= #{endDate}
-             group by o.identify)r 
-          left join 
-           (select tranuser, sum(tranamount) payment 
-              from t_transaction 
-             where trantype = 1 group by tranuser)p 
-            on r.custName = p.tranuser
-        ) s  
+    <select id="queryReception" parameterType="Reception" resultMap="receptionmap">
+        
+        select o.orderIdentify,
+               debt,
+               reception,
+               lastDebt - lastReception as lastDebt,
+               currentDebt - currentReception as currentDebt               
+               <!-- 订单为主表 -->
+          from (select identify as orderIdentify
+                  from t_order where status = 1
+                  <if test="orderIdentify != null and orderIdentify != ''">
+		          and identify like #{orderIdentify}
+		          </if>) o
+                  <!-- 查找指定月份的应收-->
+          left join (select sum(debt) as debt, 
+                            orderIdentify 
+                       from view_productout 
+                      where str_to_date(delivermonth, '%Y-%m') = str_to_date(#{month}, '%Y-%m') 
+                      group by orderIdentify) po
+             on o.orderIdentify = po.orderIdentify
+             <!-- 查找指定月份的已收-->
+          left join (select sum(reception) as reception, 
+                            orderIdentify 
+                       from view_transactionin 
+                      where str_to_date(tranmonth, '%Y-%m') = str_to_date(#{month}, '%Y-%m') 
+                      group by orderIdentify) ti
+             on o.orderIdentify = ti.orderIdentify             
+                 <!-- 查找截止指定月份的前一个月的应收 --> 
+           left join (select tl.orderIdentify, 
+                             debt as lastDebt, 
+                             (case when reception is null then 0 else reception end) as lastReception 
+                        from
+	                     (select sum(debt) as debt,
+	                             orderIdentify 
+	                        from view_productout
+	                       where str_to_date(delivermonth, '%Y-%m') &lt;= DATE_ADD(str_to_date(#{month}, '%Y-%m-%d'), INTERVAL -1 MONTH) 
+	                       group by orderIdentify) tl
+	                      
+	                        left join
+	                       
+	                      (select sum(reception) as reception,
+	                             orderIdentify 
+	                       from view_transactionin
+	                      where str_to_date(tranmonth, '%Y-%m') &lt;= DATE_ADD(str_to_date(#{month}, '%Y-%m-%d'), INTERVAL -1 MONTH) 
+	                      group by orderIdentify) tr 
+	                       on tl.orderIdentify = tr.orderIdentify
+	                       ) ld
+              on o.orderIdentify = ld.orderIdentify
+                  <!-- 截止当前月的应收 -->
+            left join (select tl.orderIdentify, 
+                              debt as currentDebt,
+                              (case when reception is null then 0 else reception end) as currentReception 
+                         from
+	                     (select sum(debt) as debt,
+	                             orderIdentify 
+	                        from view_productout
+	                       where str_to_date(delivermonth, '%Y-%m') &lt;= now()
+	                       group by orderIdentify) tl
+	                      
+	                        left join
+	                       
+	                      (select sum(reception) as reception,
+	                             orderIdentify 
+	                       from view_transactionin
+	                      where str_to_date(tranmonth, '%Y-%m') &lt;= now() 
+	                      group by orderIdentify) tr 
+	                       on tl.orderIdentify = tr.orderIdentify
+	                       ) cd
+               on o.orderIdentify = cd.orderIdentify
+            order by ${orderBy} ${order}
+       		limit #{pageOffset},#{pageSize}       
     </select> 
     
-    <select id="statisticsByOrder" parameterType="Reception" resultMap="receptionmap">
-        select r.orderIdentify, r.custName as customerName, r.reception as reception, (case when p.payment is null then 0 else p.payment end) as payment from 
-             (select o.identify as orderIdentify, o.custName as custName, (case when od.priceRMB = 0 then sum(d.amount * od.priceDollar)*o.exchangeRate else sum(d.amount * od.priceRMB) end) as reception 
-              from t_productout d, t_order o, t_orderDetail od
-             where d.orderIdentify = o.identify 
-               and d.pdtno = od.pdtno
-               and d.deliverDate &gt;= #{startDate}
-               and d.deliverDate &lt;= #{endDate}
-             group by o.identify)r 
-          left join 
-           (select tranuser, sum(tranamount) payment 
-              from t_transaction 
-             where trantype = 1 group by tranuser)p 
-            on r.custName = p.tranuser
-         where 1 = 1
-         <if test="orderIdentify != null and orderIdentify !=''">
-          and orderIdentify like #{orderIdentify}
-        </if>
-         
+    <select id="countReception" parameterType="Reception" resultType="int">
+        select count(1) from t_order where status = 1
+         <if test="orderIdentify != null and orderIdentify != ''">
+           and identify like #{orderIdentify}
+         </if>
     </select>     
+    
+    <select id="getTotalDebt" resultType="float">
+        select debt - reception from (select sum(debt) as debt from view_productout)p, (select sum(reception) as reception from view_transactionin)t
+    </select>   
     
 </mapper>
