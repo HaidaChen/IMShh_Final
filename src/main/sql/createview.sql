@@ -54,7 +54,7 @@ select odr.materialName,
 	and odr.specification3 = consume.specification3 
 	and odr.year = consume.year;
 	
-
+/**
 create or replace view view_payment as
 select payable, 
        (case when paid is null then 0 else paid end) paid, 
@@ -72,8 +72,26 @@ select payable,
 			   group by tranUser, month)tran 
 			      on mtlin.supplierName = tran.tranUser 
 				 and mtlin.month = tran.month;
-				 
-				 
+**/
+	
+
+create or replace view view_materialin as
+select sum(totlemnt) payable, 
+       supplierName, 
+	   concat(year(receiveDate), '-', month(receiveDate)) month 
+  from t_materialin 
+ group by supplierName, month;
+ 
+
+create or replace view view_transactionout as
+select sum(tranAmount) paid, 
+       tranUser as supplierName, 
+       concat(year(tranDate), '-', month(tranDate)) month 
+  from t_transaction
+ where tranUser is not null 
+ group by tranUser, month;
+ 
+
 create or replace view view_productout as	
 select po.orderIdentify, 
        concat(year(deliverDate), '-', month(deliverDate)) as delivermonth, 

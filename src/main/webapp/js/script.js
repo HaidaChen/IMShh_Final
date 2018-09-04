@@ -5009,7 +5009,13 @@ var App = function () {
 				month = month - 1;
 			}
 			$("#currentMonth").html(fullInfo());
-			$("#tbl_payment").bootstrapTable('refresh', {url: getProjectName() + "/payment/loadpayment.do", cash:false});
+			$("#tbl_payment").bootstrapTable('refreshOptions', {url: getProjectName() + "/payment/loadpayment.do", 
+				columns: [{field: 'supplierName',title: '往来单位'}, 
+					{field: 'lastDebt',title: '截止' + getLastMonth() + '欠款',align : 'center',sortable : true}, 
+					{field: 'debt',title: year + '年' + month + '月欠款',align : 'center',sortable : true}, 
+					{field: 'payment',title: year + '年' + month + '月还款',align : 'center',sortable : true}, 
+					{field: 'currentDebt',title: '截止' + date.getFullYear() + '年' + (date.getMonth() + 1) + '月欠款',align : 'center',sortable : true}],
+				cash:false});
 		});
 		
 		$("#btn_nextMonth").click(function(){
@@ -5020,7 +5026,13 @@ var App = function () {
 				month = month + 1;
 			}
 			$("#currentMonth").html(fullInfo());
-			$("#tbl_payment").bootstrapTable('refresh', {url: getProjectName() + "/payment/loadpayment.do", cash:false});
+			$("#tbl_payment").bootstrapTable('refreshOptions', {url: getProjectName() + "/payment/loadpayment.do", 
+				columns: [{field: 'supplierName',title: '往来单位'}, 
+					{field: 'lastDebt',title: '截止' + getLastMonth() + '欠款',align : 'center',sortable : true}, 
+					{field: 'debt',title: year + '年' + month + '月欠款',align : 'center',sortable : true}, 
+					{field: 'payment',title: year + '年' + month + '月还款',align : 'center',sortable : true}, 
+					{field: 'currentDebt',title: '截止' + date.getFullYear() + '年' + (date.getMonth() + 1) + '月欠款',align : 'center',sortable : true}],
+				cash:false});
 		});	
 		
 		
