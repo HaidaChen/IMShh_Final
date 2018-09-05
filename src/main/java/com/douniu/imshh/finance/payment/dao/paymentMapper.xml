@@ -91,6 +91,11 @@
     </select>     
     
     <select id="getTotalDebt" resultType="float">
-        select payable - paid from (select sum(payable) as payable from view_materialin)m, (select sum(paid) as paid from view_transactionout)t
+        select payable - paid from (
+               select sum(payable) as payable 
+                 from view_materialin)m, 
+              (select sum(paid) as paid 
+                 from view_transactionout
+                where supplierName != '')t
     </select>
 </mapper>

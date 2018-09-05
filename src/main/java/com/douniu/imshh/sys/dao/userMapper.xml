@@ -102,14 +102,14 @@
     
     <select id="findByNmPwd" parameterType="User" resultMap="usermap">
     	select * from t_user where status = '1'
-    	<if test="userName != null and userName !=''">
           and username = #{userName}
-        </if> 
-        <if test="password != null and password !=''">
-          and password = #{password}           
-        </if>         
+          and password = #{password}
     </select>
     
+    <select id="findByName" parameterType="String" resultType="User">
+    	select * from t_user where status = '1'
+          and username = #{userName}
+    </select>
     
     <delete id="deleteRoleRelation" parameterType="String">
     	delete from t_user_role where userId = #{userId}

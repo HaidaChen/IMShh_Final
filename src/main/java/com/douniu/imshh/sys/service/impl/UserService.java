@@ -58,9 +58,7 @@ public class UserService implements IUserService{
 
 	@Override
 	public boolean existUserName(String userName) {
-		User user = new User();
-		user.setUserName(userName);
-		return dao.findByNmPwd(user) != null;
+		return dao.findByName(userName) != null;
 	}
 	
 	@Override

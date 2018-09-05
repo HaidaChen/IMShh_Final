@@ -242,7 +242,7 @@ CREATE TABLE T_TRANSACTION (
 
 CREATE TABLE T_USER(
 	id varchar(20) not null,
-	username varchar(60) not null,
+	username varchar(60) not null unique,
 	password varchar(20) not null,
 	fullname varchar(60) not null,
 	birthday date,

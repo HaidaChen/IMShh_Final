@@ -93,7 +93,12 @@
     </select>     
     
     <select id="getTotalDebt" resultType="float">
-        select debt - reception from (select sum(debt) as debt from view_productout)p, (select sum(reception) as reception from view_transactionin)t
+        select debt - reception from (
+               select sum(debt) as debt 
+                 from view_productout)p, 
+              (select sum(reception) as reception 
+                 from view_transactionin
+                where orderIdentify != '')t
     </select>   
     
 </mapper>

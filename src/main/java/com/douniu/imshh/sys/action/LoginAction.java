@@ -47,28 +47,6 @@ public class LoginAction {
 			Gson gson = new Gson();
 			String menuStr = gson.toJson(menus);
 			httpSession.setAttribute("userMenu", menuStr);
-			/*menuStr = URLEncoder.encode(menuStr, "UTF-8");
-			Cookie usermenu = null;
-			if (request.getCookies() != null){
-				for (Cookie cookie :request.getCookies()){
-					if (cookie.getName().equals("userMenu")){
-						usermenu = cookie;
-						break;
-					}
-				}
-			}
-			
-			if (usermenu != null){
-				usermenu.setValue(menuStr);
-				usermenu.setPath(request.getContextPath());
-				usermenu.setSecure(false);
-			}else{
-				usermenu = new Cookie("userMenu", menuStr);
-				usermenu.setPath(request.getContextPath());
-				usermenu.setSecure(false);
-			}
-			response.addCookie(usermenu);*/
-			
 			return 1;
 		}else{
 			return -1;
@@ -123,5 +101,16 @@ public class LoginAction {
 			return "";
 		}
 			
+	}
+	
+	@RequestMapping(value="/userOnLine", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String userOnLine(HttpSession httSession){
+		Object oUser = httSession.getAttribute("user");
+		if (oUser != null){
+			return "onLine";
+		}else{
+			return "offLine";
+		}
 	}
 }

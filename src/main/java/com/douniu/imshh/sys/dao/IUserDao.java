@@ -10,6 +10,7 @@ public interface IUserDao {
 	int count(User user);
 	User findById(String id);
 	User findByNmPwd(User user);
+	User findByName(String userName);
 	void insert(User user);
 	void update(User user);
 	void updateProfile(User user);

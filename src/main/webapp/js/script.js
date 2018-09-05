@@ -3216,7 +3216,9 @@ var App = function () {
 						icon = icon.replace(/\+/g, ' ');
 					}
 					var itemContent = $("<i class='" + icon + "'></i><span class='menu-text'>" + obj.name +"</span><span class='arrow'></span>");
-					
+					if (obj.url){
+						itemLink.attr("href", getProjectName() + "/page/" + obj.url);
+					}
 					itemLink.append(itemContent);
 					item.append(itemLink);
 					menuContainer.append(item);
@@ -3331,10 +3333,13 @@ var App = function () {
 				}
 			}
 		};
-		$("#loginform").submit(function(){
-			$(this).ajaxSubmit(options);
-			
-			return false;
+		
+		$("#btn_login").click(function(){
+			$("#loginform").bootstrapValidator('validate');
+			if (!$("#loginform").data('bootstrapValidator').isValid()) {	        
+				return;
+			}
+			$("#loginform").ajaxSubmit(options);
 		});
 	}
 	
@@ -3419,18 +3424,36 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/
 	/*	init navbar for navbar
 	/*-----------------------------------------------------------------------------------*/	
-	var initNavbar = function(){		
+	var initNavbar = function(){	
+		$("#header-user").attr("style", "float:right");
 		$.ajax({
 			url: getProjectName()+"/user/userProfile.do",
 			success: function(result){
 				var head = getProjectName() + result["head"];
 				$("#header-user img").attr("src", head);
-				$("#header-user .username").html(result["userName"]);
+				$("#header-user .username").html(result["fullName"]);
 			}
 		});
 		
 	}
 	
+	/*-----------------------------------------------------------------------------------*/
+	/*	check the user has access online or no
+	/*-----------------------------------------------------------------------------------*/	
+	var checkOnLine = function(){
+		var result = true;
+		$.ajax({
+			async: false, 
+			dataType: 'text',
+			url: getProjectName()+"/login/userOnLine.do",
+			success: function(obj){
+				if (obj == "offLine"){
+					result = false;
+				}
+			}
+		});
+		return result;
+	}
 	
 	/*-----------------------------------------------------------------------------------*/
 	/*	Handle DatePriod Select
@@ -3940,9 +3963,6 @@ var App = function () {
                 field: 'receiveDate',
                 title: '接收日期'
             }, {
-                field: 'orderIdentify',
-                title: '关联订单号'
-            }, {
                 field: 'supplierName',
                 title: '供应商'
             }, {
@@ -3995,20 +4015,7 @@ var App = function () {
 		$("input[name=condition]").change(function(){
 			$("#tbl_materialIn").bootstrapTable("refresh", {url: getProjectName() + "/materialin/loadmaterialin.do", cache: false});
 		});
-		
-		
-		//----------表单-----------------------
-		$.getJSON(getProjectName() + "/order/loadallorder.do", function (data){
-			$("#relorder").append("<option></option>");
-			$.each(data, function(index, obj){
-				$("#relorder").append("<option value='"+obj.identify+"'>"+ obj.identify +"</option>");
-			});
-			$("#relorder").select2({
-			    placeholder: "关联订单",
-			    allowClear: true
-			});
-		});
-		
+				
 		$.getJSON(getProjectName() + "/mtl/loadallmtl.do", function (data){
 			$("#relmaterial").append("<option></option>");
 			$.each(data, function(index, obj){
@@ -4211,9 +4218,6 @@ var App = function () {
                 field: 'handMan',
                 title: '经手人'
             }, {
-                field: 'orderIdentify',
-                title: '关联订单号'
-            }, {
                 field: 'materialName',
                 title: '品名'
             }, {
@@ -4297,17 +4301,6 @@ var App = function () {
 			$("#materialOutList").slideToggle();
 			$("#materialOutNew").slideToggle();
 			removeFormData($("#materialOutForm"));
-		});
-		
-		$.getJSON(getProjectName() + "/order/loadallorder.do", function (data){
-			$("#relorder").append("<option></option>");
-			$.each(data, function(index, obj){
-				$("#relorder").append("<option value='"+obj.identify+"'>"+ obj.identify +"</option>");
-			});
-			$("#relorder").select2({
-			    placeholder: "关联订单",
-			    allowClear: true
-			});
 		});
 		
 		$.getJSON(getProjectName() + "/mtl/loadallmtl.do", function (data){
@@ -5403,13 +5396,13 @@ var App = function () {
                 title: '余额'
             }, {
                 field: 'tranUser',
-                title: '交易用户'
+                title: '对方用户'
             }, {
             	field: 'tranBank',
-                title: '交易银行'
+                title: '对方银行'
             },{
             	field: 'tranAccountNo',
-                title: '交易账号'
+                title: '对方账号'
             },{
             	field: 'orderIdentify',
                 title: '关联订单'
@@ -6089,6 +6082,11 @@ var App = function () {
 
         //Initialise theme pages
         init: function () {
+        	if (!App.isPage("login") && !checkOnLine()){
+        		window.location.href = getProjectName() + "/login.html";
+        		return;
+        	}
+        	
         	initNavbar();
 		    if (App.isPage("login")) {
 				handleUniform();

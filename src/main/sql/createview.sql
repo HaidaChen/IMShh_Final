@@ -84,7 +84,7 @@ select sum(totlemnt) payable,
  
 
 create or replace view view_transactionout as
-select sum(tranAmount) paid, 
+select sum(ABS(tranAmount)) paid, 
        tranUser as supplierName, 
        concat(year(tranDate), '-', month(tranDate)) month 
   from t_transaction
@@ -100,13 +100,13 @@ select po.orderIdentify,
 	   t_orderDetail od 
  where po.pdtNo = od.pdtNo 
    and po.orderIdentify = od.orderIdentify 
- group by orderIdentify, delivermonth
+ group by orderIdentify, delivermonth;
  
 create or replace view view_transactionin as
-select sum(tranAmount) reception, 
+select sum(ABS(tranAmount)) reception, 
        orderIdentify, 
 	   concat(year(tranDate), '-', month(tranDate)) tranmonth 
   from t_transaction
  where orderIdentify is not null  
- group by orderIdentify, tranmonth
+ group by orderIdentify, tranmonth;
 		 
