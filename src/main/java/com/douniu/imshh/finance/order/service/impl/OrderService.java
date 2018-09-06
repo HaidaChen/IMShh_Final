@@ -59,25 +59,41 @@ public class OrderService implements IOrderService{
 	}
 
 	@Override
-	public void save(Order order) {
+	public void save(Order order) {		
 		if (order.getId().equals("")){
 			String orderId = System.currentTimeMillis()+"";
 			order.setId(orderId);
 			order.setStatus(1);
-			for(OrderDetail detail : order.getDetails()){
-				detail.setOrderIdentify(order.getIdentify());
-			}
+			calculateAmount(order);
 			detailService.batchAdd(order.getDetails());
 			dao.insert(order);
 		}else{
 			detailService.killByOrderIdentify(order.getIdentify());
-			for(OrderDetail detail : order.getDetails()){
-				detail.setOrderIdentify(order.getIdentify());;
-			}
+			calculateAmount(order);
 			detailService.batchAdd(order.getDetails());
 			dao.update(order);
 		}
 	}
+	
+	private void calculateAmount(Order order){
+		float orderAmountRMB = 0f;
+		float orderAmountDollar = 0f;
+		for (OrderDetail item : order.getDetails()){
+			item.setOrderIdentify(order.getIdentify());			
+			
+			if (order.getOrderType().equals("海外订单")){
+				item.setPriceRMB(item.getPriceDollar() * order.getExchangeRate());
+			}else{
+				item.setPriceDollar(0f);
+			}
+			item.setTotlmentRMB(item.getPriceRMB() * item.getQuantity());
+			item.setTotlmentDollar(item.getPriceDollar() * item.getQuantity());
+			orderAmountRMB += item.getTotlmentRMB();
+			orderAmountDollar += item.getTotlmentDollar();
+		}
+		order.setAmountDollar(orderAmountDollar);
+		order.setAmountRMB(orderAmountRMB);
+	}	
 	
 	@Override
 	public void updateState(Order order) {
@@ -142,5 +158,5 @@ public class OrderService implements IOrderService{
 	public void setDetailService(IOrderDetailService detailService) {
 		this.detailService = detailService;
 	}
-	
+
 }

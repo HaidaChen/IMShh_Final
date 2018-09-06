@@ -3506,147 +3506,39 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initOrderModule = function(){
 		
+		/**
+		 * 订单列表页面，是订单管理的主页面，主要提供订单的查询功能
+		 */
 		$("#tbl_order").bootstrapTable({
 			url: getProjectName() + "/order/loadorder.do",
 			method: "get",
 			pagination: true,
 			sidePagination: "server", 
 			clickToSelect: true,
-			columns: [{
-                field: 'identify',
-                title: '订单编号'
-            }, {
-                field: 'custName',
-                title: '客户名称'
-            }, {
-                field: 'orderDate',
-                title: '订购日期'
-            }, {
-                field: 'deliveryTerm',
-                title: '交付日期'
-            }, {
-                field: 'amountRMB',
-                title: '订单金额(￥含税)'
-            }, {
-                field: 'amountDollar',
-                title: '订单金额($)'
-            }, {
-            	field: 'remark',
-                title: '备注'
-            }],
+			columns: [{field: 'identify', title: '订单编号'}, 
+				{field: 'custName', title: '客户名称'}, 
+				{field: 'orderDate', title: '订购日期'}, 
+				{field: 'deliveryTerm', title: '交付日期'}, 
+				{field: 'amountRMB', title: '订单金额(￥)'}, 
+				{field: 'amountDollar', title: '订单金额($)'}, 
+				{field: 'remark', title: '备注'}],
             queryParams: function(params){
-            	var orderType = $("#modaldatepicker input[name=orderType]:checked");
-            	var orderState  = $("#modaldatepicker input[name=orderState]:checked");
-            	
-            	var orderTypeValues = [];
-            	var orderStateValues = [];
-            	$.each(orderType, function(index, obj){
-            		orderTypeValues.push($(obj).val());
-            	});
-            	
-            	$.each(orderState, function(index, obj){
-            		orderStateValues.push($(obj).val());
-            	});
-            	
-            	var condition_orderType = '';
-            	var condition_orderState = '';
-            	if (orderTypeValues.length == 1){
-            		if (orderTypeValues[0] == "1")
-            			condition_orderType = "国内订单";
-            		else
-            			condition_orderType = "海外订单";
-            	}
-            	if (orderStateValues.length == 1){
-            		condition_orderState = orderStateValues[0];
-            	}
-            	
             	return {
                     pageSize: params.limit,
                     pageOffset: params.offset,                    
                     condition: $("input[name=condition]").val(),
                     startDate: $("#startDate").val(),
-                    endDate: $("#endDate").val(),
-                    state: condition_orderState,
-                    orderType: condition_orderType
+                    endDate: $("#endDate").val()
                 }
             }
 		});	
-		
+		$('#tbl_order tbody').mouseover(function(){
+			$(this).attr("style", "cursor:pointer");
+		});
 		$("input[name=condition]").change(function(){
 			$("#tbl_order").bootstrapTable("refresh", {url: getProjectName() + "/order/loadorder.do", cache: false});
 		});
-		
-		$("#dataperiod input[name=orderType],input[name=orderState]").change(function(){
-			var name = $(this).attr("name");
-			var val = $(this).val();
-			
-			var target = $("#modaldatepicker input[name="+name+"][value="+val+"]");
-			if ($(this).prop('checked')){
-				target.prop("checked","checked");
-			}else{
-				target.removeAttr("checked");
-			}
-			$("#tbl_order").bootstrapTable("refresh", {url: getProjectName() + "/order/loadorder.do", cache: false});
-		});
-		
-		$("#modaldatepicker input[name=orderType],input[name=orderState]").change(function(){
-			var name = $(this).attr("name");
-			var val = $(this).val();
-			
-			var target = $("#dataperiod input[name="+name+"][value="+val+"]");
-			if ($(this).prop('checked')){
-				target.prop("checked","checked");
-			}else{
-				target.removeAttr("checked");
-			}
-		});
-		
-		var orderItems = [];
-		$("#tbl_view_orderItems").bootstrapTable({
-			data: orderItems,
-			cache: false,
-			columns: [
-			{field: 'pdtNo',title: '货号' }, 
-			{field: 'pdtName',title: '品名'}, 
-			{field: 'content',title: '含量'}, 
-			{field: 'priceRMB',title: '￥单价'}, 
-			{field: 'priceDollar',title: '$单价'}, 
-			{field: 'quantity',title: '数量'}, 
-			{field: 'totlmentRMB',title: '￥合计'},
-			{field: 'totlmentDollar',title: '$合计'},
-			{field: 'operation', title: '操作', formatter: function (value, row, index) {
-                return '<a id="tbl_opt_add" href="javascript:;"><i class="fa fa-plus"></i></a> '+
-                	   '<a id="tbl_opt_delete" dataid="'+index+'" href="javascript:;"><i class="fa fa-minus"></i></a> '+
-                	   '<a id="tbl_opt_update" dataid="'+index+'" href="javascript:;"><i class="fa fa-edit"></i></a>';
-            }}
-		]});
-		
-		$('#tbl_view_orderItems').on('click', '#tbl_opt_add', function(){
-			$("#orderitemform").children("#sourceForm").val("#orderUpdateForm");
-			$("#orderitemform").children("#sourceTable").val("#tbl_view_orderItems");
-			$("#modalorderitem").modal('show');
-		});
-		
-		$('#tbl_view_orderItems').on('click', '#tbl_opt_delete', function(){
-			var index = $(this).attr("dataid");		
-			deleteOrderItem("#orderUpdateForm", "#tbl_view_orderItems", index);
-		});
-		
-		$('#tbl_view_orderItems').on('click', '#tbl_opt_update', function(){
-			var index = $(this).attr("dataid");
-			var items = $('#orderUpdateForm input[name=orderDetails]').val();
-			items = JSON.parse(items);
-			var fillForm = new FillForm();
-			fillForm.fillByData("#orderitemform" , items[index], 1);
-			
-			$("#orderitemform").children("#sourceForm").val("#orderUpdateForm");
-			$("#orderitemform").children("#sourceTable").val("#tbl_view_orderItems");
-			$("#modalorderitem").modal('show');
-			
-		});
-		
-		$('#tbl_view_orderItems').bootstrapTable('hideColumn', 'operation');
-		
+		/*点击订单列表的行，将在订单详情页面展示选中订单的详细信息*/
 		$('#tbl_order').on('click-row.bs.table', function (e, row, element){  
 			$.getJSON(getProjectName() + "/order/findById.do?id="+row.id, function (data){
 				orderItems = data.details;
@@ -3666,259 +3558,19 @@ var App = function () {
 				$("#orderView").slideToggle();
 			});			
 	    });  
-		
-		$('a.vgoback').click(function(){
-			$("#orderList").slideToggle();
-			$("#orderView").slideToggle();
-			
-			$('#tbl_view_orderItems').bootstrapTable('hideColumn', 'operation');
-			$('#orderInfoView').show();
-			$('#orderUpdateForm').hide();
-			$('#form_footer').hide();
-		});
-		
+		/* 点击新增按钮进入订单新增页面 */
 		$('#btn_add').click(function(){
 			$("#orderList").slideToggle();
 			$("#orderNew").slideToggle();
 		});
-		$('a.ngoback').click(function(){
-			$("#orderList").slideToggle();
-			$("#orderNew").slideToggle();
-		});
-		$('a.editOrder').click(function(){
-			$('#tbl_view_orderItems').bootstrapTable('showColumn', 'operation');
-			$('#orderInfoView').hide();
-			$('#orderUpdateForm').show();
-			$('#form_footer').show();
-		});
-		
-		$("#btn_add_orderItem").click(function(){
-			$("#orderitemform").children("#sourceForm").val("#formOrder");
-			$("#orderitemform").children("#sourceTable").val("#tbl_new_orderitem");
-			$("#modalorderitem").modal('show');
-		});
-		
-		$("#btn_update_cancel").click(function(){
-			$('#tbl_view_orderItems').bootstrapTable('hideColumn', 'operation');
-			$('#orderInfoView').show();
-			$('#orderUpdateForm').hide();
-			$('#form_footer').hide();
-		});
-		
-		
-		$("#themes label").click(function(){
-			var identify = $("#orderUpdateForm input[name=identify]").val();
-			var index = $("#themes label").index(this)+1;
-			$.ajax({
-				url: getProjectName() + "/order/updatestate.do?identify="+identify+"&state="+index,
-				method: "post",
-				success: function(){
-					$("#tbl_order").bootstrapTable("refresh", {url: getProjectName() + "/order/loadorder.do", cache: false});
-					alert("订单状态修改成功");
-				}
-			});
-		});
-		
-		$("#tbl_new_orderitem").bootstrapTable({columns: [
-			{field: 'pdtNo',title: '货号'}, 
-			{field: 'pdtName',title: '品名'}, 
-			{field: 'content',title: '含量'}, 
-			{field: 'priceRMB',title: '￥单价'}, 
-			{field: 'priceDollar',title: '$单价'}, 
-			{field: 'quantity',title: '数量'}, 
-			{field: 'totlmentRMB',title: '￥合计'}, 
-			{field: 'totlmentDollar',title: '$合计'},
-			{field: '', title: '操作', formatter: function(value,row,index){
-				return '<a href="javascript:;" onclick="deleteOrderItem(\'#formOrder\', \'#tbl_new_orderitem\', ' + index + ')"><i class="fa fa-cut (alias)"></a>';
-			}}]});
-		
-		
-		
-		
-		$.getJSON(getProjectName() + "/pdt/loadallpdt.do", function (data){
-			$("#relpdt").append("<option value=''></option>");
-			$.each(data, function(index, obj){
-				$("#relpdt").append("<option value='"+obj.code+"'>"+ obj.code + "-" + obj.name + "-" + obj.specification +"</option>");
-			});
-			$("#relpdt").select2({
-			    placeholder: "关联产品",
-			    allowClear: true
-			});
-		});
-		$("#relpdt").change(function(){
-			var pdtno = $(this).val();
-			if (pdtno == ''){
-				$("input[name=pdtName]").val('');
-				$("input[name=content]").val('');
-			}else{
-				$.getJSON(getProjectName() + "/pdt/findbycode.do?code="+pdtno, function (pdt){
-					
-					$("input[name=pdtName]").val(pdt.name);
-					$("input[name=pdtName]").change();
-					$("input[name=content]").val(pdt.specification);
-					$("input[name=content]").change();
-				});
-			}
-			
-		});
-		
-		$("#orderitemform").bootstrapValidator({
-			fields: {
-				pdtNo : {validators: {notEmpty : {}}},
-				pdtName : {trigger: "change", validators: {notEmpty : {}}},
-				content: {trigger: "change", validators: {notEmpty : {}}},
-				priceRMB: {validators: {notEmpty : {}, numeric : {}}},
-				priceDollar: {validators: {notEmpty : {}, numeric : {}}},
-				quantity: {validators: {notEmpty : {}, integer : {}}}
-	        }
-		});
-		$("#btn_save_orderitem").click(function(){
-			var tableId = $("#sourceTable").val();
-			var formId = $("#sourceForm").val();
-			saveOrderItemInLocal($(tableId), $(formId));			
-		});
-		
-		var saveOrderItemInLocal = function(table, form){
-			var bv = $("#orderitemform").data('bootstrapValidator');
-	        bv.validate();
-			if(bv.isValid()){
-				var orderitem = getJSONObjByForm($("#orderitemform"));
-				var orderitems = form.find("input[name=orderDetails]").val();//table.attr("data-data");
-				var oorderitems = JSON.parse(orderitems);
-				
-				if (orderitem.id != ""){
-					$.each(oorderitems, function(index, item){
-						if (orderitem.id == item.id){
-							oorderitems[index] = orderitem;
-							return false;
-						}
-					})
-				}else{
-					oorderitems[oorderitems.length] = orderitem;
-				}
-				
-				var detail = fillNumWhenEmpty(["priceRMB", "priceDollar", "totlmentRMB", "totlmentDollar", "inStorageQuantity", "deliverQuantity"], JSON.stringify(oorderitems));
-				form.find("input[name=orderDetails]").val(detail);
-				//table.attr("data-data", JSON.stringify(oorderitems));
-				table.bootstrapTable("refreshOptions", {data: JSON.parse(detail)});
-				
-				var totlmentRMB = 0;
-				var totlmentDollar = 0;
-				$.each(oorderitems, function(index, item){
-					if (item.totlmentRMB != '')
-					totlmentRMB += parseFloat(item.totlmentRMB);
-					if (item.totlmentDollar != '')
-					totlmentDollar += parseFloat(item.totlmentDollar);
-				});				
-				
-				form.find("input[name=amountRMB]").val(totlmentRMB);
-				form.find("input[name=amountDollar]").val(totlmentDollar);
-				
-				$('#modalorderitem').modal('hide');
-			}
-		}
-		
-		
-		$('#modalorderitem').on("show.bs.modal", function(){
-			var srcForm = $("#sourceForm").val();
-			var orderType = $(srcForm + ' select[name=orderType]').val();
-			
-			if (orderType == '海外订单'){
-				$("#orderitemform #priceDollarField").show();
-				$("#orderitemform #totlmentDollarField").show();
-				$("#orderitemform #priceRMBField").hide();
-				$("#orderitemform #totlmentRMBField").hide();
-			}
-			
-			if (orderType == '国内订单'){
-				$("#orderitemform #priceDollarField").hide();
-				$("#orderitemform #totlmentDollarField").hide();
-				$("#orderitemform #priceRMBField").show();
-				$("#orderitemform #totlmentRMBField").show();
-			}
-			
-		});
-		$('#modalorderitem').on("hide.bs.modal", function(){
-			removeFormData($("#orderitemform"));
-		});
-		$("input[name=priceRMB],input[name=quantity]").change(function(){
-			if ($("input[name=priceRMB]").val()!="" && $("input[name=quantity]").val()!=""){
-				$("input[name=totlmentRMB]").val(parseInt($("input[name=quantity]").val()) * parseFloat($("input[name=priceRMB]").val()));
-			}
-		});
-		$("input[name=priceDollar],input[name=quantity]").change(function(){
-			if ($("input[name=priceDollar]").val()!="" && $("input[name=quantity]").val()!=""){
-				var totlmentDollar = parseInt($("input[name=quantity]").val()) * parseFloat($("input[name=priceDollar]").val());
-				$("input[name=totlmentDollar]").val(totlmentDollar);
-				var srcForm = $("#sourceForm").val();
-				var orderType = $(srcForm).find("select[name=orderType]").val();
-				var exchangeRate = $(srcForm).find("input[name=exchangeRate]").val();
-				
-				if (orderType == '海外订单' && exchangeRate != ''){
-					$("input[name=totlmentRMB]").val(totlmentDollar*exchangeRate);
-				}
-			}
-		});
-		
-		
-		$.getJSON(getProjectName() + "/cust/loadallcust.do", function (data){
-			$("#relcust").append("<option value=''></option>");
-			$.each(data, function(index, obj){
-				$("#relcust").append("<option value='"+obj.name+"'>"+ obj.name + "</option>");
-			});
-			$("#relcust").select2({
-			    placeholder: "关联客户",
-			    allowClear: true
-			});
-		});
-		
-		$("#formOrder, #orderUpdateForm").bootstrapValidator({
-			fields: {
-				identify : {validators: {notEmpty : {}}},
-				orderDate : {validators: {notEmpty : {}}},
-				custName: {validators: {notEmpty : {}}}
-	        }
-		});
-		$("#btn_save_order").click(function(){
-			var bv = $("#formOrder").data('bootstrapValidator');
-	        bv.validate();
-			if(bv.isValid()){
-				$("#formOrder").ajaxSubmit({
-					url: getProjectName()+"/order/save.do",
-					success: function(){
-						window.location.reload(true);
-					}
-				});
-			}
-		})
-		
-		$("#btn_update_order").click(function(){
-			var bv = $("#orderUpdateForm").data('bootstrapValidator');
-	        bv.validate();
-			if(bv.isValid()){
-				if($("#orderUpdateForm input[name=orderDetails]").val() == "[]"){
-					alert("必须包含订单项！");
-					return false;
-				}
-				$("#orderUpdateForm").ajaxSubmit({
-					url: getProjectName()+"/order/save.do",
-					success: function(){
-						window.location.reload();
-					}
-				});
-			}
-			
-			
-		})
-		
-		
+		/* 点击导入按钮弹出导入窗口 */
 		$("#btn_import").click(function(){			
 			var oImportModal = new ImportModal(getProjectName() + "/order/importorder.do", function(){
 				$("#tbl_order").bootstrapTable("refresh", {url: getProjectName() + "/order/loadorder.do", cache: false});
         	}, getProjectName() + "/templaters/订单.xlsx");
 			oImportModal.createModal();  
 		});
-		
+		/* 点击导出按钮弹出导出结果 */
 		$("#btn_export").click(function(){
 			var orderType = $("#modaldatepicker input[name=orderType]:checked");
         	var orderState  = $("#modaldatepicker input[name=orderState]:checked");
@@ -3943,10 +3595,278 @@ var App = function () {
         	}
         	if (orderStateValues.length == 1){
         		condition_orderState = orderStateValues[0];
-        	}
-        	
+        	}        	
 			window.open(getProjectName() + "/order/exportorder.do?state="+condition_orderState+"&orderType="+condition_orderType+"&condition="+$("input[name=condition]").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()); 
 		});
+		
+		/**
+		 * 订单查看页面（同时在页面上点击编辑按钮可以编辑订单信息）
+		 * 订单查看页面在编辑状态下将会出现保存和取消操作区域，以及订单基本信息的文本框和订单项操作列
+		 * 点击vgoback连接后将关闭详情页面并将页面处于查看状态，回到订单列表页面
+		 */
+		$('a.vgoback').click(function(){
+			$("#orderList").slideToggle();
+			$("#orderView").slideToggle();
+			
+			$('#tbl_view_orderItems').bootstrapTable('hideColumn', 'operation');
+			$('#orderInfoView').show();
+			$('#orderUpdateForm').hide();
+			$('#form_footer').hide();
+		});
+		/* 订单详情页面的订单项列表 */
+		var orderItems = [];
+		$("#tbl_view_orderItems").bootstrapTable({
+			data: orderItems,
+			cache: false,
+			columns: [
+			{field: 'pdtNo',title: '货号' }, 
+			{field: 'pdtName',title: '品名'}, 
+			{field: 'content',title: '含量'}, 
+			{field: 'priceRMB',title: '￥单价'}, 
+			{field: 'priceDollar',title: '$单价'}, 
+			{field: 'quantity',title: '数量'}, 
+			/*{field: 'totlmentRMB',title: '￥合计'},
+			{field: 'totlmentDollar',title: '$合计'},*/
+			{field: 'operation', title: '操作', formatter: function (value, row, index) {
+                return '<a id="tbl_opt_add" href="javascript:;"><i class="fa fa-plus"></i></a> '+
+                	   '<a id="tbl_opt_update" dataid="'+index+'" href="javascript:;"><i class="fa fa-edit"></i></a>';
+            }}
+		]});		
+		$('#tbl_view_orderItems').bootstrapTable('hideColumn', 'operation');
+		/*点击edit链接订单信息处于可编辑状态*/
+		$('a.editOrder').click(function(){
+			$('#tbl_view_orderItems').bootstrapTable('showColumn', 'operation');
+			$('#orderInfoView').hide();
+			$('#orderUpdateForm').show();
+			$('#form_footer').show();
+		});
+		/*订单页面处于可编辑状态时点击取消按钮，页面回到查看状态*/
+		$("#btn_update_cancel").click(function(){
+			$('#tbl_view_orderItems').bootstrapTable('hideColumn', 'operation');
+			$('#orderInfoView').show();
+			$('#orderUpdateForm').hide();
+			$('#form_footer').hide();
+		});
+		$('#tbl_view_orderItems').on('click', '#tbl_opt_add', function(){
+			$("#orderitemform").children("#sourceForm").val("#orderUpdateForm");
+			$("#orderitemform").children("#sourceTable").val("#tbl_view_orderItems");
+			$("#modalorderitem").modal('show');
+		});
+		/* 保存修改好的订单信息 */
+		$('#tbl_view_orderItems').on('click', '#tbl_opt_update', function(){
+			var index = $(this).attr("dataid");
+			var items = $('#orderUpdateForm input[name=orderDetails]').val();
+			items = JSON.parse(items);
+			var fillForm = new FillForm();
+			fillForm.fillByData("#orderitemform" , items[index], 1);
+			
+			$("#orderitemform").children("#sourceForm").val("#orderUpdateForm");
+			$("#orderitemform").children("#sourceTable").val("#tbl_view_orderItems");
+			$("#modalorderitem").modal('show');			
+		});
+		$("#btn_update_order").click(function(){
+			var bv = $("#orderUpdateForm").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				if($("#orderUpdateForm input[name=orderDetails]").val() == "[]"){
+					alert("必须包含订单项！");
+					return false;
+				}
+				$("#orderUpdateForm").ajaxSubmit({
+					url: getProjectName()+"/order/save.do",
+					success: function(){
+						window.location.reload();
+					}
+				});
+			}
+		})
+				
+		/**
+		 * 订单新增页面，向导式（分为三步：订单基本信息、订单项信息、确认）输入订单信息。
+		 * 订单新增页面和订单详情页面的展示和回退类似，点击ngoback链接将回到订单列表页面
+		 */
+		$('a.ngoback').click(function(){
+			$("#orderList").slideToggle();
+			$("#orderNew").slideToggle();
+		});
+		
+		/**步骤二页面已添加表单项为主**/
+		$("#tbl_new_orderitem").bootstrapTable({columns: [
+			{field: 'pdtNo',title: '货号'}, 
+			{field: 'pdtName',title: '品名'}, 
+			{field: 'content',title: '含量'}, 
+			{field: 'priceRMB',title: '￥单价'}, 
+			{field: 'priceDollar',title: '$单价'}, 
+			{field: 'quantity',title: '数量'}, 
+			/*{field: 'totlmentRMB',title: '￥合计'}, 
+			{field: 'totlmentDollar',title: '$合计'},*/
+			{field: '', title: '操作', formatter: function(value,row,index){
+				return '<a href="javascript:;" onclick="deleteOrderItem(\'#formOrder\', \'#tbl_new_orderitem\', ' + index + ')"><i class="fa fa-cut (alias)"></a>';
+			}}]});
+		/* 新增订单步骤二中添加表单项 */
+		$("#btn_add_orderItem").click(function(){
+			$("#orderitemform").children("#sourceForm").val("#formOrder");
+			$("#orderitemform").children("#sourceTable").val("#tbl_new_orderitem");
+			$("#modalorderitem").modal('show');
+		});
+		$.getJSON(getProjectName() + "/cust/loadallcust.do", function (data){
+			$("#relcust").append("<option value=''></option>");
+			$.each(data, function(index, obj){
+				$("#relcust").append("<option value='"+obj.name+"'>"+ obj.name + "</option>");
+			});
+			$("#relcust").select2({
+			    placeholder: "关联客户",
+			    allowClear: true
+			});
+		});
+		/* 表单基本信息验证 */
+		$("#formOrder, #orderUpdateForm").bootstrapValidator({
+			fields: {
+				identify : {validators: {notEmpty : {}}},
+				orderDate : {validators: {notEmpty : {}}},
+				custName: {validators: {notEmpty : {}}}
+	        }
+		});
+		$("#btn_save_order").click(function(){
+			var bv = $("#formOrder").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				$("#formOrder").ajaxSubmit({
+					url: getProjectName()+"/order/save.do",
+					success: function(){
+						window.location.reload(true);
+					}
+				});
+			}
+		})
+		
+		/**
+		 * 订单项编辑模态窗口，该窗口分别为订单编辑页面和订单新增页面引用
+		 */
+		$('#modalorderitem').on("show.bs.modal", function(){
+			var srcForm = $("#sourceForm").val();
+			var orderType = $(srcForm + ' select[name=orderType]').val();
+			
+			if (orderType == '海外订单'){
+				$("#orderitemform #priceDollarField").show();
+				$("#orderitemform #totlmentDollarField").show();
+				$("#orderitemform #priceRMBField").hide();
+				$("#orderitemform #totlmentRMBField").hide();
+			}
+			
+			if (orderType == '国内订单'){
+				$("#orderitemform #priceDollarField").hide();
+				$("#orderitemform #totlmentDollarField").hide();
+				$("#orderitemform #priceRMBField").show();
+				$("#orderitemform #totlmentRMBField").show();
+			}
+			
+		});
+		$('#modalorderitem').on("hide.bs.modal", function(){
+			removeFormData($("#orderitemform"));
+		});
+		/* 订单项编辑页面的产品关联 */
+		$.getJSON(getProjectName() + "/pdt/loadallpdt.do", function (data){
+			$("#relpdt").append("<option value=''></option>");
+			$.each(data, function(index, obj){
+				$("#relpdt").append("<option value='"+obj.code+"'>"+ obj.code + "-" + obj.name + "-" + obj.specification +"</option>");
+			});
+			$("#relpdt").select2({
+			    placeholder: "关联产品",
+			    allowClear: true
+			});
+		});
+		$("#relpdt").change(function(){
+			var pdtno = $(this).val();
+			if (pdtno == ''){
+				$("input[name=pdtName]").val('');
+				$("input[name=content]").val('');
+			}else{
+				$.getJSON(getProjectName() + "/pdt/findbycode.do?code="+pdtno, function (pdt){					
+					$("input[name=pdtName]").val(pdt.name);
+					$("input[name=pdtName]").change();
+					$("input[name=content]").val(pdt.specification);
+					$("input[name=content]").change();
+				});
+			}
+		});
+		/*计算国内订单项金额
+		$("input[name=priceRMB],input[name=quantity]").change(function(){
+			if ($("input[name=priceRMB]").val()!="" && $("input[name=quantity]").val()!=""){
+				$("input[name=totlmentRMB]").val(parseInt($("input[name=quantity]").val()) * parseFloat($("input[name=priceRMB]").val()));
+			}
+		});
+		计算海外订单项金额，并将美元转换为人民币
+		$("input[name=priceDollar],input[name=quantity]").change(function(){
+			if ($("input[name=priceDollar]").val()!="" && $("input[name=quantity]").val()!=""){
+				var totlmentDollar = parseInt($("input[name=quantity]").val()) * parseFloat($("input[name=priceDollar]").val());
+				$("input[name=totlmentDollar]").val(totlmentDollar);
+				var srcForm = $("#sourceForm").val();
+				var orderType = $(srcForm).find("select[name=orderType]").val();
+				var exchangeRate = $(srcForm).find("input[name=exchangeRate]").val();
+				
+				if (orderType == '海外订单' && exchangeRate != ''){
+					$("input[name=totlmentRMB]").val(totlmentDollar*exchangeRate);
+					var priceRMB = parseFloat($("input[name=priceDollar]").val())*exchangeRate;
+					$("input[name=priceRMB]").val(priceRMB);
+				}
+			}
+		});*/
+		/*表单校验*/
+		$("#orderitemform").bootstrapValidator({
+			fields: {
+				pdtNo : {validators: {notEmpty : {}}},
+				pdtName : {trigger: "change", validators: {notEmpty : {}}},
+				content: {trigger: "change", validators: {notEmpty : {}}},
+				priceRMB: {validators: {notEmpty : {}, numeric : {}}},
+				priceDollar: {validators: {notEmpty : {}, numeric : {}}},
+				quantity: {validators: {notEmpty : {}, integer : {}}}
+	        }
+		});
+		/*保存表单项信息，表单项在保存到数据库之前是暂存在页面的*/
+		$("#btn_save_orderitem").click(function(){
+			var tableId = $("#sourceTable").val();
+			var formId = $("#sourceForm").val();
+			saveOrderItemInLocal($(tableId), $(formId));			
+		});
+		var saveOrderItemInLocal = function(table, form){
+			var bv = $("#orderitemform").data('bootstrapValidator');
+	        bv.validate();
+			if(bv.isValid()){
+				var orderitem = getJSONObjByForm($("#orderitemform"));
+				var orderitems = form.find("input[name=orderDetails]").val();//table.attr("data-data");
+				var oorderitems = JSON.parse(orderitems);
+				
+				if (orderitem.id != ""){
+					$.each(oorderitems, function(index, item){
+						if (orderitem.id == item.id){
+							oorderitems[index] = orderitem;
+							return false;
+						}
+					})
+				}else{
+					oorderitems[oorderitems.length] = orderitem;
+				}
+				
+				var detail = fillNumWhenEmpty(["priceRMB", "priceDollar", "totlmentRMB", "totlmentDollar", "inStorageQuantity", "deliverQuantity"], JSON.stringify(oorderitems));
+				form.find("input[name=orderDetails]").val(detail);
+				table.bootstrapTable("refreshOptions", {data: JSON.parse(detail)});
+				
+				var totlmentRMB = 0;
+				var totlmentDollar = 0;
+				$.each(oorderitems, function(index, item){
+					if (item.totlmentRMB != '')
+					totlmentRMB += parseFloat(item.totlmentRMB);
+					if (item.totlmentDollar != '')
+					totlmentDollar += parseFloat(item.totlmentDollar);
+				});				
+				
+				form.find("input[name=amountRMB]").val(totlmentRMB);
+				form.find("input[name=amountDollar]").val(totlmentDollar);
+				
+				$('#modalorderitem').modal('hide');
+			}
+		}
 	}
 	
 	
@@ -5989,7 +5909,7 @@ var App = function () {
 		});
 		
 		$("#btn_save_user").click(function(){
-			var bv = $("#customerForm").data('bootstrapValidator');
+			var bv = $("#userForm").data('bootstrapValidator');
 	        bv.validate();
 			if(bv.isValid()){
 				$("#userForm").ajaxSubmit({

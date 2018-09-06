@@ -28,10 +28,15 @@ import com.douniu.imshh.finance.order.domain.OrderAndDetail;
 import com.douniu.imshh.finance.order.domain.OrderDetail;
 import com.douniu.imshh.finance.order.service.IOrderDetailService;
 import com.douniu.imshh.finance.order.service.IOrderService;
+import com.douniu.imshh.sys.domain.Role;
+import com.douniu.imshh.sys.domain.User;
+import com.douniu.imshh.sys.service.IRoleService;
 import com.douniu.imshh.utils.DateUtil;
 import com.douniu.imshh.utils.ExcelBean;
 import com.douniu.imshh.utils.ExcelUtil;
 import com.douniu.imshh.utils.POIExcelAdapter;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -65,20 +70,21 @@ public class OrderAction {
 	private IOrderService service;
 	@Autowired
 	private IOrderDetailService detailService;
+	@Autowired
+	private IRoleService roleService;
 	
 	/**
 	 * 查询订单，需要根据订单号、状态、日期、客户查询订单
 	 */
 	@RequestMapping(value ="/loadorder", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String queryOrder(Order condition){
+	public String queryOrder(HttpSession session, Order condition){
 		List<Order> res = service.query(condition);
 		int count = service.count(condition);
 		PageResult pr = new PageResult();
 		pr.setTotal(count);
 		pr.setRows(res);
-		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		return gson.toJson(pr);
+		return getResultByRole(session, pr);
 	}
 	
 	/**
@@ -86,34 +92,30 @@ public class OrderAction {
 	 */
 	@RequestMapping(value ="/loadallorder", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String queryAllOrder(Order condition){
+	public String queryAllOrder(HttpSession session,Order condition){
 		List<Order> res = service.queryNoPage(condition);
-		Gson gson = new Gson();
-		return gson.toJson(res);
+		return getResultByRole(session, res);
 	}
 	
 	@RequestMapping(value="/findById", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String editOrder(String id){
+	public String editOrder(HttpSession session, String id){
 		Order order = service.getById(id);
-		Gson gson = new Gson();
-        return gson.toJson(order);
+		return getResultByRole(session, order);
 	}
 	
 	@RequestMapping(value="/findbyidentify", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String findByIdentify(String identify){
+	public String findByIdentify(HttpSession session, String identify){
 		Order order = service.getByNo(identify);
-		Gson gson = new Gson();
-        return gson.toJson(order);
+		return getResultByRole(session, order);
 	}
 	
 	@RequestMapping(value="/finddetailbyid", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String findDetailById(String id){
+	public String findDetailById(HttpSession session, String id){
 		OrderDetail detail = detailService.findById(id);
-		Gson gson = new Gson();
-        return gson.toJson(detail);
+		return getResultByRole(session, detail);
 	}
 	
 	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
@@ -153,7 +155,10 @@ public class OrderAction {
     @RequestMapping(value = "exportorder", method = RequestMethod.GET)  
     @ResponseBody  
     public void downloadExcel(HttpServletRequest request,HttpServletResponse response,HttpSession session){  
-        response.reset();  
+        if (!userIsAdmin(session)){
+        	return;
+        }
+    	response.reset();  
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");  
         String dateStr = sdf.format(new Date());  
          
@@ -168,8 +173,6 @@ public class OrderAction {
         	String condition = request.getParameter("condition");
         	String identify = request.getParameter("identify");
         	String custName = request.getParameter("custName");
-        	String state = request.getParameter("state");
-        	String orderType = request.getParameter("orderType");
         	Date startDate = DateUtil.string2Date(request.getParameter("startDate"));
         	Date endDate = DateUtil.string2Date(request.getParameter("endDate"));
         	
@@ -177,8 +180,6 @@ public class OrderAction {
         	order.setCondition(condition);
         	order.setIdentify(identify);
         	order.setCustName(custName);
-        	order.setState(state);
-        	order.setOrderType(orderType);
         	order.setStartDate(startDate);
         	order.setEndDate(endDate);
         	
@@ -200,4 +201,42 @@ public class OrderAction {
             e.printStackTrace();  
         }  
     } 
+    
+    private boolean userIsAdmin(HttpSession session){
+    	boolean isAdmin = false;
+		Object oUser = session.getAttribute("user");
+		User user = (User)oUser;
+		List<Role> roles = roleService.queryByUser(user.getId());
+		for (Role role : roles){
+			if (role.getAdmin() == 1){
+				isAdmin = true;
+				break;
+			}
+		}
+		return isAdmin;
+    }
+    
+    private String getResultByRole(HttpSession session, Object src){    	
+		Gson gson = null;
+		if (userIsAdmin(session)){
+			gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		}else{
+			gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").setExclusionStrategies(new ExclusionStrategy() {
+				
+				@Override
+				public boolean shouldSkipField(FieldAttributes f) {
+					return f.getName().equals("amountRMB")|
+							f.getName().equals("amountDollar")|
+							f.getName().equals("totlmentRMB")|
+							f.getName().equals("totlmentDollar");
+				}
+				
+				@Override
+				public boolean shouldSkipClass(Class<?> c) {
+					return false;
+				}
+			}).create();
+		}
+		return gson.toJson(src);
+    }
 }

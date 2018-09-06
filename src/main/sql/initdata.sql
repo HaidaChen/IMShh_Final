@@ -28,7 +28,7 @@ INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0404', '原材料信�
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('05', '系统管理', '0', '', 'fa fa-cog');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0501', '用户管理', '05', 'user.html', '');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0502', '角色管理', '05', 'role.html', '');
-INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0503', '日志查询', '05', 'operation_log.html', '');
+/*INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0503', '日志查询', '05', 'operation_log.html', '');*/
 
      
 TRUNCATE TABLE T_AUTHORITY;
@@ -53,7 +53,7 @@ INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES (
 INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('05', '系统管理', '0', '', '', '');
 INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0501', '用户管理', '05', 'user/loaduser.do,user/loadRoses.do,user/save.do,user/edit.do,user/delete.do', '', '拥有用户管理权限，可以查看，新增，修改和删除用户信息，并为其分配角色');
 INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0502', '角色管理', '05', 'role/getAllRoles.do,role/allAuthority.do,role/saveAuthority.do,role/saveRole.do,role/delete.do', '', '拥有角色管理权限，可以查看，新增，修改和删除角色信息，并为其分配权限');
-INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0503', '日志查询', '05', '', '', '');
+/*INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0503', '日志查询', '05', '', '', '');*/
 
 TRUNCATE TABLE T_ROLE;
 insert into T_ROLE(id, name, remark, status, modifyDate)
@@ -72,7 +72,7 @@ TRUNCATE TABLE t_role_authority;
 INSERT INTO `t_role_authority` VALUES ('01', '05');
 INSERT INTO `t_role_authority` VALUES ('01', '0501');
 INSERT INTO `t_role_authority` VALUES ('01', '0502');
-INSERT INTO `t_role_authority` VALUES ('01', '0503');
+/*INSERT INTO `t_role_authority` VALUES ('01', '0503');*/
 INSERT INTO `t_role_authority` VALUES ('02', '01');
 INSERT INTO `t_role_authority` VALUES ('02', '0101');
 INSERT INTO `t_role_authority` VALUES ('02', '0102');

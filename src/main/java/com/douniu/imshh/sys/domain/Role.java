@@ -5,6 +5,7 @@ import java.util.List;
 public class Role {
 	private String id;
 	private String name;
+	private int admin;
 	private List<Authority> authorities;
 
 	private String status;
@@ -39,6 +40,12 @@ public class Role {
 	}
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+	public int getAdmin() {
+		return admin;
+	}
+	public void setAdmin(int admin) {
+		this.admin = admin;
 	}
 	
 	

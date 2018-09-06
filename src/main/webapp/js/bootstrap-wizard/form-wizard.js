@@ -25,9 +25,7 @@ var FormWizard = function () {
     			{field: 'content',title: '含量'}, 
     			{field: 'priceRMB',title: '￥单价'}, 
     			{field: 'priceDollar',title: '$单价'}, 
-    			{field: 'quantity',title: '数量'}, 
-    			{field: 'totlmentRMB',title: '￥合计'},
-    			{field: 'totlmentDollar',title: '$合计'}]});
+    			{field: 'quantity',title: '数量'}]});
             
             
 			/*-----------------------------------------------------------------------------------*/
@@ -97,7 +95,7 @@ var FormWizard = function () {
                     		alert_error.children("#alter_error").html("请按照提示，正确的填写订单信息！");
                     		alert_error.hide();
                     		
-                    		var amountDollar = $('#formOrder').find("input[name=amountDollar]").val();
+                    		/*var amountDollar = $('#formOrder').find("input[name=amountDollar]").val();
                     		var exchangeRate = $('#formOrder').find("input[name=exchangeRate]").val();
                     		
                     		if (amountDollar!="" && exchangeRate !=""){
@@ -107,7 +105,7 @@ var FormWizard = function () {
                     				$('#formOrder').find("p[data-display=amountRMB]").html(amountRMB);
                                 });
                     		}
-                    		
+                    		*/
                     		var fillForm = new FillForm();
                         	fillForm.exchange($("#tab_orderInfo"), $("#tab_confirm"), "p", "data-display");
                         	

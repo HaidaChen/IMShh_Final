@@ -64,19 +64,13 @@
           and (identify like #{condition}
             or custName like #{condition})
         </if> 
-        <if test="orderType != null and orderType !=''">
-          and orderType = #{orderType}
-        </if> 
-        <if test="state != null and state !=''">
-          and state = #{state}
-        </if>       
         <if test="startDate != null">
           and orderDate &gt;= #{startDate}
         </if>
         <if test="endDate != null">
           and orderDate &lt;= #{endDate}
         </if>
-          order by modifydate desc
+          order by orderDate desc
           limit #{pageOffset},#{pageSize}
     </select> 
     <select id="queryNoPage" parameterType="Order" resultMap="ordermap">
@@ -97,7 +91,7 @@
         <if test="endDate != null">
           and orderDate &lt;= #{endDate}
         </if>
-          order by modifydate desc
+          order by orderDate desc
     </select> 
     <select id="queryOrderAndDetail" parameterType="Order" resultMap="orderdtlmap">
         <!-- select t_order.id, identify, custName, orderDate, amount, t_Order.remark, orderId, t_orderdetail.id as detailid, pdtno,content,pdtName, quantity,priceRMB,priceDollar,totlemnt,t_orderdetail.remark as detailremark  from t_Order, t_orderdetail where t_Order.id = t_orderdetail.orderid and t_Order.status = 1 -->
@@ -118,7 +112,7 @@
         <if test="endDate != null">
           and orderDate &lt;= #{endDate}
         </if>
-          order by t_order.modifydate desc
+          order by t_order.orderDate desc
     </select>
     <select id="count" parameterType="Order" resultType="int">
         select count(1) from t_Order where status = 1

@@ -13,8 +13,10 @@ public class Order extends BaseQO {
 	private Date orderDate;  /*订单生成日期*/
 	private Date deliveryTerm; /*交货日期*/
 	private Float exchangeRate; /*约定汇率*/
+	
 	private Float amountRMB;    /*订单总金额*/
 	private Float amountDollar;    /*订单总金额*/
+	
 	private float paid;
 	private String state = "1";   /*订单状态*/
 	private List<OrderDetail> details;  /*订单明细*/	

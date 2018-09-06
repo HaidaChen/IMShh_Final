@@ -260,14 +260,14 @@ CREATE TABLE T_USER(
 	modifyDate datetime
 );
 
-CREATE TABLE T_ROLE(
-	id varchar(20) not null,
-	name varchar(60) not null,
-	remark varchar(1024),
-	
-	status char(1),
-	modifyDate datetime
-);
+DROP TABLE IF EXISTS `t_role`;
+CREATE TABLE `t_role` (
+  `id` varchar(20) NOT NULL,
+  `name` varchar(60) NOT NULL,
+  `admin` int(11) NOT NULL DEFAULT '0',
+  `remark` varchar(1024) DEFAULT NULL,
+  `status` char(1) DEFAULT NULL,
+  `modifyDate` datetime);
 
 CREATE TABLE T_AUTHORITY(
 	id varchar(20) not null,
