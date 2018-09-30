@@ -3974,13 +3974,15 @@ var App = function () {
 					$("input[name=specification2]").val(data["specification2"]);
 					$("input[name=specification3]").val(data["specification3"]);
 					$("input[name=formula]").val(data["formula"]);
-					$("#calculation").html(data["formula"]);					
+					$("#calculation").html(data["formula"]);	
+					$("input[name=unit]").val(data["unit"]);
 				}else{
 					$("input[name=specification1]").val("");
 					$("input[name=specification2]").val("");
 					$("input[name=specification3]").val("");
 					$("input[name=formula]").val("");
 					$("#calculation").html("");
+					$("input[name=unit]").val("");
 				}
 				
 				if ($("input[name=formula]").val() != ''){
@@ -3999,7 +4001,7 @@ var App = function () {
 				receiptDate : {validators: {notEmpty : {}}},
 				supplierName : {validators: {notEmpty : {}}},
 				materialName : {validators: {notEmpty : {}}},
-				amount : {validators: {notEmpty : {}, integer:{}}},
+				amount : {validators: {notEmpty : {}, numeric:{}}},
 				unitPrice : {validators: {notEmpty : {}, numeric:{}}}
 	        }
 		});
@@ -5934,11 +5936,20 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initRoleModule = function(){
 		var rolelist = $("#select_role");
+		var appendRole = function(role){
+			if (role.admin == '1'){
+				rolelist.append("<option value='" + role.id + "' remark='"+ role.remark +"'>" + role.name + " (管理员)</option>");
+				
+			}else{
+				rolelist.append("<option value='" + role.id + "' remark='"+ role.remark +"'>" + role.name + "</option>");
+			}		
+		}
+		
 		$.ajax({
 			url: getProjectName()+"/role/getAllRoles.do",
 			success: function(data){
 				$.each(data, function(index, role) {
-					rolelist.append("<option value='" + role.id + "' remark='"+ role.remark +"'>" + role.name + "</option>");
+					appendRole(role);			
 				});
 			}
 		});
@@ -5947,9 +5958,12 @@ var App = function () {
 			$("#formRole").ajaxSubmit({
 				url: getProjectName()+"/role/saveRole.do",
 				success: function(role){
-					rolelist.append("<option value='" + role.id + "' remark='"+ role.remark +"'>" + role.name + "</option>");
+					appendRole(role);
 					$("#roleEditModal").modal('hide');
-				}
+				},
+			    error: function(i, e, o){
+			    	alert(e);
+			    }
 			});      
 		});
 		

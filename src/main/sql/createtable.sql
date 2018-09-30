@@ -101,7 +101,7 @@ CREATE TABLE T_MATERIALIN(
     formula varchar(256),
     unit varchar(20),
     meterage numeric(12,4),
-    amount int not null,    
+    amount numeric(10,3) not null,    
     unitPrice numeric(10,2),
     totlemnt numeric(10,2),
     
@@ -120,8 +120,8 @@ CREATE TABLE T_MATERIALOUT(
     specification1 varchar(20),
     specification2 varchar(20),
     specification3 varchar(20),    
-    outAmount int not null,    
-    returnAmount int,
+    outAmount numeric(10,3) not null,    
+    returnAmount numeric(10,3),
     
     modifyDate datetime,
     remark varchar(1024),

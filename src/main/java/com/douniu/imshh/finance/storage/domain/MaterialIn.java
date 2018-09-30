@@ -20,7 +20,7 @@ public class MaterialIn extends BaseQO{
 	private String unit;                /*计量单位*/
 	private float meterage = 1;         /*计量数*/
 	private float unitPrice;            /*单价*/	
-	private int amount;                 /*交付数量*/
+	private float amount;                 /*交付数量*/
 	private float totlemnt;             /*合计*/	
 	
 	private String remark;
@@ -97,10 +97,10 @@ public class MaterialIn extends BaseQO{
 	public void setUnitPrice(float unitPrice) {
 		this.unitPrice = unitPrice;
 	}
-	public int getAmount() {
+	public float getAmount() {
 		return amount;
 	}
-	public void setAmount(int amount) {
+	public void setAmount(float amount) {
 		this.amount = amount;
 	}
 	public float getTotlemnt() {

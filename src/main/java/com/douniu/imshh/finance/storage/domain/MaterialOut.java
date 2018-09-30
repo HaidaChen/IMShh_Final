@@ -15,8 +15,8 @@ public class MaterialOut extends BaseQO{
 	private String specification1;      /*规格1*/
 	private String specification2;      /*规格2*/
 	private String specification3;      /*规格3*/
-	private int outAmount;              /*出库数量*/
-	private int returnAmount;           /*退回数量*/
+	private float outAmount;              /*出库数量*/
+	private float returnAmount;           /*退回数量*/
 	
 	private String remark;
 	private int status = 1;
@@ -57,16 +57,16 @@ public class MaterialOut extends BaseQO{
 		this.specification3 = specification3;
 	}
 	
-	public int getOutAmount() {
+	public float getOutAmount() {
 		return outAmount;
 	}
-	public void setOutAmount(int outAmount) {
+	public void setOutAmount(float outAmount) {
 		this.outAmount = outAmount;
 	}
-	public int getReturnAmount() {
+	public float getReturnAmount() {
 		return returnAmount;
 	}
-	public void setReturnAmount(int returnAmount) {
+	public void setReturnAmount(float returnAmount) {
 		this.returnAmount = returnAmount;
 	}
 	public String getRemark() {

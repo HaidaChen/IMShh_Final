@@ -56,10 +56,10 @@ INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES (
 /*INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0503', '日志查询', '05', '', '', '');*/
 
 TRUNCATE TABLE T_ROLE;
-insert into T_ROLE(id, name, remark, status, modifyDate)
-     values('01', '系统管理员', '系统管理员角色，主要职责是管理系统用户和对用户设置角色，为角色分配权限', '1', sysdate());
-insert into T_ROLE(id, name, remark, status, modifyDate)
-     values('02', '业务管理员', '业务管理员角色，是整个系统业务功能模块的管理员，能够访问系统的所有业务模块（不包含系统管理模块）', '1', sysdate());
+insert into T_ROLE(id, name, admin, remark, status, modifyDate)
+     values('01', '系统管理员', 0, '系统管理员角色，主要职责是管理系统用户和对用户设置角色，为角色分配权限', '1', sysdate());
+insert into T_ROLE(id, name, admin, remark, status, modifyDate)
+     values('02', '业务管理员', 1, '业务管理员角色，是整个系统业务功能模块的管理员，能够访问系统的所有业务模块（不包含系统管理模块）', '1', sysdate());
 
 TRUNCATE TABLE t_user_role;
 INSERT INTO `t_user_role` VALUES ('02', '01');

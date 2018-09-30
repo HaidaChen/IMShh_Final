@@ -209,6 +209,8 @@ xsi:schemaLocation="
          <property name="url" value="jdbc:mysql://localhost:3306/imshh?characterEncoding=utf8"/> 
          <property name="username" value="imshh"/> 
          <property name="password" value="imshh"/> 
+         <property name="validationQuery" value="SELECT 1" />
+    	 <property name="testOnBorrow" value="true"/>
      </bean> 
       
      <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> 

@@ -54,8 +54,12 @@ public class ExcelUtil {
                 
                 List<Object> rowData = new ArrayList<Object>();
                 
-                Row row = sheet.getRow(i);      
-                if (getCellValue(row.getCell(merge)).toString().equals("")){
+                Row row = sheet.getRow(i);
+                
+                if (null == row || null == row.getCell(merge))
+                	continue;
+                Object cellValue = getCellValue(row.getCell(merge));
+                if (null == cellValue || cellValue.toString().equals("")){
                 	continue;
                 }
                 	

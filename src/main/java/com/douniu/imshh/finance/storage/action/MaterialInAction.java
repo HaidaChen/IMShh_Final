@@ -37,7 +37,7 @@ import com.google.gson.GsonBuilder;
 public class MaterialInAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{
-		mapper.add(new ExcelBean("接收日期","receiveDate",0));  
+		mapper.add(new ExcelBean("接收日期","receiveDate",0));
 		mapper.add(new ExcelBean("供应商","supplierName",0));   
 		mapper.add(new ExcelBean("品名","materialName",0));  
 		mapper.add(new ExcelBean("规格1","specification1",0));  
