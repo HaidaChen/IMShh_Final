@@ -41,7 +41,8 @@ CREATE TABLE T_Product(
 
 CREATE TABLE T_MATERIAL(
     id varchar(20) not null,
-    name varchar(20) not null,
+    name varchar(64) not null,
+    supplierName varchar(64),
     specification1 varchar(64),
     specification2 varchar(64),
     specification3 varchar(64),

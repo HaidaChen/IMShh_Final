@@ -5,6 +5,7 @@ import com.douniu.imshh.common.BaseQO;
 public class Material extends BaseQO{
 	private String id;
 	private String name;
+	private String supplierName;
 	private String unit;
 	private String specification1;
 	private String specification2;
@@ -66,10 +67,17 @@ public class Material extends BaseQO{
 	public void setStatus(int status) {
 		this.status = status;
 	}
+	public String getSupplierName() {
+		return supplierName;
+	}
+	public void setSupplierName(String supplierName) {
+		this.supplierName = supplierName;
+	}
 	@Override
 	public String toString() {
-		return "Material [id=" + id + ", name=" + name + ", unit=" + unit + ", specification1=" + specification1
-				+ ", specification2=" + specification2 + ", specification3=" + specification3 + ", formula=" + formula
-				+ ", remark=" + remark + ", status=" + status + "]";
-	}	
+		return "Material [id=" + id + ", name=" + name + ", supplierName=" + supplierName + ", unit=" + unit
+				+ ", specification1=" + specification1 + ", specification2=" + specification2 + ", specification3="
+				+ specification3 + ", formula=" + formula + ", remark=" + remark + ", status=" + status + "]";
+	}
+	
 }

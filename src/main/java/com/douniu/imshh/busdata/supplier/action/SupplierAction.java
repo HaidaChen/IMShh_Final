@@ -78,6 +78,15 @@ public class SupplierAction {
         return gson.toJson(pr);
 	}
 	
+	@RequestMapping(value ="/loadallsupp", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String loadAllSupplier(Supplier supp){
+		List<Supplier> res = service.queryNoPage(supp);
+		
+		Gson gson = new Gson();
+        return gson.toJson(res);
+	}
+	
 	@RequestMapping("/delete")
 	@ResponseBody
 	public void delete(String id){

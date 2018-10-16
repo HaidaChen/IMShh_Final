@@ -5707,6 +5707,9 @@ var App = function () {
 			pagination: true,
 			sidePagination: "server", 
 			columns: [{
+                field: 'supplierName',
+                title: '供应商'
+            }, {
                 field: 'name',
                 title: '品名'
             }, {
@@ -5750,6 +5753,18 @@ var App = function () {
             }
 		});
 		
+		$.getJSON(getProjectName() + "/supp/loadallsupp.do", function (data){
+			$("#relsupplier").append("<option></option>");
+			$.each(data, function(index, obj){
+				
+				$("#relsupplier").append("<option id='"+obj.id+"' value='"+obj.name+"'>"+ obj.name +"</option>");
+			});
+			$("#relsupplier").select2({
+			    placeholder: "关联供应商",
+			    allowClear: true
+			});
+		});
+		
 		$("input[name=condition]").change(function(){
 			$("#tbl_material").bootstrapTable("refresh", {url: getProjectName() + "/mtl/loadmtl.do", cache: false});
 		});
@@ -5757,7 +5772,8 @@ var App = function () {
 		
 		$("#materialForm").bootstrapValidator({
 			fields: {
-				name : {validators: {notEmpty : {}}}
+				name : {validators: {notEmpty : {}}},
+				supplierName : {validators: {notEmpty : {}}}
 	        }
 		});
 		

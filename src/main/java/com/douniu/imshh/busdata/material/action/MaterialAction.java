@@ -35,6 +35,7 @@ import com.google.gson.Gson;
 public class MaterialAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{
+		mapper.add(new ExcelBean("供应商","supplierName",0));
 		mapper.add(new ExcelBean("品名","name",0));  
 		mapper.add(new ExcelBean("规格1","specification1",0)); 
 		mapper.add(new ExcelBean("规格2","specification2",0)); 
