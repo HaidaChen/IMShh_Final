@@ -30,8 +30,7 @@ import com.douniu.imshh.utils.ExcelUtil;
 import com.douniu.imshh.utils.POIExcelAdapter;
 import com.google.gson.Gson;
 
-@Controller
-@RequestMapping("/mtl")
+
 public class MaterialAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{

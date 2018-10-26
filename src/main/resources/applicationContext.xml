@@ -13,6 +13,31 @@ xsi:schemaLocation="
        http://www.springframework.org/schema/context/spring-context-3.0.xsd
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+      <bean name="materialService" class="com.douniu.imshh.material.service.impl.MaterialService">
+          <property name="dao" ref="materialDao"></property>
+          <property name="supplierService" ref="materialSupplierService"></property>
+      </bean>
+      <bean id="materialDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.material.dao.IMaterialDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+                                                  
+      <bean name="materialSupplierService" class="com.douniu.imshh.material.service.impl.HistorySupplierSerivce">
+          <property name="dao" ref="materialSupplierDao"></property>
+          <property name="priceService" ref="materialPriceService"></property>
+      </bean>
+      <bean id="materialSupplierDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.material.dao.IHistorySupplierDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="materialPriceService" class="com.douniu.imshh.material.service.impl.HistoryPriceService">
+          <property name="dao" ref="materialPriceDao"></property>
+      </bean>
+      <bean id="materialPriceDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.material.dao.IHistoryPriceDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
       
       <bean name="customerService" class="com.douniu.imshh.busdata.customer.service.impl.CustomerService">
           <property name="dao" ref="customerDao"></property>
@@ -38,13 +63,7 @@ xsi:schemaLocation="
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       
-      <bean name="materialService" class="com.douniu.imshh.busdata.material.service.impl.MaterialService">
-          <property name="dao" ref="materialDao"></property>
-      </bean>
-      <bean id="materialDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.busdata.material.dao.IMaterialDao"/>
-          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean>
+      
       
       <bean name="orderService" class="com.douniu.imshh.finance.order.service.impl.OrderService">
           <property name="dao" ref="orderDao"></property>

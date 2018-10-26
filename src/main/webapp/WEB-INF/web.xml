@@ -45,7 +45,7 @@
      <url-pattern>/*</url-pattern>  
    </filter-mapping>
    
-   <filter>
+   <!-- <filter>
    	 <filter-name>authorizationFilter</filter-name>
    	 <filter-class>com.douniu.imshh.sys.action.AuthorizationFilter</filter-class>
    	 <init-param>
@@ -64,5 +64,5 @@
    <filter-mapping>  
      <filter-name>authorizationFilter</filter-name>  
      <url-pattern>/*</url-pattern>  
-   </filter-mapping>
+   </filter-mapping> -->
 </web-app>

@@ -1,3 +1,72 @@
+CREATE TABLE TBL_MATERIAL(
+    id varchar(20) not null,
+    name varchar(64) not null,
+    specification1 varchar(64),
+    specification2 varchar(64),
+    specification3 varchar(64),
+    unit varchar(20),
+    formula varchar(256),
+    category varchar(20), 
+    
+    remark varchar(1024),
+    status char(1),
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_MATERIAL_SUPPLIER(
+    id varchar(20) not null,
+    materialId varchar(20) not null,
+    supplierId varchar(20) not null,
+    
+    remark varchar(1024),
+    status char(1),
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_MATERIAL_PIRCE(
+    id varchar(20) not null,
+    supplierId varchar(20) not null,
+    price numeric(10,2) not null,
+    markDate date not null,
+    
+    remark varchar(1024),
+    status char(1),
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_MATERIAL_INVENTORY(
+    id varchar(20) not null,
+    inventoryDate date not null,
+    pricingRules char(1),
+    total numeric(10,2),
+    
+    remark varchar(1024),
+    status char(1),
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_MATERIAL_INVENTORYDETAIL(
+    id varchar(20) not null,
+    inventoryId varchar(20) not null,
+    materialId varchar(20) not null,
+    expectAmount numeric(10,2) not null,
+    actualAmount numeric(10,2),
+    
+    remark varchar(1024),
+    status char(1),
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_MATERIAL_RETREAT(
+    id varchar(20) not null,
+    materialinID varchar(20) not null,
+    amount numeric(10,2),
+    
+    remark varchar(1024),
+    status char(1),
+    modifyDate datetime
+);
+
 CREATE TABLE T_CUSTOMER(
     id varchar(20) not null,
     name varchar(128) not null,
@@ -11,6 +80,9 @@ CREATE TABLE T_CUSTOMER(
     remark varchar(1024),
     status char(1)
 );
+
+
+
 
 CREATE TABLE T_SUPPLIER(
     id varchar(20) not null,
@@ -39,6 +111,7 @@ CREATE TABLE T_Product(
     status char(1)
 );
 
+/*
 CREATE TABLE T_MATERIAL(
     id varchar(20) not null,
     name varchar(64) not null,
@@ -52,7 +125,9 @@ CREATE TABLE T_MATERIAL(
     modifyDate datetime,
     remark varchar(1024),
     status char(1)
-);
+);*/
+
+
 
 CREATE TABLE T_ORDER(
     id varchar(20) not null,

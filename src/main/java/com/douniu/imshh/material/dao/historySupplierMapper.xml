@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.material.dao.IHistorySupplierDao">
+    <resultMap type="MaterialSupplier" id="suppmap">
+        <result property="id" column="id"/>
+        <result property="materialId" column="materialId"/>
+        <result property="materialName" column="materialName"/>
+        <result property="supplierId" column="supplierId"/>
+        <result property="supplierName" column="supplierName"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    
+    <select id="getHistorySupplier" parameterType="String" resultMap="suppmap">
+        select ms.*, m.name, s.name from tbl_material_supplier ms, 
+                                         tbl_material m, 
+                                         t_supplier s 
+         where sm.status = 1
+           and sm.materialid = m.id
+           and sm.supplierid = s.id
+           and ms.id = #{materialId}
+    </select> 
+    
+    
+    <select id="findById" parameterType="String" resultMap="mtlmap">
+        select ms.*, m.name, s.name 
+          from tbl_material_supplier ms, 
+               tbl_material m, 
+               t_supplier s  
+         where id = #{id}
+    </select>
+    
+    <insert id="insert" parameterType="MaterialSupplier">
+        insert into tbl_material_supplier(id, materialId, supplierId, modifydate, remark, status)  
+          values(#{id}, #{materialId}, #{supplierId}, sysdate(), #{remark}, #{status})
+    </insert>
+    
+    <update id="delete" parameterType="String">
+        update tbl_material_supplier set 
+          status = '0',
+          modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+</mapper>

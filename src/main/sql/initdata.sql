@@ -7,13 +7,20 @@ insert into T_USER(id, username, password, fullname, email, weichat, status, mod
       value('03', 'ttt', 'ttt', '唐甜甜', '', '', '1', now());
 
 TRUNCATE TABLE T_MENU;
-INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('01', '日常票据', '0', '', 'fa fa-bookmark');
-INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0101', '订单登记', '01', 'order.html', '');
-INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0102', '原材料入库', '01', 'material_in_storage.html', '');
-INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0103', '原材料出库', '01', 'material_out_storage.html', '');
-INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0104', '成品入库', '01', 'product_in_storage.html', '');
-INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0105', '成品出库', '01', 'product_out_storage.html', '');
-INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0106', '开票', '01', 'invoice.html', '');
+INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('01', '原材料', '0', '', 'fa fa-balance-scale');
+INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0101', '品类列表', '01', 'mtl/catalog.html', '');
+INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0102', '入库明细', '01', 'mtl/receipt-dtl.html', '');
+INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0103', '出库明细', '01', 'mtl/draw-dtl.html', '');
+INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0104', '清退明细', '01', 'mtl/retreat-dtl.html', '');
+INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0105', '历史盘点', '01', 'mtl/inventory-dtl.html', '');
+INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0106', '数据统计', '01', 'mtl/statistics.html', '');
+--INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('01', '日常票据', '0', '', 'fa fa-bookmark');
+--INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0101', '订单登记', '01', 'order.html', '');
+--INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0102', '原材料入库', '01', 'material_in_storage.html', '');
+--INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0103', '原材料出库', '01', 'material_out_storage.html', '');
+--INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0104', '成品入库', '01', 'product_in_storage.html', '');
+--INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0105', '成品出库', '01', 'product_out_storage.html', '');
+--INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0106', '开票', '01', 'invoice.html', '');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('02', '综合查询', '0', '', 'fa fa-bar-chart-o');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0201', '应收', '02', 'receivable.html', '');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0202', '应付', '02', 'payment.html', '');
@@ -32,13 +39,22 @@ INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0502', '角色管理'
 
      
 TRUNCATE TABLE T_AUTHORITY;
-INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('01', '日常票据', '0', '', '', '');
-INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0101', '订单登记', '01', 'order/loadorder.do,order/loadallorder.do,order/findById.do,order/findbyidentify.do,order/finddetailbyid.do,,order/save.do', '', '拥有订单管理权限，可以查看，录入，修改和删除订单');
-INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0102', '原材料入库', '01', 'materialin/loadmaterialin.do,materialin/findById.do,materialin/save.do,materialin/delete.do,materialin/importmaterialin.do,materialin/exportmaterialin.do', '', '拥有原材料入库权限，可以查看，录入，修改和删除原材料入库单');
-INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0103', '原材料出库', '01', 'materialout/findById.do,materialout/save.do,materialout/return.do,materialout/loadmaterialout.do,materialout/delete.do,materialout/exportmaterialout.do,materialstorage/loadmaterialstorage.do', '', '拥有原材料出库权限，可以查看，录入，修改和删除原材料出库单');
-INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0104', '成品入库', '01', 'pdtin/loadstorage.do,pdtin/save.do,pdtin/findbyid.do,pdtin/delete.do,pdtin/importstorage.do,pdtin/exportstorage.do,pdtin/loadstatistics.do', '', '拥有入库单权限，可以查看，录入，修改和删除入库单');
-INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0105', '成品出库', '01', 'pdtout/loadproductout.do,pdtout/findbyid.do,pdtout/save.do,pdtout/findbyorder.do,pdtout/loadbycust.do,pdtout/delete.do,pdtout/importproductout.do,pdtout/exportproductout.do', '', '拥有发货单权限，可以查看，录入，修改和删除发货单');
-INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0106', '开票', '01', 'invoice/loadinvoice.do,invoice/save.do,invoice/edit.do,invoice/delete.do,invoice/importinvoice.do,invoice/exportinvoice.do', '', '拥有开票权限，可以查看，录入，修改和删除入开票信息');
+INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('01', '原材料', '0', '', '', '');
+INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0101', '品类列表', '01', '', '', '拥有原材料品类管理权限，可以查看，录入，修改和删除原材料品类列表');
+INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('010101', '查询', '0101', '', '', '');
+INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('010102', '新增', '0101', '', '', '');
+INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('010103', '修改', '0101', '', '', '');
+INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('010104', '删除', '0101', '', '', '');
+INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('010105', '导出', '0101', '', '', '');
+INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('010106', '导入', '0101', '', '', '');
+
+--INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('01', '日常票据', '0', '', '', '');
+--INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0101', '订单登记', '01', 'order/loadorder.do,order/loadallorder.do,order/findById.do,order/findbyidentify.do,order/finddetailbyid.do,,order/save.do', '', '拥有订单管理权限，可以查看，录入，修改和删除订单');
+--INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0102', '原材料入库', '01', 'materialin/loadmaterialin.do,materialin/findById.do,materialin/save.do,materialin/delete.do,materialin/importmaterialin.do,materialin/exportmaterialin.do', '', '拥有原材料入库权限，可以查看，录入，修改和删除原材料入库单');
+--INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0103', '原材料出库', '01', 'materialout/findById.do,materialout/save.do,materialout/return.do,materialout/loadmaterialout.do,materialout/delete.do,materialout/exportmaterialout.do,materialstorage/loadmaterialstorage.do', '', '拥有原材料出库权限，可以查看，录入，修改和删除原材料出库单');
+--INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0104', '成品入库', '01', 'pdtin/loadstorage.do,pdtin/save.do,pdtin/findbyid.do,pdtin/delete.do,pdtin/importstorage.do,pdtin/exportstorage.do,pdtin/loadstatistics.do', '', '拥有入库单权限，可以查看，录入，修改和删除入库单');
+--INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0105', '成品出库', '01', 'pdtout/loadproductout.do,pdtout/findbyid.do,pdtout/save.do,pdtout/findbyorder.do,pdtout/loadbycust.do,pdtout/delete.do,pdtout/importproductout.do,pdtout/exportproductout.do', '', '拥有发货单权限，可以查看，录入，修改和删除发货单');
+--INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0106', '开票', '01', 'invoice/loadinvoice.do,invoice/save.do,invoice/edit.do,invoice/delete.do,invoice/importinvoice.do,invoice/exportinvoice.do', '', '拥有开票权限，可以查看，录入，修改和删除入开票信息');
 INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('02', '综合查询', '0', '', '', '');
 INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0201', '应收', '02', 'reception/loadreception.do,reception/gettotaldebt.do', '', '拥有应收权限，可以查看应收情况');
 INSERT INTO T_AUTHORITY(id, name, parentId, action, dependents, remark) VALUES ('0202', '应付', '02', 'payment/loadpayment.do,payment/gettotaldebt.do', '', '拥有应付权限，可以查看应付情况');
@@ -75,6 +91,12 @@ INSERT INTO `t_role_authority` VALUES ('01', '0502');
 /*INSERT INTO `t_role_authority` VALUES ('01', '0503');*/
 INSERT INTO `t_role_authority` VALUES ('02', '01');
 INSERT INTO `t_role_authority` VALUES ('02', '0101');
+INSERT INTO `t_role_authority` VALUES ('02', '010101');
+INSERT INTO `t_role_authority` VALUES ('02', '010102');
+INSERT INTO `t_role_authority` VALUES ('02', '010103');
+INSERT INTO `t_role_authority` VALUES ('02', '010104');
+INSERT INTO `t_role_authority` VALUES ('02', '010105');
+INSERT INTO `t_role_authority` VALUES ('02', '010106');
 INSERT INTO `t_role_authority` VALUES ('02', '0102');
 INSERT INTO `t_role_authority` VALUES ('02', '0103');
 INSERT INTO `t_role_authority` VALUES ('02', '0104');

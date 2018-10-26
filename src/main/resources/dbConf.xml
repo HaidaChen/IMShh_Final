@@ -2,6 +2,10 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<typeAliases>
+		<typeAlias alias="Material" type="com.douniu.imshh.material.domain.Material"/>
+        <typeAlias alias="MaterialFilter" type="com.douniu.imshh.material.domain.MaterialFilter"/>
+        <typeAlias alias="MaterialPrice" type="com.douniu.imshh.material.domain.HistoryPrice"/>
+        <typeAlias alias="MaterialSupplier" type="com.douniu.imshh.material.domain.HistorySupplier"/>
         
         <typeAlias alias="Order" type="com.douniu.imshh.finance.order.domain.Order"/>
         <typeAlias alias="OrderDetail" type="com.douniu.imshh.finance.order.domain.OrderDetail"/>
@@ -25,7 +29,7 @@
         <typeAlias alias="Customer" type="com.douniu.imshh.busdata.customer.domain.Customer"/>
         <typeAlias alias="Supplier" type="com.douniu.imshh.busdata.supplier.domain.Supplier"/>
         <typeAlias alias="Product" type="com.douniu.imshh.busdata.product.domain.Product"/>
-        <typeAlias alias="Material" type="com.douniu.imshh.busdata.material.domain.Material"/>
+        
         
         <typeAlias alias="User" type="com.douniu.imshh.sys.domain.User"/>
         <typeAlias alias="Role" type="com.douniu.imshh.sys.domain.Role"/>
@@ -34,7 +38,9 @@
     </typeAliases>
     
      
-    <mappers>        
+    <mappers>
+    	<mapper resource="/com/douniu/imshh/material/dao/materialMapper.xml"/>
+    	        
         <mapper resource="/com/douniu/imshh/finance/order/dao/orderMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/order/dao/orderDetailMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/storage/dao/materialInMapper.xml"/>
@@ -55,7 +61,7 @@
         <mapper resource="/com/douniu/imshh/busdata/customer/dao/custMapper.xml"/>
         <mapper resource="/com/douniu/imshh/busdata/supplier/dao/suppMapper.xml"/>
         <mapper resource="/com/douniu/imshh/busdata/product/dao/pdtMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/busdata/material/dao/mtlMapper.xml"/>
+        
         
         <mapper resource="/com/douniu/imshh/sys/dao/userMapper.xml"/>
         <mapper resource="/com/douniu/imshh/sys/dao/roleMapper.xml"/>

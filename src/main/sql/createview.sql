@@ -1,4 +1,27 @@
-create or replace view view_product as select odr.pdtNo, 
+create or replace view view_storage_base as
+select materialname, specification1, specification2, specification3, sum(amount) as amount from t_materialin where status = '1' and inventory = '0' group by materialname, specification1, specification2, specification3
+ union all
+select materialname, specification1, specification2, specification3, 0-sum(outamount)+sum(returnamount) as amount from t_materialout group by materialname, specification1,specification2, specification3
+ union all
+select m.name as materialname,  m.specification1, m.specification2, m.specification3, 0-sum(r.amount) as amount from tbl_material_retreat r, tbl_material m, t_materialin mi where r.materialinid = mi.id and mi.materialname = m.name group by m.name, m.specification1, m.specification2, m.specification3
+ union all
+select m.name as materialname, m.specification1, m.specification2, m.specification3, sum(actualAmount) as amount from tbl_material_inventorydetail ind, tbl_material m where ind.materialid = m.id group by m.name, m.specification1, m.specification2, m.specification3;
+
+create or replace view view_storage as
+select materialname, specification1, specification2, specification3, sum(amount) amount
+  from view_storage_base 
+ group by materialname, specification1, specification2, specification3;
+
+create or replace view view_material as
+select m.*, s.amount storage 
+  from tbl_material m 
+  left join view_storage s 
+    on m.name = s.materialname 
+   and m.specification1 = s.specification1 
+   and m.specification2 = s.specification2 
+   and m.specification3 = s.specification3; 
+
+ create or replace view view_product as select odr.pdtNo, 
        odr.orderQuantity, 
        odr.orderAmount, 
        odr.year, 

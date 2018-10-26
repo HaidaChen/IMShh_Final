@@ -1,0 +1,22 @@
+body{
+	margin: 0px;
+	padding: 0px;
+	font-family: font-family: "Arial","Microsoft YaHei","黑体","宋体",sans-serif;
+}
+
+nav.navbar{
+	background: #49274A;
+	color: white;
+	height: 50px;
+	width: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+}
+
+nav.navbar .brand{
+	padding: 5px 10px;
+	float: left;
+	display: inline;
+	line-height: 50px;
+}

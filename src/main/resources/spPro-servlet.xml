@@ -10,6 +10,15 @@
 	<!-- 在实际开发中通常都需配置 mvc:annotation-driven 标签 -->
     <mvc:annotation-driven/>
     
+    <mvc:interceptors>  
+    <!-- 使用bean定义一个Interceptor，直接定义在mvc:interceptors根下面的Interceptor将拦截所有的请求 -->  
+	    <mvc:interceptor>  
+	        <mvc:mapping path="/**"/>  
+	        <!-- 定义在mvc:interceptor下面的表示是对特定的请求才进行拦截的 -->  
+	        <bean class="com.douniu.imshh.sys.action.AuthorizationIntercepter"/>  
+	    </mvc:interceptor>  
+	</mvc:interceptors>  
+    
     <!-- 配置自定扫描的包 -->
     <context:component-scan base-package="com.douniu.imshh"></context:component-scan>
 

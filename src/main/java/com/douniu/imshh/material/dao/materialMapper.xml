@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.material.dao.IMaterialDao">
+    <resultMap type="Material" id="mtlmap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="specification1" column="specification1"/>
+        <result property="specification2" column="specification2"/>
+        <result property="specification3" column="specification3"/>
+        <result property="unit" column="unit"/>
+        <result property="formula" column="formula"/>
+        <result property="storage" column="storage"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    
+    <select id="getPageResult" parameterType="MaterialFilter" resultMap="mtlmap">
+        select * from view_material where status = 1
+        <if test="name != null and name !=''">
+          and name like #{name} 
+        </if> 
+        <if test="category != null and category !=''">
+          and category like #{category} 
+        </if>
+          order by modifydate desc
+          limit #{pageOffset},#{pageSize}
+    </select> 
+    <select id="query" parameterType="MaterialFilter" resultMap="mtlmap">
+        select * from view_material where status = 1
+        <if test="name != null and name !=''">
+          and name like #{name} 
+        </if> 
+        <if test="category != null and category !=''">
+          and category like #{category} 
+        </if>      
+          order by modifydate desc
+    </select>
+    
+    <select id="count" parameterType="Material" resultType="int">
+        select count(1) from view_material where status = 1
+        <if test="name != null and name !=''">
+          and name like #{name} 
+        </if> 
+        <if test="category != null and category !=''">
+          and category like #{category} 
+        </if>    
+    </select>   
+    
+    <select id="getById" parameterType="String" resultMap="mtlmap">
+        select * from view_material where id = #{id}
+    </select>
+    
+    <insert id="insert" parameterType="Material">
+        insert into tbl_material(id, name, specification1, specification2, specification3, unit, formula, modifydate, remark, status)  
+          values(#{id}, #{name}, #{specification1}, #{specification2}, #{specification3}, #{unit}, #{formula}, sysdate(), #{remark}, #{status})
+    </insert>
+    
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into tbl_material(id, name, specification1, specification2, specification3, unit, formula, modifydate, remark, status) 
+             values
+             <foreach collection="list" item="mtl" index="index" separator=",">
+                 (#{mtl.id} , #{mtl.name}, #{mtl.specification1}, #{mtl.specification2}, #{mtl.specification3}, #{mtl.unit}, #{mtl.formula}, sysdate(), #{mtl.remark}, '1')
+             </foreach>
+    </insert>
+    
+    <update id="update" parameterType="Material">
+        update tbl_material set 
+          name = #{name},
+          specification1 = #{specification1},
+          specification2 = #{specification2},
+          specification3 = #{specification3},
+          unit = #{unit},
+          formula = #{formula},
+          remark = #{remark},
+          modifydate = sysdate()
+    where id = #{id}
+    </update>
+    <update id="delete" parameterType="String">
+        update tbl_material set 
+          status = '0',
+          modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+</mapper>
