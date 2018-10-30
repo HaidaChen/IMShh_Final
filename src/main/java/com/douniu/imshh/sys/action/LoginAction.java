@@ -80,15 +80,17 @@ public class LoginAction {
 	
 	@RequestMapping(value="/changePWD", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public int changePWD(User user, HttpSession httpSession){
+	public int changePWD(String opassword, String npassword, HttpSession httpSession){
 		Object oUser = httpSession.getAttribute("user");
 		if (oUser instanceof User){
 			User tUser = (User)oUser;
-			tUser.setPassword(user.getPassword());
+			if (!tUser.getPassword().equals(opassword))
+				return -1;
+			tUser.setPassword(npassword);
 			service.update(tUser);
 			return 1;
 		}
-		return 0;
+		throw new RuntimeException();
 	}
 	
 	@RequestMapping(value="/getUserMemu", produces = "application/json; charset=utf-8")

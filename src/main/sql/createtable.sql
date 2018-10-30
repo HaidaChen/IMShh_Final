@@ -371,3 +371,9 @@ CREATE TABLE T_MENU(
 	url varchar(128) not null,
 	icon varchar(128)
 );
+
+CREATE TABLE TBL_FUNCTION(
+	id varchar(20) not null,
+	name varchar(60) not null,
+	MENUID varchar(20) not null
+);

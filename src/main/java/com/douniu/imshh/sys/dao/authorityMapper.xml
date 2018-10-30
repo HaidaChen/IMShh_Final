@@ -33,7 +33,7 @@
     </select>
     
     <select id="queryMenuByUser" parameterType="String" resultMap="menumap">
-        select m.* from t_menu m, t_role_authority r, t_user_role u where m.id = r.authorityId and r.roleId = u.roleId and u.userId= #{userId} order by m.id 
+        select distinct m.* from t_menu m, t_role_authority r, t_user_role u where m.id = r.authorityId and r.roleId = u.roleId and u.userId= #{userId} order by m.id 
     </select>
     
     <select id="findById" parameterType="String" resultMap="authoritymap">

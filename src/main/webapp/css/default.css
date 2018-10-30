@@ -1,22 +1,219 @@
 body{
 	margin: 0px;
 	padding: 0px;
-	font-family: font-family: "Arial","Microsoft YaHei","黑体","宋体",sans-serif;
+	font-family: "Arial","Microsoft YaHei","黑体","宋体",sans-serif;
+	font-size: small;
+	color: #333;
+	background: #edf1f5;
 }
 
-nav.navbar{
-	background: #49274A;
+h1,h2,h3,h4,h5,h6{
+	font-family: "Arial","Microsoft YaHei","黑体","宋体",sans-serif;
+}
+
+.m-l-5 {
+	margin-left: 5px;
+}
+
+.nav-list {
+	padding-left: 0;
+	margin-bottom: 0;
+	list-style: none;
+}
+
+.header{
+	background: #2f323e;
 	color: white;
-	height: 50px;
+	height: 60px;
 	width: 100%;
 	position: fixed;
 	top: 0;
 	left: 0;
+	z-index: 1000;
 }
 
-nav.navbar .brand{
-	padding: 5px 10px;
+.header-brand{
+	padding: 10px;
 	float: left;
-	display: inline;
-	line-height: 50px;
+}
+
+.header-nav{
+	margin-right: 10px;
+}
+
+.header-nav > li {
+	float: left;
+}
+
+.header-nav > li > a {
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+	height: 60px;
+	line-height: 60px;	
+	padding: 0px 14px;
+}
+
+.header-nav > li > a:hover {
+	cursor: pointer;
+	background: rgba(0, 0, 0, 0.9);
+}
+
+.app-search {
+	position: relative;
+	margin: 0;
+}
+.app-search .form-control, 
+.app-search .form-control:focus {
+	border: none;
+	font-size: 13px;
+	color: #4c5667;
+	padding-left: 20px;
+	padding-right: 40px;
+	margin-right: 15px;
+	background: rbga(255, 255,255, 0.9);
+	box-shadow: none;
+	height: 30px;
+	width: 180px;
+	display: inline-block;
+	line-height: 30px;
+	margin-top: 15px;
+	border-radius: 40px;
+	transform: 0.5s ease-out;
+}
+
+.app-search a {
+	position: absolute;
+	top: 0px;
+	right: 25px;
+	color: #4C5667;
+	padding: 20px 0;
+}
+
+.app-search a:hover {
+	cursor: pointer;
+	color: rgba(0, 0, 0, .9);
+}
+
+.sidebar{
+	background: #fff;
+	box-shadow: 1px 0px 20px rgba(0, 0, 0, 0.08);
+	position: fixed;
+	left: 0;
+	top: 60px;
+	bottom: 0;
+	width: 240px;
+}
+
+#side-menu li a {
+  	color: #54667a;
+  	border-left: 0px solid #fff;
+  	text-decoration: none;
+  	display: block
+}
+
+#side-menu > li > ul {
+	background: rgba(0, 0, 0, 0.05);
+	display: none;
+	overflow: hidden;	
+}
+
+#side-menu > li > a {
+	padding: 15px 35px 15px 20px;
+}
+
+#side-menu > li > ul > li > a {
+	padding: 7.5px 15px 7.5px 40px;
+	
+}
+
+#side-menu > li > a:hover {
+  background: rgba(0, 0, 0, 0.07);
+}
+
+#side-menu > li > ul > li > a:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+#side-menu > li > a.active {
+  color: #54667a;
+  font-weight: 600;
+}
+
+#side-menu > li > ul > li > a.active {
+  background: rgba(0, 0, 0, 0.1);
+  color: #54667a;
+  border-left: 3px solid #41b3f9;
+  font-weight: 600;
+}
+
+.sidebar ul > li > a .arrow:before {
+  float: right;
+  margin-top: 1px;
+  margin-right: 5px;
+  display: inline;
+  font-size: 16px;
+  font-family: FontAwesome;
+  height: auto;
+  content: "\f104";
+  font-weight: 300;
+  text-shadow: none;
+}
+
+.sidebar > ul > li > a .arrow.open:before {
+  float: right;
+  margin-top: 1px;
+  margin-right: 5px;
+  display: inline;
+  font-family: FontAwesome;
+  height: auto;
+  font-size: 16px;
+  content: "\f107";
+  font-weight: 300;
+  text-shadow: none;
+}
+
+.content-warpper {
+	margin-top: 60px;
+	margin-left: 120px;	
+}
+
+.panel {
+	background: #fff;
+	padding: 8px 25px;
+	margin: 20px 20px 10px;
+}
+
+.panel-condition {
+	background: #fff;
+	padding: 20px 30px;
+	box-shadow: 0px 1px 20px rgba(0, 0, 0, 0.08);
+	display: none;
+}
+
+.panel-condition.open {
+	display: block;	
+}
+
+.panel-condition .btn_search{
+	/*display: block;
+	vertical-align: bottom;*/
+	margin-top: 22px;
+}
+
+
+
+
+
+.panel-function {
+	padding: 10px;
+}
+
+.panel-table {
+	padding: 10px;	
+}
+
+table caption {
+	float: left;
+	padding-bottom: 10px;
 }
