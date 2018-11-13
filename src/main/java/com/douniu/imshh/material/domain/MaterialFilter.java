@@ -3,15 +3,15 @@ package com.douniu.imshh.material.domain;
 import com.douniu.imshh.common.BaseQO;
 
 public class MaterialFilter extends BaseQO{
-	private String supplierName;
+	private String supplier;
 	private String category;
 	private String name;	
 		
-	public String getSupplierName() {
-		return supplierName;
+	public String getSupplier() {
+		return supplier;
 	}
-	public void setSupplierName(String supplierName) {
-		this.supplierName = supplierName;
+	public void setSupplier(String supplier) {
+		this.supplier = supplier;
 	}
 	public String getCategory() {
 		return category;
@@ -28,7 +28,7 @@ public class MaterialFilter extends BaseQO{
 	
 	@Override
 	public String toString() {
-		return "Fliter [supplierName=" + supplierName + ", category=" + category + ", name=" + name + "]";
+		return "Fliter [supplier=" + supplier + ", category=" + category + ", name=" + name + "]";
 	}
 	
 }

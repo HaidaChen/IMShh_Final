@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>原材料分类列表</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+	
+	<link rel="stylesheet" href="../../bootstrap-dist/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../../bootstrap-table/bootstrap-table.css">
+	<link rel="stylesheet" href="../../css/default.css">
+</head>
+<body>
+	<header class="header">
+		<div class="header-brand">
+			<a href="#">
+			<img src="../../img/logo/ALOGO.png" alt="华辉烟花信息管理系统" class="img-responsive" height="40" width="150">
+			</a>
+		</div>
+		<ul class="nav-list header-nav pull-right">
+			<li>
+				<form class="app-search" role="search">
+					<input id="condition" class="form-control" type="text" placeholder="原材料分类名称"/>
+					<a><i class="fa fa-search"></i></a>
+				</form>
+			</li>
+			
+			<li>
+				<a id="nav_changePWD" data-toggle="tooltip" data-placement="bottom" title="修改密码"><i class="fa fa-key"></i></a>
+			</li>
+			<li>
+				<a id="nav_signOut" title="退出系统"><i class="fa fa-power-off"></i></a>
+			</li>
+		</ul>
+		
+	</header>
+	<section class="content-warpper">
+		<aside class="sidebar">
+			<div id="siderbar-warper">
+				<ul id="side-menu" class="nav-list">
+				</ul>
+			</div>
+		</aside>
+		<div class="content-warpper">
+			<div id="panel_table" class="container-fluid">
+				<div class="panel panel-function">
+					<button class="btn btn-danger btn-sm" id="btn_add"><i class="fa fa-plus"></i> 新 增</button>
+					<button class="btn btn-danger btn-sm" id="btn_update"><i class="fa fa-edit"></i> 修 改</button>
+					<button class="btn btn-danger btn-sm" id="btn_remove"><i class="fa fa-remove"></i> 删 除</button>
+				</div>
+				
+				<div class="panel">
+					<h3 class="table-title">原材料.分类列表</h3>
+					<table id="tbl_material_category" class="table table-hover ">
+						
+					</table>
+				</div>				
+			</div>
+			<div id="panel-new" class="container-fluid panel" style="display: none">
+				<h3 >新的原材料分类</h3>
+				<form id="form_new_material_category" class="form-horizontal">
+					<div class="form-group">
+					    <label for="new_name" class="col-sm-2 control-label">分类名称</label>
+					    <div class="col-sm-10">
+					    	<input type="text" class="form-control" id="new_name" name="name">
+						</div>
+					</div>
+					<div class="form-group">
+					    <label for="new_category" class="col-sm-2 control-label">计算公式（面积/体积）</label>
+					    <div class="col-sm-10">
+						    <div class="input-group">
+						    	<input type="hidden" name="id" value="">
+								<input type="text" name="formula" class="form-control formItem" value="" readonly="readonly">
+								<span id="btn_showformula" class="input-group-addon" style="cursor: pointer;"><i class="fa fa-keyboard-o"></i></span>
+							</div>
+					    </div>
+					</div>
+					<div id="formulabox" class="form-group" style="display: none;">
+						<label class="col-md-3 control-label"></label> 
+						<div class="col-md-7">
+							<div class="box-container">
+								<div class="box border green">
+									<div class="toolbox">
+										<div id="grp_factor" class="btn-group">
+										  <button type="button" class="btn btn-default">规格1</button>
+										  <button type="button" class="btn btn-default">规格2</button>
+										  <button type="button" class="btn btn-default">规格3</button>															  
+										</div>
+									</div>
+									<div class="toolbox">
+										<div id="grp_number" class="btn-group">
+										  <button type="button" class="btn btn-default">0</button>
+										  <button type="button" class="btn btn-default">1</button>
+										  <button type="button" class="btn btn-default">2</button>
+										  <button type="button" class="btn btn-default">3</button>
+										  <button type="button" class="btn btn-default">4</button>
+										  <button type="button" class="btn btn-default">5</button>
+										  <button type="button" class="btn btn-default">6</button>
+										  <button type="button" class="btn btn-default">7</button>
+										  <button type="button" class="btn btn-default">8</button>
+										  <button type="button" class="btn btn-default">9</button>
+										  <button type="button" class="btn btn-default">.</button>
+										</div>
+									</div>
+									<div class="toolbox">
+										<div id="grp_operation" class="btn-group">
+										  <button type="button" class="btn btn-default">+</button>
+										  <button type="button" class="btn btn-default">-</button>
+										  <button type="button" class="btn btn-default">*</button>
+										  <button type="button" class="btn btn-default">/</button>
+										  <button type="button" class="btn btn-default">(</button>
+										  <button type="button" class="btn btn-default">)</button>
+										</div>
+									</div>
+									<div class="box-body">
+										<div>
+											<p id="calculation"></p>
+										</div>
+									</div>
+									<div class="toolbox bottom">
+										<div class="btn-group">
+										  <button id="btn_formula_reback" type="button" class="btn btn-default"><i class="fa fa-mail-reply (alias)"></i></button>
+										  <button id="btn_formula_clear" type="button" class="btn btn-default"><i class="fa fa-eraser"></i></button>	
+										  <button id="btn_formula_save" type="button" class="btn btn-default"><i class="fa fa-save (alias)"></i></button>									  
+										</div>
+									</div>
+									
+								</div>
+								<!-- /BOX WITH TOOLBOX-->
+							</div>
+					    </div>
+					</div>
+					<div class="form-group">
+					    <label for="new_remark" class="col-sm-2 control-label">备注</label>
+					    <div class="col-sm-10">
+						    <textarea class="form-control" id="new_remark" name="remark" rows="3">
+						    </textarea>
+						</div>
+					</div>
+				</form>
+				<div class="clearfix">
+					<input type="button" id="btn_save_new" value="保存" class="btn btn-success pull-right m-l-5">
+					<input type="button" id="btn_cancel_new" value="取消" class="btn btn-default pull-right ">
+				</div>
+			</div>
+			
+		</div>
+	</section>
+	
+	<script src="../../js/jquery/jquery-2.0.3.min.js"></script>
+	<script src="../../bootstrap-dist/js/bootstrap.min.js"></script>
+	<script src="../../js/bootstrapvalidator/js/bootstrapValidator.min.js"></script>	
+	<script src="../../js/bootstrapvalidator/js/language/zh_CN.js"></script>
+	<script src="../../bootstrap-table/bootstrap-table.js"></script>
+	<script src="../../bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+	<script src="../../js/jquery-form/jquery.form.js"></script>
+	<script src="../../js/jQuery-slimScroll-1.3.0/jquery.slimscroll.min.js"></script>
+	<script src="../../js/common.js"></script>
+	<script src="../../js/fillForm.js"></script>
+	<script src="../../js/mtl/material-category.js"></script>
+	<script>
+		$(function(){
+			App.setPage("materialCategory");
+			App.init(); 
+			initMtlCategoryModule();
+		});
+	</script>
+</body>
+</html>

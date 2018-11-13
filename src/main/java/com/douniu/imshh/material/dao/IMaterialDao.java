@@ -18,7 +18,7 @@ public interface IMaterialDao {
 	
 	void batchInsert(List<Material> materialList);
 	
-	void update(Material material);
+	void setStorage(Material material);
 	
 	void delete(String id);
 }

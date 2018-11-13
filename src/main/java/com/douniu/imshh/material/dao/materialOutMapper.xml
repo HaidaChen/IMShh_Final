@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.material.dao.IMaterialOutDao">
+    <resultMap type="MaterialOut" id="mtloutmap">
+        <result property="id" column="id"/>
+        <result property="outDate" column="outDate"/>
+        <result property="materialId" column="materialId"/>
+        <result property="materialName" column="materialName"/>
+        <result property="specification1" column="specification1"/>
+        <result property="specification2" column="specification2"/>
+        <result property="specification3" column="specification3"/>
+        <result property="unit" column="unit"/>
+        <result property="amount" column="amount"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    
+    <select id="getPageResult" parameterType="MaterialFilter" resultMap="mtloutmap">
+        select mo.*, 
+               m.name as materialName, 
+               m.specification1, 
+               m.specification2, 
+               m.specification3, 
+               m.unit
+          from tbl_material_out mo, 
+               tbl_material m
+         where mo.status = '1' 
+           and mo.materialId = m.id 
+          <if test="startDate != null">
+          and mo.outDate &gt;= #{startDate}
+          </if>
+          <if test="endDate != null">
+          and mo.outDate &lt;= #{endDate}
+          </if>
+          <if test="name != null and name !=''">
+          and m.name like #{name} 
+          </if>
+          <if test="category != null and category !=''">
+          and m.category = #{category} 
+          </if>
+          order by mo.outDate desc
+          limit #{pageOffset},#{pageSize}
+    </select> 
+    
+    <select id="query" parameterType="MaterialFilter" resultMap="mtloutmap">
+        select mo.*, 
+               m.name as materialName, 
+               m.specification1, 
+               m.specification2, 
+               m.specification3, 
+               m.unit
+          from tbl_material_out mo, 
+               tbl_material m
+         where mo.status = '1' 
+           and mo.materialId = m.id 
+          <if test="startDate != null">
+          and mo.outDate &gt;= #{startDate}
+          </if>
+          <if test="endDate != null">
+          and mo.outDate &lt;= #{endDate}
+          </if>
+          <if test="name != null and name !=''">
+          and m.name like #{name} 
+          </if>
+          <if test="category != null and category !=''">
+          and m.category = #{category} 
+          </if>
+          order by mo.outDate desc
+    </select>
+    
+    <select id="count" parameterType="MaterialFilter" resultType="int">
+        select count(1)
+          from tbl_material_out mo, 
+               tbl_material m
+         where mo.status = '1' 
+           and mo.materialId = m.id 
+          <if test="startDate != null">
+          and mo.outDate &gt;= #{startDate}
+          </if>
+          <if test="endDate != null">
+          and mo.outDate &lt;= #{endDate}
+          </if>
+          <if test="name != null and name !=''">
+          and m.name like #{name} 
+          </if>
+          <if test="category != null and category !=''">
+          and m.category = #{category} 
+          </if> 
+    </select>   
+    
+    <select id="getById" parameterType="String" resultType="MaterialOut">
+        select mo.*, 
+               m.name as materialName, 
+               m.specification1, 
+               m.specification2, 
+               m.specification3, 
+               m.unit
+          from tbl_material_out mo, 
+               tbl_material m
+         where mo.status = '1' 
+           and mo.materialId = m.id 
+           and mi.id = #{id} 
+    </select>
+    
+    <insert id="insert" parameterType="MaterialIn">
+        insert into tbl_material_in(id, outDate, materialId, amount, modifydate, remark, status)  
+          values(#{id}, #{outDate}, #{materialId}, #{amount}, sysdate(), #{remark}, #{status})
+    </insert>
+    
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into tbl_material_out(id, outDate, materialId, amount, modifydate, remark, status) 
+             values
+             <foreach collection="list" item="mtlout" index="index" separator=",">
+                 (#{mtlout.id} , #{mtlout.outDate}, #{mtlout.materialId}, #{mtlout.amount}, sysdate(), #{mtlout.remark}, '1')
+             </foreach>
+    </insert>
+    
+    <update id="delete" parameterType="String">
+        update tbl_material_out set 
+          status = '0',
+          modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+</mapper>

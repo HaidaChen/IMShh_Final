@@ -13,7 +13,7 @@ public class IDInjector {
 		} 
 	}
 	
-	public static void injector(List<Object> src){
+	public static <T> void injector(List<T> src){
 		try {
 			int i = 1;
 			for (Object item : src){
@@ -27,7 +27,7 @@ public class IDInjector {
 	}
 	
 	private static void injector(Object src, String postfix) throws Exception{
-		Field f = src.getClass().getDeclaredField("");
+		Field f = src.getClass().getDeclaredField("id");
 		if (f != null){
 			f.setAccessible(true);
 			f.set(src, System.currentTimeMillis()+postfix);

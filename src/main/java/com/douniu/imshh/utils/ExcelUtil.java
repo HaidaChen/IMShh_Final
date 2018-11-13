@@ -99,7 +99,7 @@ public class ExcelUtil {
     		return "";
         Object value = null;    
         DecimalFormat df = new DecimalFormat("0");
-        SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         DecimalFormat df2 = new DecimalFormat("0.00"); 
             
         switch (cell.getCellType()) { 

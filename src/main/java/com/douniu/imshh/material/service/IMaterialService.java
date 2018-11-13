@@ -2,6 +2,7 @@ package com.douniu.imshh.material.service;
 
 import java.util.List;
 
+import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.domain.Material;
 import com.douniu.imshh.material.domain.MaterialFilter;
@@ -12,7 +13,7 @@ public interface IMaterialService {
 	 * @param filter
 	 * @return
 	 */
-	List<Material> query(MaterialFilter filter);
+	List<Material> exportMaterial(MaterialFilter filter);
 	
 	/**
 	 * 根据查询条件（名称、供应商、分类、规格、分页条件）
@@ -25,10 +26,11 @@ public interface IMaterialService {
 	
 	void newMaterial(Material material);
 	
-	void batchAdd(List<Material> materialList);
+	void importMaterial(List<Material> materialList);
 	
-	void updateMaterial(Material material);
+	List<ImportException> checkImport(List<Material> materialList);
 	
 	void deleteMaterial(String id);
 	
+	void addStorage(String id, float storage);
 }

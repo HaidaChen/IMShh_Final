@@ -8,12 +8,14 @@ insert into T_USER(id, username, password, fullname, email, weichat, status, mod
 
 TRUNCATE TABLE T_MENU;
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('01', '原材料管理', '0', '', 'fa fa-database');
-INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0101', '品类列表', '01', 'mtl/catalog.html', '');
+INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0101', '原材料列表', '01', 'mtl/catalog.html', '');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0102', '入库明细', '01', 'mtl/receipt-dtl.html', '');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0103', '出库明细', '01', 'mtl/draw-dtl.html', '');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0104', '清退明细', '01', 'mtl/retreat-dtl.html', '');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0105', '历史盘点', '01', 'mtl/inventory-dtl.html', '');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0106', '数据统计', '01', 'mtl/statistics.html', '');
+INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0107', '品类管理', '01', 'mtl/statistics.html', '');
+INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0108', '供应商管理', '01', 'mtl/statistics.html', '');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('02', '成品管理', '0', '', 'fa fa-cubes');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0201', '品类列表', '02', 'mtl/retreat-dtl.html', '');
 INSERT INTO T_MENU(id, name, parentId, url, icon) VALUES ('0202', '订购明细', '02', 'mtl/catalog.html', '');
@@ -146,6 +148,8 @@ INSERT INTO `t_role_authority` VALUES ('02', '0103');
 INSERT INTO `t_role_authority` VALUES ('02', '0104');
 INSERT INTO `t_role_authority` VALUES ('02', '0105');
 INSERT INTO `t_role_authority` VALUES ('02', '0106');
+INSERT INTO `t_role_authority` VALUES ('02', '0107');
+INSERT INTO `t_role_authority` VALUES ('02', '0108');
 INSERT INTO `t_role_authority` VALUES ('02', '02');
 INSERT INTO `t_role_authority` VALUES ('02', '0201');
 INSERT INTO `t_role_authority` VALUES ('02', '0202');

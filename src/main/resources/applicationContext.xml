@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns:aop="http://www.springframework.org/schema/aop"
-xmlns:tx="http://www.springframework.org/schema/tx"
-xmlns:context="http://www.springframework.org/schema/context"
-xsi:schemaLocation="
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://www.springframework.org/schema/tx
@@ -13,29 +13,58 @@ xsi:schemaLocation="
        http://www.springframework.org/schema/context/spring-context-3.0.xsd
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+       
+      <bean name="materialCategoryService" class="com.douniu.imshh.material.service.impl.MaterialCategoryService">
+          <property name="dao" ref="materialCategoryDao"></property>
+      </bean>
+      <bean id="materialCategoryDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.material.dao.IMaterialCategoryDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="materialSupplierService" class="com.douniu.imshh.material.service.impl.MaterialSupplierService">
+          <property name="dao" ref="materialSupplierDao"></property>
+      </bean>
+      <bean id="materialSupplierDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.material.dao.IMaterialSupplierDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+       
       <bean name="materialService" class="com.douniu.imshh.material.service.impl.MaterialService">
           <property name="dao" ref="materialDao"></property>
-          <property name="supplierService" ref="materialSupplierService"></property>
+          <property name="ctgService" ref="materialCategoryService"></property>
       </bean>
       <bean id="materialDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
           <property name="mapperInterface" value="com.douniu.imshh.material.dao.IMaterialDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
                                                   
-      <bean name="materialSupplierService" class="com.douniu.imshh.material.service.impl.HistorySupplierSerivce">
-          <property name="dao" ref="materialSupplierDao"></property>
-          <property name="priceService" ref="materialPriceService"></property>
-      </bean>
-      <bean id="materialSupplierDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.material.dao.IHistorySupplierDao"/>
-          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean>
       
       <bean name="materialPriceService" class="com.douniu.imshh.material.service.impl.HistoryPriceService">
           <property name="dao" ref="materialPriceDao"></property>
       </bean>
       <bean id="materialPriceDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
           <property name="mapperInterface" value="com.douniu.imshh.material.dao.IHistoryPriceDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="materialInService" class="com.douniu.imshh.material.service.impl.MaterialInService">
+          <property name="dao" ref="materialInDao"></property>
+          <property name="materialService" ref="materialService"></property>
+      </bean>
+      
+      <bean id="materialInDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.material.dao.IMaterialInDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="materialOutService" class="com.douniu.imshh.material.service.impl.MaterialOutService">
+          <property name="dao" ref="materialOutDao"></property>
+          <property name="materialService" ref="materialService"></property>
+      </bean>
+      
+      <bean id="materialOutDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.material.dao.IMaterialOutDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       
@@ -84,21 +113,6 @@ xsi:schemaLocation="
       </bean>
       
       
-      <bean name="materialInService" class="com.douniu.imshh.finance.storage.service.impl.MaterialInService">
-          <property name="dao" ref="materialInDao"></property>
-      </bean>
-      <bean id="materialInDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.finance.storage.dao.IMaterialInDao"/>
-          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean>
-      
-      <bean name="materialOutService" class="com.douniu.imshh.finance.storage.service.impl.MaterialOutService">
-          <property name="dao" ref="materialOutDao"></property>
-      </bean>
-      <bean id="materialOutDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.finance.storage.dao.IMaterialOutDao"/>
-          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean>
       
       <bean name="materialStorageService" class="com.douniu.imshh.finance.storage.service.impl.MaterialStorageService">
           <property name="dao" ref="materialStorageDao"></property>
@@ -238,6 +252,24 @@ xsi:schemaLocation="
          <!--configLocation属性指定mybatis的核心配置文件--> 
          <property name="configLocation" value="classpath:dbConf.xml"/> 
     </bean>   
+    
+     <bean id="transactionManager"
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED" />
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:pointcut id="interceptorPointCuts"
+            expression="execution(* com.douniu.imshh.*.service.*.*(..))" />
+        <aop:advisor advice-ref="txAdvice"
+            pointcut-ref="interceptorPointCuts" />       
+    </aop:config>  
     
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
     <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>

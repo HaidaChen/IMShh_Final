@@ -44,14 +44,32 @@ var FillForm = function(){
 		var formitems = $(form).find("select, input, textarea");
 		$.each(formitems, function(index, item){
 			var field = $(item).attr("name");
+			var type = $(item).attr("type");
 			var valuetype = $(item).attr("valuetype");
 			var valueformatter = $(item).attr("valueformatter");
 			var value = getFieldValue(data, field, valuetype, valueformatter);
 			if (valuetype == 'select2'){
 				$(item).val(value).select2({allowClear: true});
-			}else{
+			} else if(type == 'radio'){
+				if ($(item).val() == value){
+					$(item).prop("checked","true");
+				}else{
+					$(item).removeAttr("checked");
+				}
+			} else if(type == 'checkbox'){
+				var values = value.split(",");
+				$.each(values, function(index, value){
+					if ($(item).val() == value){	
+						$(item).prop("checked","checked");
+						return false;
+					}else{
+						$(item).removeAttr("checked");
+					}
+				})
+			} else{
 				$(item).val(value);
-			}			
+			}	
+			
 		});
 	}
 	
@@ -77,9 +95,10 @@ var fillData = function(data, container, fieldAttr, fieldPerfix, formType){
 				$(e).removeAttr("checked");
 			}
 		}else if (e.tagName == 'INPUT' && $(e).attr('type') == 'checkbox'){			
-			var values = dataValue.split(";");
+			var values = dataValue.split(",");
 			
 			$.each(values, function(index, value){
+				
 				if ($(e).val() == value){	
 					$(e).prop("checked","checked");
 					return false;

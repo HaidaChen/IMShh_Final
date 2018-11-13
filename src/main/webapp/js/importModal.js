@@ -57,7 +57,7 @@ var ImportModal = function(url, callback_success, turl){
 				      　　 url : importModal.url,
 				     　　  dataType : 'text',
 				      　　 success : function(data) {
-				    	  $("#importBox").find(".modal-footer").text("导入成功");	
+				    	  $("#importBox").find(".modal-footer").html(data);	
 						  $("#importModal").find("input,a").removeAttr("disable");  	 
 				          importModal.callback_success();
 				     },

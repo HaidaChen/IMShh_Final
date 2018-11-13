@@ -1,3 +1,21 @@
+CREATE TABLE TBL_MATERIAL_CATEGORY(
+    id varchar(20) not null,
+    name varchar(64) not null,
+    formula varchar(256),
+    remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_MATERIAL_SUPPLIER(
+    id varchar(20) not null,
+    name varchar(64) not null,
+    categoryIds varchar(528),
+    remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
 CREATE TABLE TBL_MATERIAL(
     id varchar(20) not null,
     name varchar(64) not null,
@@ -7,9 +25,9 @@ CREATE TABLE TBL_MATERIAL(
     unit varchar(20),
     formula varchar(256),
     category varchar(20), 
-    
+    storage numeric(10,3),
     remark varchar(1024),
-    status char(1),
+    status char(1) default '1',
     modifyDate datetime
 );
 
@@ -30,7 +48,30 @@ CREATE TABLE TBL_MATERIAL_PIRCE(
     markDate date not null,
     
     remark varchar(1024),
-    status char(1),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_MATERIAL_IN(
+    id varchar(20) not null,
+    inDate date not null,
+    materialID varchar(20),
+    amount numeric(10,2) not null,
+    supplierId  varchar(20),
+    
+    remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_MATERIAL_OUT(
+    id varchar(20) not null,
+    outDate date not null,
+    materialID varchar(20),
+    amount numeric(10,2) not null,
+    
+    remark varchar(1024),
+    status char(1) default '1',
     modifyDate datetime
 );
 
@@ -41,7 +82,7 @@ CREATE TABLE TBL_MATERIAL_INVENTORY(
     total numeric(10,2),
     
     remark varchar(1024),
-    status char(1),
+    status char(1) default '1',
     modifyDate datetime
 );
 
@@ -53,7 +94,7 @@ CREATE TABLE TBL_MATERIAL_INVENTORYDETAIL(
     actualAmount numeric(10,2),
     
     remark varchar(1024),
-    status char(1),
+    status char(1) default '1',
     modifyDate datetime
 );
 
@@ -63,9 +104,11 @@ CREATE TABLE TBL_MATERIAL_RETREAT(
     amount numeric(10,2),
     
     remark varchar(1024),
-    status char(1),
+    status char(1) default '1',
     modifyDate datetime
 );
+
+
 
 CREATE TABLE T_CUSTOMER(
     id varchar(20) not null,

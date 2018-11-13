@@ -10,6 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.douniu.imshh.common.Authorization;
+import com.douniu.imshh.common.NoPermissionException;
 import com.douniu.imshh.sys.domain.Authority;
 
 public class AuthorizationIntercepter implements HandlerInterceptor{
@@ -40,7 +41,7 @@ public class AuthorizationIntercepter implements HandlerInterceptor{
 					if (authority.getId().equals(authCode))
 						return true;
 				}
-				return false;
+				throw new NoPermissionException();
 			}
 		}
 		

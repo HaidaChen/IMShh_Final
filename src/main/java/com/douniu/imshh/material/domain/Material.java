@@ -1,8 +1,6 @@
 package com.douniu.imshh.material.domain;
 
-import java.util.List;
-
-public class Material {
+public class Material{
 	private String id;
 	private String name;
 	private String category;
@@ -10,12 +8,11 @@ public class Material {
 	private String specification2;
 	private String specification3;
 	private String unit;
-	private String formula;
 	private String remark;
 	private int status = 1;
-	
+
 	private float storage;
-	private List<HistorySupplier> hisSuppliers;
+	private String supplierNames;
 	
 	public String getId() {
 		return id;
@@ -59,12 +56,6 @@ public class Material {
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
-	public String getFormula() {
-		return formula;
-	}
-	public void setFormula(String formula) {
-		this.formula = formula;
-	}
 	public String getRemark() {
 		return remark;
 	}
@@ -83,18 +74,30 @@ public class Material {
 	public void setStorage(float storage) {
 		this.storage = storage;
 	}
-	public List<HistorySupplier> getHisSuppliers() {
-		return hisSuppliers;
-	}
-	public void setHisSuppliers(List<HistorySupplier> hisSuppliers) {
-		this.hisSuppliers = hisSuppliers;
-	}
 		
+	public String getSupplierNames() {
+		return supplierNames;
+	}
+	public void setSupplierNames(String supplierNames) {
+		this.supplierNames = supplierNames;
+	}
+	
 	@Override
 	public String toString() {
 		return "Material [id=" + id + ", name=" + name + ", category=" + category + ", specification1=" + specification1
 				+ ", specification2=" + specification2 + ", specification3=" + specification3 + ", unit=" + unit
-				+ ", formula=" + formula + ", remark=" + remark + ", status=" + status + ", storage=" + storage
-				+ ", hisSuppliers=" + hisSuppliers + "]";
-	}	
+				+ ", remark=" + remark + ", status=" + status + ", storage=" + storage
+				+ ", supplierNames=" + supplierNames + "]";
+	}
+	
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Material material = (Material) o;
+        return this.name.equals(material.name) &&
+				this.specification1.equals(material.specification1) &&
+				this.specification2.equals(material.specification2) &&
+				this.specification3.equals(material.specification3);
+    }	
 }

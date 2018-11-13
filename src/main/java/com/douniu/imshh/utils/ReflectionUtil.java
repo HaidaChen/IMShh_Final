@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.util.StringUtils;
+
 public class ReflectionUtil {  
   
 	private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");  
@@ -129,16 +131,23 @@ public class ReflectionUtil {
         try {  
             //将 object 中 field 所代表的值 设置为 value  
         	String sdate = value.toString();
-    		if (sdate.equals("") || sdate.equals("null"))
-    			return;
+    		/*if (sdate.equals("") || sdate.equals("null"))
+    			return;*/
         	if (field.getType() == Date.class){
-        		value = format.parse(sdate);        		
+        		if (!StringUtils.isEmpty(sdate))
+        			value = format.parse(sdate);
+        		else
+        			return;
         	}
         	if (field.getType() == int.class || field.getType() == Integer.class){
-        		value = new Integer(value.toString());
+        		if (!StringUtils.isEmpty(sdate))
+        			value = new Integer(value.toString());
+        		else value = 0;
         	}
         	if (field.getType() == float.class || field.getType() == Float.class){
-        		value = new Float(value.toString());
+        		if (!StringUtils.isEmpty(sdate))
+        			value = new Float(value.toString());
+        		else value = 0f;
         	}
         	field.set(object, value) ;  
         	
