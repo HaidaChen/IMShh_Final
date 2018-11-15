@@ -16,12 +16,24 @@
 		var defaults = {
 			name: '',
 			title: '',
-			toggle: '',
+			eventEle: null,
+			toggle: function(){
+				$("#cart").slideToggle();
+				$("#panel_table").slideToggle();
+			},
+			autoToggle: true,
 			formItems: [],
-			tableOpts: []
+			tableOpts: [],
+			TIValidator:[],
+			submitBtnName: '提交',
+			clearBtnName: '清空',
+			closeBtnName: '关闭',
+			submitUrl: '',
+			paramName4Cart: '',
+			successCallback: function(){},
+			clearCallback: function(){}
 		};
-		var setting = $.extend({}, options);
-		setting.triggerShow.unbind();
+		var setting = $.extend({}, defaults, options);
 		init(_cart, setting);
 		
 		return {
@@ -30,42 +42,44 @@
 			isEmpty: function(){
 				return cartData.length == 0;
 			},
-			addToCart: function(row){
-				var exists = false;
-				$.each(cartData, function(index, item){
-					if (item.id == row.id){
-						exists = true;
-						return;
-					}						
+			addToCart: function(rows){
+				$.each(rows, function(i, row){
+					var exists = false;
+					$.each(cartData, function(ii, item){
+						if (row.id == item.id){
+							exists = true;
+							return;
+						}
+					});
+					if (!exists){
+						row.amount = 0;
+						row.remark = '';
+						cartData.push(row);
+						changeCartSize(setting);
+					}
 				});
-				if (!exists){
-					row.amount = 0;
-					row.remark = '';
-					cartData.push(row);
-					changeCartSize(_cart, setting);
-					$("#tbl_cart").bootstrapTable("refreshOptions", {data: cartData, cache: false});
+				$("#tbl_cart").bootstrapTable("refreshOptions", {data: cartData, cache: false});
+				
+				if (setting.autoToggle){
+					setting.toggle();
 				}
 			}
 		}
 	}
 	
-	var changeCartSize = function(ele, options){
+	var changeCartSize = function(options){
 		if (cartData.length == 0){
-			options.triggerShow.hide();
-			toggleCart(ele, options);
+			options.eventEle.children('.badge').hide();
+			options.toggle();
 			options.clearCallback();
 		}else{
-			options.triggerShow.show();
-			$('#cartSize').html(cartData.length);
+			options.eventEle.children('.badge').text(cartData.length);
+			options.eventEle.children('.badge').show();
 		}
 	}
 	
 	var initTitle = function(ele, options){
-		var title = $('<h3>' + options.title + ' </h3>');
-		ele.append(title);
-		options.triggerShow.click(function(){
-			toggleCart(ele, options);
-		});
+		ele.append('<h3>' + options.title + ' </h3>');
 	};
 	
 	var initForm = function(ele, options){
@@ -87,7 +101,7 @@
 							
 						});
 						var slt2 = _item.select2({
-							placeholder: "请选择供应商",
+							placeholder: "请选择" + item.label,
 							allowClear: true
 						});
 						if (item.values){
@@ -162,7 +176,7 @@
 				var index = $("#tbl_cart tbody tr").index(event_tr);
 				cartData.splice(index,1);
 				event_tr.remove();
-				changeCartSize(ele, options);
+				changeCartSize(options);
 			});
 		});
 		
@@ -183,16 +197,16 @@
 	};
 	
 	var initOperation = function(ele, options){
+		options.eventEle.append(' <span class="badge" style="display:none">0</span>');
 		ele.append('<div class="alert alert-warning" role="alert" style="display:none">...</div>');
-		
 		var buttonGroup = $('<div class="clearfix">');
-		var btn_submit = $('<button class="btn btn-success pull-right m-l-5" id="btn_submit_cart"><i class="fa fa-check"></i> 保存</button>');
-		var btn_clear = $('<button class="btn btn-defaul pull-right" id="btn_clear_cart"><i class="fa fa-remove"></i> 清空</button>');
-		var btn_close = $('<button class="btn btn-defaul pull-right" id="btn_close_cart"><i class="fa fa-close"></i> 关闭</button>');
+		var btn_close = $('<button class="btn btn-defaul pull-right" id="btn_close_cart">'+options.closeBtnName+'</button>');
+		var btn_submit = $('<button class="btn btn-success pull-right m-l-5" id="btn_submit_cart">'+options.submitBtnName+'</button>');
+		var btn_clear = $('<button class="btn btn-defaul pull-right" id="btn_clear_cart">'+options.clearBtnName+'</button>');
 		
+		buttonGroup.append(btn_close);
 		buttonGroup.append(btn_submit);
 		buttonGroup.append(btn_clear);
-		buttonGroup.append(btn_close);
 		ele.append(buttonGroup);
 		
 		btn_clear.click(function(){
@@ -205,7 +219,7 @@
 		});
 		
 		btn_close.click(function(){
-			toggleCart(ele, options);
+			options.toggle();
 		});
 		
 		btn_submit.click(function(){
@@ -263,7 +277,8 @@
 				return;
 			
 			var tableParam = {};
-			tableParam[options.name_tableParam] = JSON.stringify(cartData);
+			tableParam[options.paramName4Cart] = JSON.stringify(cartData);
+			
 			$("#form_cart").ajaxSubmit({
 				type: "post",
 				url: getProjectName() + options.submitUrl,
@@ -283,11 +298,7 @@
 	
 	var handleClearCart = function(ele, options){
 		cartData = [];
-		changeCartSize(ele, options);
+		changeCartSize(options);
 	};
 	
-	var toggleCart = function(ele, options){
-		options.toggle.slideToggle();
-		ele.slideToggle();
-	}
 })(jQuery);

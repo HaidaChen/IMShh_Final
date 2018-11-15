@@ -94,7 +94,7 @@ public class MaterialAction {
 	public void exportMaterial(HttpServletRequest request,HttpServletResponse response,HttpSession session){
 		ImportAndExportUtil.exportPreprocess(response, "原材料品类列表");
 		
-		String[] params = {"name", "category", "supplierName"};
+		String[] params = {"name", "category", "supplier"};
 		MaterialFilter filter = new MaterialFilter();
 		RequestParameterLoader.loadParameter(request, filter, params);
 		List<Material> materialList = service.exportMaterial(filter);

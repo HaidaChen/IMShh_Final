@@ -13,7 +13,7 @@ public interface IMaterialService {
 	 * @param filter
 	 * @return
 	 */
-	List<Material> exportMaterial(MaterialFilter filter);
+	List<Material> query(MaterialFilter filter);
 	
 	/**
 	 * 根据查询条件（名称、供应商、分类、规格、分页条件）
@@ -29,6 +29,8 @@ public interface IMaterialService {
 	void importMaterial(List<Material> materialList);
 	
 	List<ImportException> checkImport(List<Material> materialList);
+	
+	List<Material> exportMaterial(MaterialFilter filter);
 	
 	void deleteMaterial(String id);
 	

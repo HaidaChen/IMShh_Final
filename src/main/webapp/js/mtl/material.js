@@ -177,7 +177,7 @@ var initDelete = function(){
 var initImport = function(){
 	$("#btn_import").click(function(){
 		ImportData.show({url: getProjectName() + "/mtl/importMaterial.do",
-			templaterName: getProjectName() + "/templaters/原材料信息.xlsx",
+			templaterName: getProjectName() + "/templaters/原材料品类列表.xlsx",
 			callback: function(){
 				$("#tbl_material").bootstrapTable("refresh", {url: getProjectName() + "/mtl/getPageResult.do", cache: false});
 			}
@@ -187,26 +187,24 @@ var initImport = function(){
 
 var initExport = function(){
 	$("#btn_export").click(function(){
-		window.open(getProjectName() + "/mtl/exportMaterial.do?name="+$('#search_name').val()+"&category="+$('#search_category').val()+"&supplierName="+$('#search_supplier').val());
+		window.open(getProjectName() + "/mtl/exportMaterial.do?name="+$('#search_name').val()+"&category="+$('#search_category').val()+"&supplier="+$('#search_supplier').val());
 	});
 }
 
 var initMaterialIn = function(){	
 	$("#btn_instorage").click(function(){
 		var selections = $("#tbl_material").bootstrapTable('getSelections');
-		if (selections.length == 0){
+		if (selections.length == 0 && (!cart || cart.isEmpty())){
 			Ewin.alert({message: "请选择需要入库的原材料"}).on(function(e){});
 			return;
 		}
-		
-		$("#btn_outstorage").attr("disabled",true);
+		$("#btn_outstorage").attr('disabled', true);
 		if (!cart || (cart.isEmpty() && cart.name != 'materialIn')){
 			cart = null;
 			cart = $("#cart").cart({
 				name: 'materialIn',
 				title: '原材料入库',
-				triggerShow: $("#btn_show_cart"),
-				toggle: $("#panel_table"),
+				eventEle: $("#btn_instorage"),
 				formItems: [{element: 'select', label: '供应商', name: 'supplier', dataSrc: '/mtlSupp/query.do', valueField: 'id', textField: 'name', values: $("#search_supplier"), required: true}, 
 					        {element: 'date', label: '入库日期', name: 'inDate', required: true}],
 				tableOpts: [{field: 'name', title: '品名'}, 
@@ -214,20 +212,20 @@ var initMaterialIn = function(){
 					        {field: 'specification2', title: '规格2'}, 
 					        {field: 'specification3', title: '规格3'}],
 		        submitUrl: '/mtlIn/batchInStorage.do',
-				name_tableParam: 'materialStr',
+		        paramName4Cart: 'materialStr',
 				successCallback: function(){
 					$("#tbl_material").bootstrapTable("refresh", {url: getProjectName() + "/mtl/getPageResult.do", cache: false});
 			    },
 			    clearCallback: function(){
-			    	$("#btn_outstorage").attr("disabled",false);
+			    	$("#btn_outstorage").attr('disabled', false);
 			    }
 			});
 		}
 		
 		$.each(selections, function(index, row){
 			row.materialId = row.id;
-			cart.addToCart(row);
 		});
+		cart.addToCart(selections);
 		$("#tbl_material").bootstrapTable("uncheckAll");
 	});
 }
@@ -235,19 +233,18 @@ var initMaterialIn = function(){
 var initMaterialOut = function(){
 	$("#btn_outstorage").click(function(){
 		var selections = $("#tbl_material").bootstrapTable('getSelections');
-		if (selections.length == 0){
+		if (selections.length == 0 && (!cart || cart.isEmpty())){
 			Ewin.alert({message: "请选择需要出库的原材料"}).on(function(e){});
 			return;
 		}
 		
-		$("#btn_instorage").attr("disabled",true);
+		$("#btn_instorage").attr('disabled', true);
 		if (!cart || (cart.isEmpty() && cart.name != 'materialOut')){
 			cart = null;
 			cart = $("#cart").cart({
 				name: 'materialOut',
 				title: '原材料出库',
-				triggerShow: $("#btn_show_cart"),
-				toggle: $("#panel_table"),
+				eventEle: $("#btn_outstorage"),
 				formItems: [{element: 'date', label: '出库日期', name: 'outDate', required: true}],
 				tableOpts: [{field: 'name', title: '品名'}, 
 					        {field: 'specification1', title: '规格1'}, 
@@ -256,12 +253,12 @@ var initMaterialOut = function(){
 					        {field: 'storage', title: '库存'}],
 			    TIValidator: [{field: 'amount', rule: {name: 'lessThan', target: 'storage', message:'出库数不能大于库存'}}],
 		        submitUrl: '/mtlOut/batchOutStorage.do',
-				name_tableParam: 'materialStr',
+		        paramName4Cart: 'materialStr',
 				successCallback: function(){
 					$("#tbl_material").bootstrapTable("refresh", {url: getProjectName() + "/mtl/getPageResult.do", cache: false});
 			    },
 			    clearCallback: function(){
-			    	$("#btn_instorage").attr("disabled",false);
+			    	$("#btn_instorage").attr('disabled', false);
 			    }
 			});
 		}
@@ -269,8 +266,8 @@ var initMaterialOut = function(){
 		
 		$.each(selections, function(index, row){
 			row.materialId = row.id;
-			cart.addToCart(row);
 		});
+		cart.addToCart(selections);
 		$("#tbl_material").bootstrapTable("uncheckAll");
 	});
 }

@@ -18,10 +18,10 @@ import com.douniu.imshh.utils.LikeFlagUtil;
 
 public class MaterialService implements IMaterialService{
 	private IMaterialDao dao;
-	private IMaterialCategoryService ctgService;
+	private IMaterialCategoryService ctgService;	
 	
 	@Override
-	public List<Material> exportMaterial(MaterialFilter filter) {
+	public List<Material> query(MaterialFilter filter) {
 		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"name"});
 		return dao.query(condition);
 	}
@@ -81,8 +81,23 @@ public class MaterialService implements IMaterialService{
 	
 	@Override
 	public void importMaterial(List<Material> materialList) {
+		List<MaterialCategory> fullCategory = ctgService.query(new MaterialFilter());
+		for (Material material : materialList){
+			if (!material.getCategory().trim().equals("")){
+				MaterialCategory category = new MaterialCategory();
+				category.setName(material.getCategory());
+				int index = fullCategory.indexOf(category);
+				MaterialCategory match =  fullCategory.get(index);
+				material.setCategory(match.getId());
+			}
+		}
 		IDInjector.injector(materialList);
 		dao.batchInsert(materialList);
+	}
+
+	@Override
+	public List<Material> exportMaterial(MaterialFilter filter) {
+		return query(filter);
 	}
 
 	@Override

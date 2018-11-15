@@ -36,9 +36,6 @@
           <if test="name != null and name !=''">
           and m.name like #{name} 
           </if>
-          <if test="category != null and category !=''">
-          and m.category = #{category} 
-          </if>
           order by mo.outDate desc
           limit #{pageOffset},#{pageSize}
     </select> 
@@ -63,9 +60,6 @@
           <if test="name != null and name !=''">
           and m.name like #{name} 
           </if>
-          <if test="category != null and category !=''">
-          and m.category = #{category} 
-          </if>
           order by mo.outDate desc
     </select>
     
@@ -83,10 +77,7 @@
           </if>
           <if test="name != null and name !=''">
           and m.name like #{name} 
-          </if>
-          <if test="category != null and category !=''">
-          and m.category = #{category} 
-          </if> 
+          </if>          
     </select>   
     
     <select id="getById" parameterType="String" resultType="MaterialOut">
@@ -103,8 +94,8 @@
            and mi.id = #{id} 
     </select>
     
-    <insert id="insert" parameterType="MaterialIn">
-        insert into tbl_material_in(id, outDate, materialId, amount, modifydate, remark, status)  
+    <insert id="insert" parameterType="MaterialOut">
+        insert into tbl_material_out(id, outDate, materialId, amount, modifydate, remark, status)  
           values(#{id}, #{outDate}, #{materialId}, #{amount}, sysdate(), #{remark}, #{status})
     </insert>
     

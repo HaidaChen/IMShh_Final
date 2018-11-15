@@ -25,13 +25,13 @@
                m.specification2, 
                m.specification3, 
                m.unit, 
-               s.name as supplierName 
+               ms.name as supplierName 
           from tbl_material_in mi, 
                tbl_material m, 
-               t_supplier s 
+               tbl_material_supplier ms 
          where mi.status = '1' 
            and mi.materialId = m.id 
-           and mi.supplierId = s.id
+           and mi.supplierId = ms.id
           <if test="startDate != null">
           and mi.inDate &gt;= #{startDate}
           </if>
@@ -41,11 +41,8 @@
           <if test="name != null and name !=''">
           and m.name like #{name} 
           </if>
-          <if test="category != null and category !=''">
-          and m.category like #{category} 
-          </if>
-          <if test="supplierName != null and supplierName !=''">
-          and s.name like #{supplierName}
+          <if test="supplier != null and supplier !=''">
+          and ms.id = #{supplier}
           </if>
           order by mi.inDate desc
           limit #{pageOffset},#{pageSize}
@@ -58,13 +55,13 @@
                m.specification2, 
                m.specification3, 
                m.unit, 
-               s.name as supplierName 
+               ms.name as supplierName 
           from tbl_material_in mi, 
                tbl_material m, 
-               t_supplier s 
+               tbl_material_supplier ms 
          where mi.status = '1' 
            and mi.materialId = m.id 
-           and mi.supplierId = s.id
+           and mi.supplierId = ms.id
           <if test="startDate != null">
           and mi.inDate &gt;= #{startDate}
           </if>
@@ -74,11 +71,8 @@
           <if test="name != null and name !=''">
           and m.name like #{name} 
           </if>
-          <if test="category != null and category !=''">
-          and m.category like #{category} 
-          </if>
-          <if test="supplierName != null and supplierName !=''">
-          and s.name like #{supplierName}
+          <if test="supplier != null and supplier !=''">
+          and ms.id = #{supplier}
           </if>
           order by mi.inDate desc
     </select>
@@ -87,10 +81,10 @@
         select count(1) 
           from tbl_material_in mi, 
                tbl_material m, 
-               t_supplier s 
+               tbl_material_supplier ms 
          where mi.status = '1' 
            and mi.materialId = m.id 
-           and mi.supplierId = s.id
+           and mi.supplierId = ms.id
           <if test="startDate != null">
           and mi.inDate &gt;= #{startDate}
           </if>
@@ -100,12 +94,9 @@
           <if test="name != null and name !=''">
           and m.name like #{name} 
           </if>
-          <if test="category != null and category !=''">
-          and m.category like #{category} 
-          </if>
-          <if test="supplierName != null and supplierName !=''">
-          and s.name like #{supplierName}
-          </if>  
+          <if test="supplier != null and supplier !=''">
+          and ms.id = #{supplier}
+          </if> 
     </select>   
     
     <select id="getById" parameterType="String" resultType="MaterialIn">
@@ -115,14 +106,14 @@
                m.specification2, 
                m.specification3, 
                m.unit, 
-               s.name as supplierName 
+               ms.name as supplierName 
           from tbl_material_in mi, 
                tbl_material m, 
-               t_supplier s 
+               tbl_material_supplier ms 
          where mi.id = #{id}
            and mi.status = '1' 
            and mi.materialId = m.id 
-           and mi.supplierId = s.id 
+           and mi.supplierId = ms.id 
     </select>
     
     <insert id="insert" parameterType="MaterialIn">

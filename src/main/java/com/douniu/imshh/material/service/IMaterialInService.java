@@ -2,6 +2,7 @@ package com.douniu.imshh.material.service;
 
 import java.util.List;
 
+import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.material.domain.MaterialIn;
@@ -25,7 +26,11 @@ public interface IMaterialInService {
 	
 	void inStorage(MaterialIn materialIn);
 	
-	void batchInStorage(List<MaterialIn> materialIn);
+	void batchInStorage(List<MaterialIn> materialIn);	
 	
-	void delete(String id);
+	void importMaterialIn(List<MaterialIn> materialInList);
+	
+	List<ImportException> checkImport(List<MaterialIn> materialInList);
+	
+	List<MaterialIn> exportMaterialIn(MaterialFilter filter);
 }

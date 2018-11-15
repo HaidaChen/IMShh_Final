@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>原材料入库明细</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+	
+  <link rel="stylesheet" href="../../bootstrap-dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../../bootstrap-table/bootstrap-table.css">
+  <link rel="stylesheet" href="../../js/select2/select2.min.css" />
+  <link rel="stylesheet" href="../../css/default.css">
+</head>
+<body>
+    <div class="modal fade bs-example-modal-lg" id="modal_material" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
+	  <div class="modal-dialog modal-lg" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel">请选择原材料</h4>
+	      </div>
+	      <div class="modal-body">
+	        <div>
+			  <form class="form-inline">
+				<div class="form-group">
+				  <input type="text" class="form-control" id="search_mtl_name" name="name" placeholder="请输入原材料名称"/>
+				</div>
+				<div class="form-group">  
+				  <select class="form-control" id="search_mtl_supplier" name="supplier">
+					<option value=""></option>
+				  </select>
+				</div>  
+				<button id="btn_search_mtl" type="button" class="btn btn-success btn-sm">查询</button>
+			  </form>
+			</div>
+			<div>
+			  <table id="tbl_material" class="table table-condensed"></table>
+			</div>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	        <button type="button" id="btn_chose_mtl" class="btn btn-success">添加</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+  <header class="header">
+	<div class="header-brand">
+	  <a href="#">
+	  <img src="../../img/logo/ALOGO.png" alt="华辉烟花信息管理系统" class="img-responsive" height="40" width="150">
+	  </a>
+	</div>
+	<ul class="nav-list header-nav pull-right">
+	  <li>
+		<form class="app-search" role="search">
+		  <input id="condition" class="form-control" type="text" placeholder="原材料名称"/>
+			<a><i class="fa fa-search"></i></a>
+		</form>
+	  </li>
+	  <li>
+		<a id="nav_more_condition"><i class="fa fa-th-large"></i> 更多查询 <i class="fa fa-angle-down"></i></a>
+	  </li>
+	  <li>
+		<a id="nav_changePWD" data-toggle="tooltip" data-placement="bottom" title="修改密码"><i class="fa fa-key"></i></a>
+	  </li>
+	  <li>
+		<a id="nav_signOut" title="退出系统"><i class="fa fa-power-off"></i></a>
+	  </li>
+	</ul>	
+  </header>
+  <section class="content-warpper">
+	<aside class="sidebar">
+	  <div id="siderbar-warper">
+		<ul id="side-menu" class="nav-list"></ul>
+	  </div>
+	</aside>
+	<div class="content-warpper">
+	  <div id="panel_more_condition" class="panel-condition">
+		<form>
+	      <div class="row" >
+			<div class="col-md-2">
+			  <label for="search_name">原材料名称</label>
+			  <input type="text" class="form-control" id="search_name"/>
+			</div>
+			<div class="col-md-2">
+			  <label for="search_supplier">供应商</label>
+		      <select class="form-control" id="search_supplier">
+				<option value=""></option>
+			  </select>
+			</div>
+			<div class="col-md-2">
+			  <label for="search_startDate">开始日期</label>
+			  <input type="date" class="form-control" id="search_startDate"/>
+			</div>
+			<div class="col-md-2">
+			  <label for="search_endDate">结束日期</label>
+			  <input type="date" class="form-control" id="search_endDate"/>
+			</div>
+			<button id="btn_search" type="button" class="btn btn-success btn_search"><i class="fa fa-search"></i> 查询</button>
+		  </div>
+		</form>
+	  </div>
+	  <div id="panel_table" class="container-fluid">
+		<div class="panel panel-function">
+		  <button class="btn btn-danger btn-sm" id="btn_add"><i class="fa fa-plus"></i> 新 增</button>
+		  <button class="btn btn-danger btn-sm" id="btn_copy"><i class="fa fa-files-o"></i> 复制</button>
+		  <button class="btn btn-danger btn-sm" id="btn_import"><i class="fa fa-sign-in fa-rotate-90"></i> 导入</button>
+		  <button class="btn btn-danger btn-sm" id="btn_export"><i class="fa fa-sign-out fa-rotate-270"></i> 导出</button>
+		</div>
+		<div class="panel">
+		  <h3 class="table-title">原材料.入库明细</h3>
+		  <table id="tbl_materialIn" class="table table-hover "></table>
+		</div>				
+	  </div>
+	  <div id="cart" class="panel" style="display: none"></div>
+	  <div id="panel-new" class="container-fluid panel" style="display: none">
+		<h3 >新的原材料入库</h3>
+		<form id="form_new_materialIn" class="form-horizontal">
+		  <div class="form-group">
+			<label for="new_inDate" class="col-sm-2 control-label">入库日期</label>
+			<div class="col-sm-10">
+			  <input type="date" class="form-control" id="new_inDate" name="inDate">
+			</div>
+		  </div>
+		  <div class="form-group">
+			<label for="new_supplier" class="col-sm-2 control-label">供应商</label>
+			<div class="col-sm-10">
+			  <select class="form-control" id="new_supplier" name="supplierId">
+			    <option value=""></option>
+			  </select>
+			</div>
+		  </div>
+		  <div class="form-group">
+			<label for="new_material" class="col-sm-2 control-label">原材料</label>
+			<div class="col-sm-10">
+			  <input type="hidden" name="materialId">
+			  <div class="input-group">
+			    <input type="text" class="form-control" id="new_material" name="material" readonly="readonly">
+			    <span class="input-group-btn">
+			      <button class="btn btn-default" type="button" data-toggle="modal" data-target="#modal_material"><i class="fa fa-arrow-circle-down"></i></button>
+			    </span>
+			  </div>
+			</div>
+		  </div>
+		  <div class="form-group">
+			<label for="new_amount" class="col-sm-2 control-label">入库数量</label>
+			<div class="col-sm-10">
+			  <input type="text" class="form-control" id="new_amount" name="amount">
+			</div>
+		  </div>
+		  <div class="form-group">
+			<label for="new_remark" class="col-sm-2 control-label">备注</label>
+			<div class="col-sm-10">
+			  <textarea rows="3" class="form-control" id="new_remark" name="remark"></textarea>
+			</div>
+		  </div>
+		</form>
+		<div class="clearfix">
+		  <input type="button" id="btn_save_new" value="保存" class="btn btn-success pull-right m-l-5">
+		  <input type="button" id="btn_cancel_new" value="取消" class="btn btn-default pull-right ">
+		</div>
+	  </div>		
+	</div>
+  </section>
+  <script src="../../js/jquery/jquery-2.0.3.min.js"></script>
+  <script src="../../bootstrap-dist/js/bootstrap.min.js"></script>
+  <script src="../../js/bootstrapvalidator/js/bootstrapValidator.min.js"></script>	
+  <script src="../../js/bootstrapvalidator/js/language/zh_CN.js"></script>
+  <script src="../../bootstrap-table/bootstrap-table.js"></script>
+  <script src="../../bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+  <script src="../../js/jquery-form/jquery.form.js"></script>
+  <script src="../../js/jQuery-slimScroll-1.3.0/jquery.slimscroll.min.js"></script>
+  <script src="../../js/select2/select2.min.js"></script>
+
+  <script src="../../js/common.js"></script>
+  <script src="../../js/myplugins/jquery.import.js"></script>
+  <script src="../../js/myplugins/jquery.cart.js"></script>
+  <script src="../../js/mtl/materialIn.js"></script>
+  <script>
+	$(function(){
+	  App.setPage("materialIn");
+	  App.init(); 
+	  initMaterialModule();
+	});
+  </script>
+</body>
+</html>

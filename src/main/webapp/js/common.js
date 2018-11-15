@@ -213,8 +213,12 @@ var App = function () {
         	if (App.isPage("material")){
         		handleSidebar("mtl/catalog.html");        		
         	}
-        	
-        	
+        	if (App.isPage("materialIn")){
+        		handleSidebar("mtl/receipt-dtl.html");        		
+        	}
+        	if (App.isPage("materialOut")){
+        		handleSidebar("mtl/draw-dtl.html");        		
+        	}
         	
 			handleMoreCondition();
 			handleChangePWD();

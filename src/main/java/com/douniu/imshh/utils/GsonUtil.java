@@ -12,7 +12,7 @@ public class GsonUtil {
 	public static String toJson(Object target, String dateFormat){
 		Gson gson = null;
 		if (dateFormat == null || dateFormat.equals(""))
-			gson = new GsonBuilder().setDateFormat("yyyy-mm-dd").create();
+			gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		else
 			gson = new GsonBuilder().setDateFormat(dateFormat).create();
 		return gson.toJson(target);
