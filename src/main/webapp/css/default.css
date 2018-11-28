@@ -17,7 +17,7 @@ h1,h2,h3,h4,h5,h6{
     border-radius: 7px 7px 7px 7px;
     box-shadow: 0, 1px, 4px #D3D3D3;
     margin: 10px auto;
-    padding: 40px 60px 60px;
+    padding: 40px 60px 80px;
     position: relative;
     min-height: 300px;
 }
