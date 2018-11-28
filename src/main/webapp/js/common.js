@@ -178,9 +178,9 @@ var App = function () {
 				if (result == 1) {
 					window.location.href = getProjectName() + "/page/frame.html";
 				} else if (result == 0){
-					$("#loginform").append('<div class="alert alert-warning" role="alert">不存在该用户</div>');
+					$("#loginform").append('<div class="alert alert-warning" role="alert" style="margin-top:10px">不存在该用户</div>');
 				} else{
-					$("#loginform").append('<div class="alert alert-warning" role="alert">用户名密码不正确</div>');
+					$("#loginform").append('<div class="alert alert-warning" role="alert" style="margin-top:10px">用户名密码不正确</div>');
 				}
 			}
 		};

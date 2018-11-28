@@ -11,6 +11,47 @@ h1,h2,h3,h4,h5,h6{
 	font-family: "Arial","Microsoft YaHei","黑体","宋体",sans-serif;
 }
 
+.login-box {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #D8D8D8;
+    border-radius: 7px 7px 7px 7px;
+    box-shadow: 0, 1px, 4px #D3D3D3;
+    margin: 10px auto;
+    padding: 40px 60px 60px;
+    position: relative;
+    min-height: 300px;
+}
+.login-box h3{
+	font-size: 28px;
+    text-align: center;
+    margin-bottom: 40px;
+}
+.login-box input{
+  background: none repeat scroll 0 0 #FFFFFF;
+  font-size: 15px;
+  margin: 0;
+  padding: 10px 8px 8px;
+  width: 100%;
+  border-radius: 6px;
+  box-shadow: none;
+  min-width: 0;
+  padding-left: 33px !important;
+}
+.login-box button {
+  width: 100%;
+}
+.login-box form i{
+  color: #CCCCCC;
+  display: block !important;
+  font-size: 16px;
+  height: 16px;
+  margin: 9px 2px 4px 10px;
+  position: absolute !important;
+  text-align: center;
+  width: 16px;
+  z-index: 1;
+}
+
 .error-tip {
 	padding: 5px 10px;
 	color: rgba(255, 0, 0, 0.8);
