@@ -1,10 +1,54 @@
 var initMtlCategoryModule = function(){
+	initCategory();
 	initQuery();
 	initEdit();
 	initSave();
 	initDelete();
 	
 	initFormula();
+}
+
+var initCategory = function(){
+	var ctgData = [
+        {'id': '0', 'parent': '#', 'text': '原材料分类', 'state': { "opened" : true }},
+
+		{'id': '01', 'parent': '0', 'text': '01 化工材料'},
+		{'id': '02', 'parent': '0', 'text': '02 引线'},
+		{'id': '03', 'parent': '0', 'text': '03 包装材料', 'state': { "opened" : true }},
+		{'id': '99', 'parent': '0', 'text': '99 其他'},
+		
+		{'id': '0301', 'parent': '03', 'text': '0301 纸箱'},
+		{'id': '0302', 'parent': '03', 'text': '0302 彩盒'},
+		{'id': '0303', 'parent': '03', 'text': '0303 PVC袋'},
+		{'id': '0304', 'parent': '03', 'text': '0304 彩印'},
+		{'id': '0305', 'parent': '03', 'text': '0305 纸管'},
+		{'id': '0306', 'parent': '03', 'text': '0306 纸张'},
+		{'id': '0307', 'parent': '03', 'text': '0307 木方'},
+		{'id': '0399', 'parent': '03', 'text': '0399 其他'},
+		
+		{'id': '030401', 'parent': '0304', 'text': '030401 围招'},
+		{'id': '030402', 'parent': '0304', 'text': '030402 顶招'},
+		{'id': '030403', 'parent': '0304', 'text': '030403 筒招'},
+		{'id': '030404', 'parent': '0304', 'text': '030404 弹招'},
+		{'id': '030405', 'parent': '0304', 'text': '030405 皮招'},
+		{'id': '030406', 'parent': '0304', 'text': '030406 柱形弹混批'},
+		{'id': '030407', 'parent': '0304', 'text': '030407 卡头'},
+		{'id': '030408', 'parent': '0304', 'text': '030408 内卡'},
+		{'id': '030409', 'parent': '0304', 'text': '030409 内架'}
+	];
+	
+	
+	$('#panel_category').jstree({
+		plugins: ['types', 'state'],
+		'types': {
+			'default': {
+				'icon': false
+			}
+		},
+		'core': {
+			'data': ctgData
+		}
+	});
 }
 
 var initQuery = function(){

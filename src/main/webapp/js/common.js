@@ -1,6 +1,6 @@
 var App = function () {
 	var currentPage = '';
-	
+	var nthTabs;
 	var handleSidebar = function(current){
 		
 		$("#siderbar-warper").slimScroll({
@@ -19,32 +19,27 @@ var App = function () {
 					}
 					var itemContent = $("<i class='" + icon + "'></i> <span>" + obj.name +"</span>");
 					if (obj.url && obj.url != ''){
-						itemLink.attr("href", getProjectName() + "/page/" + obj.url);
+						itemLink.attr("link", obj.url);
+						itemLink.attr("identify", obj.id);
+						itemLink.attr("text", obj.name);
 					}
 					itemLink.append(itemContent);
 					item.append(itemLink);
 					menuContainer.append(item);
-					
 					if (obj.submenu && obj.submenu.length > 0){
 						var subcontainer = $("<ul class='nav-list'>");
 						$.each(obj.submenu, function(index, submenu){
-							var subItem = $("<li><a class='' href='" + getProjectName() + "/page/" + submenu.url + "'>" + submenu.name + "</a></li>");
+							var subItem = $("<li><a class='' href='javascript:;' link='"+submenu.url+"' identify='"+submenu.id+"' text='"+obj.name+"."+submenu.name+"'>" + submenu.name + "</a></li>");
 							subcontainer.append(subItem);
 						});
 						item.append(subcontainer);
 						itemLink.append("<span class='arrow'></span>");
+						
 					}else{
 						itemLink.attr("href", obj.url);
 					}				
 				});
 				
-				var currentItem = menuContainer.find("a[href$='"+current+"']");
-				var currentPannel = currentItem.parent().parent();
-				var currentParent = currentPannel.prev();
-				currentItem.addClass("active");
-				currentPannel.show();
-				currentParent.addClass("active");
-				currentParent.children("span").addClass("open");
 			}
 		});
 	}
@@ -52,15 +47,20 @@ var App = function () {
 	var handleSidebarCollapse = function(){
 		var menuContainer = $("#side-menu");
 		menuContainer.on("click", "li", function(){
-			var child = $(this).children("ul");
-			var arrow = $(this).find("span.arrow");
-			if (child){
-				child.toggle("normal");
-				arrow.toggleClass("open")
-			}
+			var child = $(this).find("ul");
 			
-			menuContainer.find("ul").not(child).hide();
+			var arrow = $(this).find("span.arrow");
+			child.toggle();
+			arrow.toggleClass("open");
 			menuContainer.find("span.arrow").not(arrow).removeClass("open");
+			menuContainer.find("ul").not(child).hide();
+			
+			var link = $(this).children("a").attr("link");
+			if(link && link != ''){
+				var identify = $(this).children("a").attr("identify");
+				var text = $(this).children("a").attr("text");
+				nthTabs.addTab({id:identify,title:text,content:link});
+			}
 		});
 		
 	}
@@ -176,7 +176,7 @@ var App = function () {
 			success: function(result){
 				$("#loginform .alert").remove();
 				if (result == 1) {
-					window.location.href = getProjectName() + "/page/mtl/catalog.html";
+					window.location.href = getProjectName() + "/page/frame.html";
 				} else if (result == 0){
 					$("#loginform").append('<div class="alert alert-warning" role="alert">不存在该用户</div>');
 				} else{
@@ -204,6 +204,18 @@ var App = function () {
 				handleLoginModule();
 			}
         	
+        	if (App.isPage("frame")){
+        		 $('body or .container or #content').slimScroll();
+        		handleSidebar("mtl/category.html"); 
+        		nthTabs = $("#editor-tabs").nthTabs();
+                nthTabs.addTab({
+                    id:'0101',
+                    title:'原材料.品类',
+                    active:true,
+                    allowClose:false,
+                    content:'mtl/category.html',
+                });
+        	}
         	if (App.isPage("materialCategory")){
         		handleSidebar("mtl/category.html");        		
         	}
@@ -420,3 +432,6 @@ function isNumber(value) {
         return true
     }
 }
+
+
+
