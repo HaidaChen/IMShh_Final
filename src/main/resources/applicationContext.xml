@@ -14,11 +14,11 @@
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
        
-      <bean name="materialCategoryService" class="com.douniu.imshh.material.service.impl.MaterialCategoryService">
+      <bean name="materialCategoryService" class="com.douniu.imshh.material.service.impl.CategoryService">
           <property name="dao" ref="materialCategoryDao"></property>
       </bean>
       <bean id="materialCategoryDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.material.dao.IMaterialCategoryDao"/>
+          <property name="mapperInterface" value="com.douniu.imshh.material.dao.ICategoryDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       
@@ -231,6 +231,9 @@
       <bean id="menuDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
           <property name="mapperInterface" value="com.douniu.imshh.sys.dao.IMenuDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="parameterService" class="com.douniu.imshh.sys.service.impl.ParameterService">
       </bean>
       <!-- 公共部分 -->
       <!-- SpringMVC上传文件时，需要配置MultipartResolver处理器 -->  

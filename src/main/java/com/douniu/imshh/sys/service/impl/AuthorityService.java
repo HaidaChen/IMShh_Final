@@ -41,6 +41,15 @@ public class AuthorityService implements IAuthorityService{
 		return root.getSubmenu();
 	}
 	
+	@Override
+	public List<Menu> getAllMenu() {
+		List<Menu> menus = dao.getAllMenu();
+		Menu root = new Menu();
+		root.setId("0");
+		menuList2Tree(menus, root);
+		return root.getSubmenu();
+	}
+
 	private void menuList2Tree(List<Menu> src, Menu parent){
 		List<Menu> submenus = new ArrayList<Menu>();
 		for(Menu menu : src){

@@ -2,7 +2,7 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<typeAliases>
-		<typeAlias alias="MaterialCategory" type="com.douniu.imshh.material.domain.MaterialCategory"/>
+		<typeAlias alias="MaterialCategory" type="com.douniu.imshh.material.domain.Category"/>
 		<typeAlias alias="MaterialSupplier" type="com.douniu.imshh.material.domain.MaterialSupplier"/>
 		<typeAlias alias="Material" type="com.douniu.imshh.material.domain.Material"/>
         <typeAlias alias="MaterialFilter" type="com.douniu.imshh.material.domain.MaterialFilter"/>
@@ -40,7 +40,7 @@
     
      
     <mappers>
-    	<mapper resource="/com/douniu/imshh/material/dao/materialCategoryMapper.xml"/>
+    	<mapper resource="/com/douniu/imshh/material/dao/categoryMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/material/dao/materialSupplierMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/material/dao/materialMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/material/dao/historyPriceMapper.xml"/>

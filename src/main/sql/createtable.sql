@@ -1,7 +1,8 @@
 CREATE TABLE TBL_MATERIAL_CATEGORY(
     id varchar(20) not null,
+    code varchar(20) not null,
     name varchar(64) not null,
-    formula varchar(256),
+    parentId varchar(20),
     remark varchar(1024),
     status char(1) default '1',
     modifyDate datetime

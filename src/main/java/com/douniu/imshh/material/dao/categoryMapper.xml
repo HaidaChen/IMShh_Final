@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.douniu.imshh.material.dao.IMaterialCategoryDao">
+<mapper namespace="com.douniu.imshh.material.dao.ICategoryDao">
     <resultMap type="MaterialCategory" id="mtlctgymap">
         <result property="id" column="id"/>
+        <result property="code" column="code"/>
         <result property="name" column="name"/>
-        <result property="formula" column="formula"/>
+        <result property="parentId" column="parentId"/>
         <result property="remark" column="remark"/>
         <result property="status" column="status"/>
     </resultMap>
@@ -17,18 +18,33 @@
           <if test="name != null and name !=''">
           and name like #{name} 
           </if>
-          order by modifydate desc
+          <if test="code != null and code !=''">
+          and code like ={code} 
+          </if>
+          <if test="parentId != null and parentId !=''">
+          and parentId = #{parentId} 
+          </if>
+          <if test="remark != null and remark !=''">
+          and remark like #{remark} 
+          </if>
+          order by code
           limit #{pageOffset},#{pageSize}
     </select> 
     <select id="query" parameterType="MaterialFilter" resultMap="mtlctgymap">
         select * from tbl_material_category where status = 1
-        <if test="name != null and name !=''">
+          <if test="name != null and name !=''">
           and name like #{name} 
-        </if> 
-        <if test="category != null and category !=''">
-          and category like #{category} 
-        </if>      
-          order by modifydate desc
+          </if>
+          <if test="code != null and code !=''">
+          and code = #{code} 
+          </if>
+          <if test="parentId != null and parentId !=''">
+          and parentId = #{parentId} 
+          </if>
+          <if test="remark != null and remark !=''">
+          and remark like #{remark} 
+          </if>      
+          order by code
     </select>
     
     <select id="count" parameterType="MaterialFilter" resultType="int">
@@ -37,6 +53,15 @@
          where status = '1' 
           <if test="name != null and name !=''">
           and name like #{name} 
+          </if>
+          <if test="code != null and code !=''">
+          and code = #{code} 
+          </if>
+          <if test="parentId != null and parentId !=''">
+          and parentId = #{parentId} 
+          </if>
+          <if test="remark != null and remark !=''">
+          and remark like #{remark} 
           </if>          
     </select>   
     
@@ -45,14 +70,14 @@
     </select>
     
     <insert id="insert" parameterType="MaterialCategory">
-        insert into tbl_material_category (id, name, formula, modifydate, remark, status)  
-          values(#{id}, #{name}, #{formula}, sysdate(), #{remark}, #{status})
+        insert into tbl_material_category (id, code, name, parentId, modifydate, remark, status)  
+          values(#{id}, #{code}, #{name}, #{parentId}, sysdate(), #{remark}, #{status})
     </insert>
     
     <update id="update" parameterType="MaterialCategory">
         update tbl_material_category set 
           name = #{name},
-          formula = #{formula},
+          code = #{code},
           remark = #{remark},
           modifydate = sysdate()
         where id = #{id}

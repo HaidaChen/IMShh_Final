@@ -9,16 +9,16 @@ import com.douniu.imshh.common.IDInjector;
 import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.dao.IMaterialDao;
+import com.douniu.imshh.material.domain.Category;
 import com.douniu.imshh.material.domain.Material;
-import com.douniu.imshh.material.domain.MaterialCategory;
 import com.douniu.imshh.material.domain.MaterialFilter;
-import com.douniu.imshh.material.service.IMaterialCategoryService;
+import com.douniu.imshh.material.service.ICategoryService;
 import com.douniu.imshh.material.service.IMaterialService;
 import com.douniu.imshh.utils.LikeFlagUtil;
 
 public class MaterialService implements IMaterialService{
 	private IMaterialDao dao;
-	private IMaterialCategoryService ctgService;	
+	private ICategoryService ctgService;	
 	
 	@Override
 	public List<Material> query(MaterialFilter filter) {
@@ -53,7 +53,7 @@ public class MaterialService implements IMaterialService{
 		String repeation = "";
 		String categoryMapping = "";
 		List<Material> fullMaterial = dao.query(new MaterialFilter());
-		List<MaterialCategory> fullCategory = ctgService.query(new MaterialFilter());
+		List<Category> fullCategory = ctgService.query(new MaterialFilter());
 		
 		for (int i = 0; i < materialList.size(); i++){
 			Material material = materialList.get(i);
@@ -62,7 +62,7 @@ public class MaterialService implements IMaterialService{
 			}
 			
 			if (!StringUtils.isEmpty(material.getCategory())){
-				MaterialCategory category = new MaterialCategory();
+				Category category = new Category();
 				category.setName(material.getCategory());
 				if (!fullCategory.contains(category)){
 					categoryMapping += "," + (i+2);
@@ -81,13 +81,13 @@ public class MaterialService implements IMaterialService{
 	
 	@Override
 	public void importMaterial(List<Material> materialList) {
-		List<MaterialCategory> fullCategory = ctgService.query(new MaterialFilter());
+		List<Category> fullCategory = ctgService.query(new MaterialFilter());
 		for (Material material : materialList){
 			if (!material.getCategory().trim().equals("")){
-				MaterialCategory category = new MaterialCategory();
+				Category category = new Category();
 				category.setName(material.getCategory());
 				int index = fullCategory.indexOf(category);
-				MaterialCategory match =  fullCategory.get(index);
+				Category match =  fullCategory.get(index);
 				material.setCategory(match.getId());
 			}
 		}
@@ -117,7 +117,7 @@ public class MaterialService implements IMaterialService{
 		this.dao = dao;
 	}
 
-	public void setCtgService(IMaterialCategoryService ctgService) {
+	public void setCtgService(ICategoryService ctgService) {
 		this.ctgService = ctgService;
 	}
 

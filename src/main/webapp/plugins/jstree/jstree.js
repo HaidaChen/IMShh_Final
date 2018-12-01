@@ -3601,7 +3601,7 @@
 				}
 				this._data.core.state = null;
 			});
-		},
+		},		
 		/**
 		 * refreshes a node in the tree (reload its children) all opened nodes inside that node are reloaded with calls to `load_node`.
 		 * @name refresh_node(obj)

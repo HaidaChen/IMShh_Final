@@ -36,6 +36,10 @@
         select distinct m.* from t_menu m, t_role_authority r, t_user_role u where m.id = r.authorityId and r.roleId = u.roleId and u.userId= #{userId} order by m.id 
     </select>
     
+    <select id="getAllMenu" resultMap="menumap">
+        select * from t_menu m order by id 
+    </select>
+    
     <select id="findById" parameterType="String" resultMap="authoritymap">
         select * from t_authority where id = #{id}
     </select>

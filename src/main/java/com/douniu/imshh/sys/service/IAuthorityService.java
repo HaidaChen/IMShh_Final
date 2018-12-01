@@ -10,5 +10,6 @@ public interface IAuthorityService {
 	List<Authority> queryByRole(String roleId);
 	List<Authority> queryByUser(String userId);
 	List<Menu> queryMenuTreeByUser(String userId);
+	List<Menu> getAllMenu();
 	Authority findById(String id);	
 }

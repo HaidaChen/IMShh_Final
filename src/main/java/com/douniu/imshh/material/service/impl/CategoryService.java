@@ -4,43 +4,43 @@ import java.util.List;
 
 import com.douniu.imshh.common.IDInjector;
 import com.douniu.imshh.common.PageResult;
-import com.douniu.imshh.material.dao.IMaterialCategoryDao;
-import com.douniu.imshh.material.domain.MaterialCategory;
+import com.douniu.imshh.material.dao.ICategoryDao;
+import com.douniu.imshh.material.domain.Category;
 import com.douniu.imshh.material.domain.MaterialFilter;
-import com.douniu.imshh.material.service.IMaterialCategoryService;
+import com.douniu.imshh.material.service.ICategoryService;
 import com.douniu.imshh.utils.LikeFlagUtil;
 
-public class MaterialCategoryService implements IMaterialCategoryService{
-	private IMaterialCategoryDao dao;
+public class CategoryService implements ICategoryService{
+	private ICategoryDao dao;
 	
 	@Override
-	public List<MaterialCategory> query(MaterialFilter filter) {
-		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"name"});
+	public List<Category> query(MaterialFilter filter) {
+		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"name", "remark"});
 		return dao.query(condition);
 	}
 
 	@Override
 	public PageResult getPageResult(MaterialFilter filter) {
 		PageResult pr = new PageResult();
-		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"name"});
+		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"name", "remark"});
 		pr.setRows(dao.getPageResult(condition));
 		pr.setTotal(dao.count(condition));
 		return pr;
 	}
 
 	@Override
-	public MaterialCategory getById(String id) {
+	public Category getById(String id) {
 		return dao.getById(id);
 	}
 
 	@Override
-	public void newCategory(MaterialCategory category) {
+	public void newCategory(Category category) {
 		IDInjector.injector(category);
 		dao.insert(category);
 	}
 
 	@Override
-	public void updateCategory(MaterialCategory category) {
+	public void updateCategory(Category category) {
 		dao.update(category);
 	}
 
@@ -49,7 +49,7 @@ public class MaterialCategoryService implements IMaterialCategoryService{
 		dao.delete(id);
 	}
 
-	public void setDao(IMaterialCategoryDao dao) {
+	public void setDao(ICategoryDao dao) {
 		this.dao = dao;
 	}
 

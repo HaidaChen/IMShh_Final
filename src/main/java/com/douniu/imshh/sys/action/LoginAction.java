@@ -15,6 +15,7 @@ import com.douniu.imshh.sys.domain.Authority;
 import com.douniu.imshh.sys.domain.Menu;
 import com.douniu.imshh.sys.domain.User;
 import com.douniu.imshh.sys.service.IAuthorityService;
+import com.douniu.imshh.sys.service.IParameterService;
 import com.douniu.imshh.sys.service.IUserService;
 import com.google.gson.Gson;
 
@@ -26,6 +27,8 @@ public class LoginAction {
 	private IUserService service;
 	@Autowired
 	private IAuthorityService authorityService;
+	@Autowired
+	private IParameterService parameterService;
 	
 	@RequestMapping("/login")
 	@ResponseBody
@@ -43,7 +46,10 @@ public class LoginAction {
 			httpSession.setAttribute("userAuthority", authorities);
 			
 			//保存用户菜单到session
-			List<Menu> menus =authorityService.queryMenuTreeByUser(oUser.getId());
+			List<Menu> menus = authorityService.queryMenuTreeByUser(oUser.getId());
+			if (parameterService.getBoolean("debug")){
+				menus = authorityService.getAllMenu();
+			}
 			Gson gson = new Gson();
 			String menuStr = gson.toJson(menus);
 			httpSession.setAttribute("userMenu", menuStr);

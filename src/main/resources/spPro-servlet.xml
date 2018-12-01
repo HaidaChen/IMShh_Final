@@ -10,14 +10,13 @@
 	<!-- 在实际开发中通常都需配置 mvc:annotation-driven 标签 -->
     <mvc:annotation-driven/>
     
-    <!-- 
     <mvc:interceptors>  
     	<mvc:interceptor>  
 	        <mvc:mapping path="/**"/>  
 	        <bean class="com.douniu.imshh.sys.action.AuthorizationIntercepter"/>  
 	    </mvc:interceptor>  
 	</mvc:interceptors>  
-     -->
+    
     <!-- 配置自定扫描的包 -->
     <context:component-scan base-package="com.douniu.imshh"></context:component-scan>
 
