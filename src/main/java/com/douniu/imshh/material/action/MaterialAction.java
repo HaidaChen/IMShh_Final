@@ -1,7 +1,9 @@
 package com.douniu.imshh.material.action;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,11 +34,9 @@ public class MaterialAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{
 		mapper.add(new ExcelBean("品名","name",0));  
-		mapper.add(new ExcelBean("规格1","specification1",0)); 
-		mapper.add(new ExcelBean("规格2","specification2",0)); 
-		mapper.add(new ExcelBean("规格3","specification3",0)); 		  
-		mapper.add(new ExcelBean("分类","category",0));  
-		mapper.add(new ExcelBean("计量单位","unit",0));
+		mapper.add(new ExcelBean("规格","specification",0)); 		  
+		mapper.add(new ExcelBean("分类","ctg.name",0));  
+		mapper.add(new ExcelBean("单位","unit",0));
 		mapper.add(new ExcelBean("库存","storage",0));
 		mapper.add(new ExcelBean("备注","remark",0));  
 	}
@@ -60,6 +60,15 @@ public class MaterialAction {
 		return GsonUtil.toJson(material);
 	}
 	
+	@Authorization("010101")
+	@RequestMapping(value="/validateUnique", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String validateUnique(MaterialFilter filter){
+		boolean result = service.exist(filter);
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("valid", !result);
+		return GsonUtil.toJson(map);
+	}
 	
 	@Authorization("010102")
 	@RequestMapping(value="/addMaterial", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
@@ -67,15 +76,22 @@ public class MaterialAction {
 	public void addMaterial(Material material){
 		service.newMaterial(material);
 	}
-	
+		
 	@Authorization("010103")
+	@RequestMapping(value="/updateMaterial", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public void updateMaterial(Material material){
+		service.updateMaterial(material);
+	}
+	
+	@Authorization("010104")
 	@RequestMapping(value="/deleteMaterial")
 	@ResponseBody
 	public void deleteMaterial(String id){
 		service.deleteMaterial(id);
 	}
 	
-	@Authorization("010104")
+	@Authorization("010102")
 	@RequestMapping(value="importMaterial",method={RequestMethod.GET,RequestMethod.POST}, produces = "text/html; charset=utf-8")  
     @ResponseBody
 	public String importMaterial(HttpServletRequest request,HttpServletResponse response) throws Exception{

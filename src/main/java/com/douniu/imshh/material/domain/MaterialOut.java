@@ -7,9 +7,7 @@ public class MaterialOut {
 	private Date outDate;
 	private String materialId;          /*原材料ID*/
 	private String materialName;        /*原材料名称*/	
-	private String specification1;      /*规格1*/
-	private String specification2;      /*规格2*/
-	private String specification3;      /*规格3*/
+	private String specification;      /*规格1*/
 	private String unit;                /*计量单位*/
 	private float amount;
 	
@@ -39,23 +37,12 @@ public class MaterialOut {
 	public void setMaterialName(String materialName) {
 		this.materialName = materialName;
 	}
-	public String getSpecification1() {
-		return specification1;
+	
+	public String getSpecification() {
+		return specification;
 	}
-	public void setSpecification1(String specification1) {
-		this.specification1 = specification1;
-	}
-	public String getSpecification2() {
-		return specification2;
-	}
-	public void setSpecification2(String specification2) {
-		this.specification2 = specification2;
-	}
-	public String getSpecification3() {
-		return specification3;
-	}
-	public void setSpecification3(String specification3) {
-		this.specification3 = specification3;
+	public void setSpecification(String specification) {
+		this.specification = specification;
 	}
 	public String getUnit() {
 		return unit;
@@ -81,11 +68,5 @@ public class MaterialOut {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	@Override
-	public String toString() {
-		return "MaterialOut [id=" + id + ", outDate=" + outDate + ", materialId=" + materialId + ", materialName="
-				+ materialName + ", specification1=" + specification1 + ", specification2=" + specification2
-				+ ", specification3=" + specification3 + ", unit=" + unit + ", amount=" + amount + ", remark=" + remark
-				+ ", status=" + status + "]";
-	}
+	
 }

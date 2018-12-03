@@ -17,9 +17,9 @@
                                   '</div>' +
                               '</div>' +
                           '</div>';
-        var html_modal_frame = '<div id="[Id]" class="modal fade bs-example-modal-sm" role="dialog" aria-labelledby="modalLabel">' +
-			        '<div class="modal-dialog modal-sm">' +
-			            '<div class="modal-content">' +
+        var html_modal_frame = '<div id="[Id]" class="modal fade bs-example-modal-sm"  role="dialog">' +
+        			'<div class="modal-dialog modal-sm">' +
+        				'<div class="modal-content">' +
 			                '<div class="modal-header">' +
 			                    '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>' +
 			                    '<h4 class="modal-title" id="modalLabel">[Title]</h4>' +
@@ -87,25 +87,37 @@
         	options = $.extend({}, {
                 id: 'loadWin',
         		title: '新的窗口',
-                width: 200
+                width: 200,
+                rmvWin: true,
+                initShow: true
             }, options || {});
             
-            var content = html_modal_frame.replace(reg, function (node, key) {
-                return {
-                    Id: options.id,
-                    Title: options.title
-                }[key];
-            });
-            $('body').append(content);
-            $('.load-Content').load(options.url, options.callback);
-            $('#' + options.id).modal({
-                width: options.width,
-                backdrop: 'static'
-            });
-            $('#' + options.id).on('hide.bs.modal', function (e) {
-            	$('body').find('#' + options.id).remove();
-            });
-            return options.id;
+        	if (!$('body').find('#' + options.id) || $('body').find('#' + options.id).length == 0){
+	            var content = html_modal_frame.replace(reg, function (node, key) {
+	                return {
+	                    Id: options.id,
+	                    Title: options.title
+	                }[key];
+	            });
+	            var contentEle = $(content);
+	            $('body').append(contentEle);
+	            
+	            contentEle.find('.load-Content').load(options.url, options.callback);
+	            
+	            if (options.initShow){
+	            	$('#' + options.id).modal({
+		                width: options.width,
+		                backdrop: 'static'
+		            });
+	            }
+        	}
+        	
+            if (options.rmvWin){
+            	$('#' + options.id).on('hide.bs.modal', function (e) {
+                	$('body').find('#' + options.id).remove();
+                });
+            }            
+            return $('#' + options.id);
         }
         
         return {
@@ -126,13 +138,12 @@
                         message: options
                     };
                 }
-                var id = init(options);
-                var modal = $('#' + id);
+                var modal = init(options);
                 modal.find('.ok').removeClass('btn-success').addClass('btn-primary');
                 modal.find('.cancel').hide();
 
                 return {
-                    id: id,
+                    modal: modal,
                     on: function (callback) {
                         if (callback && callback instanceof Function) {
                             modal.find('.ok').click(function () { callback(true); });
@@ -149,12 +160,13 @@
             },
             
             confirm: function (options) {
-                var id = init(options);
+            	var id = init(options);
                 var modal = $('#' + id);
+                
                 modal.find('.ok').removeClass('btn-primary').addClass('btn-success');
                 modal.find('.cancel').show();
                 return {
-                    id: id,
+                	id: id,
                     on: function (callback) {
                         if (callback && callback instanceof Function) {
                             modal.find('.ok').click(function () { callback(true); });
@@ -171,11 +183,10 @@
                 };
             },
             load: function(options){
-            	var id = initLoad(options);
-                var modal = $('#' + id);
-                
+            	var modal = initLoad(options);
+            	
                 return {
-                    id: id,
+                	modal: modal,
                     on: function (callback) {
                         if (callback && callback instanceof Function) {
                         	callback(id);

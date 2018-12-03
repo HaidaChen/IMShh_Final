@@ -62,9 +62,7 @@ public class MaterialOutService implements IMaterialOutService{
 		for (MaterialOut item : materialOutList){
 			Material mtl = new Material();
 			mtl.setName(item.getMaterialName());
-			mtl.setSpecification1(item.getSpecification1());
-			mtl.setSpecification2(item.getSpecification2());
-			mtl.setSpecification3(item.getSpecification3());
+			mtl.setSpecification(item.getSpecification());
 			int mi = fullMaterial.indexOf(mtl);
 			item.setMaterialId(fullMaterial.get(mi).getId());
 		}
@@ -82,9 +80,7 @@ public class MaterialOutService implements IMaterialOutService{
 			
 			Material material = new Material();
 			material.setName(materialout.getMaterialName());
-			material.setSpecification1(materialout.getSpecification1());
-			material.setSpecification2(materialout.getSpecification2());
-			material.setSpecification3(materialout.getSpecification3());
+			material.setSpecification(materialout.getSpecification());
 			if (!fullMaterials.contains(material)){
 				unassociation_material += "," + (i+2);
 			}

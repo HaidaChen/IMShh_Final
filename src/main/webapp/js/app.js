@@ -280,7 +280,18 @@ var App = function () {
 						'url': getProjectName()+"/mtlCtgy/getJSTree.do"
 					}
 				}
+			}).on('changed.jstree', function(e, data){
+				if('click'==data.event.type){
+					var selectedNode = data.instance.get_node(data.selected[0]);
+					var code = selectedNode['a_attr'].ctgCode;
+					if (!code){
+						code = '';
+					}
+					filterWin.modal.find('#filter_ctgCode').val(code);
+					queryMaterial();
+				}
 			});
+			
 		}
 		
 		var initCategoryValidator = function(_code){
@@ -343,7 +354,7 @@ var App = function () {
 		
 		var updateCategory = function(node){
 			var ref = $('#category_tree').jstree(true);
-			Ewin.load({id: 'mtl_ctg_edit', title: '更新分类', url: 'fragment/mtl_ctg_edit.html', callback: function(){
+			Ewin.load({id: 'mtl_ctg_edit', title: '修改分类', url: 'fragment/mtl_ctg_edit.html', callback: function(){
 				fillForm($("#categoryForm"), {id: node.id, 
 					                    parentId: node.parent, 
 					                      parent: ref.get_node(node.parent).text,
@@ -391,42 +402,266 @@ var App = function () {
 		}
 		
 		var loadMaterialTable = function(){
-			$("#tbl_material_category").bootstrapTable({
-				url: getProjectName() + "/mtlCtgy/getPageResult.do",
+			$("#tbl_material").bootstrapTable({
+				url: getProjectName() + "/mtl/getPageResult.do",
 				method: "get",
 				pagination: true,
 				sidePagination: "server", 
 				clickToSelect: true,
 				columns: [{
-		            checkbox: true
-		        },{
 		            field: 'name',
-		            title: '分类名称'
+		            title: '品名'
 		        }, {
-		            field: 'formula',
-		            title: '计算公式（面积/体积）'
+		            field: 'specification',
+		            title: '规格'
 		        }, {
-		            field: 'remark',
-		            title: '备注'
+		            field: 'ctg.name',
+		            title: '分类'
+		        }, {
+		            field: 'storage',
+		            title: '库存'
+		        }, {
+		            field: 'unit',
+		            title: '单位'
+		        }, {
+		        	field: 'remark',
+		        	title: '备注'
+		        }, {
+		        	field: '',
+		        	title: '操作',
+		        	formatter: function(value, row, index){
+		        		return '<a opt="update" rowid="'+row.id+'">修改</a>&nbsp;<a opt="delete" rowid="'+row.id+'">删除</a>';
+		        	}
 		        }],
 		        queryParams: function(params){
 		        	return {
 		                pageSize: params.limit,
 		                pageOffset: params.offset,                    
-		                name: $("#condition").val()
+		                name: $("#filter_name").val(),
+		                ctgCode: $("#filter_ctgCode").val(),
+		                specification: $("#filter_spec").val(),
+		                lowerStorage: $("#filter_lStorage").val(),
+		                upperStorage: $("#filter_uStorage").val(),
+		                remark: $("#filter_remark").val()
 		            }
 		        }
 			});
-			
-			$(".app-search .fa-search").click(function(){
-				$("#tbl_material_category").bootstrapTable("refresh", {url: getProjectName() + "/mtlCtgy/getPageResult.do", cache: false});
-			});	
 		}
 		
+		var initMaterialValidator = function(){
+			$("#materialForm").bootstrapValidator({
+				fields: {
+					name : {
+						validators: {
+							notEmpty : {},
+							callback: {
+								message: '原材料已存在(名称+规格+分类唯一则唯一)，请重新输入'
+							}
+					}},
+					'ctg.id' : {validators: {
+						notEmpty : {}}},
+					storage : {validators: {regexp : { 
+						regexp: /^(-)?\d+(\.\d+)?$/,
+                        message: '请输入数字类型的库存'}}}
+		        }
+			});
+		}
+		
+		var loadCtg4Select = function(current){
+			$.getJSON(
+				getProjectName() + "/mtlCtgy/query.do",
+				function(result){
+					$.each(result, function(index, ctg){
+						var indent = '';
+						var num = ctg.code.length - 2
+						for (var i = 0; i < num; i++){indent+= '&nbsp;&nbsp;';}
+						if (current && current == ctg.id){
+							$("#select_ctg").append("<option value='"+ctg.id+"' selected='selected'>"+indent+ctg.code+" "+ctg.name+"</option>");
+						}else{
+							$("#select_ctg").append("<option value='"+ctg.id+"'>"+indent+ctg.code+" "+ctg.name+"</option>");	
+						}						
+					});
+					$("#select_ctg").select2({
+						placeholder: "请选择材料分类",
+						allowClear: true
+					});
+				}
+			);
+		} 
+		
+		var filterWin;
+		var initMaterialFunction = function(){
+			filterWin = Ewin.load({id: 'mtl_filter', title: '更多查询', url: 'fragment/mtl_filter.html', rmvWin: false, initShow: false, callback: function(){
+				$("#btn_query").click(function(){
+					queryMaterial();
+					$('#mtl_filter').modal('hide');
+				});
+			}});
+			
+			$('#btn_more').click(function(){
+				filterWin.modal.modal('show');
+			});
+			
+			$('#btn_search').click(function(){
+				queryMaterial();
+			});
+			
+			$('#btn_add').click(function(){					
+				Ewin.load({id: 'mtl_edit', title: '新的原材料', url: 'fragment/mtl_edit.html', callback: function(){
+					initMaterialValidator();
+					loadCtg4Select();		
+					
+					$("#btn_save").click(function(){
+						var bootstrapValidator = $("#materialForm").data('bootstrapValidator');
+						bootstrapValidator.validate();
+						if(!bootstrapValidator.isValid()){
+							return;
+						}
+						
+						var res;
+						$.ajax({
+							url: getProjectName()+"/mtl/validateUnique.do",
+							data: {name : $("#input_name").val(),
+								   specification: $('#input_spe').val(),
+								   category: $('#select_ctg').val()
+							},
+							async:false, 
+							success: function(result){
+								res = result.valid;
+							}
+						});
+						if (!res){
+							$('#materialForm').append('<div class="alert alert-danger" role="alert">原材料已经存在，请修改材料名称或者规格或者分类</div>');
+							return;
+						}
+						
+						$("#materialForm").ajaxSubmit({
+							type: "post",
+							url:getProjectName()+"/mtl/addMaterial.do", 
+							dataType: "text",
+							success:function(result){
+								clearForm($("#materialForm"));
+								Ewin.toast('新的原材料保存成功');
+								queryMaterial();
+							}
+						});
+					});
+				}});
+			});
+			
+			initEditMaterial();
+			
+			$('#btn_import').click(function(){
+				
+			});
+			
+			$('#btn_export').click(function(){
+				
+			});
+		}
+		
+		var queryMaterial = function(){
+			createFilterTip({
+				assWin: $('#mtl_filter'), 
+				items: [{assId: 'filter_spec', label: '材料规格', rule: '包含'}, 
+					    {assId: 'filter_lStorage', label: '库存', rule: '大于'},
+				        {assId: 'filter_uStorage', label: '库存', rule: '小于'},
+				        {assId: 'filter_remark', label: '备注', rule: '包含'}],
+		        changeCall: function(){
+		        	$("#tbl_material").bootstrapTable("refresh", {url: getProjectName() + "/mtl/getPageResult.do", cache: false});
+	        }});
+			$("#tbl_material").bootstrapTable("refresh", {url: getProjectName() + "/mtl/getPageResult.do", cache: false});
+		}
+		
+		var initEditMaterial = function(id){
+			$('#tbl_material').on('click', 'a', function(){
+				var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				if (opt == 'update'){
+					Ewin.load({id: 'mtl_edit', title: '修改原材料', url: 'fragment/mtl_edit.html', callback: function(){
+						var _name; 
+						var _spec;
+						var _ctg;
+						$.ajax({
+							url: getProjectName()+"/mtl/getMaterialById.do?id="+id, 
+							success: function(result){
+								_name = result.name; 
+								_spec = result.specification;
+								_ctg = result.ctg.id;
+								initMaterialValidator();
+								loadCtg4Select(result.ctg.id);	
+								fillForm($("#materialForm"), {
+									id: result.id, 
+									name: result.name, 
+									specification: result.specification, 
+									'ctg.id': result.ctg.id, 
+									unit: result.unit, 
+									remark: result.remark});
+							}
+						});
+						
+						$("#btn_save").click(function(){
+							var bootstrapValidator = $("#materialForm").data('bootstrapValidator');
+							bootstrapValidator.validate();
+							if(!bootstrapValidator.isValid()){
+								return;
+							}
+							
+							if (_name != $('#input_name').val() ||
+									_spec != $('#input_spe').val() ||
+									_ctg != $('#select_ctg').val()){
+								var res;
+								$.ajax({
+									url: getProjectName()+"/mtl/validateUnique.do",
+									data: {name : $("#input_name").val(),
+										   specification: $('#input_spe').val(),
+										   category: $('#select_ctg').val()
+									},
+									async:false, 
+									success: function(result){
+										res = result.valid;
+									}
+								});
+								if (!res){
+									$('#materialForm').append('<div class="alert alert-danger" role="alert">原材料已经存在，请修改材料名称或者规格或者分类</div>');
+									return;
+								}
+							} 
+							$("#materialForm").ajaxSubmit({
+								type: "post",
+								url:getProjectName()+"/mtl/updateMaterial.do", 
+								dataType: "text",
+								success:function(result){
+									Ewin.toast('原材料修改成功');
+									queryMaterial();
+								}
+							});
+						});
+					}});
+				}
+				
+				if (opt == 'delete'){
+					Ewin.confirm({message: "确定要删除选中的原材料吗？"}).on(function(e){
+						if (!e){
+							return;
+						}
+						
+						$.ajax({
+							url: getProjectName()+"/mtl/deleteMaterial.do?id="+id,
+							type: "get",
+							success: function(){
+								queryMaterial();
+							}
+						});
+					});
+				}
+			});
+		}
 		return {
 			init: function(){
 				loadCategoryTree();
 				loadMaterialTable();
+				initMaterialFunction();
 			}
 		}
 	}
@@ -451,6 +686,29 @@ var App = function () {
     };
 }();
 
+var createFilterTip = function(options){
+	var ele = $('.table-fliter');
+	var assWin = options.assWin;
+	var items = options.items;
+	
+	ele.empty();
+	$.each(items, function(i, item){
+		var assEle = assWin.find('#'+item.assId);
+		if (assEle.val() && assEle.val() != ''){
+			var tip =$('<span class="tip" ref="'+item.assId+'">');
+			var tipClose = $('<button type="button"><span aria-hidden="true">&times;</span></button>');
+			var tipContent = $('<span class="content">'+item.label+'.'+item.rule+'['+assEle.val()+'] </span>'); 
+			tipClose.click(function(){
+				assEle.val('');
+				$(this).parent().remove();
+				options.changeCall();
+			});
+			tip.append(tipClose).append(tipContent);
+			ele.append(tip);
+		}
+	});
+}
+
 var fillForm = function(form, data){
 	$.each(data, function(key, value){
 		var ele = form.find('[name="'+key+'"]');
@@ -467,7 +725,11 @@ var clearForm = function(form, igon){
 		if ($.inArray(name, igon) > -1){
 			return true;
 		}
+		
 		$(ele).val('');
+		if (ele.tagName == 'SELECT'){
+			$(ele).select2();
+		}
 	});
 }
 

@@ -54,6 +54,14 @@ public class CategoryAction {
 	}
 	
 	@Authorization("010101")
+	@RequestMapping(value ="/query", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String query(MaterialFilter filter){
+		List<Category> categories = service.query(filter);
+		return GsonUtil.toJson(categories, null);
+	}
+	
+	@Authorization("010101")
 	@RequestMapping(value="/getCategoryById", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getCategoryById(String id){
@@ -66,7 +74,7 @@ public class CategoryAction {
 	@ResponseBody
 	public String validateCategory(Category category){
 		MaterialFilter filter = new MaterialFilter();
-		filter.setCode(category.getCode());
+		filter.setCtgCode(category.getCode());
 		List<Category> res = service.query(filter);
 		Map<String, Boolean> map = new HashMap<>();
 		if (res.size() == 0){

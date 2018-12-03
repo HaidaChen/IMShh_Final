@@ -18,11 +18,8 @@
           <if test="name != null and name !=''">
           and name like #{name} 
           </if>
-          <if test="code != null and code !=''">
-          and code like ={code} 
-          </if>
-          <if test="parentId != null and parentId !=''">
-          and parentId = #{parentId} 
+          <if test="ctgCode != null and ctgCode !=''">
+          and code like #{ctgCode} 
           </if>
           <if test="remark != null and remark !=''">
           and remark like #{remark} 
@@ -35,11 +32,8 @@
           <if test="name != null and name !=''">
           and name like #{name} 
           </if>
-          <if test="code != null and code !=''">
-          and code = #{code} 
-          </if>
-          <if test="parentId != null and parentId !=''">
-          and parentId = #{parentId} 
+          <if test="ctgCode != null and ctgCode !=''">
+          and code like #{ctgCode} 
           </if>
           <if test="remark != null and remark !=''">
           and remark like #{remark} 
@@ -54,8 +48,8 @@
           <if test="name != null and name !=''">
           and name like #{name} 
           </if>
-          <if test="code != null and code !=''">
-          and code = #{code} 
+          <if test="ctgCode != null and ctgCode !=''">
+          and code like #{ctgCode} 
           </if>
           <if test="parentId != null and parentId !=''">
           and parentId = #{parentId} 

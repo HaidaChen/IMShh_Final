@@ -2,6 +2,8 @@ package com.douniu.imshh.material.service.impl;
 
 import java.util.List;
 
+import org.springframework.util.StringUtils;
+
 import com.douniu.imshh.common.IDInjector;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.dao.ICategoryDao;
@@ -16,6 +18,9 @@ public class CategoryService implements ICategoryService{
 	@Override
 	public List<Category> query(MaterialFilter filter) {
 		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"name", "remark"});
+		if (!StringUtils.isEmpty(condition.getCtgCode())){
+			condition.setCtgCode(condition.getCtgCode() + "%");
+		}
 		return dao.query(condition);
 	}
 
@@ -23,6 +28,9 @@ public class CategoryService implements ICategoryService{
 	public PageResult getPageResult(MaterialFilter filter) {
 		PageResult pr = new PageResult();
 		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"name", "remark"});
+		if (!StringUtils.isEmpty(condition.getCtgCode())){
+			condition.setCtgCode(condition.getCtgCode() + "%");
+		}
 		pr.setRows(dao.getPageResult(condition));
 		pr.setTotal(dao.count(condition));
 		return pr;

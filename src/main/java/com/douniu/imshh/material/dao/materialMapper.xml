@@ -3,88 +3,156 @@
 
 <mapper namespace="com.douniu.imshh.material.dao.IMaterialDao">
     <resultMap type="Material" id="mtlmap">
-        <result property="id" column="id"/>
-        <result property="name" column="name"/>
-        <result property="category" column="category"/>
-        <result property="specification1" column="specification1"/>
-        <result property="specification2" column="specification2"/>
-        <result property="specification3" column="specification3"/>
-        <result property="unit" column="unit"/>
-        <result property="storage" column="storage"/>
-        <result property="supplierNames" column="supplierNames"/>
-        <result property="remark" column="remark"/>
-        <result property="status" column="status"/>
+        <result property="id" column="m_id"/>
+        <result property="name" column="m_name"/>        
+        <result property="specification" column="m_specification"/>
+        <result property="unit" column="m_unit"/>
+        <result property="storage" column="m_storage"/>
+        <result property="remark" column="m_remark"/>
+        <result property="status" column="m_status"/>
+        <association property="ctg" javaType="MaterialCategory">
+        	<id property="id" column="c_id"/>
+        	<result property="name" column="c_name"/>
+        	<result property="code" column="c_code"/>
+        </association>
     </resultMap>
     
     <select id="getPageResult" parameterType="MaterialFilter" resultMap="mtlmap">
-        select m.id, m.name, m.specification1, m.specification2, m.specification3, m.unit, m.storage, c.name as category, GROUP_CONCAT(concat(ms.id,':', ms.name)) as supplierNames
-          from tbl_material m
-		  left join tbl_material_supplier ms 
-            on FIND_IN_SET(m.category, ms.categoryIds)
-          left join tbl_material_category c
-            on m.category = c.id 
+        select m.id as m_id, 
+               m.name as m_name, 
+               m.specification as m_specification, 
+               m.unit as m_unit, 
+               m.storage as m_storage, 
+               m.remark as m_remark, 
+               m.status as m_status, 
+               c.id as c_id,
+               c.name as c_name,
+               c.code as c_code 
+          from tbl_material m, 
+               tbl_material_category c             
          where m.status = '1'
+           and m.categoryId = c.id
           <if test="name != null and name !=''">
           and m.name like #{name} 
           </if>
-          <if test="category != null and category !=''">
-          and m.category = #{category} 
+          <if test="ctgCode != null and ctgCode !=''">
+          and c.code like #{ctgCode} 
           </if>
-          <if test="supplier != null and supplier !=''">
-          and ms.id = #{supplier}
+          <if test="specification != null and specification !=''">
+          and m.specification like #{specification} 
           </if>
-          group by m.id
-          order by m.modifydate desc
+          <if test="lowerStorage != null and lowerStorage !=0f">
+          and m.storage &gt;= #{lowerStorage} 
+          </if>
+          <if test="upperStorage != null and upperStorage !=0f">
+          and m.storage &lt;= #{upperStorage} 
+          </if>
+          <if test="remark != null and remark !=''">
+          and m.remark like #{remark} 
+          </if>
+          order by c.code, m.name desc
           limit #{pageOffset},#{pageSize}
     </select> 
     <select id="query" parameterType="MaterialFilter" resultMap="mtlmap">
-        select m.id, m.name, m.specification1, m.specification2, m.specification3, m.unit, m.storage, c.name as category, GROUP_CONCAT(ms.name) as supplierNames
-          from tbl_material m
-		  left join tbl_material_supplier ms 
-            on FIND_IN_SET(m.category, ms.categoryIds)
-          left join tbl_material_category c
-            on m.category = c.id 
+        select m.id as m_id, 
+               m.name as m_name, 
+               m.specification as m_specification, 
+               m.unit as m_unit, 
+               m.storage as m_storage, 
+               m.remark as m_remark, 
+               m.status as m_status, 
+               c.id as c_id,
+               c.name as c_name,
+               c.code as c_code 
+          from tbl_material m, 
+               tbl_material_category c           
          where m.status = '1'
-        <if test="name != null and name !=''">
-          and m.name like #{name} 
-          </if>
-          <if test="category != null and category !=''">
-          and m.category = #{category} 
-          </if>
-          <if test="supplier != null and supplier !=''">
-          and ms.id = #{supplier}
-          </if>
-          group by m.id    
-          order by m.modifydate desc
-    </select>
-    
-    <select id="count" parameterType="Material" resultType="int">
-        select count(1) from (
-        select m.*, GROUP_CONCAT(ms.name) as supplierNames
-          from tbl_material m
-		  left join tbl_material_supplier ms 
-            on FIND_IN_SET(m.category, ms.categoryIds) 
-         where m.status = '1'
+           and m.categoryId = c.id
           <if test="name != null and name !=''">
           and m.name like #{name} 
           </if>
-          <if test="category != null and category !=''">
-          and m.category = #{category} 
+          <if test="ctgCode != null and ctgCode !=''">
+          and c.code like #{ctgCode} 
           </if>
-          <if test="supplier != null and supplier !=''">
-          and ms.id = #{supplier}
+          <if test="specification != null and specification !=''">
+          and m.specification like #{specification} 
           </if>
-          group by m.id
-          )mm
+          <if test="lowerStorage != null and lowerStorage !=0f">
+          and m.storage &gt;= #{lowerStorage} 
+          </if>
+          <if test="upperStorage != null and upperStorage !=0f">
+          and m.storage &lt;= #{upperStorage} 
+          </if>
+          <if test="remark != null and remark !=''">
+          and m.remark like #{remark} 
+          </if>
+          order by c.code, m.name desc
+    </select>
+    <select id="exactQuery" parameterType="MaterialFilter" resultMap="mtlmap">
+        select m.id as m_id, 
+               m.name as m_name, 
+               m.specification as m_specification, 
+               m.unit as m_unit, 
+               m.storage as m_storage, 
+               m.remark as m_remark, 
+               m.status as m_status, 
+               c.id as c_id,
+               c.name as c_name,
+               c.code as c_code 
+          from tbl_material m, 
+               tbl_material_category c           
+         where m.status = '1'
+           and m.categoryId = c.id
+           and m.name = #{name} 
+           and m.categoryId = #{category}
+           and m.specification = #{specification} 
+    </select>
+    <select id="count" parameterType="Material" resultType="int">
+        select count(1) from tbl_material m, 
+                              tbl_material_category c             
+         where m.status = '1'
+           and m.categoryId = c.id
+          <if test="name != null and name !=''">
+          and m.name like #{name} 
+          </if>
+          <if test="ctgCode != null and ctgCode !=''">
+          and c.code like #{ctgCode} 
+          </if>
+          <if test="specification != null and specification !=''">
+          and m.specification like #{specification} 
+          </if>
+          <if test="lowerStorage != null and lowerStorage !=0f">
+          and m.storage &gt;= #{lowerStorage} 
+          </if>
+          <if test="upperStorage != null and upperStorage !=0f">
+          and m.storage &lt;= #{upperStorage} 
+          </if>
+          <if test="remark != null and remark !=''">
+          and m.remark like #{remark} 
+          </if>
     </select>   
     
     <select id="getById" parameterType="String" resultMap="mtlmap">
-        select * from tbl_material where id = #{id}
+        select m.id as m_id, 
+               m.name as m_name, 
+               m.specification as m_specification, 
+               m.unit as m_unit, 
+               m.storage as m_storage, 
+               m.remark as m_remark, 
+               m.status as m_status, 
+               c.id as c_id,
+               c.name as c_name,
+               c.code as c_code 
+          from tbl_material m, 
+               tbl_material_category c           
+         where m.status = '1'
+           and m.categoryId = c.id 
+           and m.id = #{id}
     </select>
     
     <insert id="insert" parameterType="Material">
-        insert into tbl_material(id, name, specification1, specification2, specification3, category, unit, modifydate, remark, status)  
-          values(#{id}, #{name}, #{specification1}, #{specification2}, #{specification3}, #{category}, #{unit}, sysdate(), #{remark}, #{status})
+        insert into tbl_material(id, name, specification, categoryId, storage, unit, modifydate, remark, status)  
+          values(#{id}, #{name}, #{specification}, #{ctg.id}, #{storage}, #{unit}, sysdate(), #{remark}, #{status})
     </insert>
     
     <insert id="batchInsert" parameterType="java.util.List">
@@ -100,6 +168,18 @@
           storage = #{storage},
           modifydate = sysdate()
     where id = #{id}
+    </update>
+    
+    <update id="update" parameterType="Material">
+    	update tbl_material set
+    	  name = #{name},
+    	  specification = #{specification},
+    	  categoryId = #{ctg.id},
+    	  storage = #{storage}, 
+    	  unit = #{unit},
+    	  remark = #{remark},
+    	  modifydate = sysdate()
+        where id = #{id}
     </update>
     
     <update id="delete" parameterType="String">

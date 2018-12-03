@@ -64,9 +64,7 @@ public class MaterialInService implements IMaterialInService{
 		for (MaterialIn item : materialInList){
 			Material mtl = new Material();
 			mtl.setName(item.getMaterialName());
-			mtl.setSpecification1(item.getSpecification1());
-			mtl.setSpecification2(item.getSpecification2());
-			mtl.setSpecification3(item.getSpecification3());
+			mtl.setSpecification(item.getSpecification());
 			int mi = fullMaterial.indexOf(mtl);
 			item.setMaterialId(fullMaterial.get(mi).getId());
 			
@@ -91,9 +89,7 @@ public class MaterialInService implements IMaterialInService{
 			
 			Material material = new Material();
 			material.setName(materialin.getMaterialName());
-			material.setSpecification1(materialin.getSpecification1());
-			material.setSpecification2(materialin.getSpecification2());
-			material.setSpecification3(materialin.getSpecification3());
+			material.setSpecification(materialin.getSpecification());
 			if (!fullMaterials.contains(material)){
 				unassociation_material += "," + (i+2);
 			}

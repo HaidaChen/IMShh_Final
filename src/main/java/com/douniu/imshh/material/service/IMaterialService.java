@@ -24,6 +24,8 @@ public interface IMaterialService {
 	
 	Material getById(String id);
 	
+	boolean exist(MaterialFilter filter);
+	
 	void newMaterial(Material material);
 	
 	void importMaterial(List<Material> materialList);
@@ -31,6 +33,8 @@ public interface IMaterialService {
 	List<ImportException> checkImport(List<Material> materialList);
 	
 	List<Material> exportMaterial(MaterialFilter filter);
+	
+	void updateMaterial(Material material);
 	
 	void deleteMaterial(String id);
 	

@@ -6,7 +6,9 @@ body{
 	color: #333;
 	background: #edf1f5;
 }
-
+a:HOVER{
+	cursor: pointer;
+}
 h1,h2,h3,h4,h5,h6{
 	font-family: "Arial","Microsoft YaHei","黑体","宋体",sans-serif;
 }
@@ -314,6 +316,7 @@ h1,h2,h3,h4,h5,h6{
 }
 .tip{
 	position: relative;
+	font-size: 12px;
 	color: #8a6d3b;
     background-color: #fcf8e3;
     border-color: #faebcc;
@@ -324,8 +327,8 @@ h1,h2,h3,h4,h5,h6{
 }
 .tip > button{
 	position: absolute;
-	top: 5px;
-	right: 10px;
+	top: 3px;
+	right: 8px;
 	padding: 0;
     cursor: pointer;
     background: transparent;
@@ -343,6 +346,7 @@ h1,h2,h3,h4,h5,h6{
 .tip > button:HOVER{
 	opacity: 0.5;
 }
+
 /***
 Select2 Plugin
 ***/

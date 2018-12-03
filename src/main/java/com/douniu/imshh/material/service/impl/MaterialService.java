@@ -22,14 +22,20 @@ public class MaterialService implements IMaterialService{
 	
 	@Override
 	public List<Material> query(MaterialFilter filter) {
-		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"name"});
+		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"name", "specification", "remark"});
+		if (!StringUtils.isEmpty(condition.getCtgCode())){
+			condition.setCtgCode(condition.getCtgCode() + "%");
+		}
 		return dao.query(condition);
 	}
 
 	@Override
 	public PageResult getPageResult(MaterialFilter filter) {
 		PageResult pr = new PageResult();
-		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"name"});
+		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"name", "specification", "remark"});
+		if (!StringUtils.isEmpty(condition.getCtgCode())){
+			condition.setCtgCode(condition.getCtgCode() + "%");
+		}
 		pr.setRows(dao.getPageResult(condition));
 		pr.setTotal(dao.count(condition));
 		return pr;
@@ -39,6 +45,11 @@ public class MaterialService implements IMaterialService{
 	public Material getById(String id) {
 		Material material = dao.getById(id);
 		return material;
+	}
+
+	@Override
+	public boolean exist(MaterialFilter filter) {
+		return dao.exactQuery(filter).size() > 0;
 	}
 
 	@Override
@@ -61,9 +72,9 @@ public class MaterialService implements IMaterialService{
 				repeation += "," + (i+2);
 			}
 			
-			if (!StringUtils.isEmpty(material.getCategory())){
+			if (!StringUtils.isEmpty(material.getCtg().getName())){
 				Category category = new Category();
-				category.setName(material.getCategory());
+				category.setName(material.getCtg().getName());
 				if (!fullCategory.contains(category)){
 					categoryMapping += "," + (i+2);
 				}
@@ -83,12 +94,12 @@ public class MaterialService implements IMaterialService{
 	public void importMaterial(List<Material> materialList) {
 		List<Category> fullCategory = ctgService.query(new MaterialFilter());
 		for (Material material : materialList){
-			if (!material.getCategory().trim().equals("")){
+			if (!material.getCtg().getName().trim().equals("")){
 				Category category = new Category();
-				category.setName(material.getCategory());
+				category.setName(material.getCtg().getName());
 				int index = fullCategory.indexOf(category);
 				Category match =  fullCategory.get(index);
-				material.setCategory(match.getId());
+				material.setCtg(match);
 			}
 		}
 		IDInjector.injector(materialList);
@@ -98,6 +109,11 @@ public class MaterialService implements IMaterialService{
 	@Override
 	public List<Material> exportMaterial(MaterialFilter filter) {
 		return query(filter);
+	}
+
+	@Override
+	public void updateMaterial(Material material) {
+		dao.update(material);
 	}
 
 	@Override

@@ -10,6 +10,8 @@ public interface IMaterialDao {
 	
 	List<Material> query(MaterialFilter filter);
 	
+	List<Material> exactQuery(MaterialFilter filter);
+	
 	int count(MaterialFilter filter);
 	
 	Material getById(String id);
@@ -17,6 +19,8 @@ public interface IMaterialDao {
 	void insert(Material material);
 	
 	void batchInsert(List<Material> materialList);
+	
+	void update(Material material);
 	
 	void setStorage(Material material);
 	
