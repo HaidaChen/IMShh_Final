@@ -121,40 +121,48 @@ public class ReflectionUtil {
      */  
       
     public static void setFieldValue(Object object, String fieldName, Object value){  
-      
-        //根据 对象和属性名通过取 Field对象  
-        Field field = getDeclaredField(object, fieldName) ;  
-          
-        //抑制Java对其的检查  
-        field.setAccessible(true) ;  
-          
-        try {  
-            //将 object 中 field 所代表的值 设置为 value  
-        	String sdate = value.toString();
-    		/*if (sdate.equals("") || sdate.equals("null"))
-    			return;*/
-        	if (field.getType() == Date.class){
-        		if (!StringUtils.isEmpty(sdate))
-        			value = format.parse(sdate);
-        		else
-        			return;
-        	}
-        	if (field.getType() == int.class || field.getType() == Integer.class){
-        		if (!StringUtils.isEmpty(sdate))
-        			value = new Integer(value.toString());
-        		else value = 0;
-        	}
-        	if (field.getType() == float.class || field.getType() == Float.class){
-        		if (!StringUtils.isEmpty(sdate))
-        			value = new Float(value.toString());
-        		else value = 0f;
-        	}
-        	field.set(object, value) ;  
-        	
-        } catch (Exception e) {  
+    	try {
+    		
+	    	//String _fieldName = fieldName;
+	    	if (fieldName.indexOf(".") > 0){
+	        	String objName = fieldName.substring(0, fieldName.indexOf("."));
+	        	Field field = getDeclaredField(object, objName);
+        		field.setAccessible(true);  
+				Object _obj = field.getType().newInstance();
+				String _fieldName = fieldName.substring(fieldName.indexOf(".")+1);
+				setFieldValue(_obj, _fieldName, value);
+				field.set(object, _obj) ; 
+	        } else{
+	        	//根据 对象和属性名通过取 Field对象  
+	            Field field = getDeclaredField(object, fieldName) ;  
+	              
+	            //抑制Java对其的检查  
+	            field.setAccessible(true) ;	            
+                //将 object 中 field 所代表的值 设置为 value  
+            	String sdate = value.toString();
+        		/*if (sdate.equals("") || sdate.equals("null"))
+        			return;*/
+            	if (field.getType() == Date.class){
+            		if (!StringUtils.isEmpty(sdate))
+            			value = format.parse(sdate);
+            		else
+            			return;
+            	}
+            	if (field.getType() == int.class || field.getType() == Integer.class){
+            		if (!StringUtils.isEmpty(sdate))
+            			value = new Integer(value.toString());
+            		else value = 0;
+            	}
+            	if (field.getType() == float.class || field.getType() == Float.class){
+            		if (!StringUtils.isEmpty(sdate))
+            			value = new Float(value.toString());
+            		else value = 0f;
+            	}
+            	field.set(object, value); 
+	        }
+    	} catch (Exception e) {  
             e.printStackTrace();  
         } 
-          
     }  
       
     /** 
@@ -162,16 +170,22 @@ public class ReflectionUtil {
      * @param fieldName : 父类中     * @return : 父类中     */  
       
     public static Object getFieldValue(Object object, String fieldName){  
-          
-        //根据 对象和属性名通过取 Field对象  
-        Field field = getDeclaredField(object, fieldName) ;  
-          
-        //抑制Java对其的检查  
-        field.setAccessible(true) ;  
-          
-        try {  
-            //获的属性值  
-            return field.get(object) ;  
+    	try { 
+	    	if (fieldName.indexOf(".") > 0){
+	    		String objName = fieldName.substring(0, fieldName.indexOf("."));
+	    		Field field = getDeclaredField(object, objName);
+	    		field.setAccessible(true);
+	    		Object _object = field.get(object);
+	    		return getFieldValue(_object, fieldName.substring(fieldName.indexOf(".") + 1));
+	    	}else{
+	    		//根据 对象和属性名通过取 Field对象  
+	            Field field = getDeclaredField(object, fieldName) ;  
+	              
+	            //抑制Java对其的检查  
+	            field.setAccessible(true) ;
+                //获的属性值  
+                return field.get(object) ;  
+	    	}        
               
         } catch(Exception e) {  
             e.printStackTrace() ;  

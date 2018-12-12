@@ -2,7 +2,202 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.douniu.imshh.material.dao.IMaterialInDao">
-    <resultMap type="MaterialIn" id="mtlinmap">
+	<resultMap type="MaterialIn" id="mibmap">
+        <result property="id" column="mib_id"/>
+        <result property="inDate" column="mib_inDate"/>        
+        <result property="number" column="mib_number"/>
+        <result property="manager" column="mib_manager"/>
+        <result property="accountant" column="mib_accountant"/>
+        <result property="custodian" column="mib_custodian"/>
+        <result property="acceptor" column="mib_acceptor"/>
+        <result property="handover" column="mib_handover"/>
+        <result property="totalQuantity" column="mib_totalQuantity"/>
+        <result property="totalAmount" column="mib_totalAmount"/>
+        <result property="billStatus" column="mib_billStatus"/>
+        <result property="remark" column="mib_remark"/>
+        <result property="status" column="mib_status"/>
+        <association property="supplier" javaType="Supplier">
+        	<id property="id" column="s_id"/>
+        	<result property="name" column="s_name"/>
+        </association>
+    </resultMap>
+        
+    <resultMap type="MaterialIn" id="mibwdmap" extends="mibmap">
+    	<collection property="details" ofType="MaterialInDetail">
+            <id property="id" column="dtl_id" />
+            <result property="billId" column="dtl_billId"/>
+            <result property="specification" column="dtl_specification"/>
+	        <result property="quantity" column="dtl_quantity"/>
+	        <result property="price" column="dtl_price"/>
+	        <result property="amount" column="dtl_amount"/>
+	        
+	        <result property="remark" column="dtl_remark"/>
+	        <result property="status" column="dtl_status"/>
+	        
+	        <association property="material" javaType="Material">
+	        	<id property="id" column="m_id"/>
+	        	<result property="name" column="m_name"/>
+        	</association>
+        </collection>
+    </resultMap>
+    
+    <select id="getPageResult" parameterType="MaterialFilter" resultMap="mibmap">
+        select mib.id as mib_id, 
+               mib.inDate as mib_inDate, 
+               mib.number as mib_number, 
+               mib.manager as mib_manager, 
+               mib.accountant as mib_accountant,               
+               mib.custodian as mib_custodian, 
+               mib.acceptor as mib_acceptor, 
+               mib.handover as mib_handover, 
+               mib.totalQuantity as mib_totalQuantity, 
+               mib.totalAmount as mib_totalAmount, 
+               mib.billStatus as mib_billStatus,
+               mib.remark as mib_remark, 
+               mib.status as mib_status,               
+               s.id as s_id,
+               s.name as s_name
+          from tbl_bill_materialin mib, 
+               t_supplier s             
+         where mib.status = '1'
+           and mib.supplierId = s.id
+          <if test="number != null and number !=''">
+          and mib.number like #{number} 
+          </if>
+          <if test="billStatus != null and billStatus !=-1">
+          and mib.billStatus = #{billStatus} 
+          </if>
+          <if test="supplier != null and supplier !=''">
+          and s.id = #{supplier} 
+          </if>
+          <if test="startDate != null and startDate !=''">
+          and mib.inDate &gt;= #{startDate} 
+          </if>
+          <if test="endDate != null and endDate !=''">
+          and mib.inDate &lt;= #{endDate} 
+          </if>
+          <if test="remark != null and remark !=''">
+          and mib.remark like #{remark} 
+          </if>
+          order by mib.inDate desc
+          limit #{pageOffset},#{pageSize}
+    </select> 
+    <select id="count" parameterType="MaterialFilter" resultType="int">
+        select count(1)
+          from tbl_bill_materialin mib, 
+               t_supplier s             
+         where mib.status = '1'
+           and mib.supplierId = s.id
+          <if test="number != null and number !=''">
+          and mib.number like #{number} 
+          </if>
+          <if test="billStatus != null and billStatus !=-1">
+          and mib.billStatus = #{billStatus} 
+          </if>
+          <if test="supplier != null and supplier !=''">
+          and s.id = #{supplier} 
+          </if>
+          <if test="startDate != null and startDate !=''">
+          and mib.inDate &gt;= #{startDate} 
+          </if>
+          <if test="endDate != null and endDate !=''">
+          and mib.inDate &lt;= #{endDate} 
+          </if>
+          <if test="remark != null and remark !=''">
+          and mib.remark like #{remark} 
+          </if>
+    </select> 
+    
+    
+    
+    <select id="getById" parameterType="String" resultMap="mibwdmap">
+        select mib.id as mib_id, 
+               mib.inDate as mib_inDate, 
+               mib.number as mib_number, 
+               mib.manager as mib_manager, 
+               mib.accountant as mib_accountant,               
+               mib.custodian as mib_custodian, 
+               mib.acceptor as mib_acceptor, 
+               mib.handover as mib_handover, 
+               mib.totalQuantity as mib_totalQuantity, 
+               mib.totalAmount as mib_totalAmount, 
+               mib.billStatus as mib_billStatus,
+               mib.remark as mib_remark, 
+               mib.status as mib_status, 
+               s.id as s_id,
+               s.name as s_name,
+               
+               dtl.id as dtl_id,
+               dtl.billId as dtl_billId,
+               dtl.specification as dtl_specification,
+               dtl.quantity as dtl_quantity,
+               dtl.price as dtl_price,
+               dtl.amount as dtl_amount,
+               dtl.remark as dtl_remark,
+               dtl.status as dtl_status,
+               m.id as m_id,
+               m.name as m_name
+          from tbl_bill_materialin mib, 
+               tbl_bill_dtl_materialin dtl, 
+               t_supplier s,
+               tbl_material m             
+         where mib.id = #{id}
+           and mib.supplierId = s.id
+           and mib.id = dtl.billId,
+           and dtl.status = '1',
+           and dtl.materialId = m.id
+    </select>
+    
+    <insert id="insert" parameterType="MaterialIn">
+        insert into tbl_bill_materialin(id, supplierId, inDate, number, totalQuantity, totalAmount, manager, accountant, custodian, acceptor, handover, modifydate, remark, status)  
+          values(#{id}, #{supplier.id}, #{inDate}, #{number}, #{totalQuantity}, #{totalAmount}, #{manager}, #{accountant}, #{custodian}, #{acceptor}, #{handover}, sysdate(), #{remark}, #{status})
+    </insert>
+    
+    
+    
+    <update id="update" parameterType="MaterialIn">
+    	update tbl_bill_materialin set
+    	  supplierId = #{supplier.id},
+    	  inDate = #{inDate},
+    	  number = #{number},
+    	  totalQuantity = #{totalQuantity}, 
+    	  totalAmount = #{totalAmount},
+    	  manager = #{manager},
+    	  accountant = #{accountant},
+    	  custodian = #{custodian},
+    	  acceptor = #{acceptor},
+    	  handover = #{handover},
+    	  remark = #{remark},
+    	  modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+    <update id="delete" parameterType="String">
+        update tbl_bill_materialin set 
+          status = '0',
+          modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+    
+    <insert id="insertDetails" parameterType="java.util.List">
+        insert into tbl_bill_dtl_materialin(id, billId, materialId, specification, quantity, price, amount, modifydate, remark, status) 
+             values
+             <foreach collection="list" item="dtl" index="index" separator=",">
+                 (#{dtl.id} , #{dtl.billId}, #{dtl.material.id}, #{dtl.specification}, #{dtl.quantity}, #{dtl.price}, #{dtl.amount}, sysdate(), #{dtl.remark}, '1')
+             </foreach>
+    </insert>
+    
+    <update id="deleteDetailsByBillId" parameterType="String">
+        update tbl_bill_dtl_materialin set 
+          status = '0',
+          modifydate = sysdate()
+        where billId = #{id}
+    </update>
+    
+    
+    
+    <!-- <resultMap type="MaterialIn" id="mtlinmap">
         <result property="id" column="id"/>
         <result property="inDate" column="inDate"/>
         <result property="materialId" column="materialId"/>
@@ -134,6 +329,6 @@
           status = '0',
           modifydate = sysdate()
         where id = #{id}
-    </update>
+    </update> -->
     
 </mapper>

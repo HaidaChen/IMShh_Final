@@ -1,0 +1,144 @@
+{
+	"title": {"name":"浏阳市华辉烟花制造有限公司原材料入库单"},
+	"reference": [{
+			"name": "supplier",
+			"src": "/supp/loadallsupp.do"
+		},
+		{
+			"name": "material",
+			"src": "/mtl/query.do"
+		}
+	],
+	"top-columns": [{
+				"name": "supplier.id",
+				"type": "select",
+				"label": "供应商",
+				"length": "50%",
+				"data-ref": "supplier",
+				"option-value": "id",
+				"option-text": "name"
+			},
+			{
+				"name": "inDate",
+				"type": "date",
+				"label": "发生日期",
+				"formatter": "yyyy-MM-dd",
+				"length": "30%",
+				"value": "now"
+			},
+			{
+				"name": "number",
+				"type": "indentify",
+				"label": "编号",
+				"formatter": "YCLRKD[yyyyMMdd][increase-3]",
+				"length": "20%"
+			}
+		],
+	"right-columns": [],
+	"bottom-columns": [{
+				"name": "manager",
+				"type": "text",
+				"label": "主管",
+				"length": "20%"
+			},
+			{
+				"name": "accountant",
+				"type": "text",
+				"label": "会计",
+				"length": "20%"
+			},
+			{
+				"name": "custodian",
+				"type": "text",
+				"label": "保管",
+				"length": "20%"
+			},
+			{
+				"name": "acceptor",
+				"type": "text",
+				"label": "验收",
+				"length": "20%"
+			},
+			{
+				"name": "handover",
+				"type": "text",
+				"label": "交库",
+				"length": "20%"
+			}
+		],
+	"left-columns": [],
+	"item-table": {
+		"border-type": "",
+		"border-weight": "",
+		"border-color": "",
+		"total": true,
+		"total-label": "合计金额：",
+		"total-column": "amount",
+		"columns": [{
+				"name": "number",
+				"type": "row-no",
+				"label": "编号",
+				"length": "5%"
+			},{
+				"name": "material.id",
+				"type": "ref",
+				"hide": true,
+				"data-ref": "material",
+				"ref-field": "id"
+			},{
+				"name": "materialName",
+				"type": "ref",
+				"ref-tigger": true,
+				"label": "品名",
+				"length": "20%",
+				"data-ref": "material",
+				"ref-field": "name"
+			},
+			{
+				"name": "specification",
+				"type": "edit-ref",
+				"label": "规格",
+				"length": "20%",
+				"data-ref": "material",
+				"ref-field": "specification"
+			},
+			{
+				"name": "quantity",
+				"type": "text",
+				"data-type": "float",
+				"label": "数量",
+				"length": "5%"
+			},
+			{
+				"name": "unit",
+				"type": "ref",
+				"label": "单位",
+				"length": "5%",
+				"data-ref": "material",
+				"ref-field": "unit"
+			},
+			{
+				"name": "price",
+				"type": "text",
+				"data-type": "float",
+				"label": "单价",
+				"length": "10%"
+			},
+			{
+				"name": "amount",
+				"type": "calculation",
+				"data-type": "counter",
+				"label": "金额",
+				"length": "10%",
+				"formula": "[quantity]*[price]"
+			},
+			{
+				"name": "remark",
+				"type": "text",
+				"label": "附注",
+				"length": "25%"
+			}
+		]
+		
+	}
+}

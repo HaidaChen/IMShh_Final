@@ -13,6 +13,7 @@ public class MaterialFilter extends BaseQO{
 	private String upperStorage;
 	private String remark;
 	private String supplier;
+	private int billStatus = -1;
 	
 	public String getSupplier() {
 		return supplier;
@@ -63,9 +64,17 @@ public class MaterialFilter extends BaseQO{
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+	public int getBillStatus() {
+		return billStatus;
+	}
+	public void setBillStatus(int billStatus) {
+		this.billStatus = billStatus;
+	}
 	@Override
 	public String toString() {
-		return "Fliter [supplier=" + supplier + ", category=" + category + ", name=" + name + "]";
+		return "MaterialFilter [name=" + name + ", specification=" + specification + ", category=" + category
+				+ ", ctgCode=" + ctgCode + ", lowerStorage=" + lowerStorage + ", upperStorage=" + upperStorage
+				+ ", remark=" + remark + ", supplier=" + supplier + ", billStatus=" + billStatus + "]";
 	}
 	
 }

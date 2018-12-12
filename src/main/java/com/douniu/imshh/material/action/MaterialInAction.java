@@ -1,39 +1,69 @@
 package com.douniu.imshh.material.action;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.douniu.imshh.common.Authorization;
-import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.material.domain.MaterialIn;
+import com.douniu.imshh.material.domain.MaterialInDetail;
 import com.douniu.imshh.material.service.IMaterialInService;
-import com.douniu.imshh.utils.ExcelBean;
 import com.douniu.imshh.utils.GsonUtil;
-import com.douniu.imshh.utils.ImportAndExportUtil;
-import com.douniu.imshh.utils.POIExcelAdapter;
-import com.douniu.imshh.utils.RequestParameterLoader;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 @Controller
-@RequestMapping("/mtlIn")
+@RequestMapping("/mtlin")
 public class MaterialInAction {
-	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
+	@Autowired
+	private IMaterialInService service; 
+	
+	@Authorization("010201")
+	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getPageResult(MaterialFilter filter){
+		PageResult pr = service.getPageResult(filter);
+		return GsonUtil.toJson(pr, null);
+	}
+	
+	@Authorization("010202")
+	@RequestMapping(value="/newMaterialIn", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public void newMaterialIn(MaterialIn materialIn, String billItem){
+		List<MaterialInDetail> _details = new GsonBuilder().setDateFormat("yyyy-MM-dd").create().fromJson(billItem, new TypeToken<List<MaterialInDetail>>(){}.getType());
+		List<MaterialInDetail> details = new ArrayList<>();
+		for (MaterialInDetail detail : _details){
+			if (detail.getMaterial()!= null && !StringUtils.isEmpty(detail.getMaterial().getId())){
+				details.add(detail);
+			}
+		}
+		materialIn.setDetails(details);
+		service.newMaterialIn(materialIn);
+	}
+	
+	@Authorization("010203")
+	@RequestMapping(value="/updateMaterialIn", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public void updateMaterialIn(MaterialIn materialIn){
+		service.updateMaterialIn(materialIn);
+	}
+	
+	@Authorization("010204")
+	@RequestMapping(value="/deleteMaterialIn", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public void deleteMaterialIn(String id){
+		service.deleteMaterialIn(id);
+	}
+	
+	/*private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{
 		mapper.add(new ExcelBean("入库日期","inDate",0));
 		mapper.add(new ExcelBean("供应商","supplierName",0));   
@@ -120,5 +150,5 @@ public class MaterialInAction {
             e.printStackTrace();  
         }  
         ImportAndExportUtil.exportProcess(response, workbook);
-	}
+	}*/
 }

@@ -1,0 +1,103 @@
+.e-bill{
+ color: rgba(0, 0, 0, .8);
+ font-size: 12px;
+ padding: 5px;
+}
+
+.e-bill h3{
+	font-size: 1.8em;
+	text-align: center;
+	text-decoration: underline;
+	margin: 0;
+}
+
+.e-bill .top-columns, .bottom-columns{
+	height: 20px;
+	margin: 5px 18px;
+}
+
+.e-bill .item-table{
+	/* height: 300px; */
+	margin: 5px 18px;
+}
+
+.e-bill .top-columns .bill-column, 
+.e-bill .bottom-columns .bill-column{
+	float: left;
+}
+.e-bill .top-columns .bill-column{
+	margin-bottom: 5px;
+}
+.e-bill .bottom-columns .bill-column{
+	margin-top: 5px;
+}
+.e-bill .top-columns .bill-column label, 
+.e-bill .bottom-columns .bill-column label{
+	margin-right: 10px;
+}
+
+.e-bill .top-columns .bill-column .select,
+.e-bill .bottom-columns .bill-column .select{
+	min-width: 160px;
+	font-size: 12px;
+}
+
+.e-bill .top-columns .select2-container .select2-choice {
+    display: block;
+    height: 25px;
+    padding: 0 0 0 8px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #aaa;
+    white-space: nowrap;
+    line-height: 25px;
+    color: #444;
+    text-decoration: none;
+    background-clip: padding-box;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: #fff;
+    background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0,#eee),color-stop(0.5,#fff));
+    background-image: -webkit-linear-gradient(center bottom,#eee 0,#fff 50%);
+    background-image: -moz-linear-gradient(center bottom,#eee 0,#fff 50%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eeeeee', GradientType=0);
+    background-image: linear-gradient(top,#fff 0,#eee 50%);
+}
+
+table.gridtable {
+	font-family: verdana,arial,sans-serif;
+	color:#333333;
+	border-width: 1px;
+	border-color: #666666;
+	border-collapse: collapse;
+}
+table.gridtable tr {
+	height: 40px;	
+}
+table.gridtable th {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #666666;
+	background-color: #dedede;
+	text-align: center;
+}
+table.gridtable td {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #666666;
+	background-color: #ffffff;
+}
+table.gridtable td:focus{
+	padding: 0;
+}
+table.gridtable td input:focus{
+	border: 1px solid dodgerblue;
+}
+table.gridtable td span.btn{
+	float: right;
+}

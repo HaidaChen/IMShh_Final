@@ -246,10 +246,10 @@ public class ExcelUtil {
 	        XSSFRow row = sheet.createRow(rowindex);  
 	        for (int i = 0; i < ems.size(); i++) {  
 	            ExcelBean em = (ExcelBean) ems.get(i);  
-	            
-	            PropertyDescriptor pd = new PropertyDescriptor(em.getPropertyName(), clazz);  
-	            Method getMethod = pd.getReadMethod();  
-	            Object rtn = getMethod.invoke(obj);  
+	            Object rtn = ReflectionUtil.getFieldValue(obj, em.getPropertyName());
+	            //PropertyDescriptor pd = new PropertyDescriptor(em.getPropertyName(), clazz);  
+	            //Method getMethod = pd.getReadMethod();  
+	            //Object rtn = getMethod.invoke(obj);  
 	            String value = "";  
 	            
 	            if (rtn != null) {  

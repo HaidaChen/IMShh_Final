@@ -35,7 +35,7 @@ public class MaterialAction {
 	static{
 		mapper.add(new ExcelBean("品名","name",0));  
 		mapper.add(new ExcelBean("规格","specification",0)); 		  
-		mapper.add(new ExcelBean("分类","ctg.name",0));  
+		mapper.add(new ExcelBean("分类","ctg.code",0));  
 		mapper.add(new ExcelBean("单位","unit",0));
 		mapper.add(new ExcelBean("库存","storage",0));
 		mapper.add(new ExcelBean("备注","remark",0));  
@@ -50,6 +50,14 @@ public class MaterialAction {
 	public String getPageResult(MaterialFilter filter){
 		PageResult pr = service.getPageResult(filter);
 		return GsonUtil.toJson(pr, null);
+	}
+	
+	@Authorization("010101")
+	@RequestMapping(value ="/query", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String query(MaterialFilter filter){
+		List<Material> materials = service.query(filter);
+		return GsonUtil.toJson(materials);
 	}
 	
 	@Authorization("010101")
@@ -110,7 +118,7 @@ public class MaterialAction {
 	public void exportMaterial(HttpServletRequest request,HttpServletResponse response,HttpSession session){
 		ImportAndExportUtil.exportPreprocess(response, "原材料品类列表");
 		
-		String[] params = {"name", "category", "supplier"};
+		String[] params = {"name", "ctgCode", "specification", "lowerStorage", "upperStorage", "remark"};
 		MaterialFilter filter = new MaterialFilter();
 		RequestParameterLoader.loadParameter(request, filter, params);
 		List<Material> materialList = service.exportMaterial(filter);

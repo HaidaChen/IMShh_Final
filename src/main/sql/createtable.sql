@@ -8,15 +8,6 @@ CREATE TABLE TBL_MATERIAL_CATEGORY(
     modifyDate datetime
 );
 
-CREATE TABLE TBL_MATERIAL_SUPPLIER(
-    id varchar(20) not null,
-    name varchar(64) not null,
-    categoryIds varchar(528),
-    remark varchar(1024),
-    status char(1) default '1',
-    modifyDate datetime
-);
-
 CREATE TABLE TBL_MATERIAL(
     id varchar(20) not null,
     name varchar(64) not null,
@@ -25,6 +16,37 @@ CREATE TABLE TBL_MATERIAL(
     categoryId varchar(20), 
     storage numeric(10,3),
     remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_BILL_MATERIALIN(
+	id varchar(20) not null,
+	supplierId varchar(20) not null,
+	inDate date not null,
+	number varchar(20),
+	totalQuantity numeric(12, 4),
+	totalAmount numeric(12, 4),
+	manager varchar(20),
+	accountant varchar(20),
+	custodian varchar(20),
+	acceptor varchar(20),
+	handover varchar(20),
+	billStatus char(1) default '0',
+	remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_BILL_DTL_MATERIALIN(
+	id varchar(20) not null,
+	billId varchar(20) not null,
+	materialId varchar(20) not null,
+	specification varchar(128),
+	quantity numeric(12, 4),
+	price numeric(12, 4),
+	amount numeric(12, 4),
+	remark varchar(1024),
     status char(1) default '1',
     modifyDate datetime
 );

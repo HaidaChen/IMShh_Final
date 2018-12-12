@@ -156,10 +156,10 @@
     </insert>
     
     <insert id="batchInsert" parameterType="java.util.List">
-        insert into tbl_material(id, name, specification1, specification2, specification3, category, unit, modifydate, remark, status) 
+        insert into tbl_material(id, name, specification, categoryId, storage, unit, modifydate, remark, status) 
              values
              <foreach collection="list" item="mtl" index="index" separator=",">
-                 (#{mtl.id} , #{mtl.name}, #{mtl.specification1}, #{mtl.specification2}, #{mtl.specification3}, #{mtl.category}, #{mtl.unit}, sysdate(), #{mtl.remark}, '1')
+                 (#{mtl.id} , #{mtl.name}, #{mtl.specification}, #{mtl.ctg.id}, #{mtl.storage}, #{mtl.unit}, sysdate(), #{mtl.remark}, '1')
              </foreach>
     </insert>
     

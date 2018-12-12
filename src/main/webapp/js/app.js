@@ -552,11 +552,22 @@ var App = function () {
 			initEditMaterial();
 			
 			$('#btn_import').click(function(){
-				
+				ImportData.show({url: getProjectName() + "/mtl/importMaterial.do",
+					templaterName: getProjectName() + "/templaters/原材料品类列表.xlsx",
+					callback: function(){
+						$("#tbl_material").bootstrapTable("refresh", {url: getProjectName() + "/mtl/getPageResult.do", cache: false});
+					}
+				});
 			});
 			
 			$('#btn_export').click(function(){
-				
+				var param = 'name=' + $("#filter_name").val()
+				          + '&ctgCode='+ $("#filter_ctgCode").val()
+				          + '&specification=' + $("#filter_spec").val()
+				          + '&lowerStorage=' + $("#filter_lStorage").val()
+				          + '&upperStorage=' + $("#filter_uStorage").val()
+				          + '&remark=' + $("#filter_remark").val();
+				window.open(getProjectName() + "/mtl/exportMaterial.do?"+param);
 			});
 		}
 		
@@ -682,6 +693,18 @@ var App = function () {
 
         materialCategory: function(){
         	initMaterialCategory().init();
+        },
+        
+        materialIn: function(){
+        	var bill;
+        	$.getJSON("../templater/yclrkd.json", "", function(data){
+        		bill = $('#eBill').eBill(data);	
+			});
+        	
+        	$('#btn_save').click(function(){
+        		bill.commit();
+        	});
+        	
         }
     };
 }();

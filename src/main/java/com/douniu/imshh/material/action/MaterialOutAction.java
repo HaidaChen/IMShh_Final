@@ -30,8 +30,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-@Controller
-@RequestMapping("/mtlOut")
 public class MaterialOutAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{

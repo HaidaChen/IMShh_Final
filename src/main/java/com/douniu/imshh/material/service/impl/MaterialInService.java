@@ -1,25 +1,79 @@
 package com.douniu.imshh.material.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.douniu.imshh.common.IDInjector;
-import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.dao.IMaterialInDao;
-import com.douniu.imshh.material.domain.Material;
 import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.material.domain.MaterialIn;
-import com.douniu.imshh.material.domain.MaterialSupplier;
+import com.douniu.imshh.material.domain.MaterialInDetail;
 import com.douniu.imshh.material.service.IMaterialInService;
 import com.douniu.imshh.material.service.IMaterialService;
-import com.douniu.imshh.material.service.IMaterialSupplierService;
 import com.douniu.imshh.utils.LikeFlagUtil;
 
 public class MaterialInService implements IMaterialInService{
+
 	private IMaterialInDao dao;
 	private IMaterialService mtlService;
-	private IMaterialSupplierService suppService;
+	
+	@Override
+	public PageResult getPageResult(MaterialFilter filter) {
+		PageResult pr = new PageResult();
+		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"number", "remark"});
+		pr.setRows(dao.getPageResult(condition));
+		pr.setTotal(dao.count(condition));
+		return pr;
+	}
+
+	@Override
+	public MaterialIn getById(String id) {
+		return dao.getById(id);
+	}
+
+	@Override
+	public void newMaterialIn(MaterialIn materialIn) {
+		IDInjector.injector(materialIn);
+		List<MaterialInDetail> details = materialIn.getDetails();
+		for (MaterialInDetail detail : details){
+			detail.setBillId(materialIn.getId());
+			mtlService.addStorage(detail.getMaterial().getId(), detail.getAmount());
+		}
+		IDInjector.injector(details);
+		dao.insertDetails(details);
+		dao.insert(materialIn);
+	}
+
+	@Override
+	public void updateMaterialIn(MaterialIn materialIn) {
+		MaterialIn o_materialIn = dao.getById(materialIn.getId());
+		List<MaterialInDetail> o_details = o_materialIn.getDetails();
+		for (MaterialInDetail detail : o_details){
+			mtlService.addStorage(detail.getMaterial().getId(), 0-detail.getAmount());
+		}
+		
+		dao.update(materialIn);
+		dao.deleteDetailsByBillId(materialIn.getId());
+		dao.insertDetails(materialIn.getDetails());
+		for (MaterialInDetail detail : materialIn.getDetails()){
+			mtlService.addStorage(detail.getMaterial().getId(), detail.getAmount());
+		}
+	}
+
+	@Override
+	public void deleteMaterialIn(String id) {
+		MaterialIn materialIn = dao.getById(id);
+		dao.delete(id);
+		dao.deleteDetailsByBillId(id);
+		List<MaterialInDetail> details = materialIn.getDetails();
+		for (MaterialInDetail detail : details){
+			mtlService.addStorage(detail.getMaterial().getId(), 0-detail.getAmount());
+		}
+	}
+	
+	
+	/*private IMaterialInDao dao;
+	private IMaterialService mtlService;
 	
 	@Override
 	public List<MaterialIn> query(MaterialFilter filter) {
@@ -60,7 +114,7 @@ public class MaterialInService implements IMaterialInService{
 	@Override
 	public void importMaterialIn(List<MaterialIn> materialInList) {
 		List<Material> fullMaterial = mtlService.query(new MaterialFilter());
-		List<MaterialSupplier> fullSupplier = suppService.query(new MaterialFilter());
+		//List<MaterialSupplier> fullSupplier = suppService.query(new MaterialFilter());
 		for (MaterialIn item : materialInList){
 			Material mtl = new Material();
 			mtl.setName(item.getMaterialName());
@@ -82,7 +136,7 @@ public class MaterialInService implements IMaterialInService{
 		String unassociation_material = "";
 		String unassociation_supplier = "";
 		List<Material> fullMaterials = mtlService.query(new MaterialFilter());
-		List<MaterialSupplier> fullSuppliers = suppService.query(new MaterialFilter());
+		//List<MaterialSupplier> fullSuppliers = suppService.query(new MaterialFilter());
 		
 		for (int i = 0; i < materialInList.size(); i++){
 			MaterialIn materialin = materialInList.get(i);
@@ -114,7 +168,7 @@ public class MaterialInService implements IMaterialInService{
 		// TODO Auto-generated method stub
 		return query(filter);
 	}
-
+*/
 	public void setDao(IMaterialInDao dao) {
 		this.dao = dao;
 	}
@@ -123,8 +177,5 @@ public class MaterialInService implements IMaterialInService{
 		this.mtlService = mtlService;
 	}
 
-	public void setSuppService(IMaterialSupplierService suppService) {
-		this.suppService = suppService;
-	}
 	
 }

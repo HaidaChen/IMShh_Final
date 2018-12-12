@@ -94,9 +94,9 @@ public class MaterialService implements IMaterialService{
 	public void importMaterial(List<Material> materialList) {
 		List<Category> fullCategory = ctgService.query(new MaterialFilter());
 		for (Material material : materialList){
-			if (!material.getCtg().getName().trim().equals("")){
+			if (!material.getCtg().getCode().trim().equals("")){
 				Category category = new Category();
-				category.setName(material.getCtg().getName());
+				category.setCode(material.getCtg().getCode());
 				int index = fullCategory.indexOf(category);
 				Category match =  fullCategory.get(index);
 				material.setCtg(match);

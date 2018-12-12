@@ -17,12 +17,12 @@
                                   '</div>' +
                               '</div>' +
                           '</div>';
-        var html_modal_frame = '<div id="[Id]" class="modal fade bs-example-modal-sm"  role="dialog">' +
-        			'<div class="modal-dialog modal-sm">' +
+        var html_modal_frame = '<div id="[Id]" class="modal fade bs-example-modal-lg" role="dialog" aria-labelledby="myLargeModalLabel">' +
+        			'<div class="modal-dialog modal-lg" role="document" style="[Style]">' +
         				'<div class="modal-content">' +
 			                '<div class="modal-header">' +
 			                    '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>' +
-			                    '<h4 class="modal-title" id="modalLabel">[Title]</h4>' +
+			                    '<h5 class="modal-title" id="modalLabel">[Title]</h5>' +
 			                '</div>' +
 			                '<div class="modal-body">' +
 			                	'<div class="load-Content"></div>' +
@@ -87,7 +87,8 @@
         	options = $.extend({}, {
                 id: 'loadWin',
         		title: '新的窗口',
-                width: 200,
+                width: 800,
+                style: '',
                 rmvWin: true,
                 initShow: true
             }, options || {});
@@ -96,7 +97,8 @@
 	            var content = html_modal_frame.replace(reg, function (node, key) {
 	                return {
 	                    Id: options.id,
-	                    Title: options.title
+	                    Title: options.title,
+	                    Style: options.style
 	                }[key];
 	            });
 	            var contentEle = $(content);

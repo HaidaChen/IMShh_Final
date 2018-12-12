@@ -21,14 +21,6 @@
           <property name="mapperInterface" value="com.douniu.imshh.material.dao.ICategoryDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
-      
-      <bean name="materialSupplierService" class="com.douniu.imshh.material.service.impl.MaterialSupplierService">
-          <property name="dao" ref="materialSupplierDao"></property>
-      </bean>
-      <bean id="materialSupplierDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.material.dao.IMaterialSupplierDao"/>
-          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean>
        
       <bean name="materialService" class="com.douniu.imshh.material.service.impl.MaterialService">
           <property name="dao" ref="materialDao"></property>
@@ -42,7 +34,6 @@
       <bean name="materialInService" class="com.douniu.imshh.material.service.impl.MaterialInService">
           <property name="dao" ref="materialInDao"></property>
           <property name="mtlService" ref="materialService"></property>
-          <property name="suppService" ref="materialSupplierService"></property>
       </bean>
       
       <bean id="materialInDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
@@ -59,15 +50,6 @@
           <property name="mapperInterface" value="com.douniu.imshh.material.dao.IMaterialOutDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
-      
-      <bean name="materialPriceService" class="com.douniu.imshh.material.service.impl.HistoryPriceService">
-          <property name="dao" ref="materialPriceDao"></property>
-      </bean>
-      <bean id="materialPriceDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.material.dao.IHistoryPriceDao"/>
-          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean>
-      
       
       
       
