@@ -8,7 +8,7 @@ import com.douniu.imshh.busdata.supplier.domain.Supplier;
 public class MaterialIn {
 	private String id;
 	private Supplier supplier;   /*供应商*/
-	private Date inDate;         /*供应商*/
+	private Date inDate;         /*发生日期*/
 	private String number;       /*入库单号*/
 	private String manager;      /*主管*/
 	private String accountant;   /*会计*/
@@ -18,7 +18,7 @@ public class MaterialIn {
 	private List<MaterialInDetail> details;
 	private float totalQuantity; /*合计数量*/
 	private float totalAmount;   /*合计金额*/
-	private int billStatus;      /*单据状态：0：待入账；1：已入账*/
+	private int billStatus = 0;      /*单据状态：0：待入账；1：已入账*/
 	
 	private String remark;
 	private int status = 1;

@@ -60,9 +60,13 @@
 	<script src="../js/myplugins/jquery.ewin.js"></script>
 	<script src="../js/app.js"></script>
 	<script>
+	    var tabs;
 		$(function(){
-			App.main();
+			tabs = App.main();
 		});
+		var getTabs = function(){
+			return tabs;
+		}
 	</script>
 </body>
 </html>

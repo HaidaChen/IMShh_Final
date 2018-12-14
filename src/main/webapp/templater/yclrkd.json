@@ -30,7 +30,7 @@
 				"name": "number",
 				"type": "indentify",
 				"label": "编号",
-				"formatter": "YCLRKD[yyyyMMdd][increase-3]",
+				"src": "/mtlin/getBillCode.do",
 				"length": "20%"
 			}
 		],
@@ -74,6 +74,7 @@
 		"total": true,
 		"total-label": "合计金额：",
 		"total-column": "amount",
+		"total-name": "totalAmount",
 		"columns": [{
 				"name": "number",
 				"type": "row-no",
@@ -90,7 +91,7 @@
 				"type": "ref",
 				"ref-tigger": true,
 				"label": "品名",
-				"length": "20%",
+				"length": "15%",
 				"data-ref": "material",
 				"ref-field": "name"
 			},
@@ -107,7 +108,7 @@
 				"type": "text",
 				"data-type": "float",
 				"label": "数量",
-				"length": "5%"
+				"length": "10%"
 			},
 			{
 				"name": "unit",

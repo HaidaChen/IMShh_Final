@@ -37,7 +37,7 @@ public class MaterialInService implements IMaterialInService{
 		List<MaterialInDetail> details = materialIn.getDetails();
 		for (MaterialInDetail detail : details){
 			detail.setBillId(materialIn.getId());
-			mtlService.addStorage(detail.getMaterial().getId(), detail.getAmount());
+			mtlService.addStorage(detail.getMaterial().getId(), detail.getQuantity());
 		}
 		IDInjector.injector(details);
 		dao.insertDetails(details);
@@ -49,15 +49,18 @@ public class MaterialInService implements IMaterialInService{
 		MaterialIn o_materialIn = dao.getById(materialIn.getId());
 		List<MaterialInDetail> o_details = o_materialIn.getDetails();
 		for (MaterialInDetail detail : o_details){
-			mtlService.addStorage(detail.getMaterial().getId(), 0-detail.getAmount());
+			mtlService.addStorage(detail.getMaterial().getId(), 0-detail.getQuantity());
 		}
 		
 		dao.update(materialIn);
 		dao.deleteDetailsByBillId(materialIn.getId());
-		dao.insertDetails(materialIn.getDetails());
-		for (MaterialInDetail detail : materialIn.getDetails()){
-			mtlService.addStorage(detail.getMaterial().getId(), detail.getAmount());
+		List<MaterialInDetail> details = materialIn.getDetails();
+		for (MaterialInDetail detail : details){
+			detail.setBillId(materialIn.getId());
+			mtlService.addStorage(detail.getMaterial().getId(), detail.getQuantity());
 		}
+		IDInjector.injector(details);
+		dao.insertDetails(materialIn.getDetails());
 	}
 
 	@Override
@@ -67,7 +70,7 @@ public class MaterialInService implements IMaterialInService{
 		dao.deleteDetailsByBillId(id);
 		List<MaterialInDetail> details = materialIn.getDetails();
 		for (MaterialInDetail detail : details){
-			mtlService.addStorage(detail.getMaterial().getId(), 0-detail.getAmount());
+			mtlService.addStorage(detail.getMaterial().getId(), 0-detail.getQuantity());
 		}
 	}
 	

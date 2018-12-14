@@ -1,0 +1,44 @@
+<meta charset="UTF-8">
+<form id="mtlFilterForm" class="form-horizontal">
+  
+  <div class="form-group">
+    <label for="filter_bStatus" class="col-sm-3 control-label">入库单状态：</label>
+    <div class="col-sm-9">
+      <select class="form-control" id="filter_bStatus" name="billStatus" >
+      	<option value="-1">--请选择--</option>
+      	<option value="0">待入账</option>
+      	<option value="1">已入账</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="filter_supplier" class="col-sm-3 control-label">供应商：</label>
+    <div class="col-sm-9">
+      <select class="form-control" id="filter_supplier" name="supplier" >
+      	<option value=""></option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="filter_lStorage" class="col-sm-3 control-label">发生日期：</label>
+    <div class="col-sm-4">
+      <input type="date" class="form-control" id="filter_sDate" name="startDate" placeholder="开始日期">
+    </div>
+    <div class="col-sm-1">
+      <span>至</span>
+    </div>    
+    <div class="col-sm-4">
+      <input type="date" class="form-control" id="filter_eDate" name="endDate" placeholder="结束日期">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="filter_remark" class="col-sm-3 control-label">备注：</label>
+    <div class="col-sm-9">
+      <input type="text" class="form-control" id="filter_remark" name="remark">
+    </div>
+  </div>
+</form>
+<div class="clearfix">
+  <input type="button" id="btn_query" value="查询" class="btn btn-success pull-right m-l-5">
+  <input type="button" id="btn_close" value="关闭" class="btn btn-default pull-right" data-dismiss="modal">
+</div>

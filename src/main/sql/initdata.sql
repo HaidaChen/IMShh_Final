@@ -1,3 +1,10 @@
+TRUNCATE TABLE TBL_SYS_PARAMETER;
+insert into TBL_SYS_PARAMETER(pname, pvalue, display)
+      value('bill.materialin.code', '', 0);
+insert into TBL_SYS_PARAMETER(pname, pvalue, pvtype, display)
+      value('debug', 'true', 'Boolean', 0);
+      
+
 TRUNCATE TABLE T_USER;
 insert into T_USER(id, username, password, fullname, email, weichat, status, modifyDate)
       value('01', 'admin', 'admin', 'admin', '', '', '1', now());

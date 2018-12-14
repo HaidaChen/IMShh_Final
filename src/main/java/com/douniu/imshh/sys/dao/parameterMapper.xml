@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.sys.dao.IParameterDao">
+    <resultMap type="Parameter" id="parammap">
+        <result property="pname" column="pname"/>
+        <result property="pvalue" column="pvalue"/>
+        <result property="pvtype" column="pvtype"/>
+        <result property="display" column="display"/>
+    </resultMap>
+    
+    <select id="allParameters" resultMap="parammap">
+        select * from tbl_sys_parameter where display = 1;
+    </select>
+    
+    <select id="getParameter" parameterType="String" resultType="Parameter">
+        select * from tbl_sys_parameter where pname = #{pname}
+    </select>
+    
+    <update id="setParameter" parameterType="Parameter">
+    	update tbl_sys_parameter set pvalue = #{pvalue} where pname = #{pname}
+    </update>
+</mapper>

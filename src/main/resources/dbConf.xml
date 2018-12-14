@@ -2,6 +2,8 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<typeAliases>
+		
+	
 	    <typeAlias alias="MaterialFilter" type="com.douniu.imshh.material.domain.MaterialFilter"/>
 		<typeAlias alias="MaterialCategory" type="com.douniu.imshh.material.domain.Category"/>
 		<typeAlias alias="Material" type="com.douniu.imshh.material.domain.Material"/>
@@ -35,6 +37,7 @@
         <typeAlias alias="Role" type="com.douniu.imshh.sys.domain.Role"/>
         <typeAlias alias="Authority" type="com.douniu.imshh.sys.domain.Authority"/>
         <typeAlias alias="Menu" type="com.douniu.imshh.sys.domain.Menu"/>
+        <typeAlias alias="Parameter" type="com.douniu.imshh.sys.domain.Parameter"/>
     </typeAliases>
     
      
@@ -69,6 +72,7 @@
         <mapper resource="/com/douniu/imshh/sys/dao/userMapper.xml"/>
         <mapper resource="/com/douniu/imshh/sys/dao/roleMapper.xml"/>
         <mapper resource="/com/douniu/imshh/sys/dao/authorityMapper.xml"/>
+        <mapper resource="/com/douniu/imshh/sys/dao/parameterMapper.xml"/>
     </mappers>
     
     

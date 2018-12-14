@@ -79,7 +79,7 @@
           <if test="remark != null and remark !=''">
           and mib.remark like #{remark} 
           </if>
-          order by mib.inDate desc
+          order by mib.inDate desc, mib.modifydate desc
           limit #{pageOffset},#{pageSize}
     </select> 
     <select id="count" parameterType="MaterialFilter" resultType="int">
@@ -107,8 +107,6 @@
           and mib.remark like #{remark} 
           </if>
     </select> 
-    
-    
     
     <select id="getById" parameterType="String" resultMap="mibwdmap">
         select mib.id as mib_id, 
@@ -143,8 +141,8 @@
                tbl_material m             
          where mib.id = #{id}
            and mib.supplierId = s.id
-           and mib.id = dtl.billId,
-           and dtl.status = '1',
+           and mib.id = dtl.billId
+           and dtl.status = '1'
            and dtl.materialId = m.id
     </select>
     
@@ -152,8 +150,6 @@
         insert into tbl_bill_materialin(id, supplierId, inDate, number, totalQuantity, totalAmount, manager, accountant, custodian, acceptor, handover, modifydate, remark, status)  
           values(#{id}, #{supplier.id}, #{inDate}, #{number}, #{totalQuantity}, #{totalAmount}, #{manager}, #{accountant}, #{custodian}, #{acceptor}, #{handover}, sysdate(), #{remark}, #{status})
     </insert>
-    
-    
     
     <update id="update" parameterType="MaterialIn">
     	update tbl_bill_materialin set
@@ -178,7 +174,6 @@
           modifydate = sysdate()
         where id = #{id}
     </update>
-    
     
     <insert id="insertDetails" parameterType="java.util.List">
         insert into tbl_bill_dtl_materialin(id, billId, materialId, specification, quantity, price, amount, modifydate, remark, status) 

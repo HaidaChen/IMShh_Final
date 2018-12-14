@@ -48,19 +48,15 @@
 			    	html += '<input type="date" name="'+opt.name+'">';
 			    }break;
 		    case 'indentify':
-		        var _value = '';
-		        if (opt.formatter){
-		        	var reg = new RegExp("\\[([^\\[\\]]*?)\\]", 'igm');
-		        	var _formatter = opt.formatter;
-		        	var now = new Date();
-		        	_value = _formatter.replace(reg, function (node, key) {
-		                return {
-		                	yyyyMMdd: now.getFullYear()+''+(now.getMonth() + 1)+''+now.getDate(),
-		                	'increase-3': '001'
-		                }[key];
-		            });
-		        }
-		        html += '<input type="text" name="'+opt.name+'" value="'+_value+'">';
+		        var _value = '001';
+		        $.ajax({
+        			url: getProjectName() + opt.src,
+        			async: false,
+        			success: function(result){
+        				_value = result.code;
+        			}
+        		});
+		        html += '<input type="text" name="'+opt.name+'" value="'+_value+'" readonly="readonly" style="width: 150px; font-weight:bold; color: #FF7F50; border: none">';
 			    break;
 			case 'text':
 				html += '<input type="text" name="'+opt.name+'">';
@@ -162,7 +158,8 @@
 			
 			if (this.tableOpt.total){
 				html += '<tr>';
-				html +=   '<td colspan = "8" style="font-size: 1.2em; font-weight: 600">'+this.tableOpt["total-label"]+'<span id="billTotal" total-column="'+this.tableOpt["total-column"]+'"></span></td>';
+				//html +=   '<td colspan = "8" style="font-size: 1.2em; font-weight: 600">'+this.tableOpt["total-label"]+'<span id="billTotal" total-column="'+this.tableOpt["total-column"]+'"></span><input type="hidden" name="'+this.tableOpt["total-name"]+'"></td>';
+				html +=   '<td colspan = "8" style="font-size: 1.2em; font-weight: 600">'+this.tableOpt["total-label"]+'<span id="'+this.tableOpt["total-name"]+'" total-column="'+this.tableOpt["total-column"]+'"></span><input type="hidden" name="'+this.tableOpt["total-name"]+'"></td>';
 				html += '</tr>';
 			}
 			
@@ -365,7 +362,7 @@
 		        	});
 		        	
 		        	if (!exp.match(reg) || exp.match(reg).lenght == 0){
-		        		var calRes = math.eval(exp).toFixed(2);
+		        		var calRes = math.eval(exp).toFixed(4);
 		        		_tableData[rowNo][column.name] = calRes;
 		        		var tr = _ele.find('table.gridtable tr')[rowNo+1];
 		        		$(tr).find('td[name="'+column.name+'"]').text(calRes);
@@ -379,13 +376,15 @@
 		calculateToal: function(){
 			if (this.tableOpt.total){
 				var column = this.tableOpt['total-column'];
+				var totalName = this.tableOpt['total-name'];
 				var total = 0;
 				$.each(this.tableData, function(i, row) {
 					if (row[column]){
 						total += parseFloat(row[column]);
 					}
 				});
-				this.$element.find('#billTotal').text(total.toFixed(2));
+				this.$element.find('#'+totalName).text(total.toFixed(4));
+				this.$element.find('[name=\''+totalName+'\']').val(total.toFixed(4));
 			}
 		}
 	}
@@ -393,7 +392,7 @@
 	var Ebill = function(ele, opt, reference){
 		this.$element = ele;
 		this.title = new BillTitle(this.$element, opt.title);
-		this.form = $('<form id="bill_form"></form>');
+		this.form = $('<form id="bill_form"><input type="hidden" name="id"></form>');
 		
 		this.t_columns = new BillTopColumns(this.form, opt['top-columns']);
 		this.b_columns = new BillBottomnColumns(this.form, opt['bottom-columns']);
@@ -421,7 +420,69 @@
 			});
 		},
 		
+		resetBill: function(){
+			var ele = this.$element;
+			ele.find('[name=\'id\']').val('');
+			var items = this.options['top-columns'].concat(this.options['bottom-columns']);
+			$.each(items, function(i, item){
+				var _ele_item = ele.find('[name=\''+item.name+'\']');
+				_ele_item.val('');
+				if (item.type == 'select'){
+					_ele_item.select2();
+				}
+				if (item.type == 'date'){
+					var now = new Date();
+		    		var _value = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
+					_ele_item.val(_value);
+				}
+				if (item.type == 'indentify'){
+					$.ajax({
+	        			url: getProjectName() + item.src,
+	        			async: false,
+	        			success: function(result){
+	        				_ele_item.val(result.code);
+	        			}
+	        		});
+				}
+			});
+			this.item_table.tableData = [{},{},{},{},{}];
+			this.item_table.currentRow = 1;
+			this.item_table.draw();
+			
+		},
+		
 		fillBill: function(data){
+			var self = this;
+			this.resetBill();
+			$.each(data, function(key, value){
+				if (value instanceof Array){
+					self.item_table.fillTable(value);
+				}else{					
+					if (typeof value == 'object'){
+						$.each(value, function(skey, svalue){
+							var ele = self.$element.find('[name=\''+key+'.'+skey+'\']');
+							
+							if (ele){
+								ele.val(svalue);
+								if (ele[0] && ele[0].tagName == 'SELECT'){
+									ele.select2();
+								}
+							}
+						});
+					}else {
+						var ele = self.$element.find('[name=\''+key+'\']');
+						if (ele){
+							ele.val(value);
+							if (ele.attr('type') == 'hidden'){
+								self.$element.find('#'+key).text(value);
+							}
+						}
+					}
+				}
+			});
+		},
+		
+		fillBillItem: function(data){
 			this.item_table.fillTable(data.tableData);
 		},
 		
@@ -429,15 +490,18 @@
 			return JSON.stringify(this.item_table.tableData);
 		},
 		
-		submitBill: function(){
+		submitBill: function(url, successMsg){
+			var self = this;
 			var tableParam = {};
 			tableParam['billItem'] = this.getBillData();
 			
 			$('#bill_form').ajaxSubmit({
 				type: 'post',
-				url: getProjectName()+'/mtlin/newMaterialIn.do',
+				url: url,
 				data: tableParam,
 				success:function(result){
+					self.resetBill();
+					Ewin.toast(successMsg);
 				},
 				error:function(XMLHttpRequest, textStatus, errorThrown){
 				}
@@ -481,11 +545,18 @@
 		
 		bills.push({id: id, bill: eBill});
 		return {
-			fillBill: function(selections){
-				eBill.fillBill(selections);
+			bill: eBill,
+			fillBillItem: function(selections){
+				eBill.fillBillItem(selections);
 			},
-			commit: function(){
-				eBill.submitBill();
+			commit: function(url, successMsg){
+				eBill.submitBill(url, successMsg);
+			},
+			fillBill: function(obj_materialIn){
+				eBill.fillBill(obj_materialIn);
+			},
+			resetBill: function(){
+				eBill.resetBill();
 			}
 		}
 	}

@@ -1,7 +1,11 @@
 package com.douniu.imshh.material.action;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +20,7 @@ import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.material.domain.MaterialIn;
 import com.douniu.imshh.material.domain.MaterialInDetail;
 import com.douniu.imshh.material.service.IMaterialInService;
+import com.douniu.imshh.sys.service.IParameterService;
 import com.douniu.imshh.utils.GsonUtil;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -24,7 +29,9 @@ import com.google.gson.reflect.TypeToken;
 @RequestMapping("/mtlin")
 public class MaterialInAction {
 	@Autowired
-	private IMaterialInService service; 
+	private IMaterialInService service;
+	@Autowired
+	private IParameterService pservice;
 	
 	@Authorization("010201")
 	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
@@ -32,6 +39,40 @@ public class MaterialInAction {
 	public String getPageResult(MaterialFilter filter){
 		PageResult pr = service.getPageResult(filter);
 		return GsonUtil.toJson(pr, null);
+	}
+	
+	@Authorization("010201")
+	@RequestMapping(value ="/getById", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getById(String id){
+		MaterialIn in = service.getById(id);
+		return GsonUtil.toJson(in, null);
+	}
+	
+	@Authorization("010202")
+	@RequestMapping(value ="/getBillCode", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getBillCode(){
+		String code = pservice.getParam("bill.materialin.code");
+		String preFix = "YCLRKD";
+		SimpleDateFormat format=new SimpleDateFormat("yyyyMMdd");
+		String dateStr = format.format(new Date());
+		if (StringUtils.isEmpty(code)){
+			code = preFix + dateStr + ".001";
+		}else{
+			String _dateStr = code.substring(preFix.length(), code.indexOf("."));
+			if (!dateStr.equals(_dateStr)){
+				code = preFix + dateStr + ".001";
+			}else{
+				String num = code.substring(code.indexOf(".") + 1);
+				String new_num = String.format("%0" + num.length() + "d", Integer.parseInt(num) + 1);
+				code = preFix + _dateStr + "." + new_num;
+			}
+		}
+		
+		Map<String, String> map = new HashMap<>();
+		map.put("code", code);
+		return GsonUtil.toJson(map);
 	}
 	
 	@Authorization("010202")
@@ -47,17 +88,26 @@ public class MaterialInAction {
 		}
 		materialIn.setDetails(details);
 		service.newMaterialIn(materialIn);
+		pservice.setParam("bill.materialin.code", materialIn.getNumber());
 	}
 	
 	@Authorization("010203")
 	@RequestMapping(value="/updateMaterialIn", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public void updateMaterialIn(MaterialIn materialIn){
+	public void updateMaterialIn(MaterialIn materialIn, String billItem){
+		List<MaterialInDetail> _details = new GsonBuilder().setDateFormat("yyyy-MM-dd").create().fromJson(billItem, new TypeToken<List<MaterialInDetail>>(){}.getType());
+		List<MaterialInDetail> details = new ArrayList<>();
+		for (MaterialInDetail detail : _details){
+			if (detail.getMaterial()!= null && !StringUtils.isEmpty(detail.getMaterial().getId())){
+				details.add(detail);
+			}
+		}
+		materialIn.setDetails(details);
 		service.updateMaterialIn(materialIn);
 	}
 	
 	@Authorization("010204")
-	@RequestMapping(value="/deleteMaterialIn", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@RequestMapping(value="/deleteMaterialIn", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void deleteMaterialIn(String id){
 		service.deleteMaterialIn(id);

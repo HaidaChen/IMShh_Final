@@ -677,6 +677,204 @@ var App = function () {
 		}
 	}
 	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化原材料入库单
+	/*-----------------------------------------------------------------------------------*/	
+	var initMaterialInBill = function(){
+		var bill;
+		var initBill = function(){
+			$.ajaxSettings.async = false;
+			$.getJSON("../templater/yclrkd.json", "", function(data){
+        		bill = $('#eBill').eBill(data);	
+			});
+			$.ajaxSettings.async = true;
+		}
+		
+		var editBill = function(){
+			$('#btn_save').click(function(){
+				if ($("input[name='id']").val() == ''){
+					bill.commit(getProjectName()+'/mtlin/newMaterialIn.do', '原材料入库单新增成功');
+				}else{
+					bill.commit(getProjectName()+'/mtlin/updateMaterialIn.do', '原材料入库单修改成功');
+				}
+        	});
+			
+			$('#btn_reset').click(function(){
+				bill.resetBill();
+			});
+		}
+		
+		return {
+			init: function(){
+				initBill();
+				editBill();
+				return bill;
+			}
+		}
+	}
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化原材料入库单列表模块
+	/*-----------------------------------------------------------------------------------*/	
+	var initMaterialInList = function(){
+		var loadFilter = function(){
+			var filterWin = Ewin.load({id: 'mtl_in_filter', title: '更多查询', url: 'fragment/mtl_in_filter.html', rmvWin: false, initShow: false, callback: function(){
+				$('#filter_supplier')
+				$.getJSON(
+					getProjectName() + "/supp/loadallsupp.do",
+					function(result){
+						$.each(result, function(index, supp){
+							$('#filter_supplier').append('<option value="'+supp.id+'">'+supp.name+'</option>');
+						});
+						$("#filter_supplier").select2({
+							placeholder: "请选择供应商",
+							allowClear: true
+						});
+					}
+				);
+				$("#btn_query").click(function(){
+					queryMaterialIn();
+					$('#mtl_in_filter').modal('hide');
+				});
+			}});
+			
+			$('#btn_more').click(function(){
+				filterWin.modal.modal('show');
+			});
+		}
+		
+		var loadMaterialInTable = function(){
+			$("#tbl_materialIn").bootstrapTable({
+				url: getProjectName() + "/mtlin/getPageResult.do",
+				method: "get",
+				pagination: true,
+				sidePagination: "server", 
+				clickToSelect: true,
+				columns: [{
+		            field: 'number',
+		            title: '单号'
+		        }, {
+		            field: 'inDate',
+		            title: '发生日期'
+		        }, {
+		            field: 'supplier.name',
+		            title: '供应商'
+		        }, {
+		            field: 'billStatus',
+		            title: '入库单状态',
+		            formatter: function(value, row, index){
+		            	if (value == 0)
+		            		return '未入账';
+		            	if (value == 1)
+		            		return '已入账';
+		            	return '';
+		        	}
+		        }, {
+		        	field: 'remark',
+		        	title: '备注'
+		        }, {
+		        	field: '',
+		        	title: '操作',
+		        	formatter: function(value, row, index){
+		        		return '<a opt="update" rowid="'+row.id+'">修改</a>&nbsp;<a opt="delete" rowid="'+row.id+'">删除</a>';
+		        	}
+		        }],
+		        queryParams: function(params){
+		        	return {
+		                pageSize: params.limit,
+		                pageOffset: params.offset,                    
+		                number: $("#filter_num").val(),
+		                billStatus: $("#filter_bStatus").val(),
+		                supplier: $("#filter_supplier").val(),
+		                startDate: $("#filter_sDate").val(),
+		                endDate: $("#filter_eDate").val(),
+		                remark: $("#filter_remark").val()
+		            }
+		        }
+			});
+		}
+		
+		var doQuery = function(){
+			$('#btn_search').click(function(){
+				queryMaterialIn();
+			});
+		}
+		
+		var queryMaterialIn = function(){
+			createFilterTip({
+				assWin: $('#mtl_in_filter'), 
+				items: [{assId: 'filter_bStatus', label: '入库单状态', rule: '等于', ignore: '-1'}, 
+					    {assId: 'filter_supplier', label: '供应商', rule: '等于', eType: 'select2'},
+				        {assId: 'filter_sDate', label: '开始日期', rule: ''},
+				        {assId: 'filter_eDate', label: '结束日期', rule: ''},
+				        {assId: 'filter_remark', label: '备注', rule: '包含'}],
+		        changeCall: function(){
+		        	$("#tbl_materialIn").bootstrapTable("refresh", {url: getProjectName() + "/mtlin/getPageResult.do", cache: false});
+	        }});
+			$("#tbl_materialIn").bootstrapTable("refresh", {url: getProjectName() + "/mtlin/getPageResult.do", cache: false});
+		}
+		
+		var initEditMaterialIn = function(){
+			$('#tbl_materialIn').on('click', 'a', function(){
+				var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				if (opt == 'update'){
+					var nthTabs = window.parent.getTabs();
+			        nthTabs.addTab({
+			        	id:'0102',
+			            title:'原材料.入库单',
+			            active:true,
+			            allowClose:true,
+			            content:'material_in.html',
+			        });
+			        
+			        setTimeout(function(){
+			        	window.parent.$('#if0102')[0].contentWindow.fillBill(id);
+			        }, 1000);
+				}
+				if (opt == 'delete'){
+					Ewin.confirm({message: "确定要删除该入库单吗？"}).on(function(e){
+						if (!e){
+							return;
+						}
+						if (window.parent.$('#if0102')[0]){
+							var billId = window.parent.$('#if0102')[0].contentWindow.getBillId();
+							if (billId == id){
+								Ewin.alert("当前待删除入库单正在修改中，无法删除");
+								return;
+							}
+						}
+						$.ajax({
+							url: getProjectName() + "/mtlin/deleteMaterialIn.do?id="+id,
+							success: function(){
+								Ewin.toast('原材料入库单删除成功');
+								queryMaterialIn();
+							}
+						});
+					});
+				}
+			});
+			
+			$('#btn_add').click(function(){
+				var nthTabs = window.parent.getTabs();
+		        nthTabs.addTab({
+		        	id:'0102',
+		            title:'原材料.入库单',
+		            active:true,
+		            allowClose:true,
+		            content:'material_in.html',
+		        });
+			});
+		}
+		return {
+			init: function(){
+				loadFilter();
+				loadMaterialInTable();
+				doQuery();
+				initEditMaterialIn();
+			}
+		}
+	}
 	
 	return {
         login: function () {
@@ -689,6 +887,7 @@ var App = function () {
             handleChangePWD();
 			handleSignOut();
 			handleSidebarCollapse();
+			return nthTabs;
         },
 
         materialCategory: function(){
@@ -696,15 +895,11 @@ var App = function () {
         },
         
         materialIn: function(){
-        	var bill;
-        	$.getJSON("../templater/yclrkd.json", "", function(data){
-        		bill = $('#eBill').eBill(data);	
-			});
-        	
-        	$('#btn_save').click(function(){
-        		bill.commit();
-        	});
-        	
+        	return initMaterialInBill().init()
+        },
+        
+        materialInList: function(){
+        	initMaterialInList().init();
         }
     };
 }();
@@ -717,12 +912,23 @@ var createFilterTip = function(options){
 	ele.empty();
 	$.each(items, function(i, item){
 		var assEle = assWin.find('#'+item.assId);
+		if (item.ignore && assEle.val() == item.ignore){
+			return true;
+		}
 		if (assEle.val() && assEle.val() != ''){
 			var tip =$('<span class="tip" ref="'+item.assId+'">');
 			var tipClose = $('<button type="button"><span aria-hidden="true">&times;</span></button>');
-			var tipContent = $('<span class="content">'+item.label+'.'+item.rule+'['+assEle.val()+'] </span>'); 
+			var tipContent;
+			if (assEle.get(0).tagName == 'SELECT'){
+				tipContent = $('<span class="content">'+item.label+'.'+item.rule+'['+assEle.find("option:selected").text()+'] </span>'); 
+			}else{
+				tipContent = $('<span class="content">'+item.label+'.'+item.rule+'['+assEle.val()+'] </span>'); 
+			}
 			tipClose.click(function(){
 				assEle.val('');
+				if (item.eType && item.eType == 'select2'){
+					assEle.trigger("change");
+				}
 				$(this).parent().remove();
 				options.changeCall();
 			});

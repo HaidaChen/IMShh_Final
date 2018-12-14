@@ -1,3 +1,10 @@
+CREATE TABLE TBL_SYS_PARAMETER(
+    pname varchar(64),
+    pvalue varchar(128),
+    pvtype varchar(10) default 'String',
+    display char(1) default '1'
+);
+
 CREATE TABLE TBL_MATERIAL_CATEGORY(
     id varchar(20) not null,
     code varchar(20) not null,

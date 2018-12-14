@@ -6,6 +6,7 @@ public class MaterialFilter extends BaseQO{
 	
 	
 	private String name;
+	private String number; /*入库单编号*/
 	private String specification;
 	private String category;
 	private String ctgCode;
@@ -40,6 +41,12 @@ public class MaterialFilter extends BaseQO{
 		this.name = name;
 	}		
 	
+	public String getNumber() {
+		return number;
+	}
+	public void setNumber(String number) {
+		this.number = number;
+	}
 	public String getSpecification() {
 		return specification;
 	}
@@ -72,9 +79,9 @@ public class MaterialFilter extends BaseQO{
 	}
 	@Override
 	public String toString() {
-		return "MaterialFilter [name=" + name + ", specification=" + specification + ", category=" + category
-				+ ", ctgCode=" + ctgCode + ", lowerStorage=" + lowerStorage + ", upperStorage=" + upperStorage
-				+ ", remark=" + remark + ", supplier=" + supplier + ", billStatus=" + billStatus + "]";
-	}
-	
+		return "MaterialFilter [name=" + name + ", number=" + number + ", specification=" + specification
+				+ ", category=" + category + ", ctgCode=" + ctgCode + ", lowerStorage=" + lowerStorage
+				+ ", upperStorage=" + upperStorage + ", remark=" + remark + ", supplier=" + supplier + ", billStatus="
+				+ billStatus + "]";
+	}	
 }
