@@ -2,9 +2,7 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<typeAliases>
-		
-	
-	    <typeAlias alias="MaterialFilter" type="com.douniu.imshh.material.domain.MaterialFilter"/>
+		<typeAlias alias="MaterialFilter" type="com.douniu.imshh.material.domain.MaterialFilter"/>
 		<typeAlias alias="MaterialCategory" type="com.douniu.imshh.material.domain.Category"/>
 		<typeAlias alias="Material" type="com.douniu.imshh.material.domain.Material"/>
         <typeAlias alias="MaterialIn" type="com.douniu.imshh.material.domain.MaterialIn"/>
@@ -13,6 +11,8 @@
         
         <typeAlias alias="FinanceFilter" type="com.douniu.imshh.finance.domain.FinanceFilter"/>
         <typeAlias alias="FinanceSubject" type="com.douniu.imshh.finance.domain.Subject"/>
+        <typeAlias alias="Voucher" type="com.douniu.imshh.finance.domain.Voucher"/>
+        <typeAlias alias="VoucherEntry" type="com.douniu.imshh.finance.domain.VoucherEntry"/>
         
         <!--  -->
         <typeAlias alias="Order" type="com.douniu.imshh.finance.order.domain.Order"/>
@@ -51,6 +51,7 @@
     	<mapper resource="/com/douniu/imshh/material/dao/materialInMapper.xml"/>
     	<!--<mapper resource="/com/douniu/imshh/material/dao/materialOutMapper.xml"/> -->
     	<mapper resource="/com/douniu/imshh/finance/dao/subjectMapper.xml"/>
+    	<mapper resource="/com/douniu/imshh/finance/dao/voucherMapper.xml"/>
     	
     	<!--  -->        
         <mapper resource="/com/douniu/imshh/finance/order/dao/orderMapper.xml"/>

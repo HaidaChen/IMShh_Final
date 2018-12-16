@@ -50,6 +50,16 @@
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       
+      <bean name="voucherService" class="com.douniu.imshh.finance.service.impl.VoucherService">
+          <property name="dao" ref="voucherDao"></property>
+      </bean>
+      
+      <bean id="voucherDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.dao.IVoucherDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      
       <!--  -->
       
       <bean name="materialOutService" class="com.douniu.imshh.material.service.impl.MaterialOutService">
