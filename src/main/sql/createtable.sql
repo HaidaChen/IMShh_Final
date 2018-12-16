@@ -58,6 +58,20 @@ CREATE TABLE TBL_BILL_DTL_MATERIALIN(
     modifyDate datetime
 );
 
+CREATE TABLE TBL_FIN_SUBJECT(
+	id varchar(20) not null,
+	code varchar(20) not null,
+	name varchar(64) not null,
+	category char(2) not null,
+	parentId varchar(20),
+	initBalance numeric(12, 4),
+	
+	remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+/*------*/
 CREATE TABLE TBL_MATERIAL_SUPPLIER(
     id varchar(20) not null,
     materialId varchar(20) not null,

@@ -203,3 +203,5 @@ INSERT INTO `tbl_material_category` VALUES ('030406', '030406', '柱形弹混批
 INSERT INTO `tbl_material_category` VALUES ('030407', '030407', '卡头', '0304', NULL, '1', NULL);
 INSERT INTO `tbl_material_category` VALUES ('030408', '030408', '内卡', '0304', NULL, '1', NULL);
 INSERT INTO `tbl_material_category` VALUES ('030409', '030409', '内架', '0304', NULL, '1', NULL);
+
+

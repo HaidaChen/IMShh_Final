@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.finance.dao.ISubjectDao">
+    <resultMap type="FinanceSubject" id="finsubmap">
+        <result property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/> 
+        <result property="category" column="category"/> 
+        <result property="initBalance" column="initBalance"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <association property="parent" javaType="FinanceSubject">
+        	<id property="id" column="p_id"/>
+        	<result property="name" column="p_name"/>
+        	<result property="code" column="p_code"/>
+        </association>
+    </resultMap>
+    
+    <select id="query" parameterType="FinanceFilter" resultMap="finsubmap">
+        select m.*,
+               p.id as p_id,
+               p.name as p_name,
+               p.code as p_code
+          from tbl_fin_subject m 
+          left join tbl_fin_subject p
+            on m.id = p.id      
+         where m.status = '1'
+          <if test="subName != null and subName !=''">
+          and m.name like #{subName} 
+          </if>
+          <if test="subCode != null and subCode !=''">
+          and m.code like #{subCode} 
+          </if>
+          <if test="subCategory != null and subCategory !=''">
+          and m.category = #{subCategory} 
+          </if>
+          <if test="remark != null and remark !=''">
+          and m.remark like #{remark} 
+          </if>
+          order by m.code
+    </select> 
+    <select id="getAll" resultMap="finsubmap">
+        select m.*,
+               p.id as p_id,
+               p.name as p_name,
+               p.code as p_code
+          from tbl_fin_subject m 
+          left join tbl_fin_subject p
+            on m.id = p.id      
+         where m.status = '1'
+         order by m.code
+    </select>
+    <select id="getByCategory" parameterType="String" resultMap="finsubmap">
+        select m.*,
+               p.id as p_id,
+               p.name as p_name,
+               p.code as p_code
+          from tbl_fin_subject m 
+          left join tbl_fin_subject p
+            on m.id = p.id      
+         where m.status = '1'
+           and m.category = #{subCategory} 
+         order by m.code
+    </select>
+    <select id="getByParent" parameterType="String" resultMap="finsubmap">
+        select m.*,
+               p.id as p_id,
+               p.name as p_name,
+               p.code as p_code
+          from tbl_fin_subject m 
+          left join tbl_fin_subject p
+            on m.id = p.id      
+         where m.status = '1'
+           and m.parentId = #{parentId} 
+         order by m.code
+    </select>
+    <select id="getById" parameterType="String" resultMap="finsubmap">
+        select m.*,
+               p.id as p_id,
+               p.name as p_name,
+               p.code as p_code
+          from tbl_fin_subject m 
+          left join tbl_fin_subject p
+            on m.parentId = p.id      
+         where m.id = #{id}
+    </select>
+    <select id="getByCode" parameterType="String" resultMap="finsubmap">
+        select m.*,
+               p.id as p_id,
+               p.name as p_name,
+               p.code as p_code
+          from tbl_fin_subject m 
+          left join tbl_fin_subject p
+            on m.id = p.id      
+         where m.status = '1'
+           and m.code = #{code}
+    </select>
+    
+    <insert id="insert" parameterType="FinanceSubject">
+        insert into tbl_fin_subject(id, code, name, category, parentId, initBalance, modifydate, remark, status)  
+          values(#{id}, #{code}, #{name}, #{category}, #{parent.id}, #{initBalance}, sysdate(), #{remark}, #{status})
+    </insert>
+    
+    <update id="update" parameterType="FinanceSubject">
+    	update tbl_fin_subject set
+    	  code = #{code},
+    	  name = #{name},
+    	  category = #{category},
+    	  initBalance = #{initBalance},
+    	  remark = #{remark},
+    	  modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+    <update id="delete" parameterType="String">
+        update tbl_fin_subject set 
+          status = '0',
+          modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+</mapper>

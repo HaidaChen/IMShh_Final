@@ -11,6 +11,10 @@
         <typeAlias alias="MaterialInDetail" type="com.douniu.imshh.material.domain.MaterialInDetail"/>
         <!--<typeAlias alias="MaterialOut" type="com.douniu.imshh.material.domain.MaterialOut"/> -->
         
+        <typeAlias alias="FinanceFilter" type="com.douniu.imshh.finance.domain.FinanceFilter"/>
+        <typeAlias alias="FinanceSubject" type="com.douniu.imshh.finance.domain.Subject"/>
+        
+        <!--  -->
         <typeAlias alias="Order" type="com.douniu.imshh.finance.order.domain.Order"/>
         <typeAlias alias="OrderDetail" type="com.douniu.imshh.finance.order.domain.OrderDetail"/>
         <typeAlias alias="MaterialStorage" type="com.douniu.imshh.finance.storage.domain.MaterialStorage"/>
@@ -44,11 +48,11 @@
     <mappers>
     	<mapper resource="/com/douniu/imshh/material/dao/categoryMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/material/dao/materialMapper.xml"/>
-    	
-    	 
     	<mapper resource="/com/douniu/imshh/material/dao/materialInMapper.xml"/>
     	<!--<mapper resource="/com/douniu/imshh/material/dao/materialOutMapper.xml"/> -->
-    	        
+    	<mapper resource="/com/douniu/imshh/finance/dao/subjectMapper.xml"/>
+    	
+    	<!--  -->        
         <mapper resource="/com/douniu/imshh/finance/order/dao/orderMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/order/dao/orderDetailMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/storage/dao/materialStorageMapper.xml"/>

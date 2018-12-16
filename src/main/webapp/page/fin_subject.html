@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+	
+	<link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="../plugins/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../plugins/bootstrap-table/bootstrap-table.css">
+	<link rel="stylesheet" href="../plugins/jstree/themes/default/style.min.css">
+	<link rel="stylesheet" href="../plugins/select2/select2.min.css">
+	<link rel="stylesheet" href="../css/default.css">
+</head>
+<body>	
+    <div id="panel_table" class="panel">
+        <div class="panel-head">
+            <span><i class="fa fa-book"></i> 会计科目</span>
+        </div>
+        
+        <div class="panel-toolbar">
+            <div class="btn-group" role="group" aria-label="">
+			    <button name="btn_ctg" code="01" type="button" class="btn btn-default active btn-sm">01 资产类</button>
+			    <button name="btn_ctg" code="02" type="button" class="btn btn-default btn-sm">02 负债累</button>
+			    <button name="btn_ctg" code="03" type="button" class="btn btn-default btn-sm">03 共同类</button>
+			    <button name="btn_ctg" code="04" type="button" class="btn btn-default btn-sm">04 所有者权益</button>
+			    <button name="btn_ctg" code="05" type="button" class="btn btn-default btn-sm">05 成本</button>
+			    <button name="btn_ctg" code="06" type="button" class="btn btn-default btn-sm">06 损益</button>
+			    <input type="hidden" id="filter_subCtg" value="01">
+			</div>
+        	<div class="table-operation pull-right" style="margin-left: 20px">
+	            <a id="btn_add" title="新增"><i class="fa fa-pencil"></i></a>
+	            <a id="btn_import" title="导入"><i class="fa fa-upload"></i></a>
+	            <a id="btn_export" title="导出"><i class="fa fa-download"></i></a>		            
+        	</div>
+        	<div class="table-search pull-right" role="search">
+				<input id="filter_name" class="form-control" type="text" placeholder="原材料名称"/>
+				<a id="btn_search" class="search" title="查询"><i class="fa fa-search"></i></a>
+			</div>
+        </div>
+		
+		<table id="tbl_subject" class="table table-hover">
+		</table>			
+	</div>
+	
+	
+	<script src="../jquery/jquery-2.0.3.min.js"></script>
+	<script src="../bootstrap/js/bootstrap.min.js"></script>
+	<script src="../plugins/bootstrapvalidator/js/bootstrapValidator.min.js"></script>	
+	<script src="../plugins/bootstrapvalidator/js/language/zh_CN.js"></script>
+	<script src="../plugins/bootstrap-table/bootstrap-table.js"></script>
+	<script src="../plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+	<script src="../plugins/jquery-form/jquery.form.js"></script>
+	<script src="../plugins/select2/select2.min.js"></script>
+	
+	<script src="../js/myplugins/jquery.ewin.js"></script>
+	<script src="../js/myplugins/jquery.import.js"></script>
+	<script src="../js/app.js"></script>
+	<script src="../js/fillForm.js"></script>
+	
+	<script>
+		$(function(){
+			App.financeSubject();
+		});
+	</script>
+</body>
+</html>

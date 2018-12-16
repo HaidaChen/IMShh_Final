@@ -876,6 +876,188 @@ var App = function () {
 		}
 	}
 	
+	var initFinSubject = function(){
+		var loadSubjectTable = function(){
+			$("#tbl_subject").bootstrapTable({
+				url: getProjectName() + "/finsub/query.do",
+				method: "get",
+				pagination: false,
+				clickToSelect: true,
+				singleSelect: true,   
+				columns: [{
+                    checkbox: true
+                }, {
+		            field: '',
+		            title: '科目编号',
+		            formatter: function(value, row, index){
+		            	var indent = '';
+		            	
+		            	var indentLevel = row.code.length - 4;
+		            	for (var i = 0; i< indentLevel; i++){
+		            		indent += '&nbsp;&nbsp;';
+		            	}
+		            	return indent + row.code;
+		        	}
+		        }, {
+		            field: '',
+		            title: '科目名称',
+		            formatter: function(value, row, index){
+		            	var indent = '';
+		            	
+		            	var indentLevel = row.code.length - 4;
+		            	for (var i = 0; i< indentLevel; i++){
+		            		indent += '&nbsp;&nbsp;';
+		            	}
+		            	return indent + row.name;
+		        	}
+		        }, {
+		            field: 'initBalance',
+		            title: '期初余额'
+		        }, {
+		            field: 'remark',
+		            title: '备注'
+		        }, {
+		        	field: '',
+		        	title: '操作',
+		        	formatter: function(value, row, index){
+		        		return '<a opt="update" rowid="'+row.id+'">修改</a>&nbsp;<a opt="delete" rowid="'+row.id+'">删除</a>';
+		        	}
+		        }],
+		        queryParams: function(params){
+		        	return {
+		        		subCategory: $("#filter_subCtg").val(),
+		        		subName: $("#filter_name").val()
+		            }
+		        }
+			})
+		}
+		
+		var doQuery = function(){
+			$('button[name="btn_ctg"]').click(function(){
+				var code = $(this).attr('code');
+				$(this).addClass('active');
+				$('button[name="btn_ctg"]').not(this).removeClass('active');
+				$('#filter_subCtg').val(code);
+				$("#tbl_subject").bootstrapTable("refresh", {url: getProjectName() + "/finsub/query.do", cache: false});
+			});
+			$('#btn_search').click(function(){
+				$("#tbl_subject").bootstrapTable("refresh", {url: getProjectName() + "/finsub/query.do", cache: false});
+			})
+		}
+		
+		var initFinSubValidator = function(_code){
+			$("#subjectForm").bootstrapValidator({
+				fields: {
+					code : {validators: {notEmpty : {}, 
+						callback: {
+							message: '编码已存在，请重新输入',
+							callback: function(value, validator){
+								if (value == '' || value == _code){
+									return true;
+								}else{
+									var res;
+									$.ajax({
+										url: getProjectName()+"/finsub/validateUnique.do",
+										data: {code : $("#input_code").val()},
+										async:false, 
+										success: function(result){
+											res = result.valid;
+										}
+									});
+									return res;
+								}
+							}
+						}}
+					},
+		        	name : {validators: {notEmpty : {}}}
+		        }
+			});
+		}
+		
+		var doSave = function(code){
+			$("#btn_save").click(function(){
+				initFinSubValidator(code);
+				var bootstrapValidator = $("#subjectForm").data('bootstrapValidator');
+				bootstrapValidator.validate();
+				if(!bootstrapValidator.isValid()){
+					return;
+				}	
+				
+				var url = getProjectName()+"/finsub/addSubject.do";
+				if ($('input[name="id"]').val() != ''){
+					url = getProjectName()+"/finsub/updateSubject.do";
+				}
+				$("#subjectForm").ajaxSubmit({
+					type: "post",
+					url: url, 
+					success:function(result){
+						Ewin.toast('保存成功');
+						$('#fin_sub_edit').modal('hide');
+						$("#tbl_subject").bootstrapTable("refresh", {url: getProjectName() + "/finsub/query.do", cache: false});
+					}
+				});
+			});
+		}
+		
+		var initEdit = function(){
+		    $('#btn_add').click(function(){
+		    	var ctg = $('#filter_subCtg').val();
+		    	var pid = '0';
+		    	var ptext = '';
+		    	
+		    	var selectContent = $("#tbl_subject").bootstrapTable('getSelections')[0];
+	            if(selectContent) {
+	            	pid = selectContent.id;
+	            	ptext = selectContent.code + ' ' + selectContent.name;
+	            }
+		    	Ewin.load({id: 'fin_sub_edit', title: '新的会计科目', url: 'fragment/fin_sub_edit.html', callback: function(){
+					fillForm($("#subjectForm"), {category: ctg, 'parent.id': pid, parentDesc: ptext});
+					doSave();
+				}});
+		    });
+		    
+		    $('#tbl_subject').on('click', 'a', function(){
+		    	var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				
+				if (opt == 'update'){
+					var ctg = $('#filter_subCtg').val();
+					$.ajax({
+						url: getProjectName() + "/finsub/getById.do?id="+id,
+						success: function(subject){
+							Ewin.load({id: 'fin_sub_edit', title: '修改会计科目', url: 'fragment/fin_sub_edit.html', callback: function(){
+								fillForm($("#subjectForm"), {id: subject.id, category: ctg, 'parent.id': subject.parent.id, parentDesc: subject.parent.code + ' ' + subject.parent.name, code: subject.code, name: subject.name, remark: subject.remark});
+								doSave(subject.code);
+							}});
+						}
+					});
+				}
+				if (opt == 'delete'){
+					Ewin.confirm({message: "确定要删除该会计科目吗？"}).on(function(e){
+						if (!e){
+							return;
+						}
+						$.ajax({
+							url: getProjectName() + "/finsub/deleteSubject.do?id="+id,
+							success: function(){
+								Ewin.toast('会计科目删除成功');
+								$("#tbl_subject").bootstrapTable("refresh", {url: getProjectName() + "/finsub/query.do", cache: false});
+							}
+						});
+					});
+				}
+			});
+		}
+		
+		return {
+			init: function(){
+				loadSubjectTable();
+				doQuery();
+				initEdit();
+			}
+		}
+	}
+	
 	return {
         login: function () {
         	initLoginModule();
@@ -900,6 +1082,10 @@ var App = function () {
         
         materialInList: function(){
         	initMaterialInList().init();
+        },
+        
+        financeSubject: function(){
+        	initFinSubject().init();
         }
     };
 }();
