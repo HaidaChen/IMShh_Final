@@ -20,8 +20,9 @@
             <association property="subject" javaType="FinanceSubject">
 	        	<id property="id" column="sub_id"/>
 	        	<result property="code" column="sub_code"/>
-	        	<result property="name" column="sub_code"/>
-	        	<result property="category" column="sub_code"/>
+	        	<result property="name" column="sub_name"/>
+	        	<result property="fullName" column="sub_fullName"/>
+	        	<result property="category" column="sub_category"/>	        	
         	</association>
         </collection>
     </resultMap>
@@ -36,14 +37,16 @@
                sub.id as sub_id,
                sub.code as sub_code,
                sub.name as sub_name,
+               sub.fullName as sub_fullName,
                sub.category as sub_category
           from TBL_FIN_VOUCHER v, 
                TBL_FIN_VOUCHER_ENTRY ve,
                TBL_FIN_SUBJECT sub             
          where v.status = '1'
+           and ve.status = '1'
            and v.id = ve.voucherId
            and ve.subjectId = sub.id
-          <if test="voucherWord != null and voucherWord !=''">
+          <if test="voucherWord !='' and voucherWord !=0">
           and v.word = #{voucherWord} 
           </if>
           <if test="startVouchernumber !=0">
@@ -70,7 +73,7 @@
           <if test="remark != null and remark !=''">
           and v.remark like #{remark} 
           </if>
-          <if test="voucherSummary != null and remark !=''">
+          <if test="voucherSummary != null and voucherSummary !=''">
           and ve.summary like #{voucherSummary} 
           </if>
           <if test="subCode != null and subCode !=''">
@@ -79,7 +82,7 @@
           <if test="subName != null and subName !=''">
           and sub.name like #{subName} 
           </if>
-          order by v.bill desc, v.word, v.number
+          order by v.word, v.number, ve.id
           limit #{pageOffset},#{pageSize}
     </select> 
     <select id="count" parameterType="FinanceFilter" resultType="int">
@@ -94,11 +97,13 @@
 		               sub.id as sub_id,
 		               sub.code as sub_code,
 		               sub.name as sub_name,
+		               sub.fullName as sub_fullName,
 		               sub.category as sub_category
 		          from TBL_FIN_VOUCHER v, 
 		               TBL_FIN_VOUCHER_ENTRY ve,
 		               TBL_FIN_SUBJECT sub             
 		         where v.status = '1'
+		           and ve.status = '1'
 		           and v.id = ve.voucherId
 		           and ve.subjectId = sub.id
 		          <if test="voucherWord != null and voucherWord !=''">
@@ -150,11 +155,13 @@
                sub.id as sub_id,
                sub.code as sub_code,
                sub.name as sub_name,
+               sub.fullName as sub_fullName,
                sub.category as sub_category
           from TBL_FIN_VOUCHER v, 
                TBL_FIN_VOUCHER_ENTRY ve,
                TBL_FIN_SUBJECT sub             
          where v.status = '1'
+           and ve.status = '1'
            and v.id = ve.voucherId
            and ve.subjectId = sub.id
           <if test="voucherWord != null and voucherWord !=''">
@@ -193,9 +200,9 @@
           <if test="subName != null and subName !=''">
           and sub.name like #{subName} 
           </if>
-          order by v.bill desc, v.word, v.number
+          order by v.word, v.number, ve.id
     </select> 
-    <select id="getById" parameterType="String" resultType="Voucher">
+    <select id="getById" parameterType="String" resultMap="vocmap">
         select v.*, 
                ve.id as e_id, 
                ve.summary,
@@ -205,13 +212,16 @@
                sub.id as sub_id,
                sub.code as sub_code,
                sub.name as sub_name,
+               sub.fullName as sub_fullName,
                sub.category as sub_category
           from TBL_FIN_VOUCHER v, 
                TBL_FIN_VOUCHER_ENTRY ve,
                TBL_FIN_SUBJECT sub             
          where v.id = #{id}
+           and ve.status = '1'
            and v.id = ve.voucherId
            and ve.subjectId = sub.id
+           order by ve.id
     </select>
     <select id="getByName" parameterType="Voucher" resultType="Voucher">
     	select count(1) from TBL_FIN_VOUCHER where word = #{word} and number = #{number} and billDate = #{billDate}

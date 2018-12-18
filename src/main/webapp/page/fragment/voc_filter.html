@@ -1,0 +1,67 @@
+<meta charset="UTF-8">
+<form id="vocFilterForm" class="form-horizontal">
+  
+  <div class="form-group">
+    <label for="filter_bStatus" class="col-sm-3 control-label">凭证状态：</label>
+    <div class="col-sm-9">
+      <select class="form-control" id="filter_bStatus" name="billStatus" >
+      	<option value="-1">--请选择--</option>
+      	<option value="0">未审核</option>
+      	<option value="1">已审核</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="filter_name" class="col-sm-3 control-label">凭证字号：</label>
+    <div class="col-sm-3">
+      <select class="form-control" id="filter_name" name="voucherWord" >
+      	<option value="">凭证字</option>
+      	<option value="1">记</option>
+      	<option value="2">付</option>
+      	<option value="3">收</option>
+      	<option value="4">转</option>
+      </select>
+    </div>
+    <div class="col-sm-2">
+        <input type="text" class="form-control" id="filter_snum" name="startVouchernumber" placeholder="凭证号(起)">
+    </div>
+    <div class="col-sm-1">
+        <span>至</span>
+    </div>
+    <div class="col-sm-2">
+        <input type="text" class="form-control" id="filter_enum" name="endVouchernumber" placeholder="凭证号(始)">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="filter_sDate" class="col-sm-3 control-label">凭证账期：</label>
+    <div class="col-sm-4">
+      <select class="form-control" id="filter_sDate" name="startBillDate" >
+      	<option value="">开始账期</option>
+      </select>
+    </div>
+    <div class="col-sm-1">
+      <span>至</span>
+    </div>    
+    <div class="col-sm-4">
+      <select class="form-control" id="filter_eDate" name="endBillDate" >
+      	<option value="">结束账期</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="filter_summary" class="col-sm-3 control-label">摘要：</label>
+    <div class="col-sm-9">
+      <input type="text" class="form-control" id="filter_summary" name="voucherSummary">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="filter_subName" class="col-sm-3 control-label">科目名称：</label>
+    <div class="col-sm-9">
+      <input type="text" class="form-control" id="filter_subName" name="subName">
+    </div>
+  </div>
+</form>
+<div class="clearfix">
+  <input type="button" id="btn_query" value="查询" class="btn btn-success pull-right m-l-5">
+  <input type="button" id="btn_close" value="关闭" class="btn btn-default pull-right" data-dismiss="modal">
+</div>

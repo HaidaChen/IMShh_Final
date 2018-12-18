@@ -73,24 +73,26 @@ table.gridtable {
 	border-width: 1px;
 	border-color: #666666;
 	border-collapse: collapse;
+	table-layout:fixed;
 }
 table.gridtable tr {
 	height: 40px;	
 }
 table.gridtable th {
 	border-width: 1px;
-	padding: 8px;
+	padding: 0;
 	border-style: solid;
 	border-color: #666666;
-	background-color: #dedede;
+	/* background-color: #dedede; */
 	text-align: center;
 }
 table.gridtable td {
 	border-width: 1px;
-	padding: 8px;
+	padding: 0;
 	border-style: solid;
 	border-color: #666666;
 	background-color: #ffffff;
+	text-align: center;
 }
 table.gridtable td:focus{
 	padding: 0;
@@ -100,4 +102,30 @@ table.gridtable td input:focus{
 }
 table.gridtable td span.btn{
 	float: right;
+}
+
+.money-unit{
+	font-weight: lighter;
+	padding: 0;
+	margin: 0;
+	border: none;
+}
+.money-unit > span{
+	display: inline-block;
+	width: 19px;
+	border-right: 1px solid #cfcfcf;
+}
+.money-unit > span:nth-child(3n) {
+	border-right: 1px solid #6495ED;
+}
+.money-unit > span:nth-child(9) {
+	border-right: 1px solid #EE6A50;
+}
+.money-unit > span:LAST-CHILD {
+	border-right: none;
+}
+
+td .money-unit > span{
+	height: 50px;
+	line-height: 50px;
 }

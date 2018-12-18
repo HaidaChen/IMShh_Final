@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+	
+	<link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="../plugins/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../plugins/bootstrap-table/bootstrap-table.css">
+	<link rel="stylesheet" href="../plugins/jstree/themes/default/style.min.css">
+	<link rel="stylesheet" href="../plugins/select2/select2.min.css">
+	<link rel="stylesheet" href="../plugins/jquery.scrollbar/jquery.scrollbar.css">
+	<link rel="stylesheet" href="../plugins/nth-tabs/css/nth.tabs.css">
+	<link rel="stylesheet" href="../css/default.css">
+</head>
+<body>	
+	<div id="panel_table" class="panel">
+        <div class="panel-head">
+            <span><i class="fa fa-navicon"></i> 凭证列表</span>
+            
+            <div class="table-operation pull-right" style="margin-left: 20px">
+	            <a id="btn_add" title="新增"><i class="fa fa-pencil"></i></a>	            
+        	</div>
+        	<div class="table-search pull-right" role="search">
+				<input id="filter_billPeriod" class="form-control" type="text" placeholder="账期，例201812"/>
+				<a id="btn_search" class="search" title="查询"><i class="fa fa-search"></i></a>
+				<a id="btn_more" class="more" title="更多条件"><i class="fa fa-bars"></i></a>
+			</div>
+			<div class="table-fliter">
+				
+			</div>
+        	
+        </div>
+		
+		<table id="tbl_voucher" class="table table-hover">
+		</table>			
+	</div>
+	<script src="../jquery/jquery-2.0.3.min.js"></script>
+	<script src="../bootstrap/js/bootstrap.min.js"></script>
+	<script src="../plugins/bootstrap-table/bootstrap-table.js"></script>
+	<script src="../plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+	<script src="../plugins/jquery-form/jquery.form.js"></script>
+	<script src="../plugins/select2/select2.min.js"></script>
+	<script src="../plugins/jquery.scrollbar/jquery.scrollbar.js"></script>
+	<script src="../plugins/nth-tabs/js/nth.tabs.js"></script>
+	
+	<script src="../js/myplugins/jquery.ewin.js"></script>
+	<script src="../js/myplugins/ebill/jquery.eBill.js"></script>
+	<script src="../js/app.js"></script>
+	
+	<script>
+		$(function(){
+			App.voucherList();
+		});
+	</script>
+</body>
+</html>

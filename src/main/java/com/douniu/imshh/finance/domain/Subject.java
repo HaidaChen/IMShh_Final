@@ -11,6 +11,8 @@ public class Subject {
 	private String code;
 	/*科目名称*/
 	private String name;
+	/*科目全名：编号 名称以及父科目的全名*/
+	private String fullName;
 	/*科目分类（固定），01：资产类；02：负债累；03：共同类；04：所有者权益；05：成本：06：损益*/
 	private String category;
 	private Subject parent;
@@ -36,6 +38,12 @@ public class Subject {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getFullName() {
+		return fullName;
+	}
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 	public String getCategory() {
 		return category;
@@ -69,8 +77,8 @@ public class Subject {
 	}
 	@Override
 	public String toString() {
-		return "Subject [id=" + id + ", code=" + code + ", name=" + name + ", category=" + category + ", parent="
-				+ parent + ", initBalance=" + initBalance + ", remark=" + remark + ", status=" + status + "]";
-	}
-	
+		return "Subject [id=" + id + ", code=" + code + ", name=" + name + ", fullName=" + fullName + ", category="
+				+ category + ", parent=" + parent + ", initBalance=" + initBalance + ", remark=" + remark + ", status="
+				+ status + "]";
+	}	
 }

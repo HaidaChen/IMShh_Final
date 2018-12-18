@@ -1,6 +1,8 @@
 package com.douniu.imshh.finance.domain;
 
-public class FinanceFilter {
+import com.douniu.imshh.common.BaseQO;
+
+public class FinanceFilter extends BaseQO{
 	/*会计科目名称*/
 	private String subName;
 	/*会计科目编码*/
@@ -21,6 +23,11 @@ public class FinanceFilter {
 	private String auditor;
 	/*凭证分录摘要*/
 	private String voucherSummary;
+	/*开始账期*/
+	private String startBillPeriod;
+	/*结束账期*/
+	private String endBillPeriod;
+	
 	private String remark;
 	
 	public String getSubName() {
@@ -83,6 +90,19 @@ public class FinanceFilter {
 	public void setVoucherSummary(String voucherSummary) {
 		this.voucherSummary = voucherSummary;
 	}
+	
+	public String getStartBillPeriod() {
+		return startBillPeriod;
+	}
+	public void setStartBillPeriod(String startBillPeriod) {
+		this.startBillPeriod = startBillPeriod;
+	}
+	public String getEndBillPeriod() {
+		return endBillPeriod;
+	}
+	public void setEndBillPeriod(String endBillPeriod) {
+		this.endBillPeriod = endBillPeriod;
+	}
 	public String getRemark() {
 		return remark;
 	}
@@ -94,6 +114,8 @@ public class FinanceFilter {
 		return "FinanceFilter [subName=" + subName + ", subCode=" + subCode + ", subCategory=" + subCategory
 				+ ", voucherWord=" + voucherWord + ", startVouchernumber=" + startVouchernumber + ", endVouchernumber="
 				+ endVouchernumber + ", billStatus=" + billStatus + ", preparedBy=" + preparedBy + ", auditor="
-				+ auditor + ", voucherSummary=" + voucherSummary + ", remark=" + remark + "]";
+				+ auditor + ", voucherSummary=" + voucherSummary + ", startBillPeriod=" + startBillPeriod
+				+ ", endBillPeriod=" + endBillPeriod + ", remark=" + remark + "]";
 	}
+	
 }

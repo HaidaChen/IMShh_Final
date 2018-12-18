@@ -34,6 +34,9 @@ button.active{
     background-color: #428bca;
     border-color: #357ebd;
 }
+.light-border-bottom{
+	border-bottom: 1px solid #cfcfcf;
+}
 .login-box {
     background: none repeat scroll 0 0 #FFFFFF;
     border: 1px solid #D8D8D8;
@@ -449,6 +452,8 @@ Select2 Plugin
   height: auto !important;
   padding: 0px;
 }
+
+
  
  
 .select2-container-active .select2-choice,

@@ -12,6 +12,9 @@
 	"top-columns": [{
 				"name": "supplier.id",
 				"type": "select",
+				"select2": true,
+				"style": "width:160px",
+				"placeholder": " ",
 				"label": "供应商",
 				"length": "50%",
 				"data-ref": "supplier",
@@ -82,14 +85,18 @@
 				"length": "5%"
 			},{
 				"name": "material.id",
-				"type": "ref",
+				"type": "modal-ref",
 				"hide": true,
 				"data-ref": "material",
 				"ref-field": "id"
 			},{
 				"name": "materialName",
-				"type": "ref",
+				"type": "modal-ref",
 				"ref-tigger": true,
+				"ref-modal-id": "mtl_ref",
+				"ref-modal-url": "fragment/mtl_ref.html",
+				"ref-modal-title": "选择原材料",
+				"ref-modal-style": "width: 800px",
 				"label": "品名",
 				"length": "15%",
 				"data-ref": "material",

@@ -719,7 +719,6 @@ var App = function () {
 	var initMaterialInList = function(){
 		var loadFilter = function(){
 			var filterWin = Ewin.load({id: 'mtl_in_filter', title: '更多查询', url: 'fragment/mtl_in_filter.html', rmvWin: false, initShow: false, callback: function(){
-				$('#filter_supplier')
 				$.getJSON(
 					getProjectName() + "/supp/loadallsupp.do",
 					function(result){
@@ -876,6 +875,9 @@ var App = function () {
 		}
 	}
 	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化会计科目模块
+	/*-----------------------------------------------------------------------------------*/	
 	var initFinSubject = function(){
 		var loadSubjectTable = function(){
 			$("#tbl_subject").bootstrapTable({
@@ -1049,11 +1051,295 @@ var App = function () {
 			});
 		}
 		
+		
+		
 		return {
 			init: function(){
 				loadSubjectTable();
 				doQuery();
 				initEdit();
+			}
+		}
+	}
+	
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化凭证录入模块
+	/*-----------------------------------------------------------------------------------*/	
+	var initVoucher = function(){
+		var bill;
+		var initBill = function(){
+			$.ajaxSettings.async = false;
+			$.getJSON("../templater/voucher.json", "", function(data){
+        		bill = $('#voucherBill').eBill(data);	
+			});
+			$.ajaxSettings.async = true;
+		}
+		
+		var editBill = function(){
+			$('#btn_save').click(function(){
+				if ($("input[name='id']").val() == ''){
+					bill.commit(getProjectName()+'/voc/addVoucher.do', '记账凭证新增成功');
+				}else{
+					bill.commit(getProjectName()+'/voc/updateVoucher.do', '记账凭证修改成功');
+				}
+        	});
+			
+			$('#btn_reset').click(function(){
+				bill.resetBill();
+			});
+		}
+		
+		return {
+			init: function(){
+				initBill();
+				editBill();
+				return bill;
+			}
+		}
+	}
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化历史凭证模块
+	/*-----------------------------------------------------------------------------------*/	
+	var initVoucherList = function(){
+		var loadFilter = function(){
+			var filterWin = Ewin.load({id: 'voc_filter', title: '更多查询', url: 'fragment/voc_filter.html', rmvWin: false, initShow: false, callback: function(){
+				$.getJSON(
+					getProjectName() + "/voc/allBillPeriod.do",
+					function(result){
+						$.each(result, function(key, value){
+							$('#filter_sDate').append('<option value="'+key+'">'+value+'</option>');
+							$('#filter_eDate').append('<option value="'+key+'">'+value+'</option>');
+						});
+						$("#filter_sDate").select2({
+							placeholder: "开始账期",
+							allowClear: true
+						});
+						$("#filter_eDate").select2({
+							placeholder: "结束账期",
+							allowClear: true
+						});
+					}
+				);
+				
+				$("#btn_query").click(function(){
+					queryVoucher();
+					$('#voc_filter').modal('hide');
+				});
+			}});
+			
+			$('#btn_more').click(function(){
+				filterWin.modal.modal('show');
+			});
+		}
+		
+		var loadVoucherTable = function(){
+			$("#tbl_voucher").bootstrapTable({
+				url: getProjectName() + "/voc/getPageResult.do",
+				method: "get",
+				pagination: true,
+				sidePagination: "server", 
+				clickToSelect: true,
+				columns: [{
+		            field: 'name',
+		            title: '凭证字号',
+		            formatter: function(value, row, index){
+		            	var word = '';
+		            	switch(row.word){
+		            		case 1:
+		            			word = '记';
+		            		break;
+		            		case 2:
+		            			word = '付';
+		            		break;
+		            		case 3:
+		            			word = '收';
+		            		break;
+		            		case 4:
+		            			word = '转';
+		            		break;
+		            	}
+		            	return word+'字'+row.number+'号';
+		        	}
+		        }, {
+		            field: 'billDate',
+		            title: '凭证日期'
+		        }, {
+		            field: 'summary',
+		            title: '摘要'
+		        }, {
+		            field: 'subject.name',
+		            title: '科目'
+		        }, {
+		            field: 'debitAmount',
+		            title: '借方金额'
+		        }, {
+		            field: 'creditAmount',
+		            title: '贷方金额'
+		        }, {
+		            field: 'billStatus',
+		            title: '入库单状态',
+		            formatter: function(value, row, index){
+		            	if (value == 0)
+		            		return '未审核';
+		            	if (value == 1)
+		            		return '已审核';
+		            	return '';
+		        	}
+		        }, {
+		        	field: '',
+		        	title: '操作',
+		        	formatter: function(value, row, index){
+		        		return '<a opt="update" rowid="'+row.id+'">修改</a>&nbsp;<a opt="delete" rowid="'+row.id+'">删除</a>';
+		        	}
+		        }],
+		        queryParams: function(params){
+		        	return {
+		                pageSize: params.limit,
+		                pageOffset: params.offset,   
+		                billStatus: $("#filter_bStatus").val(),
+		                voucherWord: $("#filter_name").val(),
+		                startVouchernumber: $("#filter_snum").val(),
+		                endVouchernumber: $("#filter_enum").val(),
+		                startBillPeriod: $("#filter_sDate").val(),
+		                endBillPeriod: $("#filter_eDate").val(),
+		                voucherSummary: $("#filter_summary").val(),
+		                subName: $("#filter_subName").val()
+		            }
+		        },
+		        onLoadSuccess: function (data) {
+		        	mergeCells($('#tbl_voucher'));
+	            },
+			});
+		}
+		
+		var mergeCells = function(target) {
+			var rows = target.find('tr');
+		    var _row;
+		    var rowspan = 1;
+			$.each(rows, function(i, row){
+				if (i == 0){
+					return;
+				}else if (i == 1){
+					_row = row;
+					return;
+				}else{
+					if ($($(row).find('td')[0]).html() == $($(_row).find('td')[0]).html()){
+						$($(row).find('td')[0]).remove();
+						$($(row).find('td')[0]).remove();
+						$($(row).find('td')[4]).remove();
+						$($(row).find('td')[4]).remove();
+						rowspan++;
+						if (i == rows.length - 1){
+							$($(_row).find('td')[0]).attr('rowspan', rowspan);
+							$($(_row).find('td')[1]).attr('rowspan', rowspan);
+							$($(_row).find('td')[6]).attr('rowspan', rowspan);
+							$($(_row).find('td')[7]).attr('rowspan', rowspan);
+						}
+					}else{
+						if (rowspan > 1){
+							$($(_row).find('td')[0]).attr('rowspan', rowspan);
+							$($(_row).find('td')[1]).attr('rowspan', rowspan);
+							$($(_row).find('td')[6]).attr('rowspan', rowspan);
+							$($(_row).find('td')[7]).attr('rowspan', rowspan);
+							rowspan = 1;
+						}
+						_row = row;
+					}
+				}
+				
+		    });
+		}
+		
+		var doQuery = function(){
+			$('#btn_search').click(function(){
+				var period = $('#filter_billPeriod').val();
+				$('#filter_sDate').val(period);
+				$('#filter_eDate').val(period);
+				$('#filter_sDate').select2();
+				$('#filter_eDate').select2();
+				queryVoucher();
+				$('#filter_billPeriod').val('');
+			});
+		}
+		
+		var queryVoucher = function(){
+			createFilterTip({
+				assWin: $('#voc_filter'), 
+				items: [{assId: 'filter_bStatus', label: '入库单状态', rule: '等于', ignore: '-1'}, 
+					    {assId: 'filter_name', label: '凭证字', rule: '等于', ignore: ''},
+				        {assId: 'filter_snum', label: '凭证号', rule: '大于'},
+				        {assId: 'filter_enum', label: '凭证号', rule: '小于'},
+				        {assId: 'filter_sDate', label: '开始账期', rule: '', eType: 'select2'},
+				        {assId: 'filter_eDate', label: '结束账期', rule: '', eType: 'select2'},				        
+				        {assId: 'filter_summary', label: '摘要', rule: '包含'},
+				        {assId: 'filter_subName', label: '科目名称', rule: '包含'}],
+		        changeCall: function(){
+		        	$("#tbl_voucher").bootstrapTable("refresh", {url: getProjectName() + "/voc/getPageResult.do", cache: false});
+	        }});
+			$("#tbl_voucher").bootstrapTable("refresh", {url: getProjectName() + "/voc/getPageResult.do", cache: false});
+		}
+		
+		var initEditVoucher = function(){
+			$('#tbl_voucher').on('click', 'a', function(){
+				var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				if (opt == 'update'){
+					var nthTabs = window.parent.getTabs();
+			        nthTabs.addTab({
+			        	id:'0302',
+			            title:'账务.凭证录入',
+			            active:true,
+			            allowClose:true,
+			            content:'voc_bill.html',
+			        });
+			        
+			        setTimeout(function(){
+			        	window.parent.$('#if0302')[0].contentWindow.fillBill(id);
+			        }, 1000);
+				}
+				if (opt == 'delete'){
+					Ewin.confirm({message: "确定要删除该凭证吗？"}).on(function(e){
+						if (!e){
+							return;
+						}
+						if (window.parent.$('#if0302')[0]){
+							var billId = window.parent.$('#if0302')[0].contentWindow.getBillId();
+							if (billId == id){
+								Ewin.alert("当前待删除凭证正在修改中，无法删除");
+								return;
+							}
+						}
+						$.ajax({
+							url: getProjectName() + "/voc/deleteVoucher.do?id="+id,
+							success: function(){
+								Ewin.toast('凭证删除成功');
+								queryVoucher();
+							}
+						});
+					});
+				}
+			});
+			
+			$('#btn_add').click(function(){
+				var nthTabs = window.parent.getTabs();
+		        nthTabs.addTab({
+		        	id:'0302',
+		            title:'账务.凭证录入',
+		            active:true,
+		            allowClose:true,
+		            content:'voc_bill.html',
+		        });
+			});
+		}
+		
+		return {
+			init: function(){
+				loadFilter();
+				loadVoucherTable();
+				doQuery();
+				initEditVoucher();
 			}
 		}
 	}
@@ -1086,6 +1372,14 @@ var App = function () {
         
         financeSubject: function(){
         	initFinSubject().init();
+        },
+        
+        voucher: function(){
+        	return initVoucher().init();
+        },
+        
+        voucherList: function(){
+        	initVoucherList().init();
         }
     };
 }();
@@ -1111,7 +1405,10 @@ var createFilterTip = function(options){
 				tipContent = $('<span class="content">'+item.label+'.'+item.rule+'['+assEle.val()+'] </span>'); 
 			}
 			tipClose.click(function(){
-				assEle.val('');
+				if (item.ignore)
+					assEle.val(item.ignore);
+				else
+					assEle.val('');
 				if (item.eType && item.eType == 'select2'){
 					assEle.trigger("change");
 				}
@@ -1174,7 +1471,6 @@ function isNumber(value) {
         return true
     }
 }
-
 
 
 

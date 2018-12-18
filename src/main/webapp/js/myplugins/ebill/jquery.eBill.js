@@ -19,12 +19,25 @@
 	var createHtmlForElement = function(opt, reference){
 		var html = '';
 		html += '<div class="bill-column" style="width: '+opt.length+'" >';
-		html +=   '<label>' + opt.label + '</label>';
+		if (opt.label){
+			html +=   '<label>' + opt.label + '</label>';
+		}
 		
+		var style = ''
+	    if (opt.style){
+	    	style = opt.style;
+	    }
 		switch(opt.type){
 			case 'select':
-			    html += '<select name="'+opt.name+'" class="select">';
-			    html +=   '<option value=""></option>';
+				if (opt.select2){
+					html += '<select name="'+opt.name+'" style="'+style+'" select2="true">';
+				}else{
+					html += '<select name="'+opt.name+'" style="'+style+'">';
+				}
+			    if (opt.placeholder){
+			    	html +=   '<option value="">'+opt.placeholder+'</option>';
+			    }
+			    
 			    if (opt['data-ref']){
 			    	var options = reference[opt['data-ref']];
 			    	$.each(options, function(i, option){
@@ -40,12 +53,12 @@
 			    	if (opt.value == 'now'){
 			    		var now = new Date();
 			    		var _value = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
-			    		html += '<input type="date" name="'+opt.name+'" value="'+_value+'">';
+			    		html += '<input type="date" name="'+opt.name+'" value="'+_value+'" style="'+style+'">';
 			    	}else{
-			    		html += '<input type="date" name="'+opt.name+'" value="'+opt.value+'">';
+			    		html += '<input type="date" name="'+opt.name+'" value="'+opt.value+'" style="'+style+'">';
 			    	}
-			    }else{
-			    	html += '<input type="date" name="'+opt.name+'">';
+			    }else{			
+			    	html += '<input type="date" name="'+opt.name+'" style="'+style+'">';
 			    }break;
 		    case 'indentify':
 		        var _value = '001';
@@ -59,8 +72,14 @@
 		        html += '<input type="text" name="'+opt.name+'" value="'+_value+'" readonly="readonly" style="width: 150px; font-weight:bold; color: #FF7F50; border: none">';
 			    break;
 			case 'text':
-				html += '<input type="text" name="'+opt.name+'">';
+				html += '<input type="text" name="'+opt.name+'" style="'+style+'">';
 				break;
+			case 'increase':
+				html += '<input type="text" name="'+opt.name+'" style="'+style+'">';
+				break;
+		}
+		if (opt['label-after']){
+			html +=   '<label>' + opt['label-after'] + '</label>';
 		}
 		html += '</div>';
 		return html;
@@ -107,12 +126,9 @@
         return true
     }
 	
-	
-		
-	
-	
 	BillItemTable.prototype = {
 		draw: function(){
+			
 			var tableContainer = this.$element.find('div.item-table');
 			if (!tableContainer || tableContainer.length == 0){
 				this.$element.append('<div class="item-table">');
@@ -126,7 +142,15 @@
 			html += '<tr>';
 			$.each(_columns, function(i, column){
 				if (column.hide) return true;
-				html += '<th style="width: '+column.length+'">' + column.label + '</th>';
+				if (column.type == 'money'){
+					html += '<th width="'+column.length+'">';
+					html +=   '<div class="light-border-bottom">' + column.label + '</div>';
+					html +=   '<div class="money-unit"><span>亿</span><span>千</span><span>百</span><span>十</span><span>万</span><span>千</span><span>百</span><span>十</span><span>元</span><span>角</span><span>分</span></div>';
+					html += '</th>';
+				}else{
+					html += '<th style="width: '+column.length+'">' + column.label + '</th>';
+				}
+				
 			});
 			html += '</tr>';
 			
@@ -137,17 +161,56 @@
 					if (column.hide) return true;
 					if (column.type == 'row-no'){
 						html += '<td style="text-align: center" type="'+column.type+'" row-no="'+(rowIndex+1)+'">'+(rowIndex+1)+'</td>';	
-					}else{
+					}else if (column.type == 'money'){
+						html += '<td name="'+column.name+'" type="'+column.type+'"><div class="money-unit">';
+						
+						var text = row[column.name];
+						if (text && text != '' && text != '0'){
+							var moneyText = parseFloat(text).toFixed(2) + '';
+							moneyText = moneyText.replace('.', '');//12300
+							var size = moneyText.length;
+							var counter = 11 - size;  //7
+							var cursor = 0;
+							for (var j = 0; j < 11; j++){
+								if (j == counter){
+									html += '<span>'+moneyText.charAt(cursor)+'</span>';
+									counter++;	
+									cursor++;
+								}else{
+									html += '<span>&nbsp;</span>';
+								}						
+							}
+						}else{
+							html += '<span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>';
+						}
+						html += '</div></td>';
+						$(this).parent().append('<div class="money-unit"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>');
+						
+					}
+					else{
 						html += '<td name="'+column.name+'" type="'+column.type+'"';	
 						if (column["data-ref"]) html += ' data-ref="'+column["data-ref"]+'"';
 						if (column["ref-field"]) html += ' data-ref="'+column["ref-field"]+'"';
 						if (column["ref-tigger"]) html += ' ref-tigger='+column["ref-tigger"];
+						if (column["ref-modal-id"]) html += ' ref-modal-id="'+column["ref-modal-id"]+'"';
+						if (column["ref-modal-url"]) html += ' ref-modal-url="'+column["ref-modal-url"]+'"';
+						if (column["ref-modal-title"]) html += ' ref-modal-title="'+column["ref-modal-title"]+'"';
+						if (column["ref-modal-style"]) html += ' ref-modal-style="'+column["ref-modal-style"]+'"';
 						html += '>';
 						
 						if (column.formatter){
 							html += column.formatter(row);
 						}else{
-							if (row[column.name])html += row[column.name];
+							if (column.name.indexOf('.') > 0){
+								var field = column.name;
+								var obj = field.substr(0, field.indexOf('.'));
+								var item = field.substr(field.indexOf('.') + 1);
+								
+								if (row[obj] && row[obj][item])html += row[obj][item];
+							}else{
+								if (row[column.name])html += row[column.name];
+							}
+							
 						}
 						html += '</td>';
 					}
@@ -184,6 +247,7 @@
 				var dataRef = $(this).attr('data-ref');
 				var refValue = $(this).attr('ref-value');
 				var refText = $(this).attr('ref-text');
+								
 				var tableRow = _table.$element.find('table.gridtable tr').index($(this).parent('tr')) -1;
 				
 				if (type == 'text' || type == 'edit-ref'){
@@ -206,6 +270,52 @@
 						}
 						$(this).remove();
 					});
+				}
+				
+				if (type == 'money'){
+					var _input = $('<input type="text" style="height: '+(height-5)+'px; width: '+(width-4)+'px">');
+					var moneyEles = $(this).find('span');
+					var moneyStr = '';
+					$.each(moneyEles, function(i, ele){
+						if (i == 9)
+							moneyStr += '.';
+						if ($(ele).html() == '' || $(ele).html() == '&nbsp;'){
+							moneyStr += '0';
+						}else{
+							moneyStr += $(ele).html();
+						}
+					});
+					
+					var money = parseFloat(moneyStr);
+					if (money != 0)
+					_input.val(money);
+					$(this).empty();
+					$(this).append(_input);
+					_input.focus();
+					_input.blur(function(){
+						$(this).parent().append('<div class="money-unit"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>');
+						var text = $(this).val();
+						if (text != '' && text != '0'){
+							var moneyText =  parseFloat(text).toFixed(2) + '';
+							
+							_table.updateTableRowData(tableRow, name, moneyText);
+							_table.calculateColumns(tableRow);
+							
+							moneyText = moneyText.replace('.', '');
+							var size = moneyText.length;
+							var current = size -1;
+							for (var j = 10; j > -1; j--){
+								if (current == -1){
+									$(this).parent().find("span").eq(j).html('&nbsp;');
+								}else{
+									$(this).parent().find("span").eq(j).html(moneyText.charAt(current));
+									current--;	
+								}
+															
+							}
+						}
+						$(this).remove();
+					});
 					_input.click(function(){
 						$(this).focus();
 					});
@@ -215,16 +325,24 @@
 			this.$element.find('table.gridtable td').hover(function(){
 				_table.currentRow = $('table.gridtable tr').index($(this).parents('tr'));
 				var type = $(this).attr('type');
+				var refModalId = $(this).attr('ref-modal-id');
+				var refModalUrl = $(this).attr('ref-modal-url');
+				var refModalTitle = $(this).attr('ref-modal-title');
+				var refModalStyle = $(this).attr('ref-modal-style');
 				
-				if (type == 'ref' && $(this).attr('ref-tigger')){
+				if (type == 'modal-ref' && $(this).attr('ref-tigger')){
 					if ($(this).find('.btn').length == 1){
 						$(this).find('.btn').remove();
 					}else{
 						var _btn = $('<span class="btn btn-primary btn-xs" >选择</span>');
 						$(this).append(_btn);
 						_btn.click(function(){
-							//$('#modal_material').modal({backdrop: 'static'});
-							Ewin.load({id: 'mtl_ref', title: '选择原材料', url: 'fragment/mtl_ref.html', style: 'width: 800px'});
+							//Ewin.load({id: 'mtl_ref', title: '选择原材料', url: 'fragment/mtl_ref.html', style: 'width: 800px'});
+							var option = {id: refModalId, title: refModalTitle, url: refModalUrl};
+							if (refModalStyle){
+								option.style = refModalStyle;
+							}
+							Ewin.load(option);
 						});
 					}
 				}
@@ -267,11 +385,7 @@
 			$.each(data, function(i, row){
 				var t_row = {};
 				$.each(_columns, function(j, column){
-					if (column.type !== 'ref'){
-						if (row[column.name]){
-							t_row[column.name] = row[column.name];
-						}
-					}else{
+					if (column.type == 'modal-ref' ){
 						var refName = column['data-ref'];
 						if (row[refName]){
 							var refData = row[refName];
@@ -289,6 +403,10 @@
 									t_row[column.name] = refData[fieldName];
 								}
 							}
+						}
+					}else{
+						if (row[column.name]){
+							t_row[column.name] = row[column.name];
 						}
 					}					
 				});
@@ -330,9 +448,15 @@
 				if (key.indexOf('.') > -1){
 					var obj = key.substr(0, key.indexOf('.'));
 					var item = key.substr(key.indexOf('.') + 1);
-					var _obj = {};
-					_obj[item] = value;
-					_tableData[index][obj] = _obj;
+					//var _obj = {};
+					//_obj[item] = value;
+					//_tableData[index][obj] = _obj;
+					if (!_tableData[index][obj]){
+						_tableData[index][obj] ={};
+					}
+					_tableData[index][obj][item] = value;
+					
+					
 				}else{
 					_tableData[index][key] = value;
 				}
@@ -414,7 +538,7 @@
 			this.item_table.draw();
 			this.b_columns.draw(this.reference);
 			this.$element.append(this.form);
-			this.$element.find("select").select2({
+			this.$element.find("select[select2]").select2({
 				placeholder: '',
 				allowClear: false
 			});
@@ -427,7 +551,7 @@
 			$.each(items, function(i, item){
 				var _ele_item = ele.find('[name=\''+item.name+'\']');
 				_ele_item.val('');
-				if (item.type == 'select'){
+				if (item.type == 'select' && item.select2){
 					_ele_item.select2();
 				}
 				if (item.type == 'date'){
@@ -464,7 +588,7 @@
 							
 							if (ele){
 								ele.val(svalue);
-								if (ele[0] && ele[0].tagName == 'SELECT'){
+								if (ele.attr('select2')){
 									ele.select2();
 								}
 							}
@@ -530,13 +654,22 @@
 		$.ajaxSettings.async = false; 
 		if (options.reference){
 			$.each(options.reference, function(i, refItem) {
-				var url = refItem.src;
-				if (url.indexOf('.do')>-1){
-					url = getProjectName() + refItem.src;
+				if (refItem.data){
+					reference[refItem.name] = refItem.data;
+					return true;
 				}
-				$.getJSON(url, "", function(data){
-					reference[refItem.name] = data;
-				});
+				
+				var url = refItem.src;
+				if (url){
+					if (url.indexOf('.do')>-1){
+						url = getProjectName() + refItem.src;
+					}
+					$.getJSON(url, "", function(data){
+						reference[refItem.name] = data;
+					});
+				}
+				
+				
 			});
 		}
 		$.ajaxSettings.async = true; 
@@ -552,8 +685,8 @@
 			commit: function(url, successMsg){
 				eBill.submitBill(url, successMsg);
 			},
-			fillBill: function(obj_materialIn){
-				eBill.fillBill(obj_materialIn);
+			fillBill: function(obj){
+				eBill.fillBill(obj);
 			},
 			resetBill: function(){
 				eBill.resetBill();

@@ -1,0 +1,75 @@
+<meta charset="UTF-8">
+
+    <div class="panel">
+        <div class="btn-group" role="group" aria-label="">
+		    <button name="btn_ctg" code="01" type="button" class="btn btn-default active btn-sm">01 资产类</button>
+		    <button name="btn_ctg" code="02" type="button" class="btn btn-default btn-sm">02 负债累</button>
+		    <button name="btn_ctg" code="03" type="button" class="btn btn-default btn-sm">03 共同类</button>
+		    <button name="btn_ctg" code="04" type="button" class="btn btn-default btn-sm">04 所有者权益</button>
+		    <button name="btn_ctg" code="05" type="button" class="btn btn-default btn-sm">05 成本</button>
+		    <button name="btn_ctg" code="06" type="button" class="btn btn-default btn-sm">06 损益</button>
+		    <input type="hidden" id="sub_ctg" value="01">
+		</div>
+        <div class="panel-body">
+        	<div id="panel-subject">
+            	<div id="subject_tree"></div>
+            </div>
+        </div>
+    </div>
+		
+
+<div class="clearfix">
+  <input type="button" id="btn_close" value="关闭" class="btn btn-default btn-sm pull-right m-l-5" data-dismiss="modal">
+  <input type="button" id="btn_select_close" value="选择关闭" class="btn btn-success btn-sm pull-right" data-dismiss="modal">
+  
+</div>
+
+<script>
+$(function(){
+	var selectSubject ={};
+	$("#panel-subject").slimScroll({
+		height: "280px",
+		width: "500px",
+		color: '#54667a'
+	});
+	if (window.localStorage){
+		localStorage.removeItem('jstree');
+	}
+	$('#subject_tree').data('jstree', false).empty().jstree({
+		plugins: ['types', 'state', 'wholerow'],
+		'types': {
+			'default': {
+				'icon': false
+			}
+		},
+		'core': {
+			'data': {
+				'url': getProjectName()+"/finsub/getJSTree.do",
+				'dataType': 'json',
+				'data': function (node) { // 传给服务端点击的节点
+                    return { categoryId: $('#sub_ctg').val()};
+                }
+			}
+		}
+	}).on('changed.jstree', function(e, data){
+		if('click'==data.event.type){
+			var selectedNode = data.instance.get_node(data.selected[0]);
+			
+			selectSubject.id = selectedNode.id;
+			selectSubject.fullName = selectedNode['a_attr'].fullName;
+			
+		}
+	});
+	$("#btn_select_close").click(function(){
+		if (!selectSubject.id){
+			return;
+		}
+		var _selections = [];
+		_selections.push({'subject': selectSubject});
+		var bill = $('#voucherBill').eBill();
+		bill.fillBillItem({'tableData': _selections});
+	});
+});
+
+
+</script>

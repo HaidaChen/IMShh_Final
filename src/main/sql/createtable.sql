@@ -5,6 +5,12 @@ CREATE TABLE TBL_SYS_PARAMETER(
     display char(1) default '1'
 );
 
+CREATE TABLE TBL_SYS_DICTIONARY(
+    dname varchar(64),
+    vkey varchar(128),
+    vtext varchar(128)
+);
+
 CREATE TABLE TBL_MATERIAL_CATEGORY(
     id varchar(20) not null,
     code varchar(20) not null,
@@ -62,6 +68,7 @@ CREATE TABLE TBL_FIN_SUBJECT(
 	id varchar(20) not null,
 	code varchar(20) not null,
 	name varchar(64) not null,
+	fullName varchar(256) not null, 
 	category char(2) not null,
 	parentId varchar(20),
 	initBalance numeric(12, 4),
@@ -88,7 +95,7 @@ CREATE TABLE TBL_FIN_VOUCHER(
 
 CREATE TABLE TBL_FIN_VOUCHER_ENTRY(
 	id varchar(20) not null,
-	voucherId date not null,
+	voucherId varchar(20) not null,
 	summary varchar(256),
 	subjectId varchar(20) not null,
 	debitAmount numeric(12,2),

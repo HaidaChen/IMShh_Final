@@ -1,0 +1,112 @@
+{
+	"title": {
+		"name": "记账凭证"
+	},
+	"reference": [{
+		"name": "wordList",
+		"data": [{
+			"key": "1",
+			"value": "记"
+		}, {
+			"key": "2",
+			"value": "付"
+		}, {
+			"key": "3",
+			"value": "收"
+		}, {
+			"key": "4",
+			"value": "转"
+		}]
+	}],
+	"top-columns": [{
+			"name": "word",
+			"type": "select",
+			"style": "width:45px",
+			"label-after": "字",
+			"data-ref": "wordList",
+			"option-value": "key",
+			"option-text": "value"
+		},
+		{
+			"name": "number",
+			"type": "increase",
+			"style": "width:25px",
+			"label": "第",
+			"label-after": "号",
+			"src": ""
+		},{
+			"length": "30%"
+		},
+		{
+			"name": "billDate",
+			"type": "date",
+			"label": "日期",
+			"formatter": "yyyy-MM-dd",
+			"value": "now"
+		}, {
+			"length": "30%"
+		},{
+			"name": "attachments",
+			"type": "text",
+			"style": "width:25px",
+			"label": "附件",
+			"label-after": "张"
+			
+		}
+	],
+	"bottom-columns": [{
+			"name": "auditor",
+			"type": "text",
+			"label": "审核",
+			"length": "20%"
+		},
+		{
+			"name": "preparedBy",
+			"type": "text",
+			"label": "制单",
+			"length": "20%"
+		}
+	],
+	"item-table": {
+		"border-type": "",
+		"border-weight": "",
+		"border-color": "",
+		"columns": [{
+				"name": "summary",
+				"type": "text",
+				"label": "摘要",
+				"length": "50%"
+			}, {
+				"name": "subject.id",
+				"type": "modal-ref",
+				"hide": true,
+				"data-ref": "subject",
+				"ref-field": "id"
+			}, {
+				"name": "subject.fullName",
+				"type": "modal-ref",
+				"ref-tigger": true,
+				"ref-modal-id": "fin_subject_ref",
+				"ref-modal-url": "fragment/fin_subject_ref.html",
+				"ref-modal-title": "选择会计科目",
+				"label": "科目",
+				"length": "50%",
+				"data-ref": "subject",
+				"ref-field": "fullName"
+			},
+			{
+				"name": "debitAmount",
+				"type": "money",
+				"label": "借方金额",
+				"length": "219"
+			},
+			{
+				"name": "creditAmount",
+				"type": "money",
+				"label": "贷方金额",
+				"length": "219"
+			}
+		]
+
+	}
+}

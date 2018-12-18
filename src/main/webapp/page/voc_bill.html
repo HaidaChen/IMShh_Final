@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+	
+	<link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="../plugins/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../plugins/bootstrap-table/bootstrap-table.css">
+	<link rel="stylesheet" href="../plugins/jstree/themes/default/style.min.css">
+	<link rel="stylesheet" href="../plugins/jquery.scrollbar/jquery.scrollbar.css">
+	<link rel="stylesheet" href="../plugins/select2/select2.min.css">
+	<link rel="stylesheet" href="../css/default.css">
+	<link rel="stylesheet" href="../js/myplugins/ebill/ebill.css">
+</head>
+<body>
+	
+	<div id="panel_category" class="panel">
+        <div class="panel-body">
+            <div id="voucherBill" class="e-bill"></div>
+        </div>
+    </div>
+	<div class="clearfix">
+		<input type="button" id="btn_print" value="打印" class="btn btn-default btn-sm pull-right m-l-5">
+		<input type="button" id="btn_reset" value="重置" class="btn btn-default btn-sm pull-right m-l-5" >
+	    <input type="button" id="btn_save" value="保存" class="btn btn-success btn-sm pull-right">
+	</div>
+	<script src="../jquery/jquery-2.0.3.min.js"></script>
+	<script src="../bootstrap/js/bootstrap.min.js"></script>
+	<script src="../plugins/bootstrap-table/bootstrap-table.js"></script>
+	<script src="../plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+	<script src="../plugins/jquery-form/jquery.form.js"></script>
+	<script src="../plugins/jQuery-slimScroll-1.3.0/jquery.slimscroll.min.js"></script>
+	<script src="../plugins/jquery.scrollbar/jquery.scrollbar.js"></script>
+	<script src="../plugins/jstree/jstree.js"></script>
+	<script src="../plugins/select2/select2.min.js"></script>
+	<script src="../plugins/math/math.min.js"></script>
+	
+	
+	<script src="../js/myplugins/jquery.ewin.js"></script>
+	<script src="../js/myplugins/ebill/jquery.eBill.js"></script>
+	<script src="../js/app.js"></script>
+	
+	<script>
+	    var bill;
+		$(function(){
+			bill = App.voucher();
+		});
+		
+		var fillBill = function(id){
+			$.ajax({
+				url: getProjectName()+"/voc/getById.do?id="+id,
+				type: "get",
+				success: function(result){
+					bill.fillBill(result);
+				}
+			});
+		}
+		
+		var getBillId = function(){
+			return $('input[name=\'id\']').val();
+		}
+	</script>
+</body>
+</html>

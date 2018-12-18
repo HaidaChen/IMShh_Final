@@ -6,6 +6,7 @@
         <result property="id" column="id"/>
         <result property="code" column="code"/>
         <result property="name" column="name"/> 
+        <result property="fullName" column="fullName"/>
         <result property="category" column="category"/> 
         <result property="initBalance" column="initBalance"/>
         <result property="remark" column="remark"/>
@@ -24,7 +25,7 @@
                p.code as p_code
           from tbl_fin_subject m 
           left join tbl_fin_subject p
-            on m.id = p.id      
+            on m.parentId = p.id      
          where m.status = '1'
           <if test="subName != null and subName !=''">
           and m.name like #{subName} 
@@ -47,7 +48,7 @@
                p.code as p_code
           from tbl_fin_subject m 
           left join tbl_fin_subject p
-            on m.id = p.id      
+            on m.parentId = p.id        
          where m.status = '1'
          order by m.code
     </select>
@@ -58,7 +59,7 @@
                p.code as p_code
           from tbl_fin_subject m 
           left join tbl_fin_subject p
-            on m.id = p.id      
+            on m.parentId = p.id        
          where m.status = '1'
            and m.category = #{subCategory} 
          order by m.code
@@ -70,7 +71,7 @@
                p.code as p_code
           from tbl_fin_subject m 
           left join tbl_fin_subject p
-            on m.id = p.id      
+            on m.parentId = p.id        
          where m.status = '1'
            and m.parentId = #{parentId} 
          order by m.code
@@ -92,20 +93,21 @@
                p.code as p_code
           from tbl_fin_subject m 
           left join tbl_fin_subject p
-            on m.id = p.id      
+            on m.parentId = p.id          
          where m.status = '1'
            and m.code = #{code}
     </select>
     
     <insert id="insert" parameterType="FinanceSubject">
-        insert into tbl_fin_subject(id, code, name, category, parentId, initBalance, modifydate, remark, status)  
-          values(#{id}, #{code}, #{name}, #{category}, #{parent.id}, #{initBalance}, sysdate(), #{remark}, #{status})
+        insert into tbl_fin_subject(id, code, name, fullName, category, parentId, initBalance, modifydate, remark, status)  
+          values(#{id}, #{code}, #{name}, #{fullName}, #{category}, #{parent.id}, #{initBalance}, sysdate(), #{remark}, #{status})
     </insert>
     
     <update id="update" parameterType="FinanceSubject">
     	update tbl_fin_subject set
     	  code = #{code},
     	  name = #{name},
+    	  fullName = #{fullName},
     	  category = #{category},
     	  initBalance = #{initBalance},
     	  remark = #{remark},
