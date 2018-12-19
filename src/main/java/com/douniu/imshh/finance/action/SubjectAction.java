@@ -33,20 +33,23 @@ public class SubjectAction {
 	@ResponseBody
 	public String getJSTree(String categoryId){
 		List<Subject> subjects = service.getByCategory(categoryId);
-		List<JSTreeItem> jsTree = new ArrayList<>();
-		
-		for (Subject subject : subjects){
-			JSTreeItem treeItem;
-			if (subject.getParent() == null)
-				treeItem = new JSTreeItem(subject.getId(), subject.getCode() + " " + subject.getName(), "#");
-			else
-				treeItem = new JSTreeItem(subject.getId(), subject.getCode() + " " + subject.getName(), subject.getParent().getId());
-			treeItem.putState("opened", true);
-			/*treeItem.putA_attr("title", subject.getRemark());*/
-			treeItem.putA_attr("fullName", subject.getFullName());
-			jsTree.add(treeItem);
-		}
+		List<JSTreeItem> jsTree = getJSTree(subjects);
 		return GsonUtil.toJson(jsTree, null);
+	}
+	
+	@RequestMapping(value ="/getFullJSTree", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getFullJSTree(){
+		List<Subject> allSubjects = service.query(new FinanceFilter());
+		List<JSTreeItem> jsTree = getJSTree(allSubjects);
+		return GsonUtil.toJson(jsTree, null);
+	}
+	
+	@RequestMapping(value ="/getFirstSubject", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getFirstSubject(){
+		List<Subject> allSubjects = service.query(new FinanceFilter());
+		return GsonUtil.toJson(allSubjects.get(0), null);
 	}
 	
 	@RequestMapping(value ="/getById", produces = "application/json; charset=utf-8")
@@ -84,15 +87,21 @@ public class SubjectAction {
 		service.deleteSubject(id);
 	}
 	
-	/*private String getFullName(Subject subject, List<Subject> allSubject){
-		String fullName = "";
-		if (subject.getParent() != null){
-			fullName += getFullName(subject.getParent(), allSubject) + "_";
+	private List<JSTreeItem> getJSTree(List<Subject> subjects){
+		List<JSTreeItem> jsTree = new ArrayList<>();
+		for (Subject subject : subjects){
+			JSTreeItem treeItem;
+			if (subject.getParent() == null)
+				treeItem = new JSTreeItem(subject.getId(), subject.getCode() + " " + subject.getName(), "#");
+			else
+				treeItem = new JSTreeItem(subject.getId(), subject.getCode() + " " + subject.getName(), subject.getParent().getId());
+			treeItem.putState("opened", true);
+			/*treeItem.putA_attr("title", subject.getRemark());*/
+			treeItem.putA_attr("fullName", subject.getFullName());
+			jsTree.add(treeItem);
 		}
-		fullName += subject.getCode() + " " + subject.getName();
-		
-		return fullName;
-	}*/
+		return jsTree;
+	}
 	
 	class JSTreeItem{
 		private String id;

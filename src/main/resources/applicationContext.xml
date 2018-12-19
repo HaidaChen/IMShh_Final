@@ -52,6 +52,7 @@
       
       <bean name="voucherService" class="com.douniu.imshh.finance.service.impl.VoucherService">
           <property name="dao" ref="voucherDao"></property>
+          <property name="aService" ref="financeAccountService"></property>
       </bean>
       
       <bean id="voucherDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
@@ -59,7 +60,15 @@
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       
+      <bean name="financeAccountService" class="com.douniu.imshh.finance.service.impl.AccountService">
+          <property name="dao" ref="financeAccountDao"></property>
+          <property name="sdao" ref="financeSubjectDao"></property>
+      </bean>
       
+      <bean id="financeAccountDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.finance.dao.IAccountDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
       <!--  -->
       
       <bean name="materialOutService" class="com.douniu.imshh.material.service.impl.MaterialOutService">

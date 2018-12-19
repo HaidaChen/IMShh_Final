@@ -17,7 +17,7 @@
         select * from tbl_sys_parameter where pname = #{pname}
     </select>
     
-    <select id="getDictionary" parameterType="String" resultType="java.util.HashMap">
+    <select id="getDictionary" parameterType="String" resultType="java.util.TreeMap">
         select vkey, vtext from tbl_sys_dictionary where dname = #{dname} order by vkey desc
     </select>
     

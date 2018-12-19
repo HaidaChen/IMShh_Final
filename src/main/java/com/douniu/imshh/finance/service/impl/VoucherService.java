@@ -16,11 +16,13 @@ import com.douniu.imshh.finance.domain.FinanceFilter;
 import com.douniu.imshh.finance.domain.Voucher;
 import com.douniu.imshh.finance.domain.VoucherEntry;
 import com.douniu.imshh.finance.domain.VoucherTableRow;
+import com.douniu.imshh.finance.service.IAccountService;
 import com.douniu.imshh.finance.service.IVoucherService;
 import com.douniu.imshh.utils.LikeFlagUtil;
 
 public class VoucherService implements IVoucherService{
 	private IVoucherDao dao;
+	private IAccountService aService;
 	
 	@Override
 	public PageResult getPageResult(FinanceFilter filter) {
@@ -62,6 +64,8 @@ public class VoucherService implements IVoucherService{
 		IDInjector.injector(entries);
 		dao.insertEnteries(entries);
 		dao.insert(voucher);
+		
+		aService.insert(voucher);
 	}
 
 	@Override
@@ -74,18 +78,26 @@ public class VoucherService implements IVoucherService{
 		}
 		IDInjector.injector(entries);
 		dao.insertEnteries(entries);
+		
+		aService.update(voucher);
 	}
 
 	@Override
 	public void deleteVoucher(String id) {
 		dao.delete(id);
 		dao.deleteEnteriesByVoucher(id);
+		
+		aService.delete(id);
 	}
 
 	public void setDao(IVoucherDao dao) {
 		this.dao = dao;
-	}
+	}	
 	
+	public void setaService(IAccountService aService) {
+		this.aService = aService;
+	}
+
 	private List<VoucherTableRow> change2TableRows(List<Voucher> vouchers){
 		List<VoucherTableRow> rows = new ArrayList<>();
 		for (Voucher voucher : vouchers){

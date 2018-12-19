@@ -106,6 +106,36 @@ CREATE TABLE TBL_FIN_VOUCHER_ENTRY(
     modifyDate datetime
 );
 
+/*
+CREATE TABLE TBL_FIN_SUBJECT_BALANCE(
+	id varchar(20) not null,
+	subjectId varchar(20) not null,
+	accountPeriod varchar(6) not null,
+	voucherId varchar(20),
+	voucherEntryId varchar(20),
+	balance numeric(12,2),
+	
+	remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+*/
+
+CREATE TABLE TBL_FIN_ACCOUNT(
+	id varchar(20) not null,
+	subjectId varchar(20) not null,
+	accountDate date not null,
+	accountPeriod varchar(6) not null,
+	summary varchar(256),
+	voucherId varchar(20),
+	debitAmount numeric(12,2),
+	creditAmount numeric(12,2),
+	
+	remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
 /*------*/
 CREATE TABLE TBL_MATERIAL_SUPPLIER(
     id varchar(20) not null,

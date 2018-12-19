@@ -21,6 +21,8 @@ public class Subject {
 	private String remark;
 	private int status = 1;
 	
+	public Subject(){super();}
+	public Subject(String id){this.id = id;}
 	public String getId() {
 		return id;
 	}

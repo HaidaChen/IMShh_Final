@@ -16,6 +16,7 @@
         <typeAlias alias="FinanceSubject" type="com.douniu.imshh.finance.domain.Subject"/>
         <typeAlias alias="Voucher" type="com.douniu.imshh.finance.domain.Voucher"/>
         <typeAlias alias="VoucherEntry" type="com.douniu.imshh.finance.domain.VoucherEntry"/>
+        <typeAlias alias="FinanceAccount" type="com.douniu.imshh.finance.domain.Account"/>
         
         <!--  -->
         <typeAlias alias="Order" type="com.douniu.imshh.finance.order.domain.Order"/>
@@ -55,6 +56,7 @@
     	<!--<mapper resource="/com/douniu/imshh/material/dao/materialOutMapper.xml"/> -->
     	<mapper resource="/com/douniu/imshh/finance/dao/subjectMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/finance/dao/voucherMapper.xml"/>
+    	<mapper resource="/com/douniu/imshh/finance/dao/accountMapper.xml"/>
     	
     	<!--  -->        
         <mapper resource="/com/douniu/imshh/finance/order/dao/orderMapper.xml"/>

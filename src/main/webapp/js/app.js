@@ -1344,6 +1344,149 @@ var App = function () {
 		}
 	}
 	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化明细分类账模块
+	/*-----------------------------------------------------------------------------------*/	
+	var initSubsidiaryLedger = function(){
+		var loadAssciation = function(){
+			/*获得第一个会计科目*/
+			$.ajax({
+				url: getProjectName() + '/finsub/getFirstSubject.do',
+				async:false,
+				success: function(result){
+					$("#filter_subject").val(result.id);
+					$("#label_subject").text(result.fullName);
+				}
+			})
+			/*加载账期*/
+			$.ajax({
+				url: getProjectName() + '/subLedger/allBillPeriod.do',
+				async:false,
+				success: function(result){
+					$.each(result, function(key, value){
+						$('#filter_billPeriod').append('<option value="'+key+'">'+value+'</option>');
+					});
+					$("#filter_billPeriod").select2({
+						placeholder: "选择账期",
+						allowClear: false
+					});
+				}
+			});
+			
+			/*加载所有的会计科目*/
+			$("#panel-subject").slimScroll({
+				height: "280px",
+				width: "500px",
+				color: '#54667a'
+			});
+			$('#subject_tree').data('jstree', false).empty().jstree({
+				plugins: ['types', 'state', 'wholerow'],
+				'types': {
+					'default': {
+						'icon': false
+					}
+				},
+				'core': {
+					'data': {
+						'url': getProjectName()+"/finsub/getFullJSTree.do",
+						'dataType': 'json'
+					}
+				}
+			}).on('changed.jstree', function(e, data){
+				
+				if('click'==data.event.type){
+					var selectedNode = data.instance.get_node(data.selected[0]);
+					$("#label_subject").text(selectedNode['a_attr'].fullName);
+					$("#filter_subject").val(selectedNode.id);	
+					$("#tbl_account").bootstrapTable("refresh", {url: getProjectName() + "/subLedger/getAccount.do", cache: false});
+				}
+			});
+		}
+		
+		var loadAccountTable = function(){
+			$("#tbl_account").bootstrapTable({
+				url: getProjectName() + "/subLedger/getAccount.do",
+				method: "get",
+				pagination: false,  
+				columns: [{
+					field: 'accountDate',
+		            title: '发生日期',
+                }, {
+		            field: '',
+		            title: '凭证字号',
+		            formatter: function(value, row, index){
+		            	if (row.voucher == null){
+		            		return '';
+		            	}
+		            	return '<a opt="link" rowid="'+row.voucher.id+'">'+row.voucher.word + '字 第' + row.voucher.number + '号'+'<a>';
+		        	}
+		        }, {
+		            field: 'summary',
+		            title: '摘要'
+		        }, {
+		            field: 'debitAmount',
+		            title: '借方金额',
+		            formatter: function(value, row, index){
+		            	if (value == 0){
+		            		return '';
+		            	}
+		            	return value;
+		        	}
+		        }, {
+		            field: 'creditAmount',
+		            title: '贷方金额',
+	            	formatter: function(value, row, index){
+		            	if (value == 0){
+		            		return '';
+		            	}
+		            	return value;
+		        	}
+		        }, {
+		            field: 'balance',
+		            title: '余额'
+		        }],
+		        queryParams: function(params){
+		        	return {
+		        		subjectId: $("#filter_subject").val(),
+		        		billPeriod: $("#filter_billPeriod").val()
+		            }
+		        }
+			})
+		}
+		
+		var initEvent = function(){
+			$('#btn_search').click(function(){
+				$("#tbl_account").bootstrapTable("refresh", {url: getProjectName() + "/subLedger/getAccount.do", cache: false});
+			});
+			
+			$('#tbl_account').on('click', 'a', function(){
+				var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				if (opt == 'link'){
+					var nthTabs = window.parent.getTabs();
+			        nthTabs.addTab({
+			        	id:'0302',
+			            title:'账务.凭证录入',
+			            active:true,
+			            allowClose:true,
+			            content:'voc_bill.html',
+			        });
+			        
+			        setTimeout(function(){
+			        	window.parent.$('#if0302')[0].contentWindow.fillBill(id);
+			        }, 1000);
+				}
+			});
+		}
+		return {
+			init: function(){
+				loadAssciation();
+				loadAccountTable();
+				initEvent();
+			}
+		};
+	}
+	
 	return {
         login: function () {
         	initLoginModule();
@@ -1380,6 +1523,10 @@ var App = function () {
         
         voucherList: function(){
         	initVoucherList().init();
+        },
+        
+        subsidiaryLedger: function(){
+        	initSubsidiaryLedger().init();
         }
     };
 }();

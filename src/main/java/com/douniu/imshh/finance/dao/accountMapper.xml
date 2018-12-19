@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.finance.dao.IAccountDao">
+	<resultMap type="FinanceAccount" id="actmap">
+        <result property="id" column="id"/>
+        <result property="accountDate" column="accountDate"/>        
+        <result property="accountPeriod" column="accountPeriod"/>
+        <result property="summary" column="summary"/>
+        <result property="debitAmount" column="debitAmount"/>
+        <association property="subject" javaType="FinanceSubject">
+        	<id property="id" column="s_id"/>
+        	<result property="code" column="s_code"/>
+        	<result property="name" column="s_name"/>
+        	<result property="fullName" column="s_fullName"/>
+        	<result property="category" column="s_category"/>	        	
+       	</association>
+       	<association property="voucher" javaType="Voucher">
+        	<id property="id" column="v_id"/>
+        	<result property="word" column="v_word"/>
+        	<result property="number" column="v_number"/>      	
+       	</association>
+    </resultMap>
+    
+    <select id="getBySubjectCode" resultMap="actmap">
+        select a.*, 
+               s.id as s_id, 
+               s.code as s_code,
+               s.fullName as s_fullName,
+               s.category as s_category,
+               v.id as v_id,
+               v.word as v_word,
+               v.number as v_number
+          from TBL_FIN_ACCOUNT a, 
+               TBL_FIN_SUBJECT s,
+               TBL_FIN_VOUCHER v             
+         where a.status = '1'
+           and s.code like #{0}
+           and a.subjectId = s.id
+           and a.voucherId = v.id
+           and a.accountDate &gt;= #{1}
+           and a.accountDate &lt;= #{2}
+          order by a.accountDate desc, a.id
+    </select> 
+    <select id="totalDebitBySubjectCode" resultType="float">
+        select case when sum(a.debitAmount) is null then 0 else sum(a.debitAmount) end
+          from TBL_FIN_ACCOUNT a, 
+               TBL_FIN_SUBJECT s
+         where a.status = '1'
+           and s.code like #{0}
+           and a.subjectId = s.id
+           and a.accountDate &gt;= #{1}
+           and a.accountDate &lt;= #{2} 
+    </select>
+    <select id="totalCreditBySubjectCode" resultType="float">
+        select case when sum(a.creditAmount) is null then 0 else sum(a.creditAmount) end
+          from TBL_FIN_ACCOUNT a, 
+               TBL_FIN_SUBJECT s
+         where a.status = '1'
+           and s.code like #{0}
+           and a.subjectId = s.id
+           and a.accountDate &gt;= #{1}
+           and a.accountDate &lt;= #{2} 
+    </select>  
+    
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into TBL_FIN_ACCOUNT(id, subjectId, accountDate, accountPeriod, summary, voucherId, debitAmount, creditAmount, modifydate, status) 
+             values
+             <foreach collection="list" item="dtl" index="index" separator=",">
+                 (#{dtl.id} , #{dtl.subject.id}, #{dtl.accountDate}, #{dtl.accountPeriod}, #{dtl.summary}, #{dtl.voucher.id}, #{dtl.debitAmount}, #{dtl.creditAmount}, sysdate(), '1')
+             </foreach>
+    </insert>
+    
+    <update id="deleteByVoucher" parameterType="String">
+        update TBL_FIN_ACCOUNT set 
+          status = '0',
+          modifydate = sysdate()
+        where voucherId = #{id}
+    </update>
+</mapper>
