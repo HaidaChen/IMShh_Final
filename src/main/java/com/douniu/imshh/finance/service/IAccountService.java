@@ -18,5 +18,11 @@ public interface IAccountService {
 	 * @param period
 	 * @return
 	 */
-	List<Account> getByPeriod(String subjectId, String period);
+	List<Account> getSubsidiaryLedger(String subjectId, String period);
+	
+	/**
+	 * 返回总账
+	 * @return
+	 */
+	List<Account> getGeneralLedger(String period);
 }

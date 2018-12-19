@@ -1487,6 +1487,86 @@ var App = function () {
 		};
 	}
 	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化总分类账模块
+	/*-----------------------------------------------------------------------------------*/	
+	var initGensidiaryLedger = function(){
+		var loadAssciation = function(){
+			/*加载账期*/
+			$.ajax({
+				url: getProjectName() + '/genLedger/allBillPeriod.do',
+				async:false,
+				success: function(result){
+					$.each(result, function(key, value){
+						$('#filter_billPeriod').append('<option value="'+key+'">'+value+'</option>');
+					});
+					$("#filter_billPeriod").select2({
+						placeholder: "选择账期",
+						allowClear: false
+					});
+				}
+			});
+			
+		}
+		
+		var loadAccountTable = function(){
+			$("#tbl_account").bootstrapTable({
+				url: getProjectName() + "/genLedger/getAccount.do",
+				method: "get",
+				pagination: false,  
+				columns: [{
+					field: '',
+		            title: '总账科目',
+		            formatter: function(value, row, index){
+		            	return row.subject.code + ' ' + row.subject.name;
+		        	}
+                }, {
+		            field: 'summary',
+		            title: '摘要'
+		        }, {
+		            field: 'debitAmount',
+		            title: '借方金额',
+		            formatter: function(value, row, index){
+		            	if (value == 0){
+		            		return '';
+		            	}
+		            	return value;
+		        	}
+		        }, {
+		            field: 'creditAmount',
+		            title: '贷方金额',
+	            	formatter: function(value, row, index){
+		            	if (value == 0){
+		            		return '';
+		            	}
+		            	return value;
+		        	}
+		        }, {
+		            field: 'balance',
+		            title: '余额'
+		        }],
+		        queryParams: function(params){
+		        	return {
+		        		billPeriod: $("#filter_billPeriod").val()
+		            }
+		        }
+			})
+		}
+		
+		var initEvent = function(){
+			$('#btn_search').click(function(){
+				$("#tbl_account").bootstrapTable("refresh", {url: getProjectName() + "/genLedger/getAccount.do", cache: false});
+			});
+		}
+		return {
+			init: function(){
+				loadAssciation();
+				loadAccountTable();
+				initEvent();
+			}
+		};
+	}
+	
 	return {
         login: function () {
         	initLoginModule();
@@ -1527,6 +1607,10 @@ var App = function () {
         
         subsidiaryLedger: function(){
         	initSubsidiaryLedger().init();
+        },
+        
+        gensidiaryLedger: function(){
+        	initGensidiaryLedger().init();
         }
     };
 }();

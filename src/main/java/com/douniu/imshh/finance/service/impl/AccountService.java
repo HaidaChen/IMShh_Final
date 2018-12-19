@@ -48,20 +48,43 @@ public class AccountService implements IAccountService {
 	}
 
 	@Override
-	public List<Account> getByPeriod(String subId, String period) {
-		List<Account> result = new ArrayList<>();
+	public List<Account> getSubsidiaryLedger(String subId, String period) {
 		Subject subject = sdao.getById(subId);
-		subject.setCode(subject.getCode()+"%");
+		return getAccountInfo(subject, period, true);
+	}
+	
+	@Override
+	public List<Account> getGeneralLedger(String period) {
+		List<Account> result = new ArrayList<>();
+		/*总账与明细账的区别在于只针对一级会计科目统计（往期余额、本期合计、本年累计）三个指标*/
+		
+		//查出所有总账科目
+		List<Subject> subjects = sdao.getByParent("0");
+		for (Subject subject : subjects){
+			List<Account> subjectAccounts = getAccountInfo(subject, period, false);
+			for (Account account : subjectAccounts){
+				account.setSubject(subject);
+			}
+			result.addAll(subjectAccounts);
+		}
+		return result;
+	}
+
+	private List<Account> getAccountInfo(Subject subject, String period, boolean detail){
+		List<Account> result = new ArrayList<>();
+		//subject.setCode(subject.getCode()+"%");
 		//第一条记录：往期余额
 		Account pastRec = getPastTotalBalance(subject, period);
 		result.add(pastRec);
 		
 		/*本期明细账记录，其中余额属性需要计算*/
-		Date sPeriod = DateUtil.string2Date(period + "01", "yyyyMMdd");
-		Date ePeriod = DateUtil.getLastDayOfYM(new Integer(period.substring(0, 4)), new Integer(period.substring(4)));
-		List<Account> details = dao.getBySubjectCode(subject.getCode(), sPeriod, ePeriod);
-		calculateBalance(pastRec.getBalance(), details, subject.getCategory());
-		result.addAll(details);
+		if (detail){
+			Date sPeriod = DateUtil.string2Date(period + "01", "yyyyMMdd");
+			Date ePeriod = DateUtil.getLastDayOfYM(new Integer(period.substring(0, 4)), new Integer(period.substring(4)));
+			List<Account> details = dao.getBySubjectCode(subject.getCode() + "%", sPeriod, ePeriod);
+			calculateBalance(pastRec.getBalance(), details, subject.getCategory());
+			result.addAll(details);
+		}
 		
 		//倒数第二条记录: 本期合计
 		Account periodRec = getPeriodTotal(subject, period, pastRec);
@@ -76,8 +99,8 @@ public class AccountService implements IAccountService {
 		Date sDate = DateUtil.string2Date(year+"01"+"01", "yyyyMMdd");
 		Date eDate = DateUtil.string2Date(year+"12"+"31", "yyyyMMdd");
 		Account yearPastRec = getPastTotalBalance(subject, year+"01");
-		float yearTotalDebitAmount = dao.totalDebitBySubjectCode(subject.getCode(), sDate, eDate);
-		float yearTotalCreditAmount = dao.totalCreditBySubjectCode(subject.getCode(), sDate, eDate);
+		float yearTotalDebitAmount = dao.totalDebitBySubjectCode(subject.getCode() + "%", sDate, eDate);
+		float yearTotalCreditAmount = dao.totalCreditBySubjectCode(subject.getCode() + "%", sDate, eDate);
 		float yearBalance = calculateBalance(yearPastRec.getBalance(), yearTotalDebitAmount, yearTotalCreditAmount, subject.getCategory());
 		Account yearRec = new Account();
 		yearRec.setSummary("本年累计");
@@ -99,8 +122,8 @@ public class AccountService implements IAccountService {
 		float initBalance = subject.getInitBalance();
 		
 		Date until = DateUtil.preDay(period + "01", "yyyyMMdd");
-		float pastTotalDebitAmount = dao.totalDebitBySubjectCode(subject.getCode(), null, until);
-		float pastTotalCreditAmount = dao.totalCreditBySubjectCode(subject.getCode(), null, until);
+		float pastTotalDebitAmount = dao.totalDebitBySubjectCode(subject.getCode() + "%", null, until);
+		float pastTotalCreditAmount = dao.totalCreditBySubjectCode(subject.getCode() + "%", null, until);
 		float pastBalance = calculateBalance(initBalance, pastTotalDebitAmount, pastTotalCreditAmount, ctg);
 		
 		Account pastRec = new Account();
@@ -118,8 +141,8 @@ public class AccountService implements IAccountService {
 		String ctg = subject.getCategory();
 		Date sDate = DateUtil.string2Date(period + "01", "yyyyMMdd");
 		Date eDate = DateUtil.getLastDayOfYM(new Integer(period.substring(0, 4)), new Integer(period.substring(4)));
-		float periodTotalDebitAmount = dao.totalDebitBySubjectCode(subject.getCode(), sDate, eDate);
-		float periodTotalCreditAmount = dao.totalCreditBySubjectCode(subject.getCode(), sDate, eDate);
+		float periodTotalDebitAmount = dao.totalDebitBySubjectCode(subject.getCode() + "%", sDate, eDate);
+		float periodTotalCreditAmount = dao.totalCreditBySubjectCode(subject.getCode() + "%", sDate, eDate);
 		float periodBalance = calculateBalance(pastAccount.getBalance(), periodTotalDebitAmount, periodTotalCreditAmount, ctg);
 		
 		Account periodRec = new Account();

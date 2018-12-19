@@ -15,8 +15,8 @@ import com.douniu.imshh.sys.service.IParameterService;
 import com.douniu.imshh.utils.GsonUtil;
 
 @Controller
-@RequestMapping("/subLedger")
-public class SubsidiaryLedgerAction {
+@RequestMapping("/genLedger")
+public class GeneralLedgerAction {
 	@Autowired
 	private IAccountService service;
 	@Autowired
@@ -31,8 +31,8 @@ public class SubsidiaryLedgerAction {
 	
 	@RequestMapping(value ="/getAccount", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String getAccount(String subjectId, String billPeriod){
-		List<Account> accounts = service.getSubsidiaryLedger(subjectId, billPeriod);
+	public String getAccount(String billPeriod){
+		List<Account> accounts = service.getGeneralLedger(billPeriod);
 		return GsonUtil.toJson(accounts, null);
 	}
 }
