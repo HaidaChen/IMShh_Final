@@ -2,6 +2,7 @@ package com.douniu.imshh.material.domain;
 
 import java.util.Date;
 
+@Deprecated
 public class MaterialOut {
 	private String id;
 	private Date outDate;

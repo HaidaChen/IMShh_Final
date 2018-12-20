@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.common.PageResult;
+import com.douniu.imshh.material.domain.BillDetail;
 import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.material.domain.MaterialIn;
-import com.douniu.imshh.material.domain.MaterialInDetail;
 import com.douniu.imshh.material.service.IMaterialInService;
 import com.douniu.imshh.sys.service.IParameterService;
 import com.douniu.imshh.utils.GsonUtil;
@@ -54,7 +54,7 @@ public class MaterialInAction {
 	@ResponseBody
 	public String getBillCode(){
 		String code = pservice.getParam("bill.materialin.code");
-		String preFix = "YCLRKD";
+		String preFix = "CLRKD";
 		SimpleDateFormat format=new SimpleDateFormat("yyyyMMdd");
 		String dateStr = format.format(new Date());
 		if (StringUtils.isEmpty(code)){
@@ -79,9 +79,9 @@ public class MaterialInAction {
 	@RequestMapping(value="/newMaterialIn", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void newMaterialIn(MaterialIn materialIn, String billItem){
-		List<MaterialInDetail> _details = new GsonBuilder().setDateFormat("yyyy-MM-dd").create().fromJson(billItem, new TypeToken<List<MaterialInDetail>>(){}.getType());
-		List<MaterialInDetail> details = new ArrayList<>();
-		for (MaterialInDetail detail : _details){
+		List<BillDetail> _details = new GsonBuilder().setDateFormat("yyyy-MM-dd").create().fromJson(billItem, new TypeToken<List<BillDetail>>(){}.getType());
+		List<BillDetail> details = new ArrayList<>();
+		for (BillDetail detail : _details){
 			if (detail.getMaterial()!= null && !StringUtils.isEmpty(detail.getMaterial().getId())){
 				details.add(detail);
 			}
@@ -95,9 +95,9 @@ public class MaterialInAction {
 	@RequestMapping(value="/updateMaterialIn", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void updateMaterialIn(MaterialIn materialIn, String billItem){
-		List<MaterialInDetail> _details = new GsonBuilder().setDateFormat("yyyy-MM-dd").create().fromJson(billItem, new TypeToken<List<MaterialInDetail>>(){}.getType());
-		List<MaterialInDetail> details = new ArrayList<>();
-		for (MaterialInDetail detail : _details){
+		List<BillDetail> _details = new GsonBuilder().setDateFormat("yyyy-MM-dd").create().fromJson(billItem, new TypeToken<List<BillDetail>>(){}.getType());
+		List<BillDetail> details = new ArrayList<>();
+		for (BillDetail detail : _details){
 			if (detail.getMaterial()!= null && !StringUtils.isEmpty(detail.getMaterial().getId())){
 				details.add(detail);
 			}

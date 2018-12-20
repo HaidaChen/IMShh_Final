@@ -27,7 +27,7 @@ var App = function () {
 					if (obj.submenu && obj.submenu.length > 0){
 						var subcontainer = $("<ul class='nav-list'>");
 						$.each(obj.submenu, function(index, submenu){
-							var subItem = $("<li><a class='' href='javascript:;' link='"+submenu.url+"' identify='"+submenu.id+"' text='"+obj.name+"."+submenu.name+"'>" + submenu.name + "</a></li>");
+							var subItem = $("<li><a class='' href='javascript:;' link='"+submenu.url+"' identify='"+submenu.id+"' text='"+submenu.name+"'>" + submenu.name + "</a></li>");
 							subcontainer.append(subItem);
 						});
 						item.append(subcontainer);
@@ -684,7 +684,7 @@ var App = function () {
 		var bill;
 		var initBill = function(){
 			$.ajaxSettings.async = false;
-			$.getJSON("../templater/yclrkd.json", "", function(data){
+			$.getJSON("../templater/clrkd.json", "", function(data){
         		bill = $('#eBill').eBill(data);	
 			});
 			$.ajaxSettings.async = true;
@@ -696,6 +696,42 @@ var App = function () {
 					bill.commit(getProjectName()+'/mtlin/newMaterialIn.do', '原材料入库单新增成功');
 				}else{
 					bill.commit(getProjectName()+'/mtlin/updateMaterialIn.do', '原材料入库单修改成功');
+				}
+        	});
+			
+			$('#btn_reset').click(function(){
+				bill.resetBill();
+			});
+		}
+		
+		return {
+			init: function(){
+				initBill();
+				editBill();
+				return bill;
+			}
+		}
+	}
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化原材料出库单
+	/*-----------------------------------------------------------------------------------*/	
+	var initMaterialOutBill = function(){
+		var bill;
+		var initBill = function(){
+			$.ajaxSettings.async = false;
+			$.getJSON("../templater/clckd.json", "", function(data){
+        		bill = $('#mtl_out_bill').eBill(data);	
+			});
+			$.ajaxSettings.async = true;
+		}
+		
+		var editBill = function(){
+			$('#btn_save').click(function(){
+				if ($("input[name='id']").val() == ''){
+					bill.commit(getProjectName()+'/mtlout/newBill.do', '原材料出库单新增成功');
+				}else{
+					bill.commit(getProjectName()+'/mtlout/updateBill.do', '原材料出库单修改成功');
 				}
         	});
 			
@@ -1587,6 +1623,10 @@ var App = function () {
         
         materialIn: function(){
         	return initMaterialInBill().init()
+        },
+        
+        materialOut: function(){
+        	return initMaterialOutBill().init()
         },
         
         materialInList: function(){

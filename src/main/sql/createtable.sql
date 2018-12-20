@@ -51,7 +51,36 @@ CREATE TABLE TBL_BILL_MATERIALIN(
     modifyDate datetime
 );
 
+CREATE TABLE TBL_BILL_MATERIALOUT(
+	id varchar(20) not null,
+	outDate date not null,
+	number varchar(20),
+	preparedBy varchar(20),
+	auditor varchar(20),
+	custodian varchar(20),
+	outReason char(2),
+	totalQuantity numeric(12, 4),
+	totalAmount numeric(12, 4),
+	billStatus char(1) default '0',
+	remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
 CREATE TABLE TBL_BILL_DTL_MATERIALIN(
+	id varchar(20) not null,
+	billId varchar(20) not null,
+	materialId varchar(20) not null,
+	specification varchar(128),
+	quantity numeric(12, 4),
+	price numeric(12, 4),
+	amount numeric(12, 4),
+	remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_BILL_DTL_MATERIALOUT(
 	id varchar(20) not null,
 	billId varchar(20) not null,
 	materialId varchar(20) not null,

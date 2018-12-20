@@ -9,7 +9,9 @@
 		<typeAlias alias="MaterialCategory" type="com.douniu.imshh.material.domain.Category"/>
 		<typeAlias alias="Material" type="com.douniu.imshh.material.domain.Material"/>
         <typeAlias alias="MaterialIn" type="com.douniu.imshh.material.domain.MaterialIn"/>
-        <typeAlias alias="MaterialInDetail" type="com.douniu.imshh.material.domain.MaterialInDetail"/>
+        <typeAlias alias="MaterialOutBill" type="com.douniu.imshh.material.domain.MaterialOutBill"/>
+        <typeAlias alias="BillDetail" type="com.douniu.imshh.material.domain.BillDetail"/>
+        <!-- <typeAlias alias="MaterialInDetail" type="com.douniu.imshh.material.domain.MaterialInDetail"/> -->
         <!--<typeAlias alias="MaterialOut" type="com.douniu.imshh.material.domain.MaterialOut"/> -->
         
         <typeAlias alias="FinanceFilter" type="com.douniu.imshh.finance.domain.FinanceFilter"/>
@@ -53,7 +55,7 @@
     	<mapper resource="/com/douniu/imshh/material/dao/categoryMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/material/dao/materialMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/material/dao/materialInMapper.xml"/>
-    	<!--<mapper resource="/com/douniu/imshh/material/dao/materialOutMapper.xml"/> -->
+    	<mapper resource="/com/douniu/imshh/material/dao/materialOutMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/finance/dao/subjectMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/finance/dao/voucherMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/finance/dao/accountMapper.xml"/>

@@ -1,0 +1,127 @@
+{
+	"title": {"name":"浏阳市华辉烟花制造有限公司原材料出库单"},
+	"reference": [{
+			"name": "outReasonOption",
+			"data": [{
+				"key": "01",
+				"value": "生产出库"
+			}, {
+				"key": "02",
+				"value": "退货出库"
+			}, {
+				"key": "03",
+				"value": "其他出库"
+			}]
+		},	
+		{
+			"name": "material",
+			"src": "/mtl/query.do"
+		}
+	],
+	"top-columns": [{
+				"name": "outReason",
+				"type": "select",
+				"label": "出库类型",
+				"data-ref": "outReasonOption",
+				"option-value": "key",
+				"option-text": "value",
+				"length": "30%"
+			},
+			{
+				"name": "outDate",
+				"type": "date",
+				"label": "发生日期",
+				"formatter": "yyyy-MM-dd",
+				"length": "30%",
+				"value": "now"
+			},
+			{
+				"name": "number",
+				"type": "indentify",
+				"label": "编号",
+				"src": "/mtlout/getBillCode.do",
+				"length": "20%"
+			}
+		],
+	"right-columns": [],
+	"bottom-columns": [{
+				"name": "preparedBy",
+				"type": "text",
+				"label": "经手人",
+				"length": "20%"
+			},
+			{
+				"name": "auditor",
+				"type": "text",
+				"label": "审核",
+				"length": "20%"
+			},
+			{
+				"name": "custodian",
+				"type": "text",
+				"label": "保管",
+				"length": "20%"
+			}
+		],
+	"left-columns": [],
+	"item-table": {
+		"border-type": "",
+		"border-weight": "",
+		"border-color": "",
+		"columns": [{
+				"name": "number",
+				"type": "row-no",
+				"label": "编号",
+				"length": "5%"
+			},{
+				"name": "material.id",
+				"type": "modal-ref",
+				"hide": true,
+				"data-ref": "material",
+				"ref-field": "id"
+			},{
+				"name": "materialName",
+				"type": "modal-ref",
+				"ref-tigger": true,
+				"ref-modal-id": "mtl_ref",
+				"ref-modal-url": "fragment/mtl_ref.html",
+				"ref-modal-title": "选择原材料",
+				"ref-modal-style": "width: 800px",
+				"label": "品名",
+				"length": "15%",
+				"data-ref": "material",
+				"ref-field": "name"
+			},
+			{
+				"name": "specification",
+				"type": "edit-ref",
+				"label": "规格",
+				"length": "20%",
+				"data-ref": "material",
+				"ref-field": "specification"
+			},
+			{
+				"name": "quantity",
+				"type": "text",
+				"data-type": "float",
+				"label": "数量",
+				"length": "10%"
+			},
+			{
+				"name": "unit",
+				"type": "modal-ref",
+				"label": "单位",
+				"length": "5%",
+				"data-ref": "material",
+				"ref-field": "unit"
+			},
+			{
+				"name": "remark",
+				"type": "text",
+				"label": "附注",
+				"length": "25%"
+			}
+		]
+		
+	}
+}

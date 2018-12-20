@@ -5,9 +5,9 @@ import java.util.List;
 import com.douniu.imshh.common.IDInjector;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.dao.IMaterialInDao;
+import com.douniu.imshh.material.domain.BillDetail;
 import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.material.domain.MaterialIn;
-import com.douniu.imshh.material.domain.MaterialInDetail;
 import com.douniu.imshh.material.service.IMaterialInService;
 import com.douniu.imshh.material.service.IMaterialService;
 import com.douniu.imshh.utils.LikeFlagUtil;
@@ -34,8 +34,8 @@ public class MaterialInService implements IMaterialInService{
 	@Override
 	public void newMaterialIn(MaterialIn materialIn) {
 		IDInjector.injector(materialIn);
-		List<MaterialInDetail> details = materialIn.getDetails();
-		for (MaterialInDetail detail : details){
+		List<BillDetail> details = materialIn.getDetails();
+		for (BillDetail detail : details){
 			detail.setBillId(materialIn.getId());
 			mtlService.addStorage(detail.getMaterial().getId(), detail.getQuantity());
 		}
@@ -47,15 +47,15 @@ public class MaterialInService implements IMaterialInService{
 	@Override
 	public void updateMaterialIn(MaterialIn materialIn) {
 		MaterialIn o_materialIn = dao.getById(materialIn.getId());
-		List<MaterialInDetail> o_details = o_materialIn.getDetails();
-		for (MaterialInDetail detail : o_details){
+		List<BillDetail> o_details = o_materialIn.getDetails();
+		for (BillDetail detail : o_details){
 			mtlService.addStorage(detail.getMaterial().getId(), 0-detail.getQuantity());
 		}
 		
 		dao.update(materialIn);
 		dao.deleteDetailsByBillId(materialIn.getId());
-		List<MaterialInDetail> details = materialIn.getDetails();
-		for (MaterialInDetail detail : details){
+		List<BillDetail> details = materialIn.getDetails();
+		for (BillDetail detail : details){
 			detail.setBillId(materialIn.getId());
 			mtlService.addStorage(detail.getMaterial().getId(), detail.getQuantity());
 		}
@@ -68,8 +68,8 @@ public class MaterialInService implements IMaterialInService{
 		MaterialIn materialIn = dao.getById(id);
 		dao.delete(id);
 		dao.deleteDetailsByBillId(id);
-		List<MaterialInDetail> details = materialIn.getDetails();
-		for (MaterialInDetail detail : details){
+		List<BillDetail> details = materialIn.getDetails();
+		for (BillDetail detail : details){
 			mtlService.addStorage(detail.getMaterial().getId(), 0-detail.getQuantity());
 		}
 	}

@@ -23,7 +23,7 @@
     </resultMap>
         
     <resultMap type="MaterialIn" id="mibwdmap" extends="mibmap">
-    	<collection property="details" ofType="MaterialInDetail">
+    	<collection property="details" ofType="BillDetail">
             <id property="id" column="dtl_id" />
             <result property="billId" column="dtl_billId"/>
             <result property="specification" column="dtl_specification"/>

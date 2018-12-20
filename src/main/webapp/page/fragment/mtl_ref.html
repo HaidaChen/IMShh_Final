@@ -2,6 +2,7 @@
 
     <div class="panel-head" style="margin-top: -10px">
         <div class="table-search"  >
+            
             <input id="filter_name" class="form-control" type="text" placeholder="材料名称" style=""/>
             <input id="filter_spec" class="form-control" type="text" placeholder="材料规格"/>
             <select id="filter_ctgCode" >
@@ -11,7 +12,7 @@
 		</div>
        	
    </div>
-	
+   	
 	<table id="tbl_material" class="table table-condensed">
 	</table>			
 
@@ -93,9 +94,18 @@ $(function(){
 			_selections.push({'material': data});
 		});
 		$("#tbl_material").bootstrapTable("uncheckAll");
+
+		var bill;
+		if ($('#eBill').text()){
+			bill = $('#eBill').eBill();
+		}
+		if ($('#mtl_out_bill').text()){
+			bill = $('#mtl_out_bill').eBill();
+		}
 		
-		var bill = $('#eBill').eBill();
-		bill.fillBillItem({'tableData': _selections});
+		if (bill){
+			bill.fillBillItem({'tableData': _selections});
+		}
 	});
 });
 

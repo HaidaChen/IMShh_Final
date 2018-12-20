@@ -119,7 +119,7 @@
 			},
 			{
 				"name": "unit",
-				"type": "ref",
+				"type": "modal-ref",
 				"label": "单位",
 				"length": "5%",
 				"data-ref": "material",

@@ -15,7 +15,7 @@ public class MaterialIn {
 	private String custodian;    /*保管*/
 	private String acceptor;     /*验收*/
 	private String handover;     /*交库*/
-	private List<MaterialInDetail> details;
+	private List<BillDetail> details;
 	private float totalQuantity; /*合计数量*/
 	private float totalAmount;   /*合计金额*/
 	private int billStatus = 0;      /*单据状态：0：待入账；1：已入账*/
@@ -89,10 +89,10 @@ public class MaterialIn {
 	public void setTotalAmount(float totalAmount) {
 		this.totalAmount = totalAmount;
 	}
-	public List<MaterialInDetail> getDetails() {
+	public List<BillDetail> getDetails() {
 		return details;
 	}
-	public void setDetails(List<MaterialInDetail> details) {
+	public void setDetails(List<BillDetail> details) {
 		this.details = details;
 	}
 	public int getBillStatus() {

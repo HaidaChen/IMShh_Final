@@ -2,9 +2,9 @@ package com.douniu.imshh.material.dao;
 
 import java.util.List;
 
+import com.douniu.imshh.material.domain.BillDetail;
 import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.material.domain.MaterialIn;
-import com.douniu.imshh.material.domain.MaterialInDetail;
 
 public interface IMaterialInDao {
 	List<MaterialIn> getPageResult(MaterialFilter filter);
@@ -15,7 +15,7 @@ public interface IMaterialInDao {
 	void update(MaterialIn materialIn);
 	void delete(String id);
 	
-	void insertDetails(List<MaterialInDetail> details);
+	void insertDetails(List<BillDetail> details);
 	void deleteDetailsByBillId(String id);
 	
 	/*List<MaterialIn> getPageResult(MaterialFilter filter);
