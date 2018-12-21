@@ -4,12 +4,15 @@ import com.douniu.imshh.common.BaseQO;
 
 public class MaterialFilter extends BaseQO{
 	
-	
+	private String materialId;
 	private String name;
 	private String number; /*入库单编号*/
 	private String specification;
 	private String category;
 	private String ctgCode;
+	private String billPeriod;
+	private String startPeriod;
+	private String endPeriod;
 	private String lowerStorage;
 	private String upperStorage;
 	private String remark;
@@ -33,6 +36,30 @@ public class MaterialFilter extends BaseQO{
 	}
 	public void setCtgCode(String ctgCode) {
 		this.ctgCode = ctgCode;
+	}
+	public String getMaterialId() {
+		return materialId;
+	}
+	public void setMaterialId(String materialId) {
+		this.materialId = materialId;
+	}
+	public String getBillPeriod() {
+		return billPeriod;
+	}
+	public void setBillPeriod(String billPeriod) {
+		this.billPeriod = billPeriod;
+	}
+	public String getStartPeriod() {
+		return startPeriod;
+	}
+	public void setStartPeriod(String startPeriod) {
+		this.startPeriod = startPeriod;
+	}
+	public String getEndPeriod() {
+		return endPeriod;
+	}
+	public void setEndPeriod(String endPeriod) {
+		this.endPeriod = endPeriod;
 	}
 	public String getName() {
 		return name;
@@ -79,9 +106,11 @@ public class MaterialFilter extends BaseQO{
 	}
 	@Override
 	public String toString() {
-		return "MaterialFilter [name=" + name + ", number=" + number + ", specification=" + specification
-				+ ", category=" + category + ", ctgCode=" + ctgCode + ", lowerStorage=" + lowerStorage
+		return "MaterialFilter [materialId=" + materialId + ", name=" + name + ", number=" + number + ", specification="
+				+ specification + ", category=" + category + ", ctgCode=" + ctgCode + ", billPeriod=" + billPeriod
+				+ ", startPeriod=" + startPeriod + ", endPeriod=" + endPeriod + ", lowerStorage=" + lowerStorage
 				+ ", upperStorage=" + upperStorage + ", remark=" + remark + ", supplier=" + supplier + ", billStatus="
 				+ billStatus + "]";
-	}	
+	}
+	
 }

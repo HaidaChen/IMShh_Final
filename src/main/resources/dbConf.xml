@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-	<!-- <settings>
+	<settings>
         <setting name="logImpl" value="STDOUT_LOGGING" />
-    </settings> -->
+    </settings>
 	<typeAliases>
 		<typeAlias alias="MaterialFilter" type="com.douniu.imshh.material.domain.MaterialFilter"/>
 		<typeAlias alias="MaterialCategory" type="com.douniu.imshh.material.domain.Category"/>
 		<typeAlias alias="Material" type="com.douniu.imshh.material.domain.Material"/>
-        <typeAlias alias="MaterialIn" type="com.douniu.imshh.material.domain.MaterialIn"/>
+        <typeAlias alias="MaterialBill" type="com.douniu.imshh.material.domain.MaterialBill"/>
+        <typeAlias alias="MaterialInBill" type="com.douniu.imshh.material.domain.MaterialInBill"/>
         <typeAlias alias="MaterialOutBill" type="com.douniu.imshh.material.domain.MaterialOutBill"/>
-        <typeAlias alias="BillDetail" type="com.douniu.imshh.material.domain.BillDetail"/>
+        <typeAlias alias="MaterialBillDetail" type="com.douniu.imshh.material.domain.BillDetail"/>
+        <typeAlias alias="MaterialInOut" type="com.douniu.imshh.material.domain.MaterialInOut"/>
         <!-- <typeAlias alias="MaterialInDetail" type="com.douniu.imshh.material.domain.MaterialInDetail"/> -->
         <!--<typeAlias alias="MaterialOut" type="com.douniu.imshh.material.domain.MaterialOut"/> -->
         
@@ -56,6 +58,7 @@
     	<mapper resource="/com/douniu/imshh/material/dao/materialMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/material/dao/materialInMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/material/dao/materialOutMapper.xml"/>
+    	<mapper resource="/com/douniu/imshh/material/dao/materialInOutMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/finance/dao/subjectMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/finance/dao/voucherMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/finance/dao/accountMapper.xml"/>

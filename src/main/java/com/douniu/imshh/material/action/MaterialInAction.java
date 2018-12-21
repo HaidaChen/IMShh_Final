@@ -18,7 +18,7 @@ import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.domain.BillDetail;
 import com.douniu.imshh.material.domain.MaterialFilter;
-import com.douniu.imshh.material.domain.MaterialIn;
+import com.douniu.imshh.material.domain.MaterialInBill;
 import com.douniu.imshh.material.service.IMaterialInService;
 import com.douniu.imshh.sys.service.IParameterService;
 import com.douniu.imshh.utils.GsonUtil;
@@ -45,7 +45,7 @@ public class MaterialInAction {
 	@RequestMapping(value ="/getById", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getById(String id){
-		MaterialIn in = service.getById(id);
+		MaterialInBill in = service.getById(id);
 		return GsonUtil.toJson(in, null);
 	}
 	
@@ -78,7 +78,7 @@ public class MaterialInAction {
 	@Authorization("010202")
 	@RequestMapping(value="/newMaterialIn", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public void newMaterialIn(MaterialIn materialIn, String billItem){
+	public void newMaterialIn(MaterialInBill materialIn, String billItem){
 		List<BillDetail> _details = new GsonBuilder().setDateFormat("yyyy-MM-dd").create().fromJson(billItem, new TypeToken<List<BillDetail>>(){}.getType());
 		List<BillDetail> details = new ArrayList<>();
 		for (BillDetail detail : _details){
@@ -94,7 +94,7 @@ public class MaterialInAction {
 	@Authorization("010203")
 	@RequestMapping(value="/updateMaterialIn", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public void updateMaterialIn(MaterialIn materialIn, String billItem){
+	public void updateMaterialIn(MaterialInBill materialIn, String billItem){
 		List<BillDetail> _details = new GsonBuilder().setDateFormat("yyyy-MM-dd").create().fromJson(billItem, new TypeToken<List<BillDetail>>(){}.getType());
 		List<BillDetail> details = new ArrayList<>();
 		for (BillDetail detail : _details){

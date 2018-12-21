@@ -2,69 +2,89 @@ package com.douniu.imshh.material.domain;
 
 public class InventoryDetail {
 	private String id;
-	private String materialId;
-	private float expectAmount;
-	private float actualAmount;
+	private Material material;
+	/*系统库存*/
+	private float expectQuantity;
+	/*盘点库存*/
+	private float actualQuantity;
+	/*盘盈盘亏*/
+	private float profitLoss;
+	/*盘点单价*/
 	private float price;
-	private float total;
+	/*盘点金额*/
+	private float amount;
 	
-	private String remark;
 	private int status = 1;
+
 	public String getId() {
 		return id;
 	}
+
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getMaterialId() {
-		return materialId;
+
+	public Material getMaterial() {
+		return material;
 	}
-	public void setMaterialId(String materialId) {
-		this.materialId = materialId;
+
+	public void setMaterial(Material material) {
+		this.material = material;
 	}
-	public float getExpectAmount() {
-		return expectAmount;
+
+	public float getExpectQuantity() {
+		return expectQuantity;
 	}
-	public void setExpectAmount(float expectAmount) {
-		this.expectAmount = expectAmount;
+
+	public void setExpectQuantity(float expectQuantity) {
+		this.expectQuantity = expectQuantity;
 	}
-	public float getActualAmount() {
-		return actualAmount;
+
+	public float getActualQuantity() {
+		return actualQuantity;
 	}
-	public void setActualAmount(float actualAmount) {
-		this.actualAmount = actualAmount;
+
+	public void setActualQuantity(float actualQuantity) {
+		this.actualQuantity = actualQuantity;
 	}
+
+	public float getProfitLoss() {
+		return profitLoss;
+	}
+
+	public void setProfitLoss(float profitLoss) {
+		this.profitLoss = profitLoss;
+	}
+
 	public float getPrice() {
 		return price;
 	}
+
 	public void setPrice(float price) {
 		this.price = price;
 	}
-	public float getTotal() {
-		return total;
+
+	public float getAmount() {
+		return amount;
 	}
-	public void setTotal(float total) {
-		this.total = total;
+
+	public void setAmount(float amount) {
+		this.amount = amount;
 	}
-	public String getRemark() {
-		return remark;
-	}
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
+
 	public int getStatus() {
 		return status;
 	}
+
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "InventoryDetail [id=" + id + ", materialId=" + materialId + ", expectAmount=" + expectAmount
-				+ ", actualAmount=" + actualAmount + ", price=" + price + ", total=" + total + ", remark=" + remark
-				+ ", status=" + status + "]";
+		return "InventoryDetail [id=" + id + ", material=" + material + ", expectQuantity=" + expectQuantity
+				+ ", actualQuantity=" + actualQuantity + ", profitLoss=" + profitLoss + ", price=" + price + ", amount="
+				+ amount + ", status=" + status + "]";
 	}
-	
 	
 }

@@ -4,15 +4,15 @@ import java.util.List;
 
 import com.douniu.imshh.material.domain.BillDetail;
 import com.douniu.imshh.material.domain.MaterialFilter;
-import com.douniu.imshh.material.domain.MaterialIn;
+import com.douniu.imshh.material.domain.MaterialInBill;
 
 public interface IMaterialInDao {
-	List<MaterialIn> getPageResult(MaterialFilter filter);
+	List<MaterialInBill> getPageResult(MaterialFilter filter);
 	int count(MaterialFilter filter);
-	MaterialIn getById(String id);
+	MaterialInBill getById(String id);
 	
-	void insert(MaterialIn materialIn);
-	void update(MaterialIn materialIn);
+	void insert(MaterialInBill materialIn);
+	void update(MaterialInBill materialIn);
 	void delete(String id);
 	
 	void insertDetails(List<BillDetail> details);

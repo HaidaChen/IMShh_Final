@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.douniu.imshh.material.dao.IMaterialInDao">
-	<resultMap type="MaterialIn" id="mibmap">
+	<resultMap type="MaterialInBill" id="mibmap">
         <result property="id" column="mib_id"/>
-        <result property="inDate" column="mib_inDate"/>        
+        <result property="billDate" column="mib_billDate"/>        
         <result property="number" column="mib_number"/>
         <result property="manager" column="mib_manager"/>
         <result property="accountant" column="mib_accountant"/>
@@ -22,8 +22,8 @@
         </association>
     </resultMap>
         
-    <resultMap type="MaterialIn" id="mibwdmap" extends="mibmap">
-    	<collection property="details" ofType="BillDetail">
+    <resultMap type="MaterialInBill" id="mibwdmap" extends="mibmap">
+    	<collection property="details" ofType="MaterialBillDetail">
             <id property="id" column="dtl_id" />
             <result property="billId" column="dtl_billId"/>
             <result property="specification" column="dtl_specification"/>
@@ -43,7 +43,7 @@
     
     <select id="getPageResult" parameterType="MaterialFilter" resultMap="mibmap">
         select mib.id as mib_id, 
-               mib.inDate as mib_inDate, 
+               mib.billDate as mib_billDate, 
                mib.number as mib_number, 
                mib.manager as mib_manager, 
                mib.accountant as mib_accountant,               
@@ -71,15 +71,15 @@
           and s.id = #{supplier} 
           </if>
           <if test="startDate != null and startDate !=''">
-          and mib.inDate &gt;= #{startDate} 
+          and mib.billDate &gt;= #{startDate} 
           </if>
           <if test="endDate != null and endDate !=''">
-          and mib.inDate &lt;= #{endDate} 
+          and mib.billDate &lt;= #{endDate} 
           </if>
           <if test="remark != null and remark !=''">
           and mib.remark like #{remark} 
           </if>
-          order by mib.inDate desc, mib.modifydate desc
+          order by mib.billDate desc, mib.modifydate desc
           limit #{pageOffset},#{pageSize}
     </select> 
     <select id="count" parameterType="MaterialFilter" resultType="int">
@@ -98,10 +98,10 @@
           and s.id = #{supplier} 
           </if>
           <if test="startDate != null and startDate !=''">
-          and mib.inDate &gt;= #{startDate} 
+          and mib.billDate &gt;= #{startDate} 
           </if>
           <if test="endDate != null and endDate !=''">
-          and mib.inDate &lt;= #{endDate} 
+          and mib.billDate &lt;= #{endDate} 
           </if>
           <if test="remark != null and remark !=''">
           and mib.remark like #{remark} 
@@ -110,7 +110,7 @@
     
     <select id="getById" parameterType="String" resultMap="mibwdmap">
         select mib.id as mib_id, 
-               mib.inDate as mib_inDate, 
+               mib.billDate as mib_billDate, 
                mib.number as mib_number, 
                mib.manager as mib_manager, 
                mib.accountant as mib_accountant,               
@@ -146,15 +146,15 @@
            and dtl.materialId = m.id
     </select>
     
-    <insert id="insert" parameterType="MaterialIn">
-        insert into tbl_bill_materialin(id, supplierId, inDate, number, totalQuantity, totalAmount, manager, accountant, custodian, acceptor, handover, modifydate, remark, status)  
-          values(#{id}, #{supplier.id}, #{inDate}, #{number}, #{totalQuantity}, #{totalAmount}, #{manager}, #{accountant}, #{custodian}, #{acceptor}, #{handover}, sysdate(), #{remark}, #{status})
+    <insert id="insert" parameterType="MaterialInBill">
+        insert into tbl_bill_materialin(id, supplierId, billDate, number, totalQuantity, totalAmount, manager, accountant, custodian, acceptor, handover, modifydate, remark, status)  
+          values(#{id}, #{supplier.id}, #{billDate}, #{number}, #{totalQuantity}, #{totalAmount}, #{manager}, #{accountant}, #{custodian}, #{acceptor}, #{handover}, sysdate(), #{remark}, #{status})
     </insert>
     
-    <update id="update" parameterType="MaterialIn">
+    <update id="update" parameterType="MaterialInBill">
     	update tbl_bill_materialin set
     	  supplierId = #{supplier.id},
-    	  inDate = #{inDate},
+    	  billDate = #{billDate},
     	  number = #{number},
     	  totalQuantity = #{totalQuantity}, 
     	  totalAmount = #{totalAmount},

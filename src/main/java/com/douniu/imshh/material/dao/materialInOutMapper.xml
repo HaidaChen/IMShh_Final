@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.material.dao.IMaterialInOutDao">
+	<resultMap type="MaterialInOut" id="miomap">
+        <result property="id" column="id"/>
+        <result property="genDate" column="genDate"/>        
+        <result property="billPeriod" column="billPeriod"/>
+        <result property="inQuantity" column="inQuantity"/>
+        <result property="inAmount" column="inAmount"/>
+        <result property="outQuantity" column="outQuantity"/>
+        <result property="outAmount" column="outAmount"/>
+        <result property="balanceQuantity" column="balanceQuantity"/>
+        <result property="balanceAmount" column="balanceAmount"/>
+        <result property="summary" column="summary"/>
+        <association property="bill" javaType="MaterialBill">
+        	<id property="id" column="b_id"/>
+        	<result property="number" column="b_number"/>
+        </association>
+        <association property="material" javaType="Material">
+        	<id property="id" column="m_id"/>
+        	<result property="name" column="m_name"/>
+        	<result property="specification" column="m_specification"/>
+        	<result property="storage" column="m_storage"/>
+        </association>
+    </resultMap>
+    
+    <select id="getTotalInOut" parameterType="MaterialFilter" resultMap="miomap">
+        SELECT
+            concat(m.id, io.billPeriod) as id,
+			m.id as m_id,
+			m. NAME as m_name,
+			m.specification as m_specification,
+			m. STORAGE as m_storage,
+			io.billPeriod,
+			io.inQuantity,
+			io.outQuantity
+		FROM
+			(
+				SELECT
+					*
+				FROM
+					tbl_material
+				WHERE
+					`status` = '1'
+				ORDER BY
+					categoryId,
+					id
+				LIMIT #{pageOffset},#{pageSize}
+			) m 
+	    left join
+			(
+				SELECT
+					materialId,
+					billPeriod,
+					CASE
+				WHEN sum(inQuantity) IS NULL THEN
+					0
+				ELSE
+					sum(inQuantity)
+				END AS inQuantity,
+				CASE
+			WHEN sum(outQuantity) IS NULL THEN
+				0
+			ELSE
+				sum(outQuantity)
+			END AS outQuantity
+			FROM
+				tbl_mtl_inout
+			WHERE
+			    `status` = '1'
+			and	genDate &gt;= #{startDate}
+			and genDate &lt;= #{endDate}
+			GROUP BY
+				materialId,
+				billPeriod
+			) io
+		on
+			m.id = io.materialId
+    </select> 
+    
+    <select id="countTotalInOut" parameterType="MaterialFilter" resultType="int">
+        SELECT count(1) 
+          FROM tbl_material
+		 WHERE `status` = '1'
+    </select> 
+    
+    <select id="getInOutByMaterial" resultMap="miomap">
+        SELECT
+				l.*, b.id AS b_id, b.number AS b_number
+			FROM
+				(
+					SELECT
+						io.*, 
+						m.id AS m_id,
+						m.name AS m_name,
+						m.specification AS m_specification
+					FROM
+						tbl_mtl_inout io,
+						tbl_material m
+					WHERE
+						io.materialId = #{0}
+					AND io.genDate &gt;= #{1}
+					AND io.genDate &lt;= #{2}
+					AND io. STATUS = '1'
+					AND io.materialId = m.id
+				) l LEFT JOIN (
+					SELECT
+						id,
+						number
+					FROM
+						tbl_bill_materialin
+					UNION ALL
+						SELECT
+							id,
+							number
+						FROM
+							tbl_bill_materialout
+				) b ON l.billId = b.id
+           
+    </select>
+    
+    <select id="getTotalInQuantity" resultType="float">
+    	select sum(inQuantity) from tbl_mtl_inout where materialId = #{0} and genDate &gt;= #{1} and genDate &lt;= #{2}
+    </select>
+    
+    <select id="getTotalOutQuantity" resultType="float">
+    	select sum(outQuantity) from tbl_mtl_inout where materialId = #{0} and genDate &gt;= #{1} and genDate &lt;= #{2}
+    </select>
+    <!-- <resultMap type="MaterialIn" id="mtlinmap">
+        <result property="id" column="id"/>
+        <result property="inDate" column="inDate"/>
+        <result property="materialId" column="materialId"/>
+        <result property="materialName" column="materialName"/>
+        <result property="specification1" column="specification1"/>
+        <result property="specification2" column="specification2"/>
+        <result property="specification3" column="specification3"/>
+        <result property="unit" column="unit"/>
+        <result property="amount" column="amount"/>
+        <result property="supplierId" column="supplierId"/>
+        <result property="supplierName" column="supplierName"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    
+    <select id="getPageResult" parameterType="MaterialFilter" resultMap="mtlinmap">
+        select mi.*, 
+               m.name as materialName, 
+               m.specification1, 
+               m.specification2, 
+               m.specification3, 
+               m.unit, 
+               ms.name as supplierName 
+          from tbl_material_in mi, 
+               tbl_material m, 
+               tbl_material_supplier ms 
+         where mi.status = '1' 
+           and mi.materialId = m.id 
+           and mi.supplierId = ms.id
+          <if test="startDate != null">
+          and mi.inDate &gt;= #{startDate}
+          </if>
+          <if test="endDate != null">
+          and mi.inDate &lt;= #{endDate}
+          </if>
+          <if test="name != null and name !=''">
+          and m.name like #{name} 
+          </if>
+          <if test="supplier != null and supplier !=''">
+          and ms.id = #{supplier}
+          </if>
+          order by mi.inDate desc
+          limit #{pageOffset},#{pageSize}
+    </select> 
+    
+    <select id="query" parameterType="MaterialFilter" resultMap="mtlinmap">
+        select mi.*, 
+               m.name as materialName, 
+               m.specification1, 
+               m.specification2, 
+               m.specification3, 
+               m.unit, 
+               ms.name as supplierName 
+          from tbl_material_in mi, 
+               tbl_material m, 
+               tbl_material_supplier ms 
+         where mi.status = '1' 
+           and mi.materialId = m.id 
+           and mi.supplierId = ms.id
+          <if test="startDate != null">
+          and mi.inDate &gt;= #{startDate}
+          </if>
+          <if test="endDate != null">
+          and mi.inDate &lt;= #{endDate}
+          </if>
+          <if test="name != null and name !=''">
+          and m.name like #{name} 
+          </if>
+          <if test="supplier != null and supplier !=''">
+          and ms.id = #{supplier}
+          </if>
+          order by mi.inDate desc
+    </select>
+    
+    <select id="count" parameterType="Material" resultType="int">
+        select count(1) 
+          from tbl_material_in mi, 
+               tbl_material m, 
+               tbl_material_supplier ms 
+         where mi.status = '1' 
+           and mi.materialId = m.id 
+           and mi.supplierId = ms.id
+          <if test="startDate != null">
+          and mi.inDate &gt;= #{startDate}
+          </if>
+          <if test="endDate != null">
+          and mi.inDate &lt;= #{endDate}
+          </if>
+          <if test="name != null and name !=''">
+          and m.name like #{name} 
+          </if>
+          <if test="supplier != null and supplier !=''">
+          and ms.id = #{supplier}
+          </if> 
+    </select>   
+    
+    <select id="getById" parameterType="String" resultType="MaterialIn">
+        select mi.*, 
+               m.name as materialName, 
+               m.specification1, 
+               m.specification2, 
+               m.specification3, 
+               m.unit, 
+               ms.name as supplierName 
+          from tbl_material_in mi, 
+               tbl_material m, 
+               tbl_material_supplier ms 
+         where mi.id = #{id}
+           and mi.status = '1' 
+           and mi.materialId = m.id 
+           and mi.supplierId = ms.id 
+    </select>
+    
+    <insert id="insert" parameterType="MaterialIn">
+        insert into tbl_material_in(id, inDate, materialId, amount, supplierId, modifydate, remark, status)  
+          values(#{id}, #{inDate}, #{materialId}, #{amount}, #{supplierId}, sysdate(), #{remark}, #{status})
+    </insert>
+    
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into tbl_material_in(id, inDate, materialId, amount, supplierId, modifydate, remark, status) 
+             values
+             <foreach collection="list" item="mtlin" index="index" separator=",">
+                 (#{mtlin.id} , #{mtlin.inDate}, #{mtlin.materialId}, #{mtlin.amount}, #{mtlin.supplierId}, sysdate(), #{mtlin.remark}, '1')
+             </foreach>
+    </insert>
+    
+    <update id="delete" parameterType="String">
+        update tbl_material_in set 
+          status = '0',
+          modifydate = sysdate()
+        where id = #{id}
+    </update> -->
+    
+</mapper>

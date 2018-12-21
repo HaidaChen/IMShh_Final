@@ -911,6 +911,276 @@ var App = function () {
 		}
 	}
 	
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化单个原材料出入明细模块
+	/*-----------------------------------------------------------------------------------*/
+	var initSingleMaterialInOut = function(){
+		var initPeriod = function(){
+			var now = Format(new Date(), 'yyyy-MM');
+			var befor = increaseMonth(now, -3);
+			
+			$('#filter_speriod').val(befor);
+			$('#filter_eperiod').val(now);
+			
+			$('.simplemonth span.btn').click(function(){
+				var monthEle = $(this).parent().find('input');
+				var curMon = monthEle.val();
+				
+				if (curMon == ''){
+					monthEle.val(Format(new Date(), 'yyyy-MM'));
+				}else {
+					if($(this).hasClass('btn-up')){
+						monthEle.val(increaseMonth(curMon, -1));
+					}
+					if($(this).hasClass('btn-down')){
+						monthEle.val(increaseMonth(curMon, 1));
+					}
+				}
+			});
+		}
+		
+		var loadInoutTable = function(){
+			$("#tbl_mtl_inout").bootstrapTable({
+				url: getProjectName() + "/mtlio/getInOutByMaterial.do",
+				method: "get",
+				pagination: false,
+				columns: [{
+		            field: 'genDate',
+		            title: '发生日期'
+		        }, {
+		            field: 'bill.number',
+		            title: '关联单据',
+		            formatter: function(value, row, index){
+		            	if (row.bill){
+		            		if (value.indexOf('CLRKD') == 0)
+		            			return '<a opt="link_in" rowid="'+row.bill.id+'">'+value+'</a>';
+		            		if (value.indexOf('CLCKD') == 0)
+		            			return '<a opt="link_out" rowid="'+row.bill.id+'">'+value+'</a>';
+		            	}else{
+		            		return '';
+		            	}
+		            }
+		        }, {
+		            field: 'summary',
+		            title: '摘要'
+		        }, {
+		            field: 'inQuantity',
+		            title: '入库数量'
+		        },{
+		            field: 'outQuantity',
+		            title: '出库数量'
+		        }],
+		        queryParams: function(params){
+		        	return {
+		        		materialId: $('#filter_materialId').val(),
+		        		sPeriod: $('#filter_speriod').val(),
+		        		ePeriod: $('#filter_eperiod').val()
+		            }
+		        }
+			});
+		}
+		
+		var doQuery = function(){
+			$('#btn_search').click(function(){
+				$("#tbl_mtl_inout").bootstrapTable("refresh", {url: getProjectName() + "/mtlio/getInOutByMaterial.do"});
+			});
+		}
+		
+		var initOtherOpt = function(){
+			$('#btn_chose_mtl').click(function(){
+				Ewin.load({id: 'mtl_ref_single', title: '选择原材料', url: 'fragment/mtl_ref_single.html', style: 'width: 800px', callback: function(){
+					$('#btn_select_close').click(function(){
+						var selections = $("#tbl_material").bootstrapTable('getSelections');
+						var mtlId = selections[0].id;
+						var mtlName = selections[0].name;
+						var mtlUnit = selections[0].unit;
+						$('#tbl_mtl_inout').find('th .th-inner').eq(3).text('入库数量('+mtlUnit+')');
+						$('#tbl_mtl_inout').find('th .th-inner').eq(4).text('出库数量('+mtlUnit+')');
+						$('#filter_materialId').val(mtlId);
+						$('#btn_chose_mtl').text(mtlName);
+						$('#label_mtlName').text(mtlName);
+					});
+				}});
+			});
+			
+			$('#tbl_mtl_inout').on('click', 'a', function(){
+				var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				
+				if (opt == 'link_in'){
+					var nthTabs = window.parent.getTabs();
+			        nthTabs.addTab({
+			        	id:'0201',
+			            title:'原材料入库',
+			            active:true,
+			            allowClose:true,
+			            content:'mtl_in_bill.html',
+			        });
+			        
+			        setTimeout(function(){
+			        	window.parent.$('#if0201')[0].contentWindow.fillBill(id);
+			        }, 1000);
+				}
+				
+				if (opt == 'link_out'){
+					var nthTabs = window.parent.getTabs();
+			        nthTabs.addTab({
+			        	id:'0202',
+			            title:'原材料出库',
+			            active:true,
+			            allowClose:true,
+			            content:'mtl_out_bill.html',
+			        });
+			        
+			        setTimeout(function(){
+			        	window.parent.$('#if0202')[0].contentWindow.fillBill(id);
+			        }, 1000);
+				}
+			});
+		}
+		
+		return {
+			init: function(){
+				initPeriod();
+				loadInoutTable();
+				doQuery();
+				initOtherOpt();
+			}
+		}
+	}
+	
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化原材料出入汇总模块
+	/*-----------------------------------------------------------------------------------*/
+	var initGlobalMaterialInOut = function(){
+		var initPeriod = function(){
+			var now = Format(new Date(), 'yyyy-MM');
+			var befor = increaseMonth(now, -3);
+			
+			$('#filter_speriod').val(befor);
+			$('#filter_eperiod').val(now);
+			
+			$('.simplemonth span.btn').click(function(){
+				var monthEle = $(this).parent().find('input');
+				var curMon = monthEle.val();
+				
+				if (curMon == ''){
+					monthEle.val(Format(new Date(), 'yyyy-MM'));
+				}else {
+					if($(this).hasClass('btn-up')){
+						monthEle.val(increaseMonth(curMon, -1));
+					}
+					if($(this).hasClass('btn-down')){
+						monthEle.val(increaseMonth(curMon, 1));
+					}
+				}
+			});
+		}
+		
+		var thL1 = [];
+		var thL2 = [];
+		var refreshTabelHead = function(){
+			thL1 = [];
+			thL2 = [];
+			var sPeriod = $('#filter_speriod').val();
+			var ePeriod = $('#filter_eperiod').val();
+			
+			var endMonth = parseInt(ePeriod.substring(0, 4)) * 12 + parseInt(ePeriod.substring(5));
+			var startMonth = parseInt(sPeriod.substring(0, 4)) * 12 + parseInt(sPeriod.substring(5));
+			
+			var numMonth = endMonth - startMonth;
+			
+			thL1.push({
+				field: 'mtlName',
+                title: "原材料",
+                valign:"middle",
+                align:"center",
+                colspan: 1,
+                rowspan: 2
+			});
+			for (var i = startMonth; i <= endMonth; i++){
+				var td_year = parseInt(i / 12);
+				var td_month = i % 12;
+				if (td_month == 0){
+					td_year = td_year - 1;
+					td_month = 12;
+				}
+				thL1.push({
+					title: td_year + '年' + td_month + '月',
+                    valign:"middle",
+                    align:"center",
+                    colspan: 2,
+                    rowspan: 1
+				});
+			}
+			thL1.push({
+				field: 'storage',
+                title: "当前库存",
+                valign:"middle",
+                align:"center",
+                colspan: 1,
+                rowspan: 2
+			});
+			
+			for (var i = startMonth; i <= endMonth; i++){
+				var td_year = parseInt(i / 12);
+				var td_month = i % 12;
+				if (td_month == 0){
+					td_year = td_year - 1;
+					td_month = 12;
+				}
+				
+				var period = td_year + '' + (td_month < 10 ? '0'+ td_month : td_month);
+				thL2.push({
+					field: 'iomap.'+period+'.inQuantity',
+		            title: '入库数'
+				});
+				thL2.push({
+					field: 'iomap.'+period+'.outQuantity',
+		            title: '出库数'
+				});
+			}
+		}
+		
+		var loadInoutTable = function(){
+			refreshTabelHead();
+			$("#tbl_mtl_inout").bootstrapTable({
+				url: getProjectName() + "/mtlio/getGlobalInOutPageResult.do",
+				method: "get",
+				pagination: true,
+				sidePagination : "server",
+				pageSize : 50,
+				pageList : [50, 100, 200],
+				columns: [thL1, thL2],
+		        queryParams: function(params){
+		        	return {
+		        		pageSize: params.limit,
+		                pageOffset: params.offset,  
+		        		startPeriod: $('#filter_speriod').val(),
+		        		endPeriod: $('#filter_eperiod').val()
+		            }
+		        }
+			});
+		}
+		
+		var doQuery = function(){
+			$('#btn_search').click(function(){
+				refreshTabelHead();
+				$("#tbl_mtl_inout").bootstrapTable("refreshOptions", {columns: [thL1, thL2]});
+			});
+		}
+		
+		return {
+			init: function(){
+				initPeriod();
+				loadInoutTable();
+				doQuery();
+			}
+		}
+	}
+	
 	/*-----------------------------------------------------------------------------------*/
 	/*	初始化会计科目模块
 	/*-----------------------------------------------------------------------------------*/	
@@ -1604,6 +1874,7 @@ var App = function () {
 	}
 	
 	return {
+		/****************公共模块****************/
         login: function () {
         	initLoginModule();
         },
@@ -1616,7 +1887,8 @@ var App = function () {
 			handleSidebarCollapse();
 			return nthTabs;
         },
-
+        
+        /****************材料仓库模块****************/
         materialCategory: function(){
         	initMaterialCategory().init();
         },
@@ -1633,6 +1905,15 @@ var App = function () {
         	initMaterialInList().init();
         },
         
+        singleMaterialInOut: function(){
+        	initSingleMaterialInOut().init();
+        },
+        
+        globalMaterialInOut: function(){
+        	initGlobalMaterialInOut().init();
+        },
+        
+        /****************财务模块****************/
         financeSubject: function(){
         	initFinSubject().init();
         },
@@ -1743,6 +2024,71 @@ function isNumber(value) {
     }
 }
 
+function increaseMonth(current, increase){
+	var syear = current.substring(0, 4);
+	var smonth = current.substring(5);
+	
+	var year = parseInt(syear);
+	var month = parseInt(smonth) + increase;
+	
+	if (month > 12){
+		month = month - 12;
+		year = year + 1;
+	}
+	if (month < 1){
+		month = month + 12;
+		year = year - 1
+	}
+	return year + '-' + (month < 10 ? 0 + '' + month : month);
+}
 
+function Format(now,mask)
+{
+    var d = now;
+    var zeroize = function (value, length)
+    {
+        if (!length) length = 2;
+        value = String(value);
+        for (var i = 0, zeros = ''; i < (length - value.length); i++)
+        {
+            zeros += '0';
+        }
+        return zeros + value;
+    };
+ 
+    return mask.replace(/"[^"]*"|'[^']*'|\b(?:d{1,4}|m{1,4}|yy(?:yy)?|([hHMstT])\1?|[lLZ])\b/g, function ($0)
+    {
+        switch ($0)
+        {
+            case 'd': return d.getDate();
+            case 'dd': return zeroize(d.getDate());
+            case 'ddd': return ['Sun', 'Mon', 'Tue', 'Wed', 'Thr', 'Fri', 'Sat'][d.getDay()];
+            case 'dddd': return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][d.getDay()];
+            case 'M': return d.getMonth() + 1;
+            case 'MM': return zeroize(d.getMonth() + 1);
+            case 'MMM': return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getMonth()];
+            case 'MMMM': return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][d.getMonth()];
+            case 'yy': return String(d.getFullYear()).substr(2);
+            case 'yyyy': return d.getFullYear();
+            case 'h': return d.getHours() % 12 || 12;
+            case 'hh': return zeroize(d.getHours() % 12 || 12);
+            case 'H': return d.getHours();
+            case 'HH': return zeroize(d.getHours());
+            case 'm': return d.getMinutes();
+            case 'mm': return zeroize(d.getMinutes());
+            case 's': return d.getSeconds();
+            case 'ss': return zeroize(d.getSeconds());
+            case 'l': return zeroize(d.getMilliseconds(), 3);
+            case 'L': var m = d.getMilliseconds();
+                if (m > 99) m = Math.round(m / 10);
+                return zeroize(m);
+            case 'tt': return d.getHours() < 12 ? 'am' : 'pm';
+            case 'TT': return d.getHours() < 12 ? 'AM' : 'PM';
+            case 'Z': return d.toUTCString().match(/[A-Z]+$/);
+            // Return quoted strings with the surrounding quotes removed
+            default: return $0.substr(1, $0.length - 2);
+        }
+    });
+};
 
 

@@ -51,6 +51,16 @@
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       
+      <bean name="materialInOutService" class="com.douniu.imshh.material.service.impl.MaterialInOutService">
+          <property name="dao" ref="materialInOutDao"></property>
+          <property name="mdao" ref="materialDao"></property>
+      </bean>
+      
+      <bean id="materialInOutDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.material.dao.IMaterialInOutDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
       <bean name="financeSubjectService" class="com.douniu.imshh.finance.service.impl.SubjectService">
           <property name="dao" ref="financeSubjectDao"></property>
       </bean>

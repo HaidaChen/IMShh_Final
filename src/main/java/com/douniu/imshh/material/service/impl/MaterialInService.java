@@ -7,7 +7,7 @@ import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.dao.IMaterialInDao;
 import com.douniu.imshh.material.domain.BillDetail;
 import com.douniu.imshh.material.domain.MaterialFilter;
-import com.douniu.imshh.material.domain.MaterialIn;
+import com.douniu.imshh.material.domain.MaterialInBill;
 import com.douniu.imshh.material.service.IMaterialInService;
 import com.douniu.imshh.material.service.IMaterialService;
 import com.douniu.imshh.utils.LikeFlagUtil;
@@ -27,12 +27,12 @@ public class MaterialInService implements IMaterialInService{
 	}
 
 	@Override
-	public MaterialIn getById(String id) {
+	public MaterialInBill getById(String id) {
 		return dao.getById(id);
 	}
 
 	@Override
-	public void newMaterialIn(MaterialIn materialIn) {
+	public void newMaterialIn(MaterialInBill materialIn) {
 		IDInjector.injector(materialIn);
 		List<BillDetail> details = materialIn.getDetails();
 		for (BillDetail detail : details){
@@ -45,8 +45,8 @@ public class MaterialInService implements IMaterialInService{
 	}
 
 	@Override
-	public void updateMaterialIn(MaterialIn materialIn) {
-		MaterialIn o_materialIn = dao.getById(materialIn.getId());
+	public void updateMaterialIn(MaterialInBill materialIn) {
+		MaterialInBill o_materialIn = dao.getById(materialIn.getId());
 		List<BillDetail> o_details = o_materialIn.getDetails();
 		for (BillDetail detail : o_details){
 			mtlService.addStorage(detail.getMaterial().getId(), 0-detail.getQuantity());
@@ -65,7 +65,7 @@ public class MaterialInService implements IMaterialInService{
 
 	@Override
 	public void deleteMaterialIn(String id) {
-		MaterialIn materialIn = dao.getById(id);
+		MaterialInBill materialIn = dao.getById(id);
 		dao.delete(id);
 		dao.deleteDetailsByBillId(id);
 		List<BillDetail> details = materialIn.getDetails();

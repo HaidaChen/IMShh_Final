@@ -9,7 +9,7 @@
         <result property="preparedBy" column="preparedBy"/>
         <result property="auditor" column="auditor"/>
         <result property="custodian" column="custodian"/>
-        <result property="outReason" column="outReason"/>
+        <result property="billReason" column="billReason"/>
         <result property="totalQuantity" column="totalQuantity"/>
         <result property="totalAmount" column="totalAmount"/>
         <result property="billStatus" column="billStatus"/>
@@ -18,7 +18,7 @@
     </resultMap>
         
     <resultMap type="MaterialOutBill" id="mobwdmap" extends="mobmap">
-    	<collection property="details" ofType="BillDetail">
+    	<collection property="details" ofType="MaterialBillDetail">
             <id property="id" column="dtl_id" />
             <result property="billId" column="dtl_billId"/>
             <result property="specification" column="dtl_specification"/>
@@ -103,11 +103,11 @@
     </select>
     
     <insert id="insert" parameterType="MaterialOutBill">
-        insert into tbl_bill_materialout(id, outDate, number, totalQuantity, totalAmount, preparedBy, auditor, custodian, outReason, modifydate, remark, status)  
-          values(#{id}, #{outDate}, #{number}, #{totalQuantity}, #{totalAmount}, #{preparedBy}, #{auditor}, #{custodian}, #{outReason}, sysdate(), #{remark}, #{status})
+        insert into tbl_bill_materialout(id, outDate, number, totalQuantity, totalAmount, preparedBy, auditor, custodian, billReason, modifydate, remark, status)  
+          values(#{id}, #{outDate}, #{number}, #{totalQuantity}, #{totalAmount}, #{preparedBy}, #{auditor}, #{custodian}, #{billReason}, sysdate(), #{remark}, #{status})
     </insert>
     
-    <update id="update" parameterType="MaterialIn">
+    <update id="update" parameterType="MaterialInBill">
     	update tbl_bill_materialout set
     	  outDate = #{outDate},
     	  number = #{number},
@@ -116,7 +116,7 @@
     	  preparedBy = #{preparedBy},
     	  auditor = #{auditor},
     	  custodian = #{custodian},
-    	  outReason = #{outReason},
+    	  billReason = #{billReason},
     	  billStatus = #{billStatus},
     	  remark = #{remark},
     	  modifydate = sysdate()

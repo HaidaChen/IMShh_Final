@@ -36,7 +36,7 @@ CREATE TABLE TBL_MATERIAL(
 CREATE TABLE TBL_BILL_MATERIALIN(
 	id varchar(20) not null,
 	supplierId varchar(20) not null,
-	inDate date not null,
+	billDate date not null,
 	number varchar(20),
 	totalQuantity numeric(12, 4),
 	totalAmount numeric(12, 4),
@@ -53,12 +53,12 @@ CREATE TABLE TBL_BILL_MATERIALIN(
 
 CREATE TABLE TBL_BILL_MATERIALOUT(
 	id varchar(20) not null,
-	outDate date not null,
+	billDate date not null,
 	number varchar(20),
 	preparedBy varchar(20),
 	auditor varchar(20),
 	custodian varchar(20),
-	outReason char(2),
+	billReason char(2),
 	totalQuantity numeric(12, 4),
 	totalAmount numeric(12, 4),
 	billStatus char(1) default '0',
@@ -89,6 +89,23 @@ CREATE TABLE TBL_BILL_DTL_MATERIALOUT(
 	price numeric(12, 4),
 	amount numeric(12, 4),
 	remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_MTL_INOUT(
+	id varchar(20) not null,
+	billId varchar(20) not null,
+	materialId varchar(20) not null,
+	billDate date not null,
+	billPeriod varchar(6) not null,
+	inQuantity numeric(12, 4),
+	inAmount numeric(12, 4),
+	outQuantity numeric(12, 4),
+	outAmount numeric(12, 4),
+	balanceQuantity numeric(12, 4),
+	balanceAmount numeric(12, 4),
+	summary varchar(1024),
     status char(1) default '1',
     modifyDate datetime
 );
