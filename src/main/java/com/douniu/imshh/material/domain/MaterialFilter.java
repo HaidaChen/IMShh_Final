@@ -18,6 +18,8 @@ public class MaterialFilter extends BaseQO{
 	private String remark;
 	private String supplier;
 	private int billStatus = -1;
+	private int profitLoss;
+	private int ignore0storage;
 	
 	public String getSupplier() {
 		return supplier;
@@ -104,13 +106,26 @@ public class MaterialFilter extends BaseQO{
 	public void setBillStatus(int billStatus) {
 		this.billStatus = billStatus;
 	}
+	
+	public int getProfitLoss() {
+		return profitLoss;
+	}
+	public void setProfitLoss(int profitLoss) {
+		this.profitLoss = profitLoss;
+	}
+	public int getIgnore0storage() {
+		return ignore0storage;
+	}
+	public void setIgnore0storage(int ignore0storage) {
+		this.ignore0storage = ignore0storage;
+	}
 	@Override
 	public String toString() {
 		return "MaterialFilter [materialId=" + materialId + ", name=" + name + ", number=" + number + ", specification="
 				+ specification + ", category=" + category + ", ctgCode=" + ctgCode + ", billPeriod=" + billPeriod
 				+ ", startPeriod=" + startPeriod + ", endPeriod=" + endPeriod + ", lowerStorage=" + lowerStorage
 				+ ", upperStorage=" + upperStorage + ", remark=" + remark + ", supplier=" + supplier + ", billStatus="
-				+ billStatus + "]";
+				+ billStatus + ", profitLoss=" + profitLoss + ", ignore0storage=" + ignore0storage + "]";
 	}
 	
 }

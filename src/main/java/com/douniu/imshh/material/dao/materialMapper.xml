@@ -50,7 +50,7 @@
           <if test="remark != null and remark !=''">
           and m.remark like #{remark} 
           </if>
-          order by c.code, m.name desc
+          order by c.code, m.name
           limit #{pageOffset},#{pageSize}
     </select> 
     <select id="query" parameterType="MaterialFilter" resultMap="mtlmap">
@@ -86,7 +86,7 @@
           <if test="remark != null and remark !=''">
           and m.remark like #{remark} 
           </if>
-          order by c.code, m.name desc
+          order by c.code, m.name
     </select>
     <select id="exactQuery" parameterType="MaterialFilter" resultMap="mtlmap">
         select m.id as m_id, 

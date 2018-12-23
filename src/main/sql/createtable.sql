@@ -93,6 +93,35 @@ CREATE TABLE TBL_BILL_DTL_MATERIALOUT(
     modifyDate datetime
 );
 
+CREATE TABLE TBL_MATERIAL_INVENTORY(
+    id varchar(20) not null,
+    inventoryDate date not null,
+    pricingRules char(1),
+    total numeric(12,4),
+    
+    remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_MATERIAL_INVENTORYDETAIL(
+    id varchar(20) not null,
+    inventoryId varchar(20) not null,
+    materialId varchar(20) not null,
+    expectAmount numeric(12,4),
+    actualAmount numeric(12,4),
+    price numeric(12,4),
+    
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_TMP_MATERIAL_INVENTORYDETAIL(
+    materialId varchar(20) not null,
+    actualQuantity numeric(12,4) default 0.0000,
+    price numeric(12,4)
+);
+
 CREATE TABLE TBL_MTL_INOUT(
 	id varchar(20) not null,
 	billId varchar(20) not null,
@@ -227,28 +256,7 @@ CREATE TABLE TBL_MATERIAL_OUT(
     modifyDate datetime
 );
 
-CREATE TABLE TBL_MATERIAL_INVENTORY(
-    id varchar(20) not null,
-    inventoryDate date not null,
-    pricingRules char(1),
-    total numeric(10,2),
-    
-    remark varchar(1024),
-    status char(1) default '1',
-    modifyDate datetime
-);
 
-CREATE TABLE TBL_MATERIAL_INVENTORYDETAIL(
-    id varchar(20) not null,
-    inventoryId varchar(20) not null,
-    materialId varchar(20) not null,
-    expectAmount numeric(10,2) not null,
-    actualAmount numeric(10,2),
-    
-    remark varchar(1024),
-    status char(1) default '1',
-    modifyDate datetime
-);
 
 CREATE TABLE TBL_MATERIAL_RETREAT(
     id varchar(20) not null,

@@ -2,6 +2,7 @@ package com.douniu.imshh.material.domain;
 
 public class InventoryDetail {
 	private String id;
+	private String inventoryId;
 	private Material material;
 	/*系统库存*/
 	private float expectQuantity;
@@ -22,6 +23,14 @@ public class InventoryDetail {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getInventoryId() {
+		return inventoryId;
+	}
+
+	public void setInventoryId(String inventoryId) {
+		this.inventoryId = inventoryId;
 	}
 
 	public Material getMaterial() {
@@ -82,9 +91,24 @@ public class InventoryDetail {
 
 	@Override
 	public String toString() {
-		return "InventoryDetail [id=" + id + ", material=" + material + ", expectQuantity=" + expectQuantity
-				+ ", actualQuantity=" + actualQuantity + ", profitLoss=" + profitLoss + ", price=" + price + ", amount="
-				+ amount + ", status=" + status + "]";
+		return "InventoryDetail [id=" + id + ", inventoryId=" + inventoryId + ", material=" + material
+				+ ", expectQuantity=" + expectQuantity + ", actualQuantity=" + actualQuantity + ", profitLoss="
+				+ profitLoss + ", price=" + price + ", amount=" + amount + ", status=" + status + "]";
 	}
-	
+
+	@Override
+	public boolean equals(Object target){
+		if (target instanceof InventoryDetail){
+			InventoryDetail _targe = (InventoryDetail)target;
+			return this.material.getId().equals(_targe.getMaterial().getId());
+		}
+		
+		if (target instanceof InventoryMap){
+			InventoryMap _target = (InventoryMap)target;
+			return this.material.getId().equals(_target.getMtlId());
+		}
+			
+		
+		return false;
+	}
 }

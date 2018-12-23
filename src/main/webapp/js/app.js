@@ -1181,6 +1181,323 @@ var App = function () {
 		}
 	}
 	
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化原材料盘点模块
+	/*-----------------------------------------------------------------------------------*/
+	var initMaterialInventory = function(){
+		var loadMtlCtg4Select = function(){
+			$.getJSON(
+				getProjectName() + "/mtlCtgy/query.do",
+				function(result){
+					$.each(result, function(index, ctg){
+						var indent = '';
+						var num = ctg.code.length - 2
+						for (var i = 0; i < num; i++){indent+= '&nbsp;&nbsp;';}
+						$("#filter_mtlCtg").append("<option value='"+ctg.code+"'>"+indent+ctg.code+" "+ctg.name+"</option>");							
+					});
+					$("#filter_mtlCtg").select2({
+						placeholder: "选择材料分类",
+						allowClear: true
+					});
+				}
+			);
+		} 
+		
+		var loadSystemStorage = function(){
+			$('#tbl_inventory').bootstrapTable({
+				url: getProjectName() + "/mtlinv/loadSystemInventory.do",
+				method: "get",
+				clickToSelect: true,
+				pagination: true,
+				sidePagination : "server",
+				pageSize : 50,
+				pageList : [50, 100, 200],
+				columns: [{
+		            field: 'material.name',
+		            title: '材料名称'
+		        }, {
+		        	field: 'material.specification',
+		            title: '材料规格'
+				}, {
+		        	field: 'expectQuantity',
+		            title: '系统库存'
+				}, {
+		        	field: 'actualQuantity',
+		            title: '盘点库存',
+		            formatter: function(value, row, index){
+		            	if (value == 0)
+		            		return '<span name="cashStorage" mtlId="'+row.material.id+'"></span>';
+		            	else
+		            	    return '<span name="cashStorage" mtlId="'+row.material.id+'">'+value+'</span>';
+		        	},
+		        	width: 150
+				}, {
+		        	field: '',
+		            title: '盘盈盘亏',
+		            formatter: function(value, row, index){
+		            	var result = row.actualQuantity - row.expectQuantity;
+		            	if (row.actualQuantity == 0 || result == 0)
+		            		return '';
+		            	
+		            	if (result > 0){
+		            		return '<span style="color: green">'+ result +'</span>';
+		            	}
+		            	
+		            	if (result < 0){
+		            		return '<span style="color: red">'+ result +'</span>';
+		            	}
+		        	}
+				}],
+		        queryParams: function(params){
+		        	return {
+		        		pageSize: params.limit,
+		                pageOffset: params.offset,  
+		                name: $('#filter_mtlName').val(),
+		                ctgCode: $('#filter_mtlCtg').val(),
+		                ignore0storage: $('#filter_ignore0storage:checked').val(),
+		                profitLoss: $('#filter_profitLoss:checked').val() 
+		            }
+		        }
+			});
+		}
+		
+		var doQuery = function(){
+			$('#btn_search').click(function(){
+				$("#tbl_inventory").bootstrapTable("refresh", {url: getProjectName() + "/mtlinv/loadSystemInventory.do"});
+			});
+		}
+		
+		var cashActualQuantity = function(){
+			$('#tbl_inventory').on('click', 'td', function(event){
+				var $td = $(this);
+				$td.css('padding', '0');
+				var width = $td.width();
+				var height = $td.height();
+				
+				var eActualQuantity = $td.children('span[name=\'cashStorage\']');
+				if(eActualQuantity.length == 1){
+					
+					
+					var mtlId = eActualQuantity.attr('mtlId');
+					var quantity = eActualQuantity.text();
+					var input =$('<input type="text" value="'+quantity+'" style="display: inline-block; border: 1px solid gray">');
+					input.width(width -2);
+					input.height(height -2);
+					eActualQuantity.text('');
+					eActualQuantity.append(input);
+					input.focus();
+					input.blur(function(){
+						var n_quantity = $(this).val();
+						if ($.trim(n_quantity) == '')
+							n_quantity = 0;
+						if (quantity != n_quantity){
+							$.ajax({
+								url:getProjectName() + "/mtlinv/saveInventoryItem.do",
+								type: 'post',
+								data: {materialId: mtlId, quantity: n_quantity},
+								success: function(){
+									input.remove();
+									eActualQuantity.text(n_quantity);
+									var eExpectQuantity = $td.prev();
+									var eProfitLoss = $td.next();
+									var profitLoss = n_quantity - eExpectQuantity.text();
+									if (profitLoss > 0){
+										eProfitLoss.html('<span style="color: green">'+ profitLoss +'</span>');
+									}
+									
+									if (profitLoss < 0){
+										eProfitLoss.html('<span style="color: red">'+ profitLoss +'</span>');
+									}
+								}
+							});
+						}else{
+							input.remove();
+							eActualQuantity.text(quantity);
+						}
+					});
+				}
+			});
+		}
+		
+		var doSave = function(){
+			$('#btn_save').click(function(){
+				Ewin.confirm({message: "盘点信息保存后将不可以修改，确定现在保存盘点信息吗？"}).on(function(e){
+					if (!e){
+						return;
+					}
+					$.ajax({
+						url: getProjectName() + "/mtlinv/inventory.do",
+						success: function(){
+							Ewin.toast('原材料盘点数据成功');
+							$("#tbl_inventory").bootstrapTable("refresh", {url: getProjectName() + "/mtlinv/loadSystemInventory.do"});
+						}
+					});
+				});
+			});
+		}
+		
+		var doExport = function(){
+			$('#btn_export').click(function(){
+				
+			});
+		}
+		
+		var doImport = function(){
+			$('#btn_import').click(function(){
+				
+			});
+		}
+		
+		var doReset = function(){
+			$('#btn_reset').click(function(){
+				Ewin.confirm({message: "确定删除所有盘点库存吗？"}).on(function(e){
+					if (!e){
+						return;
+					}
+					$.ajax({
+						url: getProjectName() + "/mtlinv/reset.do",
+						success: function(){
+							$("#tbl_inventory").bootstrapTable("refresh", {url: getProjectName() + "/mtlinv/loadSystemInventory.do"});
+						}
+					});
+				});
+			});
+		}
+		
+		return {
+			init: function(){
+				loadMtlCtg4Select();
+				loadSystemStorage();
+				doQuery();
+				cashActualQuantity();
+				doSave();
+				doExport();
+				doImport();
+				doReset();
+			}
+		}
+	}
+	
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化历史盘点记录模块
+	/*-----------------------------------------------------------------------------------*/
+	var initHisMaterialInventory = function(){
+		
+		var th = [];
+		
+		var loadMtlCtg4Select = function(){
+			$.getJSON(
+				getProjectName() + "/mtlCtgy/query.do",
+				function(result){
+					$.each(result, function(index, ctg){
+						var indent = '';
+						var num = ctg.code.length - 2
+						for (var i = 0; i < num; i++){indent+= '&nbsp;&nbsp;';}
+						$("#filter_mtlCtg").append("<option value='"+ctg.code+"'>"+indent+ctg.code+" "+ctg.name+"</option>");							
+					});
+					$("#filter_mtlCtg").select2({
+						placeholder: "选择材料分类",
+						allowClear: true
+					});
+				}
+			);
+		} 
+		
+		var initPeriod = function(){
+			var date = new Date();
+			var year = date.getFullYear();
+			$('#filter_speriod').val(year + '-' + '01');
+			$('#filter_eperiod').val(year + '-' + '12');
+		}
+		
+		var loadInventoryTable = function(){			
+			$.ajax({
+				url: getProjectName() + "/mtlinv/getHistroyInventory.do",
+				data: {startPeriod: $('#filter_speriod').val(), endPeriod: $('#filter_eperiod').val()},
+				success: function(result){
+					th = [];
+					th.push({
+						field: 'mtlName',
+						title: '材料名称'
+					});
+					th.push({
+						field: 'mtlSpec',
+						title: '材料规格'
+					});
+					$.each(result, function(i, inv){
+						th.push({
+							field: 'storageMap.'+inv.id,
+							title: inv.inventoryDate,
+		                    valign:"middle",
+		                    align:"center"
+						});
+					});
+					
+					
+					$("#tbl_inventory").bootstrapTable({
+						url: getProjectName() + "/mtlinv/getHistroyInventoryDetail.do",
+						method: "get",
+						pagination: true,
+						sidePagination : "server",
+						pageSize : 50,
+						pageList : [50, 100, 200],
+						columns: th,
+				        queryParams: function(params){
+				        	return {
+				        		pageSize: params.limit,
+				                pageOffset: params.offset,  
+				        		startPeriod: $('#filter_speriod').val(),
+				        		endPeriod: $('#filter_eperiod').val(),
+				        		name: $('#filter_mtlName').val(),
+				        		ctgCode: $('#filter_mtlCtg').val()
+				            }
+				        }
+					});
+				}
+			});			
+		}
+		
+		var doQuery = function(){
+			$('#btn_search').click(function(){
+				$.ajax({
+					url: getProjectName() + "/mtlinv/getHistroyInventory.do",
+					data: {startPeriod: $('#filter_speriod').val(), endPeriod: $('#filter_eperiod').val()},
+					success: function(result){
+						th = [];
+						th.push({
+							field: 'mtlName',
+							title: '材料名称'
+						});
+						th.push({
+							field: 'mtlSpec',
+							title: '材料规格'
+						});
+						$.each(result, function(i, inv){
+							th.push({
+								field: 'storageMap.'+inv.id,
+								title: inv.inventoryDate,
+			                    valign:"middle",
+			                    align:"center"
+							});
+						});
+						$("#tbl_inventory").bootstrapTable("refresh", {url: getProjectName() + "/mtlinv/getHistroyInventoryDetail.do"});
+					}
+				});
+			});
+		}
+		
+		return {
+			init: function(){
+				loadMtlCtg4Select();
+				initPeriod();
+				loadInventoryTable();
+				doQuery();
+			}
+		}
+	}
+	
 	/*-----------------------------------------------------------------------------------*/
 	/*	初始化会计科目模块
 	/*-----------------------------------------------------------------------------------*/	
@@ -1911,6 +2228,14 @@ var App = function () {
         
         globalMaterialInOut: function(){
         	initGlobalMaterialInOut().init();
+        },
+        
+        materialInventory: function(){
+        	initMaterialInventory().init();
+        },
+        
+        hisMaterialInventory: function(){
+        	return initHisMaterialInventory().init();
         },
         
         /****************财务模块****************/

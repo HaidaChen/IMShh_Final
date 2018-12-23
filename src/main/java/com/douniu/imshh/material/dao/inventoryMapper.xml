@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.material.dao.IInventoryDao">
+	<resultMap type="MaterialInventory" id="invtmap">
+        <result property="id" column="id"/>
+        <result property="inventoryDate" column="inventoryDate"/>        
+        <result property="pricingRules" column="mib_number"/>
+        <result property="total" column="total"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    
+    <resultMap type="MaterialInventoryDetail" id="invtdtlmap">
+        <result property="id" column="id"/>
+        <result property="inventoryId" column="inventoryId"/>
+        <result property="inventoryDate" column="inventoryDate"/>        
+        <result property="expectQuantity" column="expectQuantity"/>
+        <result property="actualQuantity" column="actualQuantity"/>
+        <result property="profitLoss" column="profitLoss"/>
+        <result property="price" column="price"/>
+        <result property="amount" column="amount"/>
+        <association property="material" javaType="Material">
+        	<id property="id" column="m_id"/>
+        	<result property="name" column="m_name"/>
+        	<result property="specification" column="m_spec"/>
+        	<result property="unit" column="m_unit"/>
+       	</association>
+    </resultMap>
+        
+    <resultMap type="MaterialInventory" id="invtwdtlmap" extends="invtmap">
+    	<collection property="details" ofType="MaterialInventoryDetail">
+            <id property="id" column="dtl_id" />
+            <result property="expectQuantity" column="expectQuantity"/>
+	        <result property="actualQuantity" column="actualQuantity"/>
+	        <result property="profitLoss" column="profitLoss"/>
+	        <result property="price" column="price"/>
+	        <result property="amount" column="amount"/>
+	        <association property="material" javaType="Material">
+	        	<id property="id" column="m_id"/>
+	        	<result property="name" column="m_name"/>
+	        	<result property="specification" column="m_spec"/>
+        		<result property="unit" column="m_unit"/>
+	       	</association>
+        </collection>
+    </resultMap>
+    
+    <update id="saveInventory">
+    	insert into tbl_material_inventory(id, inventoryDate, remark, modifydate)  
+          values(#{id}, #{inventoryDate}, #{remark}, sysdate())
+    </update>
+    
+    <update id="saveInventoryDetail" parameterType="String">
+    	insert into tbl_material_inventorydetail(inventoryId, materialId, actualQuantity, modifyDate) 
+	    	select tbl.* from (select #{inventoryId}, 
+	    	                      m.id, 
+	    	                      case when i.actualQuantity is null then 0 else i.actualQuantity end as actualQuantity, 
+	    	                      sysdate()
+	    	                 from tbl_material m
+	    	                 left join tbl_tmp_material_inventorydetail i
+	    	                   on m.id = i.materialId) tbl
+    </update>
+    
+    <update id="updateStorage">
+    	update tbl_material m, tbl_tmp_material_inventorydetail t
+    	   set m.storage = t.actualQuantity
+    	 where m.id = t.materialId
+    	   and t.actualQuantity is not null
+    	   and t.actualQuantity != m.storage
+    </update>
+    
+    <update id="markInventory">
+    	update tbl_mtl_inout set inventoryed = '1'
+    </update>
+    
+    <update id="removeCash">
+    	delete from tbl_tmp_material_inventorydetail
+    </update>
+    
+    <select id="existCacheItem" resultType="int">
+    	select count(1) from tbl_tmp_material_inventorydetail where materialId = #{0}
+    </select>
+    
+    <update id="insertCacheItem">
+    	insert into tbl_tmp_material_inventorydetail(materialId, actualQuantity) 
+    	   value(#{0}, #{1})
+    </update>
+    
+    <update id="updateCacheItem">
+    	update tbl_tmp_material_inventorydetail 
+    	   set actualQuantity = #{1} 
+    	 where materialId = #{0}
+    </update>
+    
+    <select id="queryStorageWithCachePageResult" parameterType="MaterialFilter" resultMap="invtdtlmap">
+	     select mtl.id, 
+	            mtl.m_id, 
+	            mtl.m_name, 
+	            mtl.m_spec, 
+	            mtl.m_unit, 
+	            mtl.expectQuantity,
+	            case when cas.actualQuantity is null then 0 else cas.actualQuantity end as actualQuantity
+	       from (select m.id as id,
+		              m.id as m_id,
+		              m.name as m_name,
+		              m.specification as m_spec,
+		              m.unit as m_unit,
+		              mc.code as m_ctgCode,
+		              m.storage as expectQuantity
+			     from tbl_material m, 
+			          tbl_material_category mc
+			    where m.categoryId = mc.id
+			      and m.status = '1') mtl
+		   left join (select materialId, 
+		                     actualQuantity
+						from tbl_tmp_material_inventorydetail) cas
+			 on mtl.m_id = cas.materialId
+		  where 1 = 1
+		<if test="name != null and name !=''">
+          and m_name like #{name} 
+        </if>
+        <if test="ctgCode != null and ctgCode !=''">
+          and m_ctgCode like #{ctgCode} 
+        </if>
+        <if test="profitLoss == 1">
+          and (expectQuantity - actualQuantity) != 0 
+        </if>
+        <if test="ignore0storage == 1">
+          and expectQuantity != 0 
+        </if>
+          order by m_ctgCode, m_name
+          limit #{pageOffset},#{pageSize}			  
+    	<!-- select * from (
+	        select m.id AS id,
+				   m.id AS m_id,
+				   m. NAME AS m_name,
+				   m.specification AS m_spec,
+				   m.unit AS m_unit,
+				   categoryId as m_ctgId,
+				   ctgCode as m_ctgCode,
+				   ctgName as m_ctgName,
+				   case when inv.storage is null then 0 else inv.storage end as expectQuantity,
+				   case when cs.actualQuantity is null then 0 else cs.actualQuantity end as actualQuantity
+			from (
+		        select mtl.id, mtl.name, mtl.specification, mtl.unit , mtl.categoryId, mc.code as ctgCode, mc.name as ctgName
+		          from tbl_material mtl, tbl_material_category mc
+		         where mtl.status = '1'
+		           and mtl.categoryId = mc.id
+		       ) m
+			left join (
+						select materialId, sum(storage) as storage
+						  from (
+								/*查找最近一次的盘点库存*/
+								select materialId, actualQuantity AS storage
+								  from tbl_material_inventorydetail
+								 where inventoryId = (select id 
+								                        from tbl_material_inventory
+										               where inventoryDate = (select max(inventoryDate)
+												                                from tbl_material_inventory where status = '1')
+							    )
+								 union all
+								/*统计从上一次盘存到目前的库存数 */
+								select materialId, (sum(inQuantity) - sum(outQuantity)) as storage
+									from tbl_mtl_inout 
+								 where status = '1'
+									 and inventoryed = '0'
+								 group by materialId
+					   ) stg
+		         group by materialId
+			      ) inv on m.id = inv.materialId
+			left join (
+						select materialId, actualQuantity
+						  from tbl_tmp_material_inventorydetail
+				  ) cs 
+		    on m.id = cs.materialId
+	    ) tbl
+	    where 1 = 1 -->
+	    
+    </select> 
+    
+    <select id="countStorageWithCache" parameterType="MaterialFilter" resultType="int">
+      select count(1) from(
+        select  mtl.m_id, 
+	            mtl.m_name, 
+	            mtl.m_spec, 
+	            mtl.m_unit, 
+	            mtl.expectQuantity,
+	            case when cas.actualQuantity is null then 0 else cas.actualQuantity end as actualQuantity
+	       from (select m.id as id,
+		              m.id as m_id,
+		              m.name as m_name,
+		              m.specification as m_spec,
+		              m.unit as m_unit,
+		              mc.code as m_ctgCode,
+		              m.storage as expectQuantity
+			     from tbl_material m, 
+			          tbl_material_category mc
+			    where m.categoryId = mc.id
+			      and m.status = '1') mtl
+		   left join (select materialId, 
+		                     actualQuantity
+						from tbl_tmp_material_inventorydetail) cas
+			 on mtl.m_id = cas.materialId
+		  where 1 = 1
+		<if test="name != null and name !=''">
+          and m_name like #{name} 
+        </if>
+        <if test="ctgCode != null and ctgCode !=''">
+          and m_ctgCode like #{ctgCode} 
+        </if>
+        <if test="profitLoss == 1">
+          and (expectQuantity - actualQuantity) != 0 
+        </if>
+        <if test="ignore0storage == 1">
+          and expectQuantity != 0 
+        </if>
+      ) tbl
+    </select> 
+    
+    <select id="queryInventory" parameterType="MaterialFilter" resultMap="invtmap">
+       select * from tbl_material_inventory where inventoryDate &gt;= #{startDate} and inventoryDate &lt;= #{endDate}  order by inventoryDate
+    </select>
+    
+    <select id="queryInventoryDetailByPage" parameterType="MaterialFilter" resultMap="invtdtlmap">
+       select idtl.id as id,
+              mtl.id as m_id, 
+              mtl.name as m_name, 
+              mtl.specification as m_spec, 
+              mtl.unit as m_unit, 
+              idtl.id, 
+              idtl.inventoryId, 
+              case when idtl.actualQuantity is null then 0 else idtl.actualQuantity end as actualQuantity
+         from (select m.id, m.name, m.specification, m.unit 
+                from tbl_material m, tbl_material_category mc 
+               where m.categoryId = mc.id
+                 and m.status = '1'
+              <if test="name != null and name !=''">
+	             and m.name like #{name} 
+	          </if>
+	          <if test="ctgCode != null and ctgCode !=''">
+	             and mc.code like #{ctgCode} 
+	          </if>
+	            order by mc.code, m.name
+	               limit #{pageOffset},#{pageSize}
+			) mtl 
+	     left join  tbl_material_inventorydetail idtl
+		   on mtl.id = idtl.materialId
+		where idtl.inventoryId in (
+		                            select id from tbl_material_inventory 
+		                             where 1 = 1
+		                             <if test="startDate != null">
+							           and inventoryDate &gt;= #{startDate}
+							         </if>
+							         <if test="endDate != null">
+							           and inventoryDate &lt;= #{endDate}
+							         </if>
+		                          )	 
+				 
+		<!-- 		 
+				 
+				 
+       select inv.*, 
+               dtl.id as dtl_id, 
+               dtl.actualQuantity,
+               dtl.m_id,
+               dtl.m_name,
+               dtl.m_spec,
+               dtl.m_unit
+          from tbl_material_inventory inv,
+               (select mtl.id as m_id, mtl.name as m_name, mtl.specification as m_spec, mtl.unit as m_unit, idtl.id, idtl.inventoryId, idtl.actualQuantity
+	              from (select m.id, m.name, m.specification, m.unit 
+	                  from tbl_material m, tbl_material_category mc 
+	                 where m.categoryId = mc.id
+	                   and m.status = '1'
+	                <if test="name != null and name !=''">
+			          and m.name like #{name} 
+			        </if>
+			        <if test="ctgCode != null and ctgCode !=''">
+			          and mc.code like #{ctgCode} 
+			        </if>
+	                 limit #{pageOffset},#{pageSize}
+					) mtl,
+					tbl_material_inventorydetail idtl
+					where mtl.id = idtl.materialId
+				 )dtl
+           where inv.id = dtl.inventoryId
+	        <if test="startDate != null">
+	          and inv.inventoryDate &gt;= #{startDate}
+	        </if>
+	        <if test="endDate != null">
+	        and inv.inventoryDate &lt;= #{endDate}
+	        </if> -->
+    </select>
+    
+    <select id="countInventoryDetail" parameterType="MaterialFilter" resultType="int">
+       select count(1) from tbl_material m, tbl_material_category mc
+        where m.status = '1'
+          and m.categoryId = mc.id
+        <if test="name != null and name !=''">
+          and m.name like #{name} 
+        </if>
+        <if test="ctgCode != null and ctgCode !=''">
+          and mc.code like #{ctgCode} 
+        </if>
+    </select>
+    
+    <select id="getById" parameterType="String" resultMap="invtwdtlmap">
+        select inv.*, 
+               dtl.id as dtl_id, 
+               expectQuantity,
+               actualQuantity,
+               price,
+               m.id as m_id,
+               m.name as m_name
+          from tbl_material_inventory inv, 
+               tbl_material_inventorydetail dtl, 
+               tbl_material m             
+         where inv.id = #{id}
+           and inv.id = dtl.inventoryId
+           and dtl.materialId = m.id
+           
+    </select>
+    
+</mapper>
