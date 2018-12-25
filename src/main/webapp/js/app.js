@@ -198,12 +198,49 @@ var App = function () {
 	var initFrameModule = function(){
 		nthTabs = $("#editor-tabs").nthTabs();
         nthTabs.addTab({
-            id:'0101',
+            id:'0501',
             title:'原材料.品类',
             active:true,
             allowClose:false,
             content:'mtl_category.html',
         });
+	}
+	
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化订单合同录入模块
+	/*-----------------------------------------------------------------------------------*/	
+	var initInputOrder = function(){
+		var bill;
+		var initBill = function(){
+			$.ajaxSettings.async = false;
+			$.getJSON("../templater/dght.json", "", function(data){
+        		bill = $('#orderBill').eBill(data);	
+			});
+			$.ajaxSettings.async = true;
+		}
+		
+		var editBill = function(){
+			$('#btn_save').click(function(){
+				if ($("input[name='id']").val() == ''){
+					bill.commit(getProjectName()+'/mtlin/newMaterialIn.do', '原材料入库单新增成功');
+				}else{
+					bill.commit(getProjectName()+'/mtlin/updateMaterialIn.do', '原材料入库单修改成功');
+				}
+        	});
+			
+			$('#btn_reset').click(function(){
+				bill.resetBill();
+			});
+		}
+		
+		return {
+			init: function(){
+				initBill();
+				editBill();
+				return bill;
+			}
+		}
 	}
 	
 	/*-----------------------------------------------------------------------------------*/
@@ -2203,6 +2240,11 @@ var App = function () {
 			handleSignOut();
 			handleSidebarCollapse();
 			return nthTabs;
+        },
+        
+        /****************销售模块****************/
+        inputOrder: function(){
+        	initInputOrder().init();
         },
         
         /****************材料仓库模块****************/

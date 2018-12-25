@@ -1,0 +1,245 @@
+{
+	"reference": [{
+			"name": "customer",
+			"src": "/cust/loadallcust.do"
+		},
+		{
+			"name": "product",
+			"src": "/pdt/loadallpdt.do"
+		},
+		{
+			"name": "trueOrFalse",
+			"data": [{
+				"key": "0",
+				"value": "否"
+			}, {
+				"key": "1",
+				"value": "是"
+			}]
+		}
+	],
+	"title": {"name":"订购合同", 
+	          "siderItems": [
+		          { "name": "indentify",
+					"type": "indentify",
+					"label": "订购编号",
+					"src": "/order/getBillCode.do"
+				  },
+		          {
+		            "name": "orderDate",
+					"type": "date",
+					"label": "订购日期",
+					"formatter": "yyyy-MM-dd",
+					"value": "now"
+		          }
+	          ]},	
+	"top-domains": {
+	    "domains":[{
+	            "style": "float: left; width: 368px",
+	    		"name": "",
+	    		"fields": [
+	    			{
+						"name": "customer.id",
+						"type": "select",
+						"select2": true,
+						"style": "width: 248px;",
+						"placeholder": " ",
+						"label": "采购方",
+						"data-ref": "customer",
+						"option-value": "id",
+						"option-text": "name"
+					},
+					{
+						"name": "customer.contacts",
+						"type": "text",
+						"label": "联系人"
+					},
+					{
+						"name": "customer.phone",
+						"type": "text",
+						"label": "电话"
+					},
+					{
+						"name": "customer.fax",
+						"type": "text",
+						"label": "传真"
+					}
+	    		]
+	    	},
+	    	{
+	    		"name": "",
+	    		"style": "float: right; width: 368px",
+	    		"fields": [
+	    			{
+						"name": "supplier",
+						"type": "text",
+						"label": "供应方"
+					},
+					{
+						"name": "supplierContacts",
+						"type": "text",
+						"label": "联系人"
+					},
+					{
+						"name": "supplierPhone",
+						"type": "text",
+						"label": "电话"
+					},
+					{
+						"name": "supplierFax",
+						"type": "text",
+						"label": "传真"
+					}
+	    		]
+	    	}
+	    ]
+	},
+	"item-table": {
+		"border-type": "",
+		"border-weight": "",
+		"border-color": "",
+		"total": true,
+		"total-label": "合计金额：",
+		"total-column": "amount",
+		"total-name": "totalAmount",
+		"columns": [{
+				"name": "number",
+				"type": "row-no",
+				"label": "编号",
+				"length": "5%"
+			},{
+				"name": "product.id",
+				"type": "modal-ref",
+				"hide": true,
+				"data-ref": "product",
+				"ref-field": "id"
+			},{
+				"name": "product.name",
+				"type": "modal-ref",
+				"ref-tigger": true,
+				"ref-modal-id": "pdt_ref",
+				"ref-modal-url": "fragment/pdt_ref.html",
+				"ref-modal-title": "选择成品",
+				"ref-modal-style": "width: 800px",
+				"label": "品名",
+				"length": "20%",
+				"data-ref": "product",
+				"ref-field": "name"
+			},
+			{
+				"name": "model",
+				"type": "modal-ref",
+				"label": "含量",
+				"length": "10%",
+				"data-ref": "product",
+				"ref-field": "model"
+			},
+			{
+				"name": "quantity",
+				"type": "text",
+				"data-type": "float",
+				"label": "数量",
+				"length": "10%"
+			},
+			{
+				"name": "unit",
+				"type": "modal-ref",
+				"label": "单位",
+				"length": "5%",
+				"data-ref": "product",
+				"ref-field": "unit"
+			},
+			{
+				"name": "price",
+				"type": "text",
+				"data-type": "float",
+				"label": "单价",
+				"length": "10%"
+			},
+			{
+				"name": "amount",
+				"type": "calculation",
+				"data-type": "counter",
+				"label": "金额",
+				"length": "10%",
+				"formula": "[quantity]*[price]"
+			},
+			{
+				"name": "remark",
+				"type": "text",
+				"label": "附注",
+				"length": "30%"
+			}
+		]		
+	},
+	"appointment-domains":{
+		"title": "约定",
+		"clause": [{
+			"number": "一、",
+			"items": [
+				{
+					"name": "deliveryTerm",
+					"type": "date",
+					"label": "交货期限"
+				}]
+			},
+			{
+			"number": "二、",
+			"items": [
+				{
+					"name": "shippingAddress",
+					"type": "text",
+					"label": "交货地址",
+					"style": "width: 256px"
+				}]
+			},
+			{
+			"number": "三、",
+			"items": [
+				{
+					"name": "needInvoice",
+					"type": "select",
+					"label": "是否开票",
+					"data-ref": "trueOrFalse",
+					"option-value": "key",
+					"option-text": "value"
+				},
+				{
+					"name": "invoiceCategory",
+					"type": "text",
+					"label": "发票类别"
+				}]
+			},
+			{
+			"number": "四、",
+			"items": [
+				{
+					"name": "paymentMethod",
+					"type": "text",
+					"label": "支付方式"
+				},
+				{
+					"name": "exchangeRate",
+					"type": "text",
+					"label": "约定汇率"
+				},
+				{
+					"name": "paymentAppointment",
+					"type": "text",
+					"label": "付款约定",
+					"style": "width: 256px"
+				}]
+			},
+			{
+			"number": "五、",
+			"items": [
+				{
+					"name": "otherAppointment",
+					"type": "text",
+					"label": "其他约定",
+					"style": "width: 691px"
+				}]
+			}
+		]
+	}
+}

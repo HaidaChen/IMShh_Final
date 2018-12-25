@@ -1,4 +1,5 @@
 ;(function($){
+	/***********单据头************/
 	var BillTitle = function(ele, opt){
 		this.$element = ele;
 		this.defaults = {};
@@ -6,11 +7,51 @@
 	}
 	
 	BillTitle.prototype = {
-		draw: function(){
-			this.$element.append('<h3>' + this.options.name + '</h3>');
+		draw: function(reference){
+			var root = $('<div class="bill-title">');
+			root.append('<h3>' + this.options.name + '</h3>');
+			if (this.options.siderItems){
+				var siderPanel = $('<div class="title-siderbar">');
+				$.each(this.options.siderItems, function(i, item){
+					var eleHtml = createHtmlForElement(item, reference);
+					siderPanel.append(eleHtml);
+				});
+				root.append(siderPanel);
+			}
+			this.$element.append(root);
 		}
 	}
 	
+	/***********单据顶部域************/
+	var BillTopDomain = function(ele, opt){
+		this.$element = ele;
+		this.defaults = {};
+		this.options = $.extend({}, this.defaults, opt);
+	}
+	
+	BillTopDomain.prototype = {
+		draw: function(reference){
+			var root = $('<div class="top-domain">');
+			
+			$.each(this.options.domains, function(i, item){
+				var style = this.style;
+				var panel = $('<div class="top-domain domain" style="'+style+'">');
+				var domianTitle = $('<div class="domain-title">'+item.name+'</div>');
+				panel.append(domianTitle);
+				$.each(item.fields, function(j, field){
+					var eleHtml = createHtmlForElement(field, reference);
+					panel.append(eleHtml);
+				})
+				
+				root.append(panel);
+				
+			});
+			
+			this.$element.append(root);
+		}
+	}
+	
+	/***********单据顶部输入项************/
 	var BillTopColumns = function(ele, columns){
 		this.$element = ele;
 		this.columns = columns;
@@ -96,6 +137,7 @@
 		}
 	}
 	
+	/***********单据底部输入项************/
 	var BillBottomnColumns = function(ele, columns){
 		this.$element = ele;
 		this.columns = columns;
@@ -126,6 +168,7 @@
         return true
     }
 	
+	/***********单据表格域************/
 	BillItemTable.prototype = {
 		draw: function(){
 			
@@ -513,14 +556,49 @@
 		}
 	}
 	
+	/***********单据约定域************/
+	var BillAppointmentDomain = function(ele, opt){
+		this.$element = ele;
+		this.defaults = {};
+		this.options = $.extend({}, this.defaults, opt);
+	}
+	
+	BillAppointmentDomain.prototype = {
+		draw: function(reference){
+			var root = $('<div class="appointment-domain">');
+			var title = $('<div class="appointment-title">'+this.options.title+'</div>');
+			root.append(title);
+			
+			$.each(this.options.clause, function(i, clause){
+				var panelClause = $('<div class="clause">');
+				var number = $('<span>'+clause.number+'</span>');
+				panelClause.append(number);
+				$.each(clause.items, function(j, item){
+					var eleHtml = createHtmlForElement(item, reference);
+					panelClause.append(eleHtml);
+				});
+				root.append(panelClause);
+			});
+			
+			this.$element.append(root);
+		}
+	}
+	
+
 	var Ebill = function(ele, opt, reference){
 		this.$element = ele;
 		this.title = new BillTitle(this.$element, opt.title);
 		this.form = $('<form id="bill_form"><input type="hidden" name="id"></form>');
 		
-		this.t_columns = new BillTopColumns(this.form, opt['top-columns']);
-		this.b_columns = new BillBottomnColumns(this.form, opt['bottom-columns']);
+		if (opt['top-columns'])
+			this.t_columns = new BillTopColumns(this.form, opt['top-columns']);
+		if (opt['top-domains'])
+			this.t_domains = new BillTopDomain(this.form, opt['top-domains']);
+		if (opt['bottom-columns'])
+			this.b_columns = new BillBottomnColumns(this.form, opt['bottom-columns']);
 		this.item_table = new BillItemTable(this.form, opt['item-table']);
+		if (opt['appointment-domains'])
+			this.appointment_domains = new BillAppointmentDomain(this.form, opt['appointment-domains']);
 		
 		this.defaults = {
 		   width : '100%',
@@ -530,13 +608,20 @@
 		
 	}
 	
+	
 	Ebill.prototype = {
 		draw: function(){
 			
 			this.title.draw();
-			this.t_columns.draw(this.reference);
+			if (this.t_columns)
+				this.t_columns.draw(this.reference);
+			if (this.t_domains)
+				this.t_domains.draw(this.reference);
 			this.item_table.draw();
-			this.b_columns.draw(this.reference);
+			if (this.b_columns)
+				this.b_columns.draw(this.reference);
+			if (this.appointment_domains)
+				this.appointment_domains.draw(this.reference);
 			this.$element.append(this.form);
 			this.$element.find("select[select2]").select2({
 				placeholder: '',

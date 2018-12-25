@@ -11,9 +11,28 @@
 	margin: 0;
 }
 
+.e-bill .title-siderbar{
+	width: 238px;
+	position: absolute;
+	right: 15px;
+	top: 15px;
+}
+
 .e-bill .top-columns, .bottom-columns{
 	height: 20px;
 	margin: 5px 18px;
+}
+.e-bill .top-domain{
+	margin: 25px 18px;
+	vertical-align: top;
+}
+.e-bill .top-domain.domain{
+	display: inline-block;
+	
+	padding: 10px;
+	
+	margin: 0;
+	margin-bottom: 18px;
 }
 
 .e-bill .item-table{
@@ -33,6 +52,56 @@
 }
 .e-bill .top-columns .bill-column label, 
 .e-bill .bottom-columns .bill-column label{
+	margin-right: 10px;
+}
+
+.e-bill .top-domain .bill-column label{
+	font-size: 1.2em;
+	margin-right: 10px;
+	display: inline-block;
+	width: 80px;
+	height: 25px;
+} 
+
+.e-bill .appointment-domain .bill-column label{
+	margin-right: 10px;
+	display: inline-block;
+	width: 60px;
+	height: 25px;
+}
+
+
+.e-bill .top-domain .bill-column select,
+.e-bill .top-domain .bill-column input{
+	font-size: 1.2em;
+	margin-right: 10px;
+	display: inline-block;
+	width: 248px;
+	height: 30px;
+}
+
+.e-bill .appointment-domain .bill-column select,
+.e-bill .appointment-domain .bill-column input{
+	margin-right: 10px;
+	display: inline-block;
+	width: 128px;
+	height: 28px;
+	border: none;
+	border-bottom: 1px solid #666666;
+}
+.e-bill .appointment-domain{
+	border: 1px solid #666666;
+	border-top: none;
+	margin: 0 18px;
+	margin-top: -5px;
+	padding: 10px;
+}
+
+.e-bill .appointment-domain .clause{
+	margin-top: 10px 0;
+}
+.e-bill .appointment-domain .clause .bill-column{
+	display: inline-block;
 	margin-right: 10px;
 }
 
