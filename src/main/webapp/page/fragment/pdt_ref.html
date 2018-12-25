@@ -1,0 +1,87 @@
+<meta charset="UTF-8">
+
+    <div class="panel-head" style="margin-top: -10px">
+        <div class="table-search"  >
+            
+            <input id="filter_code" class="form-control" type="text" placeholder="成品货号" style=""/>
+            <button id="btn_search" class="btn btn-default btn-sm">查询</button>
+		</div>
+       	
+   </div>
+   	
+	<table id="tbl_product" class="table table-condensed">
+	</table>			
+
+<div class="clearfix">
+  <input type="button" id="btn_close" value="关闭" class="btn btn-default btn-sm pull-right m-l-5" data-dismiss="modal">
+  <input type="button" id="btn_select_close" value="选择关闭" class="btn btn-default btn-sm pull-right m-l-5" data-dismiss="modal">
+  <input type="button" id="btn_select" value="选择" class="btn btn-success btn-sm pull-right">
+  
+</div>
+
+<script>
+$(function(){
+	$("#tbl_product").bootstrapTable({
+		url: getProjectName() + "/pdt/loadpdt.do",
+		method: "get",
+		pagination: true,
+		sidePagination: "server", 
+		clickToSelect: true,
+		columns: [{
+            checkbox: true
+        }, {
+            field: 'code',
+            title: '货号',
+            width: '20%'
+        }, {
+            field: 'name',
+            title: '品名',
+            width: '20%'
+        }, {
+            field: 'model',
+            title: '含量',
+            width: '20%'
+        }, {
+            field: 'remark',
+            title: '备注',
+            width: '30%'
+        }],
+        queryParams: function(params){
+        	return {
+                pageSize: params.limit,
+                pageOffset: params.offset,                  
+                condition: $("#filter_code").val()
+            }
+        }
+	});
+	
+	$("#btn_search").click(function(){
+		$("#tbl_product").bootstrapTable("refresh", {url: getProjectName() + "/pdt/getPageResult.do", cache: false});	
+	});
+	
+	$("#btn_select_close,#btn_select").click(function(){
+		var selections = $("#tbl_product").bootstrapTable('getSelections');
+		if (selections.length == 0){
+			Ewin.alert({message: "请选择需要入库的原材料"}).on(function(e){});
+			return;
+		}
+		
+		var _selections = [];
+		$.each(selections, function(i, data) {
+			_selections.push({'product': data});
+		});
+		$("#tbl_product").bootstrapTable("uncheckAll");
+
+		var bill;
+		if ($('#orderBill').text()){
+			bill = $('#orderBill').eBill();
+		}
+		
+		if (bill){
+			bill.fillBillItem({'tableData': _selections});
+		}
+	});
+});
+
+
+</script>

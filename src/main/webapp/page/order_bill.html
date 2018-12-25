@@ -44,7 +44,7 @@
 		
 		var fillBill = function(id){
 			$.ajax({
-				url: getProjectName()+"/mtlin/getById.do?id="+id,
+				url: getProjectName()+"/order/getById.do?id="+id,
 				type: "get",
 				success: function(result){
 					bill.fillBill(result);

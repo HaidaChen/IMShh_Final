@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.order.dao.IOrderDao">
+	<resultMap type="Order" id="omap">
+        <result property="id" column="id"/>
+        <result property="identify" column="identify"/>        
+        <result property="orderType" column="orderType"/>
+        <result property="orderDate" column="orderDate"/>
+        <result property="amountRMB" column="amountRMB"/>
+        <result property="totalAmount" column="totalAmount"/>
+        <result property="billStatus" column="billStatus"/>
+        <result property="remark" column="mib_remark"/>
+        <result property="status" column="mib_status"/>
+        <association property="customer" javaType="Customer">
+        	<id property="id" column="c_id"/>
+        	<result property="name" column="c_name"/>
+        	<result property="contacts" column="c_contacts"/>
+        	<result property="phone" column="c_phone"/>
+        	<result property="fax" column="c_fax"/>        	
+        </association>
+        <association property="appointment" javaType="OrderAppointment">
+        	<id property="orderId" column="orderId"/>
+        	<result property="deliveryTerm" column="deliveryTerm"/>
+        	<result property="shippingAddress" column="shippingAddress"/>
+        	<result property="needInvoice" column="needInvoice"/>   
+        	<result property="invoiceCategory" column="invoiceCategory"/>   
+        	<result property="paymentMethod" column="paymentMethod"/>   
+        	<result property="exchangeRate" column="exchangeRate"/>   
+        	<result property="paymentAppointment" column="paymentAppointment"/>   
+        	<result property="otherAppointment" column="otherAppointment"/> 
+        </association>
+        <collection property="items" ofType="OrderItem">
+            <id property="id" column="i_id" />
+            <result property="orderId" column="i_orderId"/>
+            <result property="quantity" column="i_quantity"/>
+	        <result property="price" column="i_price"/>
+	        <result property="amount" column="i_amount"/>
+	        <result property="remark" column="i_remark"/>
+	        <result property="status" column="i_status"/>
+	        <association property="product" javaType="Product">
+	        	<id property="id" column="p_id"/>
+	        	<result property="name" column="p_name"/>
+	        	<result property="model" column="p_model"/>
+        	</association>
+        </collection>
+    </resultMap>
+        
+    
+    
+    <select id="getPageResult" parameterType="OrderFilter" resultMap="omap">
+        select o.*, a.*               
+          from tbl_order o, 
+               tbl_order_appointment a,
+               t_customer c             
+         where o.status = '1'
+           and o.id = a.orderId
+           and o.customerId = c.id
+          <if test="identify != null and identify !=''">
+          and identify like #{identify} 
+          </if>
+          <if test="orderType != null and orderType !=0">
+          and orderType = #{orderType} 
+          </if>
+          <if test="billStatus != null and billStatus !=''">
+          and billStatus = #{billStatus} 
+          </if>
+          <if test="customerId != null and customerId !=''">
+          and c.name = #{customerId} 
+          </if>
+          <if test="startDate != null and startDate !=''">
+          and orderDate &gt;= #{startDate} 
+          </if>
+          <if test="endDate != null and endDate !=''">
+          and orderDate &lt;= #{endDate} 
+          </if>
+          order by orderDate desc
+          limit #{pageOffset},#{pageSize}
+    </select> 
+    <select id="count" parameterType="MaterialFilter" resultType="int">
+        select count(1)               
+          from tbl_order o, 
+               tbl_order_appointment a,
+               t_customer c             
+         where o.status = '1'
+           and o.id = a.orderId
+           and o.customerId = c.id
+          <if test="identify != null and identify !=''">
+          and identify like #{identify} 
+          </if>
+          <if test="orderType != null and orderType !=0">
+          and orderType = #{orderType} 
+          </if>
+          <if test="billStatus != null and billStatus !=''">
+          and billStatus = #{billStatus} 
+          </if>
+          <if test="customerId != null and customerId !=''">
+          and c.name = #{customerId} 
+          </if>
+          <if test="startDate != null and startDate !=''">
+          and orderDate &gt;= #{startDate} 
+          </if>
+          <if test="endDate != null and endDate !=''">
+          and orderDate &lt;= #{endDate} 
+          </if>
+    </select> 
+    
+    <select id="getById" parameterType="String" resultMap="omap">
+        select o.*, a.*,
+               c.id as c_id,
+               c.name as c_name,
+               c.contacts as c_contacts,
+               c.phone as c_phone,
+               c.fax as c_fax,
+               i.id as i_id,
+               i.orderId as i_orderId,
+               i.quantity as i_quantity,
+               i.price as i_price,
+               i.amount as i_amount,
+               p.id as p_id,
+               p.name as p_name,
+               p.model as p_model
+          from tbl_order o, 
+               tbl_order_appointment a,
+               tbl_order_item i,
+               t_customer c,
+               t_product p      
+         where o.id = #{id}
+           and o.id = a.orderId
+           and o.customerId = c.id
+           and o.id = i.orderId
+           and i.productId = p.id
+    </select>
+    
+    <insert id="insert" parameterType="Order">
+        insert into tbl_order(id, identify, orderType, orderDate, amountRMB, totalAmount, billStatus, customerId, modifydate, remark, status)  
+          values(#{id}, #{identify}, #{orderType}, #{orderDate}, #{amountRMB}, #{totalAmount}, #{billStatus}, #{customer.id}, sysdate(), #{remark}, #{status})
+    </insert>
+    
+    <update id="update" parameterType="Order">
+    	update tbl_order set
+    	  identify = #{identify},
+    	  orderType = #{orderType},
+    	  orderDate = #{orderDate},
+    	  amountRMB = #{amountRMB}, 
+    	  totalAmount = #{totalAmount},
+    	  billStatus = #{billStatus},
+    	  customerId = #{customer.id},
+    	  remark = #{remark},
+    	  modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+    <update id="delete" parameterType="String">
+        update tbl_order set 
+          status = '0',
+          modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+    <insert id="insertAppointment" parameterType="OrderAppointment">
+        insert into tbl_order_appointment(orderId, deliveryTerm, shippingAddress, needInvoice, invoiceCategory, paymentMethod, exchangeRate, paymentAppointment, otherAppointment)  
+          values(#{orderId}, #{deliveryTerm}, #{shippingAddress}, #{needInvoice}, #{invoiceCategory}, #{paymentMethod}, #{exchangeRate}, #{paymentAppointment}, #{otherAppointment})
+    </insert>
+    
+    <update id="updateAppointment" parameterType="OrderAppointment">
+    	update tbl_order_appointment set
+    	  deliveryTerm = #{deliveryTerm},
+    	  shippingAddress = #{shippingAddress},
+    	  needInvoice = #{needInvoice},
+    	  invoiceCategory = #{invoiceCategory}, 
+    	  paymentMethod = #{paymentMethod},
+    	  exchangeRate = #{exchangeRate},
+    	  paymentAppointment = #{paymentAppointment},
+    	  otherAppointment = #{otherAppointment}
+        where orderId = #{orderId}
+    </update>
+    
+    <update id="deleteAppointment" parameterType="String">
+        delete from tbl_order_appointment set 
+         where orderId = #{orderId}
+    </update>
+    
+    <insert id="insertItems" parameterType="java.util.List">
+        insert into tbl_order_item(id, orderId, productId, quantity, price, amount, modifydate, remark, status) 
+             values
+             <foreach collection="list" item="dtl" index="index" separator=",">
+                 (#{dtl.id} , #{dtl.orderId}, #{dtl.product.id}, #{dtl.quantity}, #{dtl.price}, #{dtl.amount}, sysdate(), #{dtl.remark}, '1')
+             </foreach>
+    </insert>
+    
+    <update id="deleteItemsByOrderId" parameterType="String">
+        update tbl_order_item set 
+          status = '0',
+          modifydate = sysdate()
+        where orderId = #{orderId}
+    </update>
+</mapper>

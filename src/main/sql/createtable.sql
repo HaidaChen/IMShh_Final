@@ -11,6 +11,48 @@ CREATE TABLE TBL_SYS_DICTIONARY(
     vtext varchar(128)
 );
 
+/*-----销售模块-----*/
+CREATE TABLE TBL_ORDER(
+    id varchar(20) not null,
+    identify varchar(20) not null,
+    orderType char(1) not null,
+    orderDate date,
+    amountRMB numeric(12, 4),
+    totalAmount numeric(12, 4),
+    billStatus char(1) default '1',
+    customerId varchar(20),
+    
+    remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_ORDER_ITEM(
+    id varchar(20) not null,
+    orderId varchar(20) not null,
+    productId varchar(20) not null,
+    quantity int,
+    price numeric(12, 4),
+    amount numeric(12, 4),
+
+    remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_ORDER_APPOINTMENT(
+    orderId varchar(20) not null,
+    deliveryTerm date,
+    shippingAddress varchar(256),
+    needInvoice char(1) default '0',
+    invoiceCategory varchar(64),
+    paymentMethod varchar(64),
+    exchangeRate numeric(12, 4),
+    paymentAppointment varchar(512),
+    otherAppointment varchar(1024)
+);
+
+/*-----原材料仓库-----*/
 CREATE TABLE TBL_MATERIAL_CATEGORY(
     id varchar(20) not null,
     code varchar(20) not null,

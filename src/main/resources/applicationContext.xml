@@ -13,7 +13,16 @@
        http://www.springframework.org/schema/context/spring-context-3.0.xsd
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-       
+      
+      <bean name="orderService" class="com.douniu.imshh.order.service.impl.OrderService">
+          <property name="dao" ref="orderDao"></property>
+      </bean>
+      <bean id="orderDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.order.dao.IOrderDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <!-- 原材料仓库 --> 
       <bean name="materialCategoryService" class="com.douniu.imshh.material.service.impl.CategoryService">
           <property name="dao" ref="materialCategoryDao"></property>
       </bean>
@@ -131,16 +140,10 @@
       
       
       
-      <bean name="orderService" class="com.douniu.imshh.finance.order.service.impl.OrderService">
-          <property name="dao" ref="orderDao"></property>
-          <property name="detailService" ref="orderDetailService"></property>
-      </bean>
-      <bean id="orderDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.finance.order.dao.IOrderDao"/>
-          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean>
       
       
+      
+      <!-- 
       <bean name="orderDetailService" class="com.douniu.imshh.finance.order.service.impl.OrderDetailService">
           <property name="dao" ref="orderDetailDao"></property>
       </bean>
@@ -148,7 +151,7 @@
           <property name="mapperInterface" value="com.douniu.imshh.finance.order.dao.IOrderDetailDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
-      
+       -->
       
       
       <bean name="materialStorageService" class="com.douniu.imshh.finance.storage.service.impl.MaterialStorageService">

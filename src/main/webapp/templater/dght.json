@@ -16,11 +16,21 @@
 				"key": "1",
 				"value": "是"
 			}]
+		},
+		{
+			"name": "orderTypeOption",
+			"data": [{
+				"key": "1",
+				"value": "海外订单"
+			}, {
+				"key": "2",
+				"value": "国内订单"
+			}]
 		}
 	],
 	"title": {"name":"订购合同", 
 	          "siderItems": [
-		          { "name": "indentify",
+		          { "name": "identify",
 					"type": "indentify",
 					"label": "订购编号",
 					"src": "/order/getBillCode.do"
@@ -31,6 +41,14 @@
 					"label": "订购日期",
 					"formatter": "yyyy-MM-dd",
 					"value": "now"
+		          },
+		          {
+		            "name": "orderType",
+					"type": "select",
+					"label": "订单类型",
+					"data-ref": "orderTypeOption",
+					"option-value": "key",
+					"option-text": "value"
 		          }
 	          ]},	
 	"top-domains": {
@@ -44,51 +62,10 @@
 						"select2": true,
 						"style": "width: 248px;",
 						"placeholder": " ",
-						"label": "采购方",
+						"label": "订购方",
 						"data-ref": "customer",
 						"option-value": "id",
 						"option-text": "name"
-					},
-					{
-						"name": "customer.contacts",
-						"type": "text",
-						"label": "联系人"
-					},
-					{
-						"name": "customer.phone",
-						"type": "text",
-						"label": "电话"
-					},
-					{
-						"name": "customer.fax",
-						"type": "text",
-						"label": "传真"
-					}
-	    		]
-	    	},
-	    	{
-	    		"name": "",
-	    		"style": "float: right; width: 368px",
-	    		"fields": [
-	    			{
-						"name": "supplier",
-						"type": "text",
-						"label": "供应方"
-					},
-					{
-						"name": "supplierContacts",
-						"type": "text",
-						"label": "联系人"
-					},
-					{
-						"name": "supplierPhone",
-						"type": "text",
-						"label": "电话"
-					},
-					{
-						"name": "supplierFax",
-						"type": "text",
-						"label": "传真"
 					}
 	    		]
 	    	}
@@ -138,16 +115,8 @@
 				"name": "quantity",
 				"type": "text",
 				"data-type": "float",
-				"label": "数量",
+				"label": "数量（件）",
 				"length": "10%"
-			},
-			{
-				"name": "unit",
-				"type": "modal-ref",
-				"label": "单位",
-				"length": "5%",
-				"data-ref": "product",
-				"ref-field": "unit"
 			},
 			{
 				"name": "price",
@@ -168,7 +137,7 @@
 				"name": "remark",
 				"type": "text",
 				"label": "附注",
-				"length": "30%"
+				"length": "35%"
 			}
 		]		
 	},
@@ -178,7 +147,7 @@
 			"number": "一、",
 			"items": [
 				{
-					"name": "deliveryTerm",
+					"name": "appointment.deliveryTerm",
 					"type": "date",
 					"label": "交货期限"
 				}]
@@ -187,7 +156,7 @@
 			"number": "二、",
 			"items": [
 				{
-					"name": "shippingAddress",
+					"name": "appointment.shippingAddress",
 					"type": "text",
 					"label": "交货地址",
 					"style": "width: 256px"
@@ -197,7 +166,7 @@
 			"number": "三、",
 			"items": [
 				{
-					"name": "needInvoice",
+					"name": "appointment.needInvoice",
 					"type": "select",
 					"label": "是否开票",
 					"data-ref": "trueOrFalse",
@@ -205,7 +174,7 @@
 					"option-text": "value"
 				},
 				{
-					"name": "invoiceCategory",
+					"name": "appointment.invoiceCategory",
 					"type": "text",
 					"label": "发票类别"
 				}]
@@ -214,17 +183,17 @@
 			"number": "四、",
 			"items": [
 				{
-					"name": "paymentMethod",
+					"name": "appointment.paymentMethod",
 					"type": "text",
 					"label": "支付方式"
 				},
 				{
-					"name": "exchangeRate",
+					"name": "appointment.exchangeRate",
 					"type": "text",
 					"label": "约定汇率"
 				},
 				{
-					"name": "paymentAppointment",
+					"name": "appointment.paymentAppointment",
 					"type": "text",
 					"label": "付款约定",
 					"style": "width: 256px"
@@ -234,7 +203,7 @@
 			"number": "五、",
 			"items": [
 				{
-					"name": "otherAppointment",
+					"name": "appointment.otherAppointment",
 					"type": "text",
 					"label": "其他约定",
 					"style": "width: 691px"

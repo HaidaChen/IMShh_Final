@@ -5,6 +5,11 @@
         <setting name="logImpl" value="STDOUT_LOGGING" />
     </settings>
 	<typeAliases>
+		<typeAlias alias="OrderFilter" type="com.douniu.imshh.order.domain.OrderFilter"/>
+		<typeAlias alias="Order" type="com.douniu.imshh.order.domain.Order"/>
+		<typeAlias alias="OrderAppointment" type="com.douniu.imshh.order.domain.OrderAppointment"/>
+		<typeAlias alias="OrderItem" type="com.douniu.imshh.order.domain.OrderItem"/>
+	
 		<typeAlias alias="MaterialFilter" type="com.douniu.imshh.material.domain.MaterialFilter"/>
 		<typeAlias alias="MaterialCategory" type="com.douniu.imshh.material.domain.Category"/>
 		<typeAlias alias="Material" type="com.douniu.imshh.material.domain.Material"/>
@@ -24,12 +29,13 @@
         <typeAlias alias="VoucherEntry" type="com.douniu.imshh.finance.domain.VoucherEntry"/>
         <typeAlias alias="FinanceAccount" type="com.douniu.imshh.finance.domain.Account"/>
         
-        <!--  -->
+        <!-- 
         <typeAlias alias="Order" type="com.douniu.imshh.finance.order.domain.Order"/>
         <typeAlias alias="OrderDetail" type="com.douniu.imshh.finance.order.domain.OrderDetail"/>
         <typeAlias alias="MaterialStorage" type="com.douniu.imshh.finance.storage.domain.MaterialStorage"/>
         <typeAlias alias="ProductIn" type="com.douniu.imshh.finance.storage.domain.ProductIn"/>
         <typeAlias alias="ProductOut" type="com.douniu.imshh.finance.storage.domain.ProductOut"/>
+         -->
         <typeAlias alias="Invoice" type="com.douniu.imshh.finance.invoice.domain.Invoice"/>
                 
         <typeAlias alias="Reception" type="com.douniu.imshh.finance.reception.domain.Reception"/>
@@ -56,6 +62,8 @@
     
      
     <mappers>
+    	<mapper resource="/com/douniu/imshh/order/dao/orderMapper.xml"/>
+    	
     	<mapper resource="/com/douniu/imshh/material/dao/categoryMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/material/dao/materialMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/material/dao/materialInMapper.xml"/>
@@ -66,12 +74,13 @@
     	<mapper resource="/com/douniu/imshh/finance/dao/voucherMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/finance/dao/accountMapper.xml"/>
     	
-    	<!--  -->        
+    	<!--     
         <mapper resource="/com/douniu/imshh/finance/order/dao/orderMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/order/dao/orderDetailMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/storage/dao/materialStorageMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/storage/dao/productInMapper.xml"/>
         <mapper resource="/com/douniu/imshh/finance/storage/dao/productOutMapper.xml"/>
+         -->    
         <mapper resource="/com/douniu/imshh/finance/invoice/dao/invoiceMapper.xml"/>
         
         <mapper resource="/com/douniu/imshh/finance/reception/dao/receptionMapper.xml"/>

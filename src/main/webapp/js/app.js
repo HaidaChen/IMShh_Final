@@ -223,9 +223,9 @@ var App = function () {
 		var editBill = function(){
 			$('#btn_save').click(function(){
 				if ($("input[name='id']").val() == ''){
-					bill.commit(getProjectName()+'/mtlin/newMaterialIn.do', '原材料入库单新增成功');
+					bill.commit(getProjectName()+'/order/newOrder.do', '订购合同新增成功');
 				}else{
-					bill.commit(getProjectName()+'/mtlin/updateMaterialIn.do', '原材料入库单修改成功');
+					bill.commit(getProjectName()+'/order/updateOrder.do', '订购合同修改成功');
 				}
         	});
 			
@@ -243,6 +243,148 @@ var App = function () {
 		}
 	}
 	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化订单合同列表模块
+	/*-----------------------------------------------------------------------------------*/	
+	var initOrderList = function(){
+		var initOption = function(){
+			$.getJSON(
+				getProjectName() + "/cust/loadallcust.do",
+				function(result){
+					$.each(result, function(index, cust){
+						$('#filter_customer').append('<option value="'+cust.id+'">'+cust.name+'</option>');
+					});
+					$("#filter_customer").select2({
+						placeholder: "请选择订购客户",
+						allowClear: true
+					});
+				}
+			);
+		}
+		
+		var loadOrderTable = function(){
+			$('#tbl_order').bootstrapTable({
+				url: getProjectName() + "/order/getPageResult.do",
+				method: "get",
+				pagination: true,
+				sidePagination: "server", 
+				clickToSelect: true,
+				columns: [{
+		            field: 'identify',
+		            title: '订单号'
+		        }, {
+		            field: 'orderDate',
+		            title: '订购日期'
+		        }, {
+		            field: 'orderType',
+		            title: '订单类型',
+		            formatter: function(value, row, index){
+		            	if (value == '1')
+		            		return '海外订单';
+		            	if (value == '2')
+		            		return '国内订单';
+		            }
+		        }, {
+		            field: 'customer.name',
+		            title: '订购客户'
+		        }, {
+		            field: 'totalAmount',
+		            title: '合计金额'
+		        }, {
+		        	field: 'amountRMB',
+		        	title: '人民币金额'
+		        }, {
+		        	field: '',
+		        	title: '操作',
+		        	formatter: function(value, row, index){
+		        		return '<a opt="update" rowid="'+row.id+'">修改</a>&nbsp;<a opt="delete" rowid="'+row.id+'">删除</a>';
+		        	}
+		        }],
+		        queryParams: function(params){
+		        	return {
+		                pageSize: params.limit,
+		                pageOffset: params.offset,                    
+		                identify: $("#filter_identify").val(),
+		                orderType: $("#filter_orderType").val(),
+		                customerId: $("#filter_customer").val(),
+		                startDate: $("#filter_startDate").val(),
+		                endDate: $("#filter_endDate").val()
+		            }
+		        }
+			});
+		}
+		
+		var doQuery = function(){
+			$('#btn_search').click(function(){
+				$('#tbl_order').bootstrapTable('refresh', {url: getProjectName() + "/order/getPageResult.do"});
+			});
+		}
+		
+		var doAdd = function(){
+			$('#btn_add').click(function(){
+				var nthTabs = window.parent.getTabs();
+		        nthTabs.addTab({
+		        	id:'0101',
+		            title:'订单录入',
+		            active:true,
+		            allowClose:true,
+		            content:'order_bill.html',
+		        });
+			});
+		}
+		
+		var doEditOrder = function(){
+			$('#tbl_order').on('click', 'a', function(){
+				var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				if (opt == 'update'){
+					var nthTabs = window.parent.getTabs();
+			        nthTabs.addTab({
+			        	id:'0101',
+			            title:'订单录入',
+			            active:true,
+			            allowClose:true,
+			            content:'order_bill.html',
+			        });
+			        
+			        setTimeout(function(){
+			        	window.parent.$('#if0101')[0].contentWindow.fillBill(id);
+			        }, 1000);
+				}
+				if (opt == 'delete'){
+					Ewin.confirm({message: "确定要删除该订购合同吗？"}).on(function(e){
+						if (!e){
+							return;
+						}
+						if (window.parent.$('#if0101')[0]){
+							var billId = window.parent.$('#if0101')[0].contentWindow.getBillId();
+							if (billId == id){
+								Ewin.alert("当前待删除订购合同正在修改中，无法删除");
+								return;
+							}
+						}
+						$.ajax({
+							url: getProjectName() + "/order/deleteOrder.do?id="+id,
+							success: function(){
+								Ewin.toast('订购合同删除成功');
+								$('#tbl_order').bootstrapTable('refresh', {url: getProjectName() + "/order/getPageResult.do"});
+							}
+						});
+					});
+				}
+			});
+		}
+		
+		return {
+			init: function(){
+				initOption();
+				loadOrderTable();
+				doQuery();
+				doAdd();
+				doEditOrder();
+			}
+		}
+	}
 	/*-----------------------------------------------------------------------------------*/
 	/*	初始化原材料品类模块
 	/*-----------------------------------------------------------------------------------*/	
@@ -2244,7 +2386,11 @@ var App = function () {
         
         /****************销售模块****************/
         inputOrder: function(){
-        	initInputOrder().init();
+        	return initInputOrder().init();
+        },
+        
+        orderList: function(){
+        	initOrderList().init();
         },
         
         /****************材料仓库模块****************/

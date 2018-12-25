@@ -41,8 +41,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-@Controller
-@RequestMapping("/order")
 public class OrderAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{

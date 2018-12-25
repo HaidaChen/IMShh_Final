@@ -68,7 +68,8 @@
 	    if (opt.style){
 	    	style = opt.style;
 	    }
-		switch(opt.type){
+		
+		switch(opt.type){			
 			case 'select':
 				if (opt.select2){
 					html += '<select name="'+opt.name+'" style="'+style+'" select2="true">';
@@ -110,7 +111,7 @@
         				_value = result.code;
         			}
         		});
-		        html += '<input type="text" name="'+opt.name+'" value="'+_value+'" readonly="readonly" style="width: 150px; font-weight:bold; color: #FF7F50; border: none">';
+		        html += '<input type="text" indentify=true name="'+opt.name+'" value="'+_value+'" src="'+opt.src+'" readonly="readonly" style="width: 150px; font-weight:bold; color: #FF7F50; border: none">';
 			    break;
 			case 'text':
 				html += '<input type="text" name="'+opt.name+'" style="'+style+'">';
@@ -587,9 +588,9 @@
 
 	var Ebill = function(ele, opt, reference){
 		this.$element = ele;
-		this.title = new BillTitle(this.$element, opt.title);
 		this.form = $('<form id="bill_form"><input type="hidden" name="id"></form>');
 		
+		this.title = new BillTitle(this.form, opt.title);
 		if (opt['top-columns'])
 			this.t_columns = new BillTopColumns(this.form, opt['top-columns']);
 		if (opt['top-domains'])
@@ -611,8 +612,7 @@
 	
 	Ebill.prototype = {
 		draw: function(){
-			
-			this.title.draw();
+			this.title.draw(this.reference);
 			if (this.t_columns)
 				this.t_columns.draw(this.reference);
 			if (this.t_domains)
@@ -632,21 +632,23 @@
 		resetBill: function(){
 			var ele = this.$element;
 			ele.find('[name=\'id\']').val('');
-			var items = this.options['top-columns'].concat(this.options['bottom-columns']);
+			var items = ele.find('input,select');
+			//if (this.options['top-columns']) items.concat(this.options['top-columns']);
+			//if (this.options['bottom-columns'])items.concat(this.options['bottom-columns']);
 			$.each(items, function(i, item){
-				var _ele_item = ele.find('[name=\''+item.name+'\']');
+				var _ele_item = $(item);//ele.find('[name=\''+item.name+'\']');
 				_ele_item.val('');
-				if (item.type == 'select' && item.select2){
+				if (_ele_item.attr('select2')){
 					_ele_item.select2();
 				}
-				if (item.type == 'date'){
+				if (_ele_item.attr('type') == 'date'){
 					var now = new Date();
 		    		var _value = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
 					_ele_item.val(_value);
 				}
-				if (item.type == 'indentify'){
+				if (_ele_item.attr('indentify')){
 					$.ajax({
-	        			url: getProjectName() + item.src,
+	        			url: getProjectName() + _ele_item.attr('src'),
 	        			async: false,
 	        			success: function(result){
 	        				_ele_item.val(result.code);
@@ -739,6 +741,7 @@
 		$.ajaxSettings.async = false; 
 		if (options.reference){
 			$.each(options.reference, function(i, refItem) {
+				
 				if (refItem.data){
 					reference[refItem.name] = refItem.data;
 					return true;
@@ -753,11 +756,10 @@
 						reference[refItem.name] = data;
 					});
 				}
-				
-				
 			});
 		}
 		$.ajaxSettings.async = true; 
+		
 		eBill = new Ebill(this, options, reference);
 		eBill.draw();
 		
