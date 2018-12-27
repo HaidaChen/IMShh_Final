@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.product.dao.IProductInDao">
+	<resultMap type="ProductInBill" id="pibmap">
+        <result property="id" column="id"/>
+        <result property="billDate" column="billDate"/>        
+        <result property="number" column="number"/>
+        <result property="billReason" column="billReason"/>
+        <result property="totalQuantity" column="totalQuantity"/>
+        <result property="preparedBy" column="preparedBy"/>
+        <result property="auditor" column="auditor"/>
+        <result property="custodian" column="custodian"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <association property="order" javaType="Order">
+        	<id property="id" column="orderId" />
+        </association>
+        <collection property="details" ofType="ProductBillDetail">
+            <id property="id" column="dtl_id" />
+            <result property="billId" column="dtl_billId"/>
+            <result property="quantity" column="dtl_quantity"/>
+	        <result property="remark" column="dtl_remark"/>
+	        <association property="product" javaType="Product">
+	        	<id property="id" column="p_id"/>
+	        	<result property="code" column="p_code"/>
+	        	<result property="name" column="p_name"/>
+	        	<result property="model" column="p_model"/>
+        	</association>
+        </collection>
+    </resultMap>
+    
+    <select id="getPageResult" parameterType="ProductFilter" resultMap="pibmap">
+	    select pi.*, pdi.* 
+	      from    
+	        (select * from tbl_bill_productin 
+	          where status = '1'
+	          order by billDate desc
+	          limit #{pageOffset},#{pageSize})pi
+	      left join
+	        (select d.id as dtl_id,
+	                d.billId as dtl_billId, 
+	                d.quantity as dtl_quantity,
+	                d.remark as dtl_remark, 
+	                p.id as p_id,  
+	                p.code as p_code, 
+	                p.name as p_name,
+	                p.model as p_model
+	           from tbl_bill_dtl_productin d, t_product p
+	          where d.status = '1'
+	            and d.productId = p.id)pdi
+	        on pi.id = pdi.dtl_billId
+         where 1 = 1
+         <if test="number != null and number !=''">
+          and pi.number like #{number} 
+          </if>
+          <if test="billReason != null and billReason !=''">
+          and pi.billReason = #{billReason} 
+          </if>
+          <if test="startDate != null and startDate !=''">
+          and pi.billDate &gt;= #{startDate} 
+          </if>
+          <if test="endDate != null and endDate !=''">
+          and pi.billDate &lt;= #{endDate} 
+          </if>
+          <if test="pdtId != null and pdtId !=''">
+          and pdi.p_id = #{pdtId} 
+          </if>
+    </select> 
+    <select id="count" parameterType="MaterialFilter" resultType="int">
+        select count(1) from
+	        (select distinct pi.*
+	          from tbl_bill_productin pi, 
+	               tbl_bill_dtl_productin pdi
+	         where pi.status = '1'
+	           and pdi.status = '1'
+	           and pi.id = pdi.billId 
+	          <if test="number != null and number !=''">
+	          and pi.number like #{number} 
+	          </if>
+	          <if test="billReason != null and billReason !=''">
+	          and pi.billReason = #{billReason} 
+	          </if>
+	          <if test="startDate != null and startDate !=''">
+	          and pi.billDate &gt;= #{startDate} 
+	          </if>
+	          <if test="endDate != null and endDate !=''">
+	          and pi.billDate &lt;= #{endDate} 
+	          </if>
+	          <if test="pdtId != null and pdtId !=''">
+	          and pdi.productId = #{pdtId} 
+	          </if>) tbl
+    </select> 
+    
+    <select id="query" parameterType="ProductFilter" resultMap="pibmap">
+	    select pi.*, pdi.* 
+	      from    
+	        (select * from tbl_bill_productin 
+	          where status = '1'
+	          order by billDate desc)pi
+	      left join
+	        (select d.id as dtl_id,
+	                d.billId as dtl_billId, 
+	                d.quantity as dtl_quantity,
+	                d.remark as dtl_remark, 
+	                p.id as p_id,   
+	                p.code as p_code,
+	                p.name as p_name,
+	                p.model as p_model
+	           from tbl_bill_dtl_productin d, t_product p
+	          where d.status = '1'
+	            and d.productId = p.id)pdi
+	        on pi.id = pdi.dtl_billId
+         where 1 = 1
+         <if test="number != null and number !=''">
+          and pi.number like #{number} 
+          </if>
+          <if test="billReason != null and billReason !=''">
+          and pi.billReason = #{billReason} 
+          </if>
+          <if test="startDate != null and startDate !=''">
+          and pi.billDate &gt;= #{startDate} 
+          </if>
+          <if test="endDate != null and endDate !=''">
+          and pi.billDate &lt;= #{endDate} 
+          </if>
+          <if test="pdtId != null and pdtId !=''">
+          and pdi.p_id = #{pdtId} 
+          </if>
+    </select>
+    
+    <select id="getById" parameterType="String" resultMap="pibmap">
+        select pi.*,
+               d.id as dtl_id,
+               d.billId as dtl_billId, 
+               d.quantity as dtl_quantity,
+               d.remark as dtl_remark, 
+               p.id as p_id,   
+               p.name as p_name,
+               p.model as p_model
+          from tbl_bill_productin pi, 
+               tbl_bill_dtl_productin d, 
+               t_product p         
+         where pi.id = #{id}
+           and d.status = '1'
+           and pi.id = d.billId
+           and d.productId = p.id
+    </select>
+    
+    <insert id="insert" parameterType="ProductInBill">
+        insert into tbl_bill_productin(id, number, billDate, billReason, orderId, totalQuantity, preparedBy, auditor, custodian, modifydate, remark, status)  
+          values(#{id}, #{number}, #{billDate}, #{billReason}, #{order.id}, #{totalQuantity}, #{preparedBy}, #{auditor}, #{custodian}, sysdate(), #{remark}, #{status})
+    </insert>
+    
+    <update id="update" parameterType="ProductInBill">
+    	update tbl_bill_productin set
+    	  number = #{number},
+    	  billDate = #{billDate},
+    	  billReason = #{billReason},
+    	  orderId = #{order.id},
+    	  totalQuantity = #{totalQuantity}, 
+    	  preparedBy = #{preparedBy},
+    	  auditor = #{auditor},
+    	  custodian = #{custodian},
+    	  remark = #{remark},
+    	  modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+    <update id="delete" parameterType="String">
+        update tbl_bill_productin set 
+          status = '0',
+          modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+    <insert id="insertDetails" parameterType="java.util.List">
+        insert into tbl_bill_dtl_productin(id, billId, productId, quantity, modifydate, remark, status) 
+             values
+             <foreach collection="list" item="dtl" index="index" separator=",">
+                 (#{dtl.id} , #{dtl.billId}, #{dtl.product.id}, #{dtl.quantity}, sysdate(), #{dtl.remark}, '1')
+             </foreach>
+    </insert>
+    
+    <update id="deleteDetailsByBillId" parameterType="String">
+        update tbl_bill_dtl_productin set 
+          status = '0',
+          modifydate = sysdate()
+        where billId = #{id}
+    </update>
+    
+</mapper>

@@ -8,6 +8,7 @@
         <result property="name" column="name"/>
         <result property="specification" column="specification"/>
         <result property="model" column="model"/>
+        <result property="storage" column="storage"/>
         <result property="remark" column="remark"/>
         <result property="status" column="status"/>
     </resultMap>
@@ -57,8 +58,8 @@
         </if>  
     </select>   
     <insert id="insert" parameterType="Product">
-        insert into t_product(id, code, name, specification, model, modifydate, remark, status) 
-          values(#{id}, #{code}, #{name}, #{specification}, #{model}, sysdate(), #{remark}, #{status})
+        insert into t_product(id, code, name, specification, model, storage, modifydate, remark, status) 
+          values(#{id}, #{code}, #{name}, #{specification}, #{model}, #{storage}, sysdate(), #{remark}, #{status})
     </insert>
     
     <insert id="batchInsert" parameterType="java.util.List">
@@ -76,10 +77,19 @@
           name = #{name},          
           specification = #{specification},
           model = #{model},
+          storage = #{storage},
           remark = #{remark},
           modifydate = sysdate()
     where id = #{id}
     </update>
+    
+    <update id="setStorage" >
+        update t_product set 
+          storage = #{1},
+          modifydate = sysdate()
+    where id = #{0}
+    </update>
+    
     <update id="deleteById" parameterType="String">
         update t_product set 
           status = '0',

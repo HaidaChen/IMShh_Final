@@ -4,6 +4,7 @@ import java.util.Date;
 
 
 public class MaterialOutBill extends MaterialBill {
+	private String id;
 	private Date outDate;         /*发生日期*/
 	private String preparedBy;   /*制单人*/	
 	private String auditor;      /*审核人*/
@@ -13,6 +14,12 @@ public class MaterialOutBill extends MaterialBill {
 	private String remark;
 	private int status = 1;
 	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 	public Date getOutDate() {
 		return outDate;
 	}

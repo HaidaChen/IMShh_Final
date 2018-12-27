@@ -385,6 +385,84 @@ var App = function () {
 			}
 		}
 	}
+	
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化成品订购明细模块
+	/*-----------------------------------------------------------------------------------*/	
+	initOrderProductList = function(){
+		var initFilter = function(){
+			$.getJSON(
+				getProjectName() + "/pdt/loadallpdt.do",
+				function(result){
+					$.each(result, function(index, pdt){
+						$('#filter_product').append('<option value="'+pdt.id+'">'+pdt.code+'</option>');
+					});
+					$("#filter_product").select2({
+						placeholder: "请选择成品",
+						allowClear: true
+					});
+				}
+			);
+			
+		}
+		
+		var loadOrderProductTable = function(){
+			$('#tbl_orderProduct').bootstrapTable({
+				url: getProjectName() + "/order/getOrderProductPageResult.do",
+				method: "get",
+				pagination: true,
+				sidePagination: "server", 
+				clickToSelect: true,
+				columns: [{
+		            field: 'product.code',
+		            title: '成品货号'
+		        }, {
+		            field: 'product.model',
+		            title: '成品含量'
+		        }, {
+		            field: 'orderQuantity',
+		            title: '订购数量'
+		        }, {
+		            field: 'orderAmount',
+		            title: '订购金额'
+		        }, {
+		            field: 'inQuantity',
+		            title: '生产数量'
+		        }, {
+		        	field: 'outQuantity',
+		        	title: '发货数量'
+		        }, {
+		        	field: 'product.storage',
+		        	title: '当前库存'
+		        }],
+		        queryParams: function(params){
+		        	return {
+		                pageSize: params.limit,
+		                pageOffset: params.offset,                    
+		                productId: $("#filter_product").val(),
+		                startDate: $("#filter_startDate").val(),
+		                endDate: $("#filter_endDate").val()
+		            }
+		        }
+			});
+		} 
+		
+		var doQuery = function(){
+			$('#btn_search').click(function(){
+				$('#tbl_orderProduct').bootstrapTable('refresh', {url: getProjectName() + "/order/getOrderProductPageResult.do"});
+			});
+		}
+		
+		return {
+			init: function(){
+				initFilter();
+				loadOrderProductTable();
+				doQuery();
+			}
+		}
+	}
+	
 	/*-----------------------------------------------------------------------------------*/
 	/*	初始化原材料品类模块
 	/*-----------------------------------------------------------------------------------*/	
@@ -932,33 +1010,38 @@ var App = function () {
 	/*	初始化原材料入库单列表模块
 	/*-----------------------------------------------------------------------------------*/	
 	var initMaterialInList = function(){
-		var loadFilter = function(){
-			var filterWin = Ewin.load({id: 'mtl_in_filter', title: '更多查询', url: 'fragment/mtl_in_filter.html', rmvWin: false, initShow: false, callback: function(){
-				$.getJSON(
-					getProjectName() + "/supp/loadallsupp.do",
-					function(result){
-						$.each(result, function(index, supp){
-							$('#filter_supplier').append('<option value="'+supp.id+'">'+supp.name+'</option>');
-						});
-						$("#filter_supplier").select2({
-							placeholder: "请选择供应商",
-							allowClear: true
-						});
-					}
-				);
-				$("#btn_query").click(function(){
-					queryMaterialIn();
-					$('#mtl_in_filter').modal('hide');
-				});
-			}});
-			
-			$('#btn_more').click(function(){
-				filterWin.modal.modal('show');
-			});
+		var initOption = function(){
+			$.getJSON(
+				getProjectName() + "/mtlCtgy/query.do",
+				function(result){
+					$.each(result, function(index, ctg){
+						var indent = '';
+						var num = ctg.code.length - 2
+						for (var i = 0; i < num; i++){indent+= '&nbsp;&nbsp;';}
+						$("#filter_ctgCode").append("<option value='"+ctg.id+"'>"+indent+ctg.code+" "+ctg.name+"</option>");					
+					});
+					$("#filter_ctgCode").select2({
+						placeholder: "请选择材料分类",
+						allowClear: true
+					});
+				}
+			);
+			$.getJSON(
+				getProjectName() + "/supp/loadallsupp.do",
+				function(result){
+					$.each(result, function(index, supp){
+						$("#filter_supplier").append("<option value='"+supp.id+"'>"+supp.name+"</option>");					
+					});
+					$("#filter_supplier").select2({
+						placeholder: "请选择供应商",
+						allowClear: true
+					});
+				}
+			);
 		}
 		
 		var loadMaterialInTable = function(){
-			$("#tbl_materialIn").bootstrapTable({
+			$('#tbl_materialIn').bootstrapTable({
 				url: getProjectName() + "/mtlin/getPageResult.do",
 				method: "get",
 				pagination: true,
@@ -966,26 +1049,22 @@ var App = function () {
 				clickToSelect: true,
 				columns: [{
 		            field: 'number',
-		            title: '单号'
+		            title: '入库单号'
 		        }, {
-		            field: 'inDate',
-		            title: '发生日期'
+		            field: 'billDate',
+		            title: '入库日期'
 		        }, {
 		            field: 'supplier.name',
 		            title: '供应商'
 		        }, {
-		            field: 'billStatus',
-		            title: '入库单状态',
-		            formatter: function(value, row, index){
-		            	if (value == 0)
-		            		return '未入账';
-		            	if (value == 1)
-		            		return '已入账';
-		            	return '';
-		        	}
+		            field: 'material.name',
+		            title: '材料名称'
 		        }, {
-		        	field: 'remark',
-		        	title: '备注'
+		            field: 'material.specification',
+		            title: '材料规格'
+		        }, {
+		        	field: 'quantity',
+		        	title: '入库数量'
 		        }, {
 		        	field: '',
 		        	title: '操作',
@@ -997,53 +1076,54 @@ var App = function () {
 		        	return {
 		                pageSize: params.limit,
 		                pageOffset: params.offset,                    
-		                number: $("#filter_num").val(),
-		                billStatus: $("#filter_bStatus").val(),
+		                number: $("#filter_number").val(),
 		                supplier: $("#filter_supplier").val(),
-		                startDate: $("#filter_sDate").val(),
-		                endDate: $("#filter_eDate").val(),
-		                remark: $("#filter_remark").val()
+		                ctgCode: $("#filter_ctgCode").val(),
+		                startDate: $("#filter_startDate").val(),
+		                endDate: $("#filter_endDate").val()
 		            }
-		        }
+		        },
+		        onLoadSuccess: function (data) {
+		        	mergeCells($('#tbl_materialIn'));
+	            }
 			});
 		}
 		
 		var doQuery = function(){
 			$('#btn_search').click(function(){
-				queryMaterialIn();
+				$('#tbl_materialIn').bootstrapTable('refresh', {url: getProjectName() + "/mtlin/getPageResult.do"});
 			});
 		}
 		
-		var queryMaterialIn = function(){
-			createFilterTip({
-				assWin: $('#mtl_in_filter'), 
-				items: [{assId: 'filter_bStatus', label: '入库单状态', rule: '等于', ignore: '-1'}, 
-					    {assId: 'filter_supplier', label: '供应商', rule: '等于', eType: 'select2'},
-				        {assId: 'filter_sDate', label: '开始日期', rule: ''},
-				        {assId: 'filter_eDate', label: '结束日期', rule: ''},
-				        {assId: 'filter_remark', label: '备注', rule: '包含'}],
-		        changeCall: function(){
-		        	$("#tbl_materialIn").bootstrapTable("refresh", {url: getProjectName() + "/mtlin/getPageResult.do", cache: false});
-	        }});
-			$("#tbl_materialIn").bootstrapTable("refresh", {url: getProjectName() + "/mtlin/getPageResult.do", cache: false});
+		var doAdd = function(){
+			$('#btn_add').click(function(){
+				var nthTabs = window.parent.getTabs();
+		        nthTabs.addTab({
+		        	id:'0201',
+		            title:'材料入库',
+		            active:true,
+		            allowClose:true,
+		            content:'mtl_in_bill.html',
+		        });
+			});
 		}
 		
-		var initEditMaterialIn = function(){
+		var doEditBill = function(){
 			$('#tbl_materialIn').on('click', 'a', function(){
 				var opt = $(this).attr('opt');
 				var id = $(this).attr('rowId');
 				if (opt == 'update'){
 					var nthTabs = window.parent.getTabs();
 			        nthTabs.addTab({
-			        	id:'0102',
-			            title:'原材料.入库单',
+			        	id:'0201',
+			            title:'材料入库',
 			            active:true,
 			            allowClose:true,
-			            content:'material_in.html',
+			            content:'mtl_in_bill.html',
 			        });
 			        
 			        setTimeout(function(){
-			        	window.parent.$('#if0102')[0].contentWindow.fillBill(id);
+			        	window.parent.$('#if0201')[0].contentWindow.fillBill(id);
 			        }, 1000);
 				}
 				if (opt == 'delete'){
@@ -1051,8 +1131,8 @@ var App = function () {
 						if (!e){
 							return;
 						}
-						if (window.parent.$('#if0102')[0]){
-							var billId = window.parent.$('#if0102')[0].contentWindow.getBillId();
+						if (window.parent.$('#if0201')[0]){
+							var billId = window.parent.$('#if0201')[0].contentWindow.getBillId();
 							if (billId == id){
 								Ewin.alert("当前待删除入库单正在修改中，无法删除");
 								return;
@@ -1061,31 +1141,61 @@ var App = function () {
 						$.ajax({
 							url: getProjectName() + "/mtlin/deleteMaterialIn.do?id="+id,
 							success: function(){
-								Ewin.toast('原材料入库单删除成功');
-								queryMaterialIn();
+								Ewin.toast('材料入库单删除成功');
+								$('#tbl_materialIn').bootstrapTable('refresh', {url: getProjectName() + "/mtlin/getPageResult.do"});
 							}
 						});
 					});
 				}
 			});
-			
-			$('#btn_add').click(function(){
-				var nthTabs = window.parent.getTabs();
-		        nthTabs.addTab({
-		        	id:'0102',
-		            title:'原材料.入库单',
-		            active:true,
-		            allowClose:true,
-		            content:'material_in.html',
-		        });
-			});
 		}
+		
+		var mergeCells = function(target) {
+			var rows = target.find('tr');
+		    var _row;
+		    var rowspan = 1;
+			$.each(rows, function(i, row){
+				if (i == 0){
+					return;
+				}else if (i == 1){
+					_row = row;
+					return;
+				}else{
+					if ($($(row).find('td')[0]).html() == $($(_row).find('td')[0]).html()){
+						$($(row).find('td')[0]).remove();
+						$($(row).find('td')[0]).remove();
+						$($(row).find('td')[0]).remove();
+						$($(row).find('td')[3]).remove();
+						rowspan++;
+						if (i == rows.length - 1){
+							$($(_row).find('td')[0]).attr('rowspan', rowspan);
+							$($(_row).find('td')[1]).attr('rowspan', rowspan);
+							$($(_row).find('td')[2]).attr('rowspan', rowspan);
+							$($(_row).find('td')[6]).attr('rowspan', rowspan);
+						}
+					}else{
+						if (rowspan > 1){
+							$($(_row).find('td')[0]).attr('rowspan', rowspan);
+							$($(_row).find('td')[1]).attr('rowspan', rowspan);
+							$($(_row).find('td')[2]).attr('rowspan', rowspan);
+							$($(_row).find('td')[6]).attr('rowspan', rowspan);
+							rowspan = 1;
+						}
+						_row = row;
+					}
+				}
+				
+		    });
+		}
+		
+		
 		return {
 			init: function(){
-				loadFilter();
+				initOption();
 				loadMaterialInTable();
 				doQuery();
-				initEditMaterialIn();
+				doAdd();
+				doEditBill();
 			}
 		}
 	}
@@ -1676,6 +1786,1042 @@ var App = function () {
 			}
 		}
 	}
+	
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化成品入库单
+	/*-----------------------------------------------------------------------------------*/	
+	var initProductInBill = function(){
+		var bill;
+		var initBill = function(){
+			$.ajaxSettings.async = false;
+			$.getJSON("../templater/cprkd.json", "", function(data){
+        		bill = $('#productInBill').eBill(data);	
+			});
+			$.ajaxSettings.async = true;
+		}
+		
+		var editBill = function(){
+			$('#btn_save').click(function(){
+				if ($("input[name='id']").val() == ''){
+					bill.commit(getProjectName()+'/pdtin/newProductIn.do', '成品入库单新增成功');
+				}else{
+					bill.commit(getProjectName()+'/pdtin/updateProductIn.do', '成品入库单修改成功');
+				}
+        	});
+			
+			$('#btn_reset').click(function(){
+				bill.resetBill();
+			});
+		}
+		
+		return {
+			init: function(){
+				initBill();
+				editBill();
+				return bill;
+			}
+		}
+	}
+	
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化成品入库单列表
+	/*-----------------------------------------------------------------------------------*/	
+	var initProductInList = function(){
+		var initOption = function(){
+			$.getJSON(
+				getProjectName() + "/pdt/loadallpdt.do",
+				function(result){
+					$.each(result, function(index, pdt){
+						$('#filter_product').append('<option value="'+pdt.id+'">'+pdt.name+'</option>');
+					});
+					$("#filter_product").select2({
+						placeholder: "请选择成品",
+						allowClear: true
+					});
+				}
+			);
+		}
+		
+		var loadProductInTable = function(){
+			$('#tbl_productIn').bootstrapTable({
+				url: getProjectName() + "/pdtin/getPageResult.do",
+				method: "get",
+				pagination: true,
+				sidePagination: "server", 
+				clickToSelect: true,
+				columns: [{
+		            field: 'number',
+		            title: '入库单号'
+		        }, {
+		            field: 'billDate',
+		            title: '入库日期'
+		        }, {
+		            field: 'billReason',
+		            title: '入库说明',
+		            formatter: function(value, row, index){
+		            	if (value == '1')
+		            		return '生产入库';
+		            	if (value == '2')
+		            		return '其他入库';
+		            }
+		        }, {
+		            field: 'product.code',
+		            title: '成品货号'
+		        }, {
+		            field: 'product.model',
+		            title: '成品含量'
+		        }, {
+		        	field: 'quantity',
+		        	title: '入库数量'
+		        }, {
+		        	field: '',
+		        	title: '操作',
+		        	formatter: function(value, row, index){
+		        		return '<a opt="update" rowid="'+row.id+'">修改</a>&nbsp;<a opt="delete" rowid="'+row.id+'">删除</a>';
+		        	}
+		        }],
+		        queryParams: function(params){
+		        	return {
+		                pageSize: params.limit,
+		                pageOffset: params.offset,                    
+		                number: $("#filter_number").val(),
+		                billReason: $("#filter_billReason").val(),
+		                pdtId: $("#filter_product").val(),
+		                startDate: $("#filter_startDate").val(),
+		                endDate: $("#filter_endDate").val()
+		            }
+		        },
+		        onLoadSuccess: function (data) {
+		        	mergeCells($('#tbl_productIn'));
+	            }
+			});
+		}
+		
+		var doQuery = function(){
+			$('#btn_search').click(function(){
+				$('#tbl_productIn').bootstrapTable('refresh', {url: getProjectName() + "/pdtin/getPageResult.do"});
+			});
+		}
+		
+		var doAdd = function(){
+			$('#btn_add').click(function(){
+				var nthTabs = window.parent.getTabs();
+		        nthTabs.addTab({
+		        	id:'0301',
+		            title:'成品入库',
+		            active:true,
+		            allowClose:true,
+		            content:'pdt_in_bill.html',
+		        });
+			});
+		}
+		
+		var doEditBill = function(){
+			$('#tbl_productIn').on('click', 'a', function(){
+				var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				if (opt == 'update'){
+					var nthTabs = window.parent.getTabs();
+			        nthTabs.addTab({
+			        	id:'0301',
+			            title:'成品入库',
+			            active:true,
+			            allowClose:true,
+			            content:'pdt_in_bill.html',
+			        });
+			        
+			        setTimeout(function(){
+			        	window.parent.$('#if0301')[0].contentWindow.fillBill(id);
+			        }, 1000);
+				}
+				if (opt == 'delete'){
+					Ewin.confirm({message: "确定要删除该入库单吗？"}).on(function(e){
+						if (!e){
+							return;
+						}
+						if (window.parent.$('#if0301')[0]){
+							var billId = window.parent.$('#if0301')[0].contentWindow.getBillId();
+							if (billId == id){
+								Ewin.alert("当前待删除入库单正在修改中，无法删除");
+								return;
+							}
+						}
+						$.ajax({
+							url: getProjectName() + "/pdtin/deleteProductIn.do?id="+id,
+							success: function(){
+								Ewin.toast('成品入库单删除成功');
+								$('#tbl_productIn').bootstrapTable('refresh', {url: getProjectName() + "/pdtin/getPageResult.do"});
+							}
+						});
+					});
+				}
+			});
+		}
+		
+		var mergeCells = function(target) {
+			var rows = target.find('tr');
+		    var _row;
+		    var rowspan = 1;
+			$.each(rows, function(i, row){
+				if (i == 0){
+					return;
+				}else if (i == 1){
+					_row = row;
+					return;
+				}else{
+					if ($($(row).find('td')[0]).html() == $($(_row).find('td')[0]).html()){
+						$($(row).find('td')[0]).remove();
+						$($(row).find('td')[0]).remove();
+						$($(row).find('td')[0]).remove();
+						$($(row).find('td')[3]).remove();
+						rowspan++;
+						if (i == rows.length - 1){
+							$($(_row).find('td')[0]).attr('rowspan', rowspan);
+							$($(_row).find('td')[1]).attr('rowspan', rowspan);
+							$($(_row).find('td')[2]).attr('rowspan', rowspan);
+							$($(_row).find('td')[6]).attr('rowspan', rowspan);
+						}
+					}else{
+						if (rowspan > 1){
+							$($(_row).find('td')[0]).attr('rowspan', rowspan);
+							$($(_row).find('td')[1]).attr('rowspan', rowspan);
+							$($(_row).find('td')[2]).attr('rowspan', rowspan);
+							$($(_row).find('td')[6]).attr('rowspan', rowspan);
+							rowspan = 1;
+						}
+						_row = row;
+					}
+				}
+				
+		    });
+		}
+		
+		var doExport = function(){
+			$('#btn_export').click(function(){
+				var filterStr = "number=" + $("#filter_number").val() +
+                               "&billReason=" + $("#filter_billReason").val() +
+                               "&pdtId=" + $("#filter_product").val() +
+                               "&startDate=" + $("#filter_startDate").val() +
+                               "&endDate=" + $("#filter_endDate").val();
+				window.open(getProjectName() + "/pdtin/exportProductIn.do?" + filterStr);
+			});
+		}
+		
+		return {
+			init: function(){
+				initOption();
+				loadProductInTable();
+				doQuery();
+				doAdd();
+				doEditBill();
+				doExport();
+			}
+		}
+	}
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化成品出库单
+	/*-----------------------------------------------------------------------------------*/	
+	var initProductOutBill = function(){
+		var bill;
+		var initBill = function(){
+			$.ajaxSettings.async = false;
+			$.getJSON("../templater/cpckd.json", "", function(data){
+        		bill = $('#productOutBill').eBill(data);	
+			});
+			$.ajaxSettings.async = true;
+		}
+		
+		var editBill = function(){
+			$('#btn_save').click(function(){
+				if ($("input[name='id']").val() == ''){
+					bill.commit(getProjectName()+'/pdtout/newProductOut.do', '成品出库单新增成功');
+				}else{
+					bill.commit(getProjectName()+'/pdtout/updateProductOut.do', '成品出库单修改成功');
+				}
+        	});
+			
+			$('#btn_reset').click(function(){
+				bill.resetBill();
+			});
+		}
+		
+		return {
+			init: function(){
+				initBill();
+				editBill();
+				return bill;
+			}
+		}
+	}
+	
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化成品出库单列表
+	/*-----------------------------------------------------------------------------------*/	
+	var initProductOutList = function(){
+		var initOption = function(){
+			$.getJSON(
+				getProjectName() + "/pdt/loadallpdt.do",
+				function(result){
+					$.each(result, function(index, pdt){
+						$('#filter_product').append('<option value="'+pdt.id+'">'+pdt.name+'</option>');
+					});
+					$("#filter_product").select2({
+						placeholder: "请选择成品",
+						allowClear: true
+					});
+				}
+			);
+		}
+		
+		var loadProductOutTable = function(){
+			$('#tbl_productOut').bootstrapTable({
+				url: getProjectName() + "/pdtout/getPageResult.do",
+				method: "get",
+				pagination: true,
+				sidePagination: "server", 
+				clickToSelect: true,
+				columns: [{
+		            field: 'number',
+		            title: '出库单号'
+		        }, {
+		            field: 'billDate',
+		            title: '出库日期'
+		        }, {
+		            field: 'billReason',
+		            title: '出库说明',
+		            formatter: function(value, row, index){
+		            	if (value == '1')
+		            		return '发货出库';
+		            	if (value == '2')
+		            		return '其他出库';
+		            }
+		        }, {
+		            field: 'product.code',
+		            title: '成品货号'
+		        }, {
+		            field: 'product.model',
+		            title: '成品含量'
+		        }, {
+		        	field: 'quantity',
+		        	title: '出库数量'
+		        }, {
+		        	field: '',
+		        	title: '操作',
+		        	formatter: function(value, row, index){
+		        		return '<a opt="update" rowid="'+row.id+'">修改</a>&nbsp;<a opt="delete" rowid="'+row.id+'">删除</a>';
+		        	}
+		        }],
+		        queryParams: function(params){
+		        	return {
+		                pageSize: params.limit,
+		                pageOffset: params.offset,                    
+		                number: $("#filter_number").val(),
+		                billReason: $("#filter_billReason").val(),
+		                pdtId: $("#filter_product").val(),
+		                startDate: $("#filter_startDate").val(),
+		                endDate: $("#filter_endDate").val()
+		            }
+		        },
+		        onLoadSuccess: function (data) {
+		        	mergeCells($('#tbl_productOut'));
+	            }
+			});
+		}
+		
+		var doQuery = function(){
+			$('#btn_search').click(function(){
+				$('#tbl_productOut').bootstrapTable('refresh', {url: getProjectName() + "/pdtout/getPageResult.do"});
+			});
+		}
+		
+		var doAdd = function(){
+			$('#btn_add').click(function(){
+				var nthTabs = window.parent.getTabs();
+		        nthTabs.addTab({
+		        	id:'0302',
+		            title:'成品出库',
+		            active:true,
+		            allowClose:true,
+		            content:'pdt_out_bill.html',
+		        });
+			});
+		}
+		
+		var doEditBill = function(){
+			$('#tbl_productOut').on('click', 'a', function(){
+				var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				if (opt == 'update'){
+					var nthTabs = window.parent.getTabs();
+			        nthTabs.addTab({
+			        	id:'0302',
+			            title:'成品出库',
+			            active:true,
+			            allowClose:true,
+			            content:'pdt_out_bill.html',
+			        });
+			        
+			        setTimeout(function(){
+			        	window.parent.$('#if0302')[0].contentWindow.fillBill(id);
+			        }, 1000);
+				}
+				if (opt == 'delete'){
+					Ewin.confirm({message: "确定要删除该出库单吗？"}).on(function(e){
+						if (!e){
+							return;
+						}
+						if (window.parent.$('#if0302')[0]){
+							var billId = window.parent.$('#if0302')[0].contentWindow.getBillId();
+							if (billId == id){
+								Ewin.alert("当前待删除出库单正在修改中，无法删除");
+								return;
+							}
+						}
+						$.ajax({
+							url: getProjectName() + "/pdtout/deleteProductOut.do?id="+id,
+							success: function(){
+								Ewin.toast('成品出库单删除成功');
+								$('#tbl_productOut').bootstrapTable('refresh', {url: getProjectName() + "/pdtout/getPageResult.do"});
+							}
+						});
+					});
+				}
+			});
+		}
+		
+		var mergeCells = function(target) {
+			var rows = target.find('tr');
+		    var _row;
+		    var rowspan = 1;
+			$.each(rows, function(i, row){
+				if (i == 0){
+					return;
+				}else if (i == 1){
+					_row = row;
+					return;
+				}else{
+					if ($($(row).find('td')[0]).html() == $($(_row).find('td')[0]).html()){
+						$($(row).find('td')[0]).remove();
+						$($(row).find('td')[0]).remove();
+						$($(row).find('td')[0]).remove();
+						$($(row).find('td')[3]).remove();
+						rowspan++;
+						if (i == rows.length - 1){
+							$($(_row).find('td')[0]).attr('rowspan', rowspan);
+							$($(_row).find('td')[1]).attr('rowspan', rowspan);
+							$($(_row).find('td')[2]).attr('rowspan', rowspan);
+							$($(_row).find('td')[6]).attr('rowspan', rowspan);
+						}
+					}else{
+						if (rowspan > 1){
+							$($(_row).find('td')[0]).attr('rowspan', rowspan);
+							$($(_row).find('td')[1]).attr('rowspan', rowspan);
+							$($(_row).find('td')[2]).attr('rowspan', rowspan);
+							$($(_row).find('td')[6]).attr('rowspan', rowspan);
+							rowspan = 1;
+						}
+						_row = row;
+					}
+				}
+				
+		    });
+		}
+		
+		var doExport = function(){
+			$('#btn_export').click(function(){
+				var filterStr = "number=" + $("#filter_number").val() +
+                               "&billReason=" + $("#filter_billReason").val() +
+                               "&pdtId=" + $("#filter_product").val() +
+                               "&startDate=" + $("#filter_startDate").val() +
+                               "&endDate=" + $("#filter_endDate").val();
+				window.open(getProjectName() + "/pdtout/exportProductOut.do?" + filterStr);
+			});
+		}
+		
+		return {
+			init: function(){
+				initOption();
+				loadProductOutTable();
+				doQuery();
+				doAdd();
+				doEditBill();
+				doExport();
+			}
+		}
+	}
+	
+
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化成品盘点模块
+	/*-----------------------------------------------------------------------------------*/
+	var initProductInventory = function(){
+		
+		var loadSystemStorage = function(){
+			$('#tbl_inventory').bootstrapTable({
+				url: getProjectName() + "/pdtinv/loadSystemInventory.do",
+				method: "get",
+				clickToSelect: true,
+				pagination: true,
+				sidePagination : "server",
+				pageSize : 50,
+				pageList : [50, 100, 200],
+				columns: [{
+		            field: 'product.code',
+		            title: '成品货号'
+		        }, {
+		        	field: 'product.model',
+		            title: '成品含量'
+				}, {
+		        	field: 'expectQuantity',
+		            title: '系统库存（件）'
+				}, {
+		        	field: 'actualQuantity',
+		            title: '盘点库存（件）',
+		            formatter: function(value, row, index){
+		            	if (value == 0)
+		            		return '<span name="cashStorage" pdtId="'+row.product.id+'"></span>';
+		            	else
+		            	    return '<span name="cashStorage" pdtId="'+row.product.id+'">'+value+'</span>';
+		        	},
+		        	width: 150
+				}, {
+		        	field: '',
+		            title: '盘盈盘亏',
+		            formatter: function(value, row, index){
+		            	var result = row.actualQuantity - row.expectQuantity;
+		            	if (row.actualQuantity == 0 || result == 0)
+		            		return '';
+		            	
+		            	if (result > 0){
+		            		return '<span style="color: green">'+ result +'</span>';
+		            	}
+		            	
+		            	if (result < 0){
+		            		return '<span style="color: red">'+ result +'</span>';
+		            	}
+		        	}
+				}],
+		        queryParams: function(params){
+		        	return {
+		        		pageSize: params.limit,
+		                pageOffset: params.offset,  
+		                code: $('#filter_pdtCode').val(),
+		                ignore0storage: $('#filter_ignore0storage:checked').val(),
+		                profitLoss: $('#filter_profitLoss:checked').val() 
+		            }
+		        }
+			});
+		}
+		
+		var doQuery = function(){
+			$('#btn_search').click(function(){
+				$("#tbl_inventory").bootstrapTable("refresh", {url: getProjectName() + "/pdtinv/loadSystemInventory.do"});
+			});
+		}
+		
+		var cashActualQuantity = function(){
+			$('#tbl_inventory').on('click', 'td', function(event){
+				var $td = $(this);
+				$td.css('padding', '0');
+				var width = $td.width();
+				var height = $td.height();
+				
+				var eActualQuantity = $td.children('span[name=\'cashStorage\']');
+				if(eActualQuantity.length == 1){
+					
+					
+					var pdtId = eActualQuantity.attr('pdtId');
+					var quantity = eActualQuantity.text();
+					var input =$('<input type="text" value="'+quantity+'" style="display: inline-block; border: 1px solid gray">');
+					input.width(width -2);
+					input.height(height -2);
+					eActualQuantity.text('');
+					eActualQuantity.append(input);
+					input.focus();
+					input.blur(function(){
+						var n_quantity = $(this).val();
+						if ($.trim(n_quantity) == '')
+							n_quantity = 0;
+						if (quantity != n_quantity){
+							$.ajax({
+								url:getProjectName() + "/pdtinv/saveInventoryItem.do",
+								type: 'post',
+								data: {productId: pdtId, quantity: n_quantity},
+								success: function(){
+									input.remove();
+									eActualQuantity.text(n_quantity);
+									var eExpectQuantity = $td.prev();
+									var eProfitLoss = $td.next();
+									var profitLoss = n_quantity - eExpectQuantity.text();
+									if (profitLoss > 0){
+										eProfitLoss.html('<span style="color: green">'+ profitLoss +'</span>');
+									}
+									
+									if (profitLoss < 0){
+										eProfitLoss.html('<span style="color: red">'+ profitLoss +'</span>');
+									}
+								}
+							});
+						}else{
+							input.remove();
+							eActualQuantity.text(quantity);
+						}
+					});
+				}
+			});
+		}
+		
+		var doSave = function(){
+			$('#btn_save').click(function(){
+				Ewin.confirm({message: "盘点信息保存后将不可以修改，确定现在保存盘点信息吗？"}).on(function(e){
+					if (!e){
+						return;
+					}
+					$.ajax({
+						url: getProjectName() + "/pdtinv/inventory.do",
+						success: function(){
+							Ewin.toast('成品盘点数据成功');
+							$("#tbl_inventory").bootstrapTable("refresh", {url: getProjectName() + "/pdtinv/loadSystemInventory.do"});
+						}
+					});
+				});
+			});
+		}
+		
+		var doExport = function(){
+			$('#btn_export').click(function(){
+				
+			});
+		}
+		
+		var doImport = function(){
+			$('#btn_import').click(function(){
+				
+			});
+		}
+		
+		var doReset = function(){
+			$('#btn_reset').click(function(){
+				Ewin.confirm({message: "确定删除所有盘点库存吗？"}).on(function(e){
+					if (!e){
+						return;
+					}
+					$.ajax({
+						url: getProjectName() + "/pdtinv/reset.do",
+						success: function(){
+							$("#tbl_inventory").bootstrapTable("refresh", {url: getProjectName() + "/pdtinv/loadSystemInventory.do"});
+						}
+					});
+				});
+			});
+		}
+		
+		return {
+			init: function(){
+				loadSystemStorage();
+				doQuery();
+				cashActualQuantity();
+				doSave();
+				doExport();
+				doImport();
+				doReset();
+			}
+		}
+	}
+	
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化历史盘点记录模块
+	/*-----------------------------------------------------------------------------------*/
+	var initHisProductInventory = function(){
+		
+		var th = [];
+		
+		var initPeriod = function(){
+			var date = new Date();
+			var year = date.getFullYear();
+			$('#filter_speriod').val(year + '-' + '01');
+			$('#filter_eperiod').val(year + '-' + '12');
+		}
+		
+		var loadInventoryTable = function(){			
+			$.ajax({
+				url: getProjectName() + "/pdtinv/getHistroyInventory.do",
+				data: {startPeriod: $('#filter_speriod').val(), endPeriod: $('#filter_eperiod').val()},
+				success: function(result){
+					th = [];
+					th.push({
+						field: 'pdtCode',
+						title: '成品货号'
+					});
+					th.push({
+						field: 'pdtModel',
+						title: '成品含量'
+					});
+					$.each(result, function(i, inv){
+						th.push({
+							field: 'storageMap.'+inv.id,
+							title: inv.inventoryDate,
+		                    valign:"middle",
+		                    align:"center"
+						});
+					});
+					
+					
+					$("#tbl_inventory").bootstrapTable({
+						url: getProjectName() + "/pdtinv/getHistroyInventoryDetail.do",
+						method: "get",
+						pagination: true,
+						sidePagination : "server",
+						pageSize : 50,
+						pageList : [50, 100, 200],
+						columns: th,
+				        queryParams: function(params){
+				        	return {
+				        		pageSize: params.limit,
+				                pageOffset: params.offset,  
+				        		startPeriod: $('#filter_speriod').val(),
+				        		endPeriod: $('#filter_eperiod').val(),
+				        		code: $('#filter_pdtCode').val()
+				            }
+				        }
+					});
+				}
+			});			
+		}
+		
+		var doQuery = function(){
+			$('#btn_search').click(function(){
+				$.ajax({
+					url: getProjectName() + "/pdtinv/getHistroyInventory.do",
+					data: {startPeriod: $('#filter_speriod').val(), endPeriod: $('#filter_eperiod').val()},
+					success: function(result){
+						th = [];
+						th.push({
+							field: 'pdtCode',
+							title: '成品货号'
+						});
+						th.push({
+							field: 'pdtModel',
+							title: '成品含量'
+						});
+						$.each(result, function(i, inv){
+							th.push({
+								field: 'storageMap.'+inv.id,
+								title: inv.inventoryDate,
+			                    valign:"middle",
+			                    align:"center"
+							});
+						});
+						$("#tbl_inventory").bootstrapTable("refresh", {url: getProjectName() + "/pdtinv/getHistroyInventoryDetail.do"});
+					}
+				});
+			});
+		}
+		
+		return {
+			init: function(){
+				initPeriod();
+				loadInventoryTable();
+				doQuery();
+			}
+		}
+	}
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化单个成品出入明细模块
+	/*-----------------------------------------------------------------------------------*/
+	var initSingleProductInOut = function(){
+		var initPeriod = function(){
+			var now = Format(new Date(), 'yyyy-MM');
+			var befor = increaseMonth(now, -3);
+			
+			$('#filter_speriod').val(befor);
+			$('#filter_eperiod').val(now);
+			
+			$('.simplemonth span.btn').click(function(){
+				var monthEle = $(this).parent().find('input');
+				var curMon = monthEle.val();
+				
+				if (curMon == ''){
+					monthEle.val(Format(new Date(), 'yyyy-MM'));
+				}else {
+					if($(this).hasClass('btn-up')){
+						monthEle.val(increaseMonth(curMon, -1));
+					}
+					if($(this).hasClass('btn-down')){
+						monthEle.val(increaseMonth(curMon, 1));
+					}
+				}
+			});
+		}
+		
+		var loadInoutTable = function(){
+			$("#tbl_pdt_inout").bootstrapTable({
+				url: getProjectName() + "/pdtio/getInOutByProduct.do",
+				method: "get",
+				pagination: false,
+				columns: [{
+		            field: 'genDate',
+		            title: '发生日期'
+		        }, {
+		            field: 'bill.number',
+		            title: '关联单据',
+		            formatter: function(value, row, index){
+		            	if (row.bill){
+		            		if (value.indexOf('CPRKD') == 0)
+		            			return '<a opt="link_in" rowid="'+row.bill.id+'">'+value+'</a>';
+		            		if (value.indexOf('CPCKD') == 0)
+		            			return '<a opt="link_out" rowid="'+row.bill.id+'">'+value+'</a>';
+		            	}else{
+		            		return '';
+		            	}
+		            }
+		        }, {
+		            field: 'summary',
+		            title: '摘要',
+		            formatter: function(value, row, index){
+		            	if (row.bill){
+		            		if (row.bill.number.indexOf('CPCKD') == 0){
+		            			if (value == '1')
+		            				return '发货出库';
+		            			if (value == '2')
+		            				return '其他出库';
+		            		}
+		            			
+		            		if (row.bill.number.indexOf('CPRKD') == 0){
+		            			if (value == '1')
+		            				return '发货出库';
+		            			if (value == '2')
+		            				return '其他出库';
+		            		}
+		            			
+		            	}else{
+		            		return value;
+		            	}
+		            }
+		        }, {
+		            field: 'inQuantity',
+		            title: '入库数量'
+		        },{
+		            field: 'outQuantity',
+		            title: '出库数量'
+		        }],
+		        queryParams: function(params){
+		        	return {
+		        		productId: $('#filter_product').val(),
+		        		sPeriod: $('#filter_speriod').val(),
+		        		ePeriod: $('#filter_eperiod').val()
+		            }
+		        }
+			});
+		}
+		
+		var doQuery = function(){
+			$('#btn_search').click(function(){
+				$("#tbl_pdt_inout").bootstrapTable("refresh", {url: getProjectName() + "/pdtio/getInOutByProduct.do"});
+			});
+		}
+		
+		var initOtherOpt = function(){
+			$.getJSON(
+				getProjectName() + "/pdt/loadallpdt.do",
+				function(result){
+					$.each(result, function(index, pdt){
+						$('#filter_product').append('<option value="'+pdt.id+'">'+pdt.name+'</option>');
+					});
+					$("#filter_product").select2({
+						placeholder: "请选择成品",
+						allowClear: true
+					});
+				}
+			);
+			
+			$("#filter_product").change(function(){
+				$('#label_pdtCode').text($(this).find("option:selected").text());
+			});
+			
+			$('#tbl_pdt_inout').on('click', 'a', function(){
+				var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				
+				if (opt == 'link_in'){
+					var nthTabs = window.parent.getTabs();
+			        nthTabs.addTab({
+			        	id:'0301',
+			            title:'成品入库',
+			            active:true,
+			            allowClose:true,
+			            content:'pdt_in_bill.html',
+			        });
+			        
+			        setTimeout(function(){
+			        	window.parent.$('#if0301')[0].contentWindow.fillBill(id);
+			        }, 1000);
+				}
+				
+				if (opt == 'link_out'){
+					var nthTabs = window.parent.getTabs();
+			        nthTabs.addTab({
+			        	id:'0302',
+			            title:'成品出库',
+			            active:true,
+			            allowClose:true,
+			            content:'pdt_out_bill.html',
+			        });
+			        
+			        setTimeout(function(){
+			        	window.parent.$('#if0302')[0].contentWindow.fillBill(id);
+			        }, 1000);
+				}
+			});
+		}
+		
+		return {
+			init: function(){
+				initPeriod();
+				loadInoutTable();
+				doQuery();
+				initOtherOpt();
+			}
+		}
+	}
+	
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化原材料出入汇总模块
+	/*-----------------------------------------------------------------------------------*/
+	var initGlobalProductInOut = function(){
+		var initPeriod = function(){
+			var now = Format(new Date(), 'yyyy-MM');
+			var befor = increaseMonth(now, -3);
+			
+			$('#filter_speriod').val(befor);
+			$('#filter_eperiod').val(now);
+			
+			$('.simplemonth span.btn').click(function(){
+				var monthEle = $(this).parent().find('input');
+				var curMon = monthEle.val();
+				
+				if (curMon == ''){
+					monthEle.val(Format(new Date(), 'yyyy-MM'));
+				}else {
+					if($(this).hasClass('btn-up')){
+						monthEle.val(increaseMonth(curMon, -1));
+					}
+					if($(this).hasClass('btn-down')){
+						monthEle.val(increaseMonth(curMon, 1));
+					}
+				}
+			});
+		}
+		
+		var thL1 = [];
+		var thL2 = [];
+		var refreshTabelHead = function(){
+			thL1 = [];
+			thL2 = [];
+			var sPeriod = $('#filter_speriod').val();
+			var ePeriod = $('#filter_eperiod').val();
+			
+			var endMonth = parseInt(ePeriod.substring(0, 4)) * 12 + parseInt(ePeriod.substring(5));
+			var startMonth = parseInt(sPeriod.substring(0, 4)) * 12 + parseInt(sPeriod.substring(5));
+			
+			var numMonth = endMonth - startMonth;
+			
+			thL1.push({
+				field: 'pdtCode',
+                title: "成品货号",
+                valign:"middle",
+                align:"center",
+                colspan: 1,
+                rowspan: 2
+			});
+			for (var i = startMonth; i <= endMonth; i++){
+				var td_year = parseInt(i / 12);
+				var td_month = i % 12;
+				if (td_month == 0){
+					td_year = td_year - 1;
+					td_month = 12;
+				}
+				thL1.push({
+					title: td_year + '年' + td_month + '月',
+                    valign:"middle",
+                    align:"center",
+                    colspan: 2,
+                    rowspan: 1
+				});
+			}
+			thL1.push({
+				field: 'storage',
+                title: "当前库存",
+                valign:"middle",
+                align:"center",
+                colspan: 1,
+                rowspan: 2
+			});
+			
+			for (var i = startMonth; i <= endMonth; i++){
+				var td_year = parseInt(i / 12);
+				var td_month = i % 12;
+				if (td_month == 0){
+					td_year = td_year - 1;
+					td_month = 12;
+				}
+				
+				var period = td_year + '' + (td_month < 10 ? '0'+ td_month : td_month);
+				thL2.push({
+					field: 'iomap.'+period+'.inQuantity',
+		            title: '入库数'
+				});
+				thL2.push({
+					field: 'iomap.'+period+'.outQuantity',
+		            title: '出库数'
+				});
+			}
+		}
+		
+		var loadInoutTable = function(){
+			refreshTabelHead();
+			$("#tbl_pdt_inout").bootstrapTable({
+				url: getProjectName() + "/pdtio/getGlobalInOutPageResult.do",
+				method: "get",
+				pagination: true,
+				sidePagination : "server",
+				pageSize : 50,
+				pageList : [50, 100, 200],
+				columns: [thL1, thL2],
+		        queryParams: function(params){
+		        	return {
+		        		pageSize: params.limit,
+		                pageOffset: params.offset,  
+		        		startPeriod: $('#filter_speriod').val(),
+		        		endPeriod: $('#filter_eperiod').val()
+		            }
+		        }
+			});
+		}
+		
+		var doQuery = function(){
+			$('#btn_search').click(function(){
+				refreshTabelHead();
+				$("#tbl_pdt_inout").bootstrapTable("refreshOptions", {columns: [thL1, thL2]});
+			});
+		}
+		
+		return {
+			init: function(){
+				initPeriod();
+				loadInoutTable();
+				doQuery();
+			}
+		}
+	}
+	
 	
 	/*-----------------------------------------------------------------------------------*/
 	/*	初始化会计科目模块
@@ -2393,6 +3539,9 @@ var App = function () {
         	initOrderList().init();
         },
         
+        orderProductList: function(){
+        	initOrderProductList().init();
+        },
         /****************材料仓库模块****************/
         materialCategory: function(){
         	initMaterialCategory().init();
@@ -2424,6 +3573,39 @@ var App = function () {
         
         hisMaterialInventory: function(){
         	return initHisMaterialInventory().init();
+        },        
+        
+        /****************成品仓库模块****************/
+        productInBill: function(){
+        	return initProductInBill().init();
+        },
+        
+        productInList: function(){
+        	initProductInList().init();
+        },
+        
+        productOutBill: function(){
+        	return initProductOutBill().init();
+        },
+        
+        productOutList: function(){
+        	initProductOutList().init();
+        },
+        
+        productInventory: function(){
+        	initProductInventory().init();
+        },
+        
+        hisProductInventory: function(){
+        	return initHisProductInventory().init();
+        }, 
+        
+        singleProductInOut: function(){
+        	initSingleProductInOut().init();
+        },
+        
+        globalProductInOut: function(){
+        	initGlobalProductInOut().init();
         },
         
         /****************财务模块****************/
@@ -2445,7 +3627,13 @@ var App = function () {
         
         gensidiaryLedger: function(){
         	initGensidiaryLedger().init();
+        },
+        
+        /****************基础数据模块****************/
+        product: function(){
+        	initProduct().init();
         }
+        
     };
 }();
 

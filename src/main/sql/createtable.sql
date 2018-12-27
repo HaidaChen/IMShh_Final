@@ -147,7 +147,7 @@ CREATE TABLE TBL_MATERIAL_INVENTORY(
 );
 
 CREATE TABLE TBL_MATERIAL_INVENTORYDETAIL(
-    id varchar(20) not null,
+    id int not null auto_increment primary key,
     inventoryId varchar(20) not null,
     materialId varchar(20) not null,
     expectAmount numeric(12,4),
@@ -178,8 +178,106 @@ CREATE TABLE TBL_MTL_INOUT(
 	balanceAmount numeric(12, 4),
 	summary varchar(1024),
     status char(1) default '1',
+    inventoryed char(1) default '',
     modifyDate datetime
 );
+
+
+/*成品仓库模块*/
+CREATE TABLE TBL_BILL_PRODUCTIN(
+	id varchar(20) not null,
+	number varchar(20),
+	billDate date not null,
+	billReason char(2),
+	orderId varchar(20),
+	totalQuantity numeric(12, 4),
+	preparedBy varchar(20),
+	auditor varchar(20),
+	custodian varchar(20),
+	remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_BILL_PRODUCTOUT(
+	id varchar(20) not null,
+	number varchar(20),
+	billDate date not null,
+	billReason char(2),
+	orderId varchar(20),
+	totalQuantity numeric(12, 4),
+	preparedBy varchar(20),
+	auditor varchar(20),
+	custodian varchar(20),
+	remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_BILL_DTL_PRODUCTIN(
+	id varchar(20) not null,
+	billId varchar(20) not null,
+	productId varchar(20) not null,
+	quantity int,
+	remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_BILL_DTL_PRODUCTOUT(
+	id varchar(20) not null,
+	billId varchar(20) not null,
+	productId varchar(20) not null,
+	quantity int,
+	remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_PRODUCT_INVENTORY(
+    id varchar(20) not null,
+    inventoryDate date not null,
+    pricingRules char(1),
+    total numeric(12,4),
+    
+    remark varchar(1024),
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_PRODUCT_INVENTORYDETAIL(
+    id int not null auto_increment primary key,
+    inventoryId varchar(20) not null,
+    productId varchar(20) not null,
+    expectQuantity int,
+    actualQuantity int,
+    price numeric(12,4),
+    
+    status char(1) default '1',
+    modifyDate datetime
+);
+
+CREATE TABLE TBL_TMP_PRODUCT_INVENTORYDETAIL(
+    productId varchar(20) not null,
+    actualQuantity int default 0,
+    price numeric(12,4)
+);
+
+CREATE TABLE TBL_PRODUCT_INOUT(
+	id varchar(20) not null,
+	billId varchar(20) not null,
+	productId varchar(20) not null,
+	genDate date not null,
+	billPeriod varchar(6) not null,
+	inQuantity int,
+	outQuantity int,
+	balanceQuantity int,
+	summary varchar(1024),
+    status char(1) default '1',
+    inventoryed char(1) default '',
+    modifyDate datetime
+);
+/*财务模块*/
 
 CREATE TABLE TBL_FIN_SUBJECT(
 	id varchar(20) not null,
@@ -253,27 +351,7 @@ CREATE TABLE TBL_FIN_ACCOUNT(
     modifyDate datetime
 );
 
-/*------*/
-CREATE TABLE TBL_MATERIAL_SUPPLIER(
-    id varchar(20) not null,
-    materialId varchar(20) not null,
-    supplierId varchar(20) not null,
-    
-    remark varchar(1024),
-    status char(1),
-    modifyDate datetime
-);
 
-CREATE TABLE TBL_MATERIAL_PIRCE(
-    id varchar(20) not null,
-    supplierId varchar(20) not null,
-    price numeric(10,2) not null,
-    markDate date not null,
-    
-    remark varchar(1024),
-    status char(1) default '1',
-    modifyDate datetime
-);
 
 CREATE TABLE TBL_MATERIAL_IN(
     id varchar(20) not null,
@@ -351,6 +429,7 @@ CREATE TABLE T_Product(
     model varchar(64),    
     lineDate date, 
     downlineDate date,
+    storage int default 0,
     modifyDate datetime,
     remark varchar(1024),
     status char(1)
@@ -370,7 +449,7 @@ CREATE TABLE T_MATERIAL(
     modifyDate datetime,
     remark varchar(1024),
     status char(1)
-);*/
+);
 
 
 
@@ -448,6 +527,7 @@ CREATE TABLE T_MATERIALOUT(
     remark varchar(1024),
     status char(1)
 );
+*/
 
 CREATE TABLE T_PRODUCTIN (
     id varchar(20) not null,
@@ -500,6 +580,7 @@ CREATE TABLE T_INVOICE(
     remark varchar(1024),
     status char(1)
 );
+
 
 CREATE TABLE T_RECEPTION_SETTLEMENT(
     id varchar(20) not null,

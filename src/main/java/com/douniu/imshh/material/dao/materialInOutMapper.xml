@@ -27,7 +27,7 @@
     
     <select id="getTotalInOut" parameterType="MaterialFilter" resultMap="miomap">
         SELECT
-            concat(m.id, io.billPeriod) as id,
+            concat(m.id, case when io.billPeriod is null then '' else io.billPeriod end) as id,
 			m.id as m_id,
 			m. NAME as m_name,
 			m.specification as m_specification,
@@ -121,11 +121,11 @@
     </select>
     
     <select id="getTotalInQuantity" resultType="float">
-    	select sum(inQuantity) from tbl_mtl_inout where materialId = #{0} and genDate &gt;= #{1} and genDate &lt;= #{2}
+    	select case when sum(inQuantity) is null then 0 else sum(inQuantity) end from tbl_mtl_inout where status='1' and materialId = #{0} and genDate &gt;= #{1} and genDate &lt;= #{2}
     </select>
     
     <select id="getTotalOutQuantity" resultType="float">
-    	select sum(outQuantity) from tbl_mtl_inout where materialId = #{0} and genDate &gt;= #{1} and genDate &lt;= #{2}
+    	select case when sum(outQuantity) is null then 0 else sum(outQuantity) end from tbl_mtl_inout where status='1' and materialId = #{0} and genDate &gt;= #{1} and genDate &lt;= #{2}
     </select>
     <!-- <resultMap type="MaterialIn" id="mtlinmap">
         <result property="id" column="id"/>

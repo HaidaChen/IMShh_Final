@@ -32,8 +32,6 @@ import com.douniu.imshh.utils.POIExcelAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-@Controller
-@RequestMapping("/pdtin")
 public class ProductInAction {
 	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{

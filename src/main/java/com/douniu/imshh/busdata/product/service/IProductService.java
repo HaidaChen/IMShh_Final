@@ -14,4 +14,5 @@ public interface IProductService {
 	void save(Product product);
 	void delete(String id);
 	void batchAdd(List<Product> products);
+	void addStorage(String id, int storage);
 }

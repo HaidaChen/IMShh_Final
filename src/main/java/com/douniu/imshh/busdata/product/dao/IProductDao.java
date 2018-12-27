@@ -14,5 +14,6 @@ public interface IProductDao {
 	void insert(Product product);
 	void batchInsert(List<Product> products);
 	void update(Product product);
+	void setStorage(String id, int storage);
 	void deleteById(String id);
 }

@@ -5,11 +5,14 @@
         <setting name="logImpl" value="STDOUT_LOGGING" />
     </settings>
 	<typeAliases>
+		<!-- 01 销售模块 -->
 		<typeAlias alias="OrderFilter" type="com.douniu.imshh.order.domain.OrderFilter"/>
 		<typeAlias alias="Order" type="com.douniu.imshh.order.domain.Order"/>
 		<typeAlias alias="OrderAppointment" type="com.douniu.imshh.order.domain.OrderAppointment"/>
 		<typeAlias alias="OrderItem" type="com.douniu.imshh.order.domain.OrderItem"/>
-	
+		<typeAlias alias="OrderProduct" type="com.douniu.imshh.order.domain.OrderProductDetail"/>
+		
+		<!-- 02 原材料仓库模块 -->
 		<typeAlias alias="MaterialFilter" type="com.douniu.imshh.material.domain.MaterialFilter"/>
 		<typeAlias alias="MaterialCategory" type="com.douniu.imshh.material.domain.Category"/>
 		<typeAlias alias="Material" type="com.douniu.imshh.material.domain.Material"/>
@@ -20,14 +23,25 @@
         <typeAlias alias="MaterialInOut" type="com.douniu.imshh.material.domain.MaterialInOut"/>
         <typeAlias alias="MaterialInventory" type="com.douniu.imshh.material.domain.Inventory"/>
         <typeAlias alias="MaterialInventoryDetail" type="com.douniu.imshh.material.domain.InventoryDetail"/>
-        <!-- <typeAlias alias="MaterialInDetail" type="com.douniu.imshh.material.domain.MaterialInDetail"/> -->
-        <!--<typeAlias alias="MaterialOut" type="com.douniu.imshh.material.domain.MaterialOut"/> -->
         
+        <!-- 03 成品仓库模块 -->
+        <typeAlias alias="ProductFilter" type="com.douniu.imshh.product.domain.ProductFilter"/>
+        <typeAlias alias="ProductBill" type="com.douniu.imshh.product.domain.ProductBill"/>
+        <typeAlias alias="ProductInBill" type="com.douniu.imshh.product.domain.ProductInBill"/>
+        <typeAlias alias="ProductOutBill" type="com.douniu.imshh.product.domain.ProductOutBill"/>
+        <typeAlias alias="ProductBillDetail" type="com.douniu.imshh.product.domain.BillDetail"/>
+        <typeAlias alias="ProductInventory" type="com.douniu.imshh.product.domain.Inventory"/>
+        <typeAlias alias="ProductInventoryDetail" type="com.douniu.imshh.product.domain.InventoryDetail"/>
+        <typeAlias alias="ProductInOut" type="com.douniu.imshh.product.domain.ProductInOut"/>
+        
+        <!-- 04 财务模块 -->
         <typeAlias alias="FinanceFilter" type="com.douniu.imshh.finance.domain.FinanceFilter"/>
         <typeAlias alias="FinanceSubject" type="com.douniu.imshh.finance.domain.Subject"/>
         <typeAlias alias="Voucher" type="com.douniu.imshh.finance.domain.Voucher"/>
         <typeAlias alias="VoucherEntry" type="com.douniu.imshh.finance.domain.VoucherEntry"/>
         <typeAlias alias="FinanceAccount" type="com.douniu.imshh.finance.domain.Account"/>
+        
+        
         
         <!-- 
         <typeAlias alias="Order" type="com.douniu.imshh.finance.order.domain.Order"/>
@@ -70,17 +84,17 @@
     	<mapper resource="/com/douniu/imshh/material/dao/materialOutMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/material/dao/materialInOutMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/material/dao/inventoryMapper.xml"/>
-    	<mapper resource="/com/douniu/imshh/finance/dao/subjectMapper.xml"/>
+    	
+    	<mapper resource="/com/douniu/imshh/product/dao/productInMapper.xml"/>
+    	<mapper resource="/com/douniu/imshh/product/dao/productOutMapper.xml"/>    
+        <mapper resource="/com/douniu/imshh/product/dao/productInOutMapper.xml"/>
+        <mapper resource="/com/douniu/imshh/product/dao/inventoryMapper.xml"/>
+         
+        <mapper resource="/com/douniu/imshh/finance/dao/subjectMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/finance/dao/voucherMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/finance/dao/accountMapper.xml"/>
     	
-    	<!--     
-        <mapper resource="/com/douniu/imshh/finance/order/dao/orderMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/finance/order/dao/orderDetailMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/finance/storage/dao/materialStorageMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/finance/storage/dao/productInMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/finance/storage/dao/productOutMapper.xml"/>
-         -->    
+    	 
         <mapper resource="/com/douniu/imshh/finance/invoice/dao/invoiceMapper.xml"/>
         
         <mapper resource="/com/douniu/imshh/finance/reception/dao/receptionMapper.xml"/>

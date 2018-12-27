@@ -1,0 +1,126 @@
+{
+	"title": {"name":"浏阳市华辉烟花制造有限公司成品出库单"},
+	"reference": [
+		{
+			"name": "orderRef",
+			"src": "/order/getAll.do"
+		},{
+			"name": "billReason",
+			"data": [{
+				"key": "1",
+				"value": "发货出库"
+			}, {
+				"key": "2",
+				"value": "其他出库"
+			}]
+		}
+	],
+	"top-columns": [{
+				"name": "billReason",
+				"type": "select",
+				"style": "width:160px",
+				"label": "出库说明",
+				"length": "30%",
+				"data-ref": "billReason",
+				"option-value": "key",
+				"option-text": "value"
+			},
+			{
+				"name": "order.id",
+				"type": "select",
+				"style": "width:160px",
+				"label": "关联订单",
+				"length": "30%",
+				"data-ref": "orderRef",
+				"option-value": "id",
+				"option-text": "identify"
+			},
+			{
+				"name": "billDate",
+				"type": "date",
+				"label": "发生日期",
+				"formatter": "yyyy-MM-dd",
+				"length": "20%",
+				"value": "now"
+			},
+			{
+				"name": "number",
+				"type": "indentify",
+				"label": "编号",
+				"src": "/pdtout/getBillCode.do",
+				"length": "20%"
+			}
+		],
+	"right-columns": [],
+	"bottom-columns": [{
+				"name": "preparedBy",
+				"type": "text",
+				"label": "制单",
+				"length": "50%"
+			},
+			{
+				"name": "auditor",
+				"type": "text",
+				"label": "审核",
+				"length": "30%"
+			},
+			{
+				"name": "custodian",
+				"type": "text",
+				"label": "保管",
+				"length": "20%"
+			}
+		],
+	"item-table": {
+		"border-type": "",
+		"border-weight": "",
+		"border-color": "",
+		"columns": [{
+				"name": "number",
+				"type": "row-no",
+				"label": "编号",
+				"length": "5%"
+			},{
+				"name": "product.id",
+				"type": "modal-ref",
+				"hide": true,
+				"data-ref": "product",
+				"ref-field": "id"
+			},{
+				"name": "product.name",
+				"type": "modal-ref",
+				"ref-tigger": true,
+				"ref-modal-id": "pdt_ref",
+				"ref-modal-url": "fragment/pdt_ref.html",
+				"ref-modal-title": "选择成品",
+				"ref-modal-style": "width: 800px",
+				"label": "品名",
+				"length": "25%",
+				"data-ref": "product",
+				"ref-field": "name"
+			},
+			{
+				"name": "product.model",
+				"type": "modal-ref",
+				"label": "含量",
+				"length": "20%",
+				"data-ref": "product",
+				"ref-field": "model"
+			},
+			{
+				"name": "quantity",
+				"type": "text",
+				"data-type": "float",
+				"label": "数量（件）",
+				"length": "10%"
+			},
+			{
+				"name": "remark",
+				"type": "text",
+				"label": "附注",
+				"length": "45%"
+			}
+		]
+		
+	}
+}

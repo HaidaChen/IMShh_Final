@@ -1,6 +1,9 @@
 package com.douniu.imshh.material.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.util.StringUtils;
 
 import com.douniu.imshh.common.IDInjector;
 import com.douniu.imshh.common.PageResult;
@@ -8,6 +11,7 @@ import com.douniu.imshh.material.dao.IMaterialInDao;
 import com.douniu.imshh.material.domain.BillDetail;
 import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.material.domain.MaterialInBill;
+import com.douniu.imshh.material.domain.MaterialInTableRow;
 import com.douniu.imshh.material.service.IMaterialInService;
 import com.douniu.imshh.material.service.IMaterialService;
 import com.douniu.imshh.utils.LikeFlagUtil;
@@ -20,8 +24,12 @@ public class MaterialInService implements IMaterialInService{
 	@Override
 	public PageResult getPageResult(MaterialFilter filter) {
 		PageResult pr = new PageResult();
-		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"number", "remark"});
-		pr.setRows(dao.getPageResult(condition));
+		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"number"});
+		if (!StringUtils.isEmpty(condition.getCtgCode())){
+			condition.setCtgCode(condition.getCtgCode() + "%");
+		}
+		List<MaterialInBill> result = dao.getPageResult(condition);
+		pr.setRows(change2TableRows(result));
 		pr.setTotal(dao.count(condition));
 		return pr;
 	}
@@ -74,7 +82,17 @@ public class MaterialInService implements IMaterialInService{
 		}
 	}
 	
-	
+	private List<MaterialInTableRow> change2TableRows(List<MaterialInBill> bills){
+		List<MaterialInTableRow> rows = new ArrayList<>();
+		for (MaterialInBill bill : bills){
+			List<BillDetail> details = bill.getDetails();
+			for (BillDetail detail : details){
+				MaterialInTableRow row = new MaterialInTableRow(bill, detail);
+				rows.add(row);
+			}
+		}
+		return rows;
+	}
 	/*private IMaterialInDao dao;
 	private IMaterialService mtlService;
 	

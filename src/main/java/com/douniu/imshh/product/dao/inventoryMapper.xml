@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.product.dao.IInventoryDao">
+	<resultMap type="ProductInventory" id="invtmap">
+        <result property="id" column="id"/>
+        <result property="inventoryDate" column="inventoryDate"/>        
+        <result property="pricingRules" column="mib_number"/>
+        <result property="total" column="total"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    
+    <resultMap type="ProductInventoryDetail" id="invtdtlmap">
+        <result property="id" column="id"/>
+        <result property="inventoryId" column="inventoryId"/>
+        <result property="inventoryDate" column="inventoryDate"/>        
+        <result property="expectQuantity" column="expectQuantity"/>
+        <result property="actualQuantity" column="actualQuantity"/>
+        <result property="profitLoss" column="profitLoss"/>
+        <result property="price" column="price"/>
+        <result property="amount" column="amount"/>
+        <association property="product" javaType="Product">
+        	<id property="id" column="p_id"/>
+        	<result property="name" column="p_name"/>
+        	<result property="code" column="p_code"/>
+        	<result property="model" column="p_model"/>
+       	</association>
+    </resultMap>
+        
+    <resultMap type="ProductInventory" id="invtwdtlmap" extends="invtmap">
+    	<collection property="details" ofType="ProductInventoryDetail">
+            <id property="id" column="dtl_id" />
+            <result property="expectQuantity" column="expectQuantity"/>
+	        <result property="actualQuantity" column="actualQuantity"/>
+	        <result property="profitLoss" column="profitLoss"/>
+	        <result property="price" column="price"/>
+	        <result property="amount" column="amount"/>
+	        <association property="product" javaType="Product">
+	        	<id property="id" column="p_id"/>
+	        	<result property="name" column="p_name"/>
+	        	<result property="code" column="p_code"/>
+	        	<result property="model" column="p_model"/>
+	       	</association>
+        </collection>
+    </resultMap>
+    
+    <update id="saveInventory">
+    	insert into tbl_product_inventory(id, inventoryDate, remark, modifydate)  
+          values(#{id}, #{inventoryDate}, #{remark}, sysdate())
+    </update>
+    
+    <update id="saveInventoryDetail" parameterType="String">
+    	insert into tbl_product_inventorydetail(inventoryId, productId, actualQuantity, modifyDate) 
+	    	select tbl.* from (select #{inventoryId}, 
+	    	                      p.id, 
+	    	                      case when i.actualQuantity is null then 0 else i.actualQuantity end as actualQuantity, 
+	    	                      sysdate()
+	    	                 from t_product p
+	    	                 left join tbl_tmp_product_inventorydetail i
+	    	                   on p.id = i.productId) tbl
+    </update>
+    
+    <update id="updateStorage">
+    	update t_product p, tbl_tmp_product_inventorydetail t
+    	   set p.storage = t.actualQuantity
+    	 where p.id = t.productId
+    	   and t.actualQuantity is not null
+    	   and t.actualQuantity != p.storage
+    </update>
+    
+    <update id="markInventory">
+    	update tbl_product_inout set inventoryed = '1'
+    </update>
+    
+    <update id="removeCash">
+    	delete from tbl_tmp_product_inventorydetail
+    </update>
+    
+    <select id="existCacheItem" resultType="int">
+    	select count(1) from tbl_tmp_product_inventorydetail where productId = #{0}
+    </select>
+    
+    <update id="insertCacheItem">
+    	insert into tbl_tmp_product_inventorydetail(productId, actualQuantity) 
+    	   value(#{0}, #{1})
+    </update>
+    
+    <update id="updateCacheItem">
+    	update tbl_tmp_product_inventorydetail 
+    	   set actualQuantity = #{1} 
+    	 where productId = #{0}
+    </update>
+    
+    <select id="queryStorageWithCachePageResult" parameterType="ProductFilter" resultMap="invtdtlmap">
+	     select pdt.id, 
+	            pdt.p_id, 
+	            pdt.p_name, 
+	            pdt.p_code, 
+	            pdt.p_model, 
+	            pdt.expectQuantity,
+	            case when cas.actualQuantity is null then 0 else cas.actualQuantity end as actualQuantity
+	       from (select p.id as id,
+		              p.id as p_id,
+		              p.name as p_name,
+		              p.code as p_code,
+		              p.model as p_model,
+		              p.storage as expectQuantity
+			     from t_product p
+			    where p.status = '1') pdt
+		   left join (select productId, 
+		                     actualQuantity
+						from tbl_tmp_product_inventorydetail) cas
+			 on pdt.p_id = cas.productId
+		  where 1 = 1
+		<if test="code != null and code !=''">
+          and p_code like #{code} 
+        </if>
+        <if test="profitLoss == 1">
+          and (expectQuantity - actualQuantity) != 0 
+        </if>
+        <if test="ignore0storage == 1">
+          and expectQuantity != 0 
+        </if>
+          order by p_name
+          limit #{pageOffset},#{pageSize}			  
+    	
+    </select> 
+    
+    <select id="countStorageWithCache" parameterType="ProductFilter" resultType="int">
+      select count(1) from(
+        select pdt.id, 
+	            pdt.p_id, 
+	            pdt.p_name, 
+	            pdt.p_code, 
+	            pdt.p_model, 
+	            pdt.expectQuantity,
+	            case when cas.actualQuantity is null then 0 else cas.actualQuantity end as actualQuantity
+	       from (select p.id as id,
+		              p.id as p_id,
+		              p.name as p_name,
+		              p.code as p_code,
+		              p.model as p_model,
+		              p.storage as expectQuantity
+			     from t_product p
+			    where p.status = '1') pdt
+		   left join (select productId, 
+		                     actualQuantity
+						from tbl_tmp_product_inventorydetail) cas
+			 on pdt.p_id = cas.productId
+		  where 1 = 1
+		<if test="code != null and code !=''">
+          and p_code like #{code} 
+        </if>
+        <if test="profitLoss == 1">
+          and (expectQuantity - actualQuantity) != 0 
+        </if>
+        <if test="ignore0storage == 1">
+          and expectQuantity != 0 
+        </if>
+      ) tbl
+    </select> 
+    
+    <select id="queryInventory" parameterType="ProductFilter" resultMap="invtmap">
+       select * from tbl_product_inventory where inventoryDate &gt;= #{startDate} and inventoryDate &lt;= #{endDate}  order by inventoryDate
+    </select>
+    
+    <select id="queryInventoryDetailByPage" parameterType="ProductFilter" resultMap="invtdtlmap">
+       select idtl.id as id,
+              pdt.id as p_id, 
+              pdt.name as p_name, 
+              pdt.code as p_code, 
+              pdt.model as p_model, 
+              idtl.id, 
+              idtl.inventoryId, 
+              case when idtl.actualQuantity is null then 0 else idtl.actualQuantity end as actualQuantity
+         from (select id, name, code, model 
+                from t_product 
+               where status = '1'
+              <if test="code != null and code !=''">
+	             and code like #{code} 
+	          </if>
+	            order by code
+	               limit #{pageOffset},#{pageSize}
+			) pdt 
+	     left join  tbl_product_inventorydetail idtl
+		   on pdt.id = idtl.productId
+		where idtl.inventoryId in (
+		                            select id from tbl_product_inventory 
+		                             where 1 = 1
+		                             <if test="startDate != null">
+							           and inventoryDate &gt;= #{startDate}
+							         </if>
+							         <if test="endDate != null">
+							           and inventoryDate &lt;= #{endDate}
+							         </if>
+		                          )	 
+    </select>
+    
+    <select id="countInventoryDetail" parameterType="ProductFilter" resultType="int">
+       select count(1) from t_product p
+        where p.status = '1'
+        <if test="code != null and code !=''">
+          and p.code like #{code} 
+        </if>
+    </select>
+    
+    <select id="getById" parameterType="String" resultMap="invtwdtlmap">
+        select inv.*, 
+               dtl.id as dtl_id, 
+               expectQuantity,
+               actualQuantity,
+               price,
+               p.id as p_id,
+               p.code as p_code
+          from tbl_product_inventory inv, 
+               tbl_product_inventorydetail dtl, 
+               t_product p             
+         where inv.id = #{id}
+           and inv.id = dtl.inventoryId
+           and dtl.productId = p.id
+           
+    </select>
+    
+</mapper>

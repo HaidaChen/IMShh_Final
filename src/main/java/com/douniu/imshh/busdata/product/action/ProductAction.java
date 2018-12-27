@@ -27,6 +27,7 @@ import com.douniu.imshh.busdata.product.service.IProductService;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.utils.ExcelBean;
 import com.douniu.imshh.utils.ExcelUtil;
+import com.douniu.imshh.utils.GsonUtil;
 import com.douniu.imshh.utils.POIExcelAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -67,6 +68,13 @@ public class ProductAction {
 	public int save(Product pdt){
 		service.save(pdt);
         return 1;
+	}
+	
+	@RequestMapping(value ="/query", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String query(Product pdt){
+		List<Product> list = service.query(pdt);
+		return GsonUtil.toJson(list);
 	}
 	
 	@RequestMapping(value ="/loadpdt", produces = "application/json; charset=utf-8")

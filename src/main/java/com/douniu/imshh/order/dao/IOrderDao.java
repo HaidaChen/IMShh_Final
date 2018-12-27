@@ -6,11 +6,16 @@ import com.douniu.imshh.order.domain.Order;
 import com.douniu.imshh.order.domain.OrderAppointment;
 import com.douniu.imshh.order.domain.OrderFilter;
 import com.douniu.imshh.order.domain.OrderItem;
+import com.douniu.imshh.order.domain.OrderProductDetail;
 
 public interface IOrderDao {
 	List<Order> getPageResult(OrderFilter filter);
 	int count(OrderFilter filter);
+	List<Order> getAll();
 	Order getById(String id);
+	
+	List<OrderProductDetail> getOrderProductPageResult(OrderFilter filter);
+	int countOrderProduct(OrderFilter filter);
 	
 	void insert(Order order);
 	void update(Order order);

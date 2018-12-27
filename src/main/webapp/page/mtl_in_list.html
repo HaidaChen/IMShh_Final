@@ -14,26 +14,47 @@
 	<link rel="stylesheet" href="../css/default.css">
 </head>
 <body>	
+	<div id="panel_condition" class="panel">
+    	<form class="form-inline">
+		  <div class="form-group">
+		    <label class="sr-only" for="filter_number">入库单编号</label>
+		    <input type="text" class="form-control" id="filter_number" placeholder="入库单编号">
+		  </div>
+		  <div class="form-group">
+		    <label class="sr-only" for="filter_supplier">供应商</label>
+		    <select class="form-control" id="filter_supplier">
+		      <option value=""></option>
+		    </select>
+		  </div>
+		  <div class="form-group">
+		    <label class="sr-only" for="filter_product">材料分类</label>
+		    <select class="form-control" id="filter_ctgCode" style="width: 140px">
+		      <option value=""></option>
+		    </select>
+		  </div>
+		  <div class="form-group">
+		    <label for="filter_startDate">入库日期</label>
+		    <input type="date" class="form-control" id="filter_startDate" style="width: 130px">
+		  </div>
+		  <div class="form-group">
+		    <label for="filter_endDate">至</label>
+		    <input type="date" class="form-control" id="filter_endDate" style="width: 130px">
+		  </div>
+		  
+		  <input type="button" id="btn_search" class="btn btn-default" value="查询">
+		</form>
+    </div>
 	<div id="panel_table" class="panel">
         <div class="panel-head">
-            <span><i class="fa fa-navicon"></i> 原材料入库单列表</span>
+            <span><i class="fa fa-navicon"></i> 成品入库单列表</span>
             
-            <div class="table-operation pull-right" style="margin-left: 20px">
-	            <a id="btn_add" title="新增"><i class="fa fa-pencil"></i></a>	            
+            <div class="btn-group pull-right" role="group" style="margin-left: 20px">
+	            <button id="btn_export" class="btn btn-default btn-sm"><i class="fa fa-download"></i> 导出</button>	
+	            <button id="btn_add" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>	            
         	</div>
-        	<div class="table-search pull-right" role="search">
-				<input id="filter_num" class="form-control" type="text" placeholder="入库单单号"/>
-				<a id="btn_search" class="search" title="查询"><i class="fa fa-search"></i></a>
-				<a id="btn_more" class="more" title="更多条件"><i class="fa fa-bars"></i></a>
-			</div>
-			<div class="table-fliter">
-				
-			</div>
-        	
         </div>
 		
 		<table id="tbl_materialIn" class="table table-hover">
-			
 		</table>			
 	</div>
 	<script src="../jquery/jquery-2.0.3.min.js"></script>

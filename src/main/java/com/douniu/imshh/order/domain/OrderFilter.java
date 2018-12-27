@@ -7,6 +7,8 @@ public class OrderFilter extends BaseQO {
 	private String orderType;
 	private String billStatus;
 	private String customerId;
+	private String productId;
+	
 	public String getIdentify() {
 		return identify;
 	}
@@ -30,6 +32,13 @@ public class OrderFilter extends BaseQO {
 	}
 	public void setCustomerId(String customerId) {
 		this.customerId = customerId;
+	}
+	
+	public String getProductId() {
+		return productId;
+	}
+	public void setProductId(String productId) {
+		this.productId = productId;
 	}
 	@Override
 	public String toString() {

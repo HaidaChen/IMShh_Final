@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.product.dao.IProductInOutDao">
+	<resultMap type="ProductInOut" id="piomap">
+        <result property="id" column="id"/>
+        <result property="genDate" column="genDate"/>        
+        <result property="billPeriod" column="billPeriod"/>
+        <result property="inQuantity" column="inQuantity"/>
+        <result property="outQuantity" column="outQuantity"/>
+        <result property="balanceQuantity" column="balanceQuantity"/>
+        <result property="summary" column="summary"/>
+        <association property="bill" javaType="ProductBill">
+        	<id property="id" column="b_id"/>
+        	<result property="number" column="b_number"/>
+        </association>
+        <association property="product" javaType="Product">
+        	<id property="id" column="p_id"/>
+        	<result property="code" column="p_code"/>
+        	<result property="model" column="p_model"/>
+        	<result property="storage" column="p_storage"/>
+        </association>
+    </resultMap>
+    
+    <select id="getTotalInOut" parameterType="ProductFilter" resultMap="piomap">
+        SELECT
+            concat(p.id, case when io.billPeriod is null then '' else io.billPeriod end) as id,
+			p.id as p_id,
+			p.code as p_code,
+			p.model as p_model,
+			p.storage as p_storage,
+			io.billPeriod,
+			io.inQuantity,
+			io.outQuantity
+		FROM
+			(
+				SELECT
+					*
+				FROM
+					t_product
+				WHERE
+					`status` = '1'
+				ORDER BY
+					code
+				LIMIT #{pageOffset},#{pageSize}
+			) p 
+	    left join
+			(
+				SELECT
+					productId,
+					billPeriod,
+					CASE
+				WHEN sum(inQuantity) IS NULL THEN
+					0
+				ELSE
+					sum(inQuantity)
+				END AS inQuantity,
+				CASE
+			WHEN sum(outQuantity) IS NULL THEN
+				0
+			ELSE
+				sum(outQuantity)
+			END AS outQuantity
+			FROM
+				tbl_product_inout
+			WHERE
+			    `status` = '1'
+			and	genDate &gt;= #{startDate}
+			and genDate &lt;= #{endDate}
+			GROUP BY
+				productId,
+				billPeriod
+			) io
+		on
+			p.id = io.productId
+    </select> 
+    
+    <select id="countTotalInOut" parameterType="ProductFilter" resultType="int">
+        SELECT count(1) 
+          FROM t_product
+		 WHERE `status` = '1'
+    </select> 
+    
+    <select id="getInOutByProduct" resultMap="piomap">
+        SELECT
+				l.*, b.id AS b_id, b.number AS b_number
+			FROM
+				(
+					SELECT
+						io.*, 
+						p.id AS p_id,
+						p.name AS p_name,
+						p.model AS p_model
+					FROM
+						tbl_product_inout io,
+						t_product p
+					WHERE
+						io.productId = #{0}
+					AND io.genDate &gt;= #{1}
+					AND io.genDate &lt;= #{2}
+					AND io. STATUS = '1'
+					AND io.productId = p.id
+				) l LEFT JOIN (
+					SELECT
+						id,
+						number
+					FROM
+						tbl_bill_productin
+					UNION ALL
+						SELECT
+							id,
+							number
+						FROM
+							tbl_bill_productout
+				) b ON l.billId = b.id
+           
+    </select>
+    
+    <select id="getTotalInQuantity" resultType="int">
+    	select case when sum(inQuantity) is null then 0 else sum(inQuantity) end from tbl_product_inout where status='1' and productId = #{0} and genDate &gt;= #{1} and genDate &lt;= #{2}
+    </select>
+    
+    <select id="getTotalOutQuantity" resultType="int">
+    	select case when sum(outQuantity) is null then 0 else sum(outQuantity) end from tbl_product_inout where status='1' and productId = #{0} and genDate &gt;= #{1} and genDate &lt;= #{2}
+    </select>
+    
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into tbl_product_inout(id, billId, productId, genDate, billPeriod, inQuantity, outQuantity, balanceQuantity, summary, modifydate, status) 
+             values
+             <foreach collection="list" item="pdt" index="index" separator=",">
+                 (#{pdt.id} , #{pdt.bill.id}, #{pdt.product.id}, #{pdt.genDate},#{pdt.billPeriod}, #{pdt.inQuantity}, #{pdt.outQuantity}, #{pdt.balanceQuantity}, #{pdt.summary}, sysdate(), '1')
+             </foreach>
+    </insert>
+    
+    <update id="deleteByBill" parameterType="String">
+        update tbl_product_inout set 
+          status = '0',
+          modifydate = sysdate()
+        where billId = #{billId}
+    </update>
+</mapper>

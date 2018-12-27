@@ -3,6 +3,8 @@ package com.douniu.imshh.common;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import com.douniu.imshh.utils.ReflectionUtil;
+
 public class IDInjector {
 	public static void injector(Object src){
 		try {
@@ -27,10 +29,6 @@ public class IDInjector {
 	}
 	
 	private static void injector(Object src, String postfix) throws Exception{
-		Field f = src.getClass().getDeclaredField("id");
-		if (f != null){
-			f.setAccessible(true);
-			f.set(src, System.currentTimeMillis()+postfix);
-		}
+		ReflectionUtil.setFieldValue(src, "id", System.currentTimeMillis()+postfix);
 	}
 }

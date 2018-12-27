@@ -14,6 +14,7 @@
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
       
+      <!-- 01 销售 --> 
       <bean name="orderService" class="com.douniu.imshh.order.service.impl.OrderService">
           <property name="dao" ref="orderDao"></property>
       </bean>
@@ -22,7 +23,7 @@
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       
-      <!-- 原材料仓库 --> 
+      <!-- 02 原材料仓库 --> 
       <bean name="materialCategoryService" class="com.douniu.imshh.material.service.impl.CategoryService">
           <property name="dao" ref="materialCategoryDao"></property>
       </bean>
@@ -79,6 +80,49 @@
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       
+      <!-- 03 成品仓库 --> 
+      <bean name="productInService" class="com.douniu.imshh.product.service.impl.ProductInService">
+          <property name="dao" ref="productInDao"></property>
+          <property name="pdtService" ref="productService"></property>
+          <property name="ioService" ref="productInOutService"></property>
+      </bean>
+      
+      <bean id="productInDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.product.dao.IProductInDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="productOutService" class="com.douniu.imshh.product.service.impl.ProductOutService">
+          <property name="dao" ref="productOutDao"></property>
+          <property name="pdtService" ref="productService"></property>
+          <property name="ioService" ref="productInOutService"></property>
+      </bean>
+      
+      <bean id="productOutDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.product.dao.IProductOutDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="productInventoryService" class="com.douniu.imshh.product.service.impl.InventoryService">
+          <property name="dao" ref="productInventoryDao"></property>
+      </bean>
+      
+      <bean id="productInventoryDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.product.dao.IInventoryDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <bean name="productInOutService" class="com.douniu.imshh.product.service.impl.ProductInOutService">
+          <property name="dao" ref="productInOutDao"></property>
+          <property name="pdao" ref="productDao"></property>
+      </bean>
+      
+      <bean id="productInOutDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.product.dao.IProductInOutDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
+      <!-- 04 财务 --> 
       <bean name="financeSubjectService" class="com.douniu.imshh.finance.service.impl.SubjectService">
           <property name="dao" ref="financeSubjectDao"></property>
       </bean>
@@ -107,13 +151,8 @@
           <property name="mapperInterface" value="com.douniu.imshh.finance.dao.IAccountDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
-      <!--  -->
       
-      
-      
-      
-      
-      
+      <!-- 05 基础数据 -->
       <bean name="customerService" class="com.douniu.imshh.busdata.customer.service.impl.CustomerService">
           <property name="dao" ref="customerDao"></property>
       </bean>
@@ -151,7 +190,7 @@
           <property name="mapperInterface" value="com.douniu.imshh.finance.order.dao.IOrderDetailDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
-       -->
+       
       
       
       <bean name="materialStorageService" class="com.douniu.imshh.finance.storage.service.impl.MaterialStorageService">
@@ -176,7 +215,7 @@
       <bean id="productOutDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
           <property name="mapperInterface" value="com.douniu.imshh.finance.storage.dao.IProductOutDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean>
+      </bean> -->
       
       <bean name="invoiceService" class="com.douniu.imshh.finance.invoice.service.impl.InvoiceService">
           <property name="dao" ref="invoiceDao"></property>

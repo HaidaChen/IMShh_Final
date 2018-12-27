@@ -39,11 +39,25 @@ public class OrderAction {
 		return GsonUtil.toJson(pr, "yyyy-MM-dd");
 	}
 	
+	@RequestMapping(value ="/getAll", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getAll(){
+		List<Order> res = service.getAll();
+		return GsonUtil.toJson(res, "yyyy-MM-dd");
+	}
+	
 	@RequestMapping(value ="/getById", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getById(String id){
 		Order order = service.getById(id);
 		return GsonUtil.toJson(order, "yyyy-MM-dd");
+	}
+		
+	@RequestMapping(value ="/getOrderProductPageResult", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getOrderProductPageResult(OrderFilter filter){
+		PageResult pr = service.getOrderProductPageResult(filter);
+		return GsonUtil.toJson(pr, "yyyy-MM-dd");
 	}
 	
 	@RequestMapping(value ="/getBillCode", produces = "application/json; charset=utf-8")

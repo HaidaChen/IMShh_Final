@@ -73,9 +73,7 @@ $(function(){
 		$("#tbl_product").bootstrapTable("uncheckAll");
 
 		var bill;
-		if ($('#orderBill').text()){
-			bill = $('#orderBill').eBill();
-		}
+		bill = $('.e-bill').eBill();
 		
 		if (bill){
 			bill.fillBillItem({'tableData': _selections});

@@ -176,6 +176,9 @@ public class ReflectionUtil {
 	    		Field field = getDeclaredField(object, objName);
 	    		field.setAccessible(true);
 	    		Object _object = field.get(object);
+	    		if (_object instanceof List){
+	    			return _object;
+	    		}
 	    		return getFieldValue(_object, fieldName.substring(fieldName.indexOf(".") + 1));
 	    	}else{
 	    		//根据 对象和属性名通过取 Field对象  

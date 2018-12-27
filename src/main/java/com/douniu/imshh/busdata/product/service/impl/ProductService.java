@@ -60,6 +60,12 @@ public class ProductService implements IProductService{
 	}
 
 	@Override
+	public void addStorage(String id, int storage) {
+		Product product = dao.findById(id);
+		dao.setStorage(id, product.getStorage() + storage);
+	}
+	
+	@Override
 	public void delete(String id) {
 		dao.deleteById(id);
 	}

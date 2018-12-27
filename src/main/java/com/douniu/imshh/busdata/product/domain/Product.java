@@ -8,6 +8,7 @@ public class Product extends BaseQO{
 	private String name;
 	private String specification;
 	private String model;
+	private int storage;
 	private String remark;
 	private int status = 1;
 	
@@ -48,6 +49,12 @@ public class Product extends BaseQO{
 		this.remark = remark;
 	}
 	
+	public int getStorage() {
+		return storage;
+	}
+	public void setStorage(int storage) {
+		this.storage = storage;
+	}
 	public int getStatus() {
 		return status;
 	}
@@ -57,6 +64,7 @@ public class Product extends BaseQO{
 	@Override
 	public String toString() {
 		return "Product [id=" + id + ", code=" + code + ", name=" + name + ", specification=" + specification
-				+ ", model=" + model + ", remark=" + remark + ", status=" + status + "]";
-	}	
+				+ ", model=" + model + ", storage=" + storage + ", remark=" + remark + ", status=" + status + "]";
+	}
+		
 }

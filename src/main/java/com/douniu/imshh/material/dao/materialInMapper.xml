@@ -41,71 +41,83 @@
         </collection>
     </resultMap>
     
-    <select id="getPageResult" parameterType="MaterialFilter" resultMap="mibmap">
-        select mib.id as mib_id, 
-               mib.billDate as mib_billDate, 
-               mib.number as mib_number, 
-               mib.manager as mib_manager, 
-               mib.accountant as mib_accountant,               
-               mib.custodian as mib_custodian, 
-               mib.acceptor as mib_acceptor, 
-               mib.handover as mib_handover, 
-               mib.totalQuantity as mib_totalQuantity, 
-               mib.totalAmount as mib_totalAmount, 
-               mib.billStatus as mib_billStatus,
-               mib.remark as mib_remark, 
-               mib.status as mib_status,               
-               s.id as s_id,
-               s.name as s_name
-          from tbl_bill_materialin mib, 
-               t_supplier s             
-         where mib.status = '1'
-           and mib.supplierId = s.id
-          <if test="number != null and number !=''">
-          and mib.number like #{number} 
-          </if>
-          <if test="billStatus != null and billStatus !=-1">
-          and mib.billStatus = #{billStatus} 
+    <select id="getPageResult" parameterType="MaterialFilter" resultMap="mibwdmap">
+        select mi.id as mib_id, mi.number as mib_number, mi.billDate as mib_billDate, mdi.* 
+	      from    
+	        (select mti.*, s.id as s_id, s.name as s_name from tbl_bill_materialin mti, t_supplier s 
+	          where mti.status = '1'
+	            and mti.supplierId = s.id
+	          order by mti.billDate desc
+	          limit #{pageOffset},#{pageSize})mi
+	      left join
+	        (select d.id as dtl_id,
+	                d.billId as dtl_billId, 
+	                d.quantity as dtl_quantity,
+	                d.remark as dtl_remark, 
+	                m.id as m_id,  
+	                m.name as m_name, 
+	                m.specification as m_specification,
+	                mc.code
+	           from tbl_bill_dtl_materialin d, tbl_material m, tbl_material_category mc
+	          where d.status = '1'
+	            and d.materialId = m.id
+	            and m.categoryId = mc.id)mdi
+	        on mi.id = mdi.dtl_billId
+         where 1 = 1
+         <if test="number != null and number !=''">
+          and mi.number like #{number} 
           </if>
           <if test="supplier != null and supplier !=''">
-          and s.id = #{supplier} 
+          and mi.s_id = #{supplier} 
           </if>
           <if test="startDate != null and startDate !=''">
-          and mib.billDate &gt;= #{startDate} 
+          and mi.billDate &gt;= #{startDate} 
           </if>
           <if test="endDate != null and endDate !=''">
-          and mib.billDate &lt;= #{endDate} 
+          and mi.billDate &lt;= #{endDate} 
           </if>
-          <if test="remark != null and remark !=''">
-          and mib.remark like #{remark} 
+          <if test="ctgCode != null and ctgCode !=''">
+          and mdi.code like #{ctgCode} 
           </if>
-          order by mib.billDate desc, mib.modifydate desc
-          limit #{pageOffset},#{pageSize}
     </select> 
     <select id="count" parameterType="MaterialFilter" resultType="int">
-        select count(1)
-          from tbl_bill_materialin mib, 
-               t_supplier s             
-         where mib.status = '1'
-           and mib.supplierId = s.id
-          <if test="number != null and number !=''">
-          and mib.number like #{number} 
-          </if>
-          <if test="billStatus != null and billStatus !=-1">
-          and mib.billStatus = #{billStatus} 
-          </if>
-          <if test="supplier != null and supplier !=''">
-          and s.id = #{supplier} 
-          </if>
-          <if test="startDate != null and startDate !=''">
-          and mib.billDate &gt;= #{startDate} 
-          </if>
-          <if test="endDate != null and endDate !=''">
-          and mib.billDate &lt;= #{endDate} 
-          </if>
-          <if test="remark != null and remark !=''">
-          and mib.remark like #{remark} 
-          </if>
+    	select count(1) from (
+	        select mi.*, mdi.* 
+		      from    
+		        (select mti.*, s.id as s_id, s.name as s_name from tbl_bill_materialin mti, t_supplier s 
+		          where mti.status = '1'
+		            and mti.supplierId = s.id)mi
+		      left join
+		        (select d.id as dtl_id,
+		                d.billId as dtl_billId, 
+		                d.quantity as dtl_quantity,
+		                d.remark as dtl_remark, 
+		                m.id as m_id,  
+		                m.name as m_name, 
+		                m.specification as m_specification,
+		                mc.code
+		           from tbl_bill_dtl_materialin d, tbl_material m, tbl_material_category mc
+		          where d.status = '1'
+		            and d.materialId = m.id
+		            and m.categoryId = mc.id)mdi
+		        on mi.id = mdi.dtl_billId
+	         where 1 = 1
+	         <if test="number != null and number !=''">
+	          and mi.number like #{number} 
+	          </if>
+	          <if test="supplier != null and supplier !=''">
+	          and mi.s_id = #{supplier} 
+	          </if>
+	          <if test="startDate != null and startDate !=''">
+	          and mi.billDate &gt;= #{startDate} 
+	          </if>
+	          <if test="endDate != null and endDate !=''">
+	          and mi.billDate &lt;= #{endDate} 
+	          </if>
+	          <if test="ctgCode != null and ctgCode !=''">
+	          and mdi.code like #{ctgCode} 
+	          </if>
+          )tbl
     </select> 
     
     <select id="getById" parameterType="String" resultMap="mibwdmap">

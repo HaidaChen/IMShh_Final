@@ -13,8 +13,6 @@ import com.douniu.imshh.finance.storage.service.IMaterialStorageService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-@Controller
-@RequestMapping("/materialstorage")
 public class MaterialStorageAction {
 	
 	@Autowired

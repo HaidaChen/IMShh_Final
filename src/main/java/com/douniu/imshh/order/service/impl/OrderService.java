@@ -23,6 +23,21 @@ public class OrderService implements IOrderService{
 		pr.setTotal(dao.count(condition));
 		return pr;
 	}
+	
+	@Override
+	public List<Order> getAll(){
+		return dao.getAll();
+	}
+	
+	/**
+	 * 列举所有成品的订购、生产、交付、库存情况，不按月的汇总
+	 * */
+	public PageResult getOrderProductPageResult(OrderFilter filter) {
+		PageResult pr = new PageResult();
+		pr.setRows(dao.getOrderProductPageResult(filter));
+		pr.setTotal(dao.countOrderProduct(filter));
+		return pr;
+	}
 
 	@Override
 	public Order getById(String id) {
