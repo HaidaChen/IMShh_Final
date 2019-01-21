@@ -1,5 +1,5 @@
 {
-	"title": {"name":"浏阳市华辉烟花制造有限公司原材料入库单"},
+	
 	"reference": [{
 			"name": "supplier",
 			"src": "/supp/loadallsupp.do"
@@ -9,6 +9,14 @@
 			"src": "/mtl/query.do"
 		}
 	],
+	"title": {"name":"浏阳市华辉烟花制造有限公司原材料入库单",
+			  "siderItems": [
+		          { "name": "identify",
+					"type": "indentify",
+					"label": "编号",
+					"src": "/mtlin/getBillCode.do"
+				  }
+	          ]},
 	"top-columns": [{
 				"name": "supplier.id",
 				"type": "select",
@@ -16,7 +24,7 @@
 				"style": "width:160px",
 				"placeholder": " ",
 				"label": "供应商",
-				"length": "50%",
+				"length": "45%",
 				"data-ref": "supplier",
 				"option-value": "id",
 				"option-text": "name"
@@ -24,17 +32,10 @@
 			{
 				"name": "inDate",
 				"type": "date",
+				"domainStyle": "float: right",
 				"label": "发生日期",
 				"formatter": "yyyy-MM-dd",
-				"length": "30%",
 				"value": "now"
-			},
-			{
-				"name": "number",
-				"type": "indentify",
-				"label": "编号",
-				"src": "/mtlin/getBillCode.do",
-				"length": "20%"
 			}
 		],
 	"right-columns": [],
@@ -65,8 +66,8 @@
 			{
 				"name": "handover",
 				"type": "text",
-				"label": "交库",
-				"length": "20%"
+				"domainStyle": "float: right",
+				"label": "交库"
 			}
 		],
 	"left-columns": [],

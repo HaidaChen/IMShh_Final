@@ -1,14 +1,19 @@
+.panel{
+	margin-bottom:8px; 
+	padding: 5px;
+}
+
 .e-bill{
  color: rgba(0, 0, 0, .8);
  font-size: 12px;
- padding: 5px;
 }
 
 .e-bill h3{
-	font-size: 1.8em;
+	font-size: 1.6em;
 	text-align: center;
 	text-decoration: underline;
 	margin: 0;
+	line-height: 48px;
 }
 
 .e-bill .title-siderbar{
@@ -20,10 +25,17 @@
 
 .e-bill .top-columns, .bottom-columns{
 	height: 20px;
-	margin: 5px 18px;
+	margin: 0 18px;
 }
+.e-bill .top-columns{
+	margin-bottom: 8px;
+}
+.e-bill .bottom-columns{
+	margin-top: 8px;
+}
+
 .e-bill .top-domain{
-	margin: 35px 18px;
+	margin: 5px 18px;
 	vertical-align: top;
 }
 .e-bill .top-domain.domain{
@@ -40,19 +52,22 @@
 	margin: 5px 18px;
 }
 
+
+
 .e-bill .top-columns .bill-column, 
 .e-bill .bottom-columns .bill-column{
 	float: left;
 }
-.e-bill .top-columns .bill-column{
+/* .e-bill .top-columns .bill-column{
 	margin-bottom: 5px;
 }
 .e-bill .bottom-columns .bill-column{
 	margin-top: 5px;
-}
+} */
 .e-bill .top-columns .bill-column label, 
 .e-bill .bottom-columns .bill-column label{
-	margin-right: 10px;
+	margin-right: 5px;
+	margin-bottom: 0;
 }
 
 .e-bill .top-domain .bill-column label{
@@ -63,15 +78,28 @@
 	height: 25px;
 } 
 
-.e-bill .appointment-domain .bill-column label{
-	margin-right: 10px;
+
+.e-bill .bill-column input{
 	display: inline-block;
-	width: 60px;
-	height: 25px;
+	width: 128px;
+	height: 23px;
+	border: none;
+	padding: 5px;
 }
 
+.e-bill .bill-column input[type='date']{
+	width: 108px;
+}
 
-.e-bill .top-domain .bill-column select,
+.e-bill .bill-column select{
+	background: transparent;
+    height: 23px;
+    padding: 5px;
+    border: none;
+    -webkit-appearance: none; /*for chrome*/
+}
+
+/* .e-bill .top-domain .bill-column select,
 .e-bill .top-domain .bill-column input{
 	font-size: 1.2em;
 	margin-right: 10px;
@@ -88,7 +116,12 @@
 	height: 28px;
 	border: none;
 	border-bottom: 1px solid #666666;
+} */
+
+.e-bill .title-siderbar .bill-column:NTH-CHILD(2n){
+	margin-top: -5px;
 }
+
 .e-bill .appointment-domain{
 	border: 1px solid #666666;
 	border-top: none;

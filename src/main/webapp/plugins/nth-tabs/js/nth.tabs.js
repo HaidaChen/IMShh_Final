@@ -67,7 +67,7 @@
 					//tab-content
 					var tabContent = [];
 					tabContent.push('<div class="tab-pane '+active+'" id="'+options.id+'" >');
-					tabContent.push('<iframe id="if'+options.id+'" name="if'+options.id+'" src="'+options.content+'" width="100%" height="600px" frameBorder=0 scrolling="auto"></iframe>');
+					tabContent.push('<iframe id="if'+options.id+'" name="if'+options.id+'" src="'+options.content+'" width="100%" frameBorder=0 scrolling="auto" onload="changeFrameHeight()" ></iframe>');
 					tabContent.push('</div>');
 					nthTabs.find(".tab-content").append(tabContent.join(''));
 					//$('#'+options.id).load(options.content);

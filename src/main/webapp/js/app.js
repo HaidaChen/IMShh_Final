@@ -390,7 +390,7 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/
 	/*	初始化成品订购明细模块
 	/*-----------------------------------------------------------------------------------*/	
-	initOrderProductList = function(){
+	var initOrderProductList = function(){
 		var initFilter = function(){
 			$.getJSON(
 				getProjectName() + "/pdt/loadallpdt.do",
@@ -3514,6 +3514,7 @@ var App = function () {
 			}
 		};
 	}
+	
 	
 	return {
 		/****************公共模块****************/

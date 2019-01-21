@@ -1,5 +1,4 @@
 {
-	"title": {"name":"浏阳市华辉烟花制造有限公司成品入库单"},
 	"reference": [
 		{
 			"name": "orderRef",
@@ -16,12 +15,20 @@
 			}]
 		}
 	],
+	"title": {"name":"浏阳市华辉烟花制造有限公司成品入库单",
+			  "siderItems": [
+		          { "name": "identify",
+					"type": "indentify",
+					"label": "编号",
+					"src": "/pdtin/getBillCode.do"
+				  }
+	          ]},
 	"top-columns": [{
 				"name": "billReason",
 				"type": "select",
 				"style": "width:160px",
 				"label": "入库说明",
-				"length": "30%",
+				"length": "45%",
 				"data-ref": "billReason",
 				"option-value": "key",
 				"option-text": "value"
@@ -39,17 +46,10 @@
 			{
 				"name": "billDate",
 				"type": "date",
+				"domainStyle": "float: right",
 				"label": "发生日期",
 				"formatter": "yyyy-MM-dd",
-				"length": "20%",
 				"value": "now"
-			},
-			{
-				"name": "number",
-				"type": "indentify",
-				"label": "编号",
-				"src": "/pdtin/getBillCode.do",
-				"length": "20%"
 			}
 		],
 	"right-columns": [],
@@ -69,7 +69,7 @@
 				"name": "custodian",
 				"type": "text",
 				"label": "保管",
-				"length": "20%"
+				"domainStyle": "float: right"
 			}
 		],
 	"item-table": {

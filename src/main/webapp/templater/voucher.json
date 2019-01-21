@@ -33,9 +33,8 @@
 			"style": "width:25px",
 			"label": "第",
 			"label-after": "号",
-			"src": ""
-		},{
-			"length": "30%"
+			"src": "",
+			"length": "38%"
 		},
 		{
 			"name": "billDate",
@@ -43,12 +42,12 @@
 			"label": "日期",
 			"formatter": "yyyy-MM-dd",
 			"value": "now"
-		}, {
-			"length": "30%"
-		},{
+		}, 
+		{
 			"name": "attachments",
 			"type": "text",
 			"style": "width:25px",
+			"domainStyle": "float: right",
 			"label": "附件",
 			"label-after": "张"
 			

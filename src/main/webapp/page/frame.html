@@ -67,6 +67,16 @@
 		var getTabs = function(){
 			return tabs;
 		}
+		
+		function changeFrameHeight(){
+			var ifms = $('iframe');
+			$.each(ifms, function(i, ifm){
+				ifm.height=document.documentElement.clientHeight-132;
+			});
+	        
+	    }
+	    window.onresize=function(){ changeFrameHeight();}
+	    $(function(){changeFrameHeight();});
 	</script>
 </body>
 </html>

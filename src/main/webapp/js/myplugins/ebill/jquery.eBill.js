@@ -59,7 +59,12 @@
 	
 	var createHtmlForElement = function(opt, reference){
 		var html = '';
-		html += '<div class="bill-column" style="width: '+opt.length+'" >';
+		if (opt.domainStyle){
+			html += '<div class="bill-column" style="'+opt.domainStyle+'" >';
+		}else{
+			html += '<div class="bill-column" style="width: '+opt.length+'" >';
+		}
+		
 		if (opt.label){
 			html +=   '<label>' + opt.label + '</label>';
 		}
@@ -386,7 +391,9 @@
 							if (refModalStyle){
 								option.style = refModalStyle;
 							}
-							Ewin.load(option);
+							Ewin.load(option).hide(function(){
+								$("body").removeClass('modal-open');
+							});
 						});
 					}
 				}
@@ -432,21 +439,33 @@
 					if (column.type == 'modal-ref' ){
 						var refName = column['data-ref'];
 						if (row[refName]){
+							
 							var refData = row[refName];
 							var fieldName = column['ref-field'];
 							//判断对应的字段中是否包含表达式，有的话则替换表达式
-							if (fieldName.indexOf(",") > -1){
-								var matches = fieldName.split(",");
+							if (column.name.indexOf(".") > -1){
+								/*var matches = fieldName.split(".");
 								$.each(matches, function(i, field){
 									if (refData[field]){
 										t_row[field] = refData[field];
 									}
-								});
+								});*/
+								if (!t_row[refName])
+									t_row[refName] = {};
+								t_row[refName][fieldName] = refData[fieldName];
 							}else{
 								if (refData[fieldName]){
 									t_row[column.name] = refData[fieldName];
 								}
 							}
+							/*
+							var refData = row[refName];
+							var fieldName = column['ref-field'];
+							if (refData[fieldName]){
+								t_row[refName] = {};
+								t_row[refName][fieldName] = refData[fieldName];
+							}
+							*/
 						}
 					}else{
 						if (row[column.name]){
@@ -637,6 +656,10 @@
 			//if (this.options['bottom-columns'])items.concat(this.options['bottom-columns']);
 			$.each(items, function(i, item){
 				var _ele_item = $(item);//ele.find('[name=\''+item.name+'\']');
+				if (item.tagName == 'SELECT' && !_ele_item.attr('select2')){
+					_ele_item.find('option:eq(0)').attr('selected', 'selected');
+					return true;
+				}
 				_ele_item.val('');
 				if (_ele_item.attr('select2')){
 					_ele_item.select2();

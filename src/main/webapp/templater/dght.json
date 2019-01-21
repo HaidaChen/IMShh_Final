@@ -35,42 +35,34 @@
 					"label": "订购编号",
 					"src": "/order/getBillCode.do"
 				  },
-		          {
-		            "name": "orderDate",
-					"type": "date",
-					"label": "订购日期",
-					"formatter": "yyyy-MM-dd",
-					"value": "now"
-		          },
-		          {
-		            "name": "orderType",
+				  { "name": "orderType",
 					"type": "select",
 					"label": "订单类型",
 					"data-ref": "orderTypeOption",
 					"option-value": "key",
 					"option-text": "value"
-		          }
+				  }
 	          ]},	
-	"top-domains": {
-	    "domains":[{
-	            "style": "float: left; width: 368px",
-	    		"name": "",
-	    		"fields": [
-	    			{
+	"top-columns": [{
 						"name": "customer.id",
 						"type": "select",
 						"select2": true,
-						"style": "width: 248px;",
+						"style": "width: 180px;",
 						"placeholder": " ",
 						"label": "订购方",
 						"data-ref": "customer",
 						"option-value": "id",
 						"option-text": "name"
-					}
-	    		]
-	    	}
-	    ]
-	},
+					},
+					{
+			            "name": "orderDate",
+						"type": "date",
+						"domainStyle": "float: right",
+						"label": "订购日期",
+						"formatter": "yyyy-MM-dd",
+						"value": "now"
+			          }
+		],
 	"item-table": {
 		"border-type": "",
 		"border-weight": "",
@@ -104,7 +96,7 @@
 				"ref-field": "name"
 			},
 			{
-				"name": "model",
+				"name": "product.model",
 				"type": "modal-ref",
 				"label": "含量",
 				"length": "10%",
@@ -159,7 +151,7 @@
 					"name": "appointment.shippingAddress",
 					"type": "text",
 					"label": "交货地址",
-					"style": "width: 256px"
+					"style": "width: 691px"
 				}]
 			},
 			{
@@ -168,10 +160,11 @@
 				{
 					"name": "appointment.needInvoice",
 					"type": "select",
+					"domainStyle": "width:228px",
 					"label": "是否开票",
 					"data-ref": "trueOrFalse",
 					"option-value": "key",
-					"option-text": "value"
+					"option-text": "value"					
 				},
 				{
 					"name": "appointment.invoiceCategory",
@@ -185,11 +178,13 @@
 				{
 					"name": "appointment.paymentMethod",
 					"type": "text",
+					"domainStyle": "width:228px",
 					"label": "支付方式"
 				},
 				{
 					"name": "appointment.exchangeRate",
 					"type": "text",
+					"domainStyle": "width:228px",
 					"label": "约定汇率"
 				},
 				{
