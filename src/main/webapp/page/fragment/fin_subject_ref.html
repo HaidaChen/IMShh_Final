@@ -26,12 +26,14 @@
 
 <script>
 $(function(){
+	
 	var selectSubject ={};
 	$("#panel-subject").slimScroll({
 		height: "280px",
 		width: "500px",
 		color: '#54667a'
 	});
+	
 	if (window.localStorage){
 		localStorage.removeItem('jstree');
 	}
@@ -51,15 +53,12 @@ $(function(){
                 }
 			}
 		}
-	}).on('changed.jstree', function(e, data){
-		if('click'==data.event.type){
-			var selectedNode = data.instance.get_node(data.selected[0]);
-			
-			selectSubject.id = selectedNode.id;
-			selectSubject.fullName = selectedNode['a_attr'].fullName;
-			
-		}
+	}).bind('select_node.jstree', function(e, data){
+		var selectedNode = data.instance.get_node(data.selected[0]);
+		selectSubject.id = selectedNode.id;
+		selectSubject.fullName = selectedNode['a_attr'].fullName;
 	});
+	
 	$("#btn_select_close").click(function(){
 		if (!selectSubject.id){
 			return;
@@ -69,7 +68,17 @@ $(function(){
 		var bill = $('#voucherBill').eBill();
 		bill.fillBillItem({'tableData': _selections});
 	});
+	
+	$('button[name="btn_ctg"]').click(function(){
+		$('#sub_ctg').val($(this).attr('code'));
+		
+		var ref = $('#subject_tree').jstree(true);
+		ref.refresh();
+	});
+	
+	
 });
+
 
 
 </script>

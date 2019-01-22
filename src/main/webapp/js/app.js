@@ -550,16 +550,14 @@ var App = function () {
 						'url': getProjectName()+"/mtlCtgy/getJSTree.do"
 					}
 				}
-			}).on('changed.jstree', function(e, data){
-				if('click'==data.event.type){
-					var selectedNode = data.instance.get_node(data.selected[0]);
-					var code = selectedNode['a_attr'].ctgCode;
-					if (!code){
-						code = '';
-					}
-					filterWin.modal.find('#filter_ctgCode').val(code);
-					queryMaterial();
+			}).bind('select_node.jstree', function(e, data){
+				var selectedNode = data.instance.get_node(data.selected[0]);
+				var code = selectedNode['a_attr'].ctgCode;
+				if (!code){
+					code = '';
 				}
+				filterWin.modal.find('#filter_ctgCode').val(code);
+				queryMaterial();
 			});
 			
 		}
@@ -3418,14 +3416,11 @@ var App = function () {
 						'dataType': 'json'
 					}
 				}
-			}).on('changed.jstree', function(e, data){
-				
-				if('click'==data.event.type){
-					var selectedNode = data.instance.get_node(data.selected[0]);
-					$("#label_subject").text(selectedNode['a_attr'].fullName);
-					$("#filter_subject").val(selectedNode.id);	
-					$("#tbl_account").bootstrapTable("refresh", {url: getProjectName() + "/subLedger/getAccount.do", cache: false});
-				}
+			}).bind('select_node.jstree', function(e, data){
+				var selectedNode = data.instance.get_node(data.selected[0]);
+				$("#label_subject").text(selectedNode['a_attr'].fullName);
+				$("#filter_subject").val(selectedNode.id);	
+				$("#tbl_account").bootstrapTable("refresh", {url: getProjectName() + "/subLedger/getAccount.do", cache: false});
 			});
 		}
 		
