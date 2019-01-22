@@ -232,6 +232,19 @@ var App = function () {
 			$('#btn_reset').click(function(){
 				bill.resetBill();
 			});
+			
+			$('#btn_print').click(function(){
+				$('#panel_orderBill').print({
+					globalStyles: true,
+					mediaPrint: false,
+					stylesheet: null,
+					noPrintSelector: ".no-print",
+					iframe: true,
+					append: null,
+					manuallyCopyFormValues: true,
+					deferred: $.Deferred()
+				});
+			});
 		}
 		
 		return {
@@ -959,6 +972,19 @@ var App = function () {
 			$('#btn_reset').click(function(){
 				bill.resetBill();
 			});
+			
+			$('#btn_print').click(function(){
+				$('#panel_mtlinBill').print({
+					globalStyles: true,
+					mediaPrint: false,
+					stylesheet: null,
+					noPrintSelector: ".no-print",
+					iframe: true,
+					append: null,
+					manuallyCopyFormValues: true,
+					deferred: $.Deferred()
+				});
+			});
 		}
 		
 		return {
@@ -994,6 +1020,19 @@ var App = function () {
 			
 			$('#btn_reset').click(function(){
 				bill.resetBill();
+			});
+			
+			$('#btn_print').click(function(){
+				$('#panel_mtloutBill').print({
+					globalStyles: true,
+					mediaPrint: false,
+					stylesheet: null,
+					noPrintSelector: ".no-print",
+					iframe: true,
+					append: null,
+					manuallyCopyFormValues: true,
+					deferred: $.Deferred()
+				});
 			});
 		}
 		
@@ -1813,6 +1852,19 @@ var App = function () {
 			$('#btn_reset').click(function(){
 				bill.resetBill();
 			});
+			
+			$('#btn_print').click(function(){
+				$('#panel_pdtinBill').print({
+					globalStyles: true,
+					mediaPrint: false,
+					stylesheet: null,
+					noPrintSelector: ".no-print",
+					iframe: true,
+					append: null,
+					manuallyCopyFormValues: true,
+					deferred: $.Deferred()
+				});
+			});
 		}
 		
 		return {
@@ -2045,6 +2097,19 @@ var App = function () {
 			
 			$('#btn_reset').click(function(){
 				bill.resetBill();
+			});
+			
+			$('#btn_print').click(function(){
+				$('#panel_pdtoutBill').print({
+					globalStyles: true,
+					mediaPrint: false,
+					stylesheet: null,
+					noPrintSelector: ".no-print",
+					iframe: true,
+					append: null,
+					manuallyCopyFormValues: true,
+					deferred: $.Deferred()
+				});
 			});
 		}
 		
@@ -3035,6 +3100,19 @@ var App = function () {
 			
 			$('#btn_reset').click(function(){
 				bill.resetBill();
+			});
+			
+			$('#btn_print').click(function(){
+				$('#panel_voucher').print({
+					globalStyles: true,
+					mediaPrint: false,
+					stylesheet: null,
+					noPrintSelector: ".no-print",
+					iframe: true,
+					append: null,
+					manuallyCopyFormValues: true,
+					deferred: $.Deferred()
+				});
 			});
 		}
 		

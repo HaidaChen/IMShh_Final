@@ -17,7 +17,7 @@
 }
 
 .e-bill .title-siderbar{
-	width: 238px;
+	width: 178px;
 	position: absolute;
 	right: 15px;
 	top: 15px;
@@ -82,6 +82,14 @@
 .e-bill .bill-column input{
 	display: inline-block;
 	width: 128px;
+	height: 23px;
+	border: none;
+	padding: 5px;
+}
+
+.e-bill .bottom-columns .bill-column input{
+	display: inline-block;
+	width: 88px;
 	height: 23px;
 	border: none;
 	padding: 5px;

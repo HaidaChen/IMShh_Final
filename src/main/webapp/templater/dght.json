@@ -151,7 +151,7 @@
 					"name": "appointment.shippingAddress",
 					"type": "text",
 					"label": "交货地址",
-					"style": "width: 691px"
+					"style": "width: 600px"
 				}]
 			},
 			{
@@ -160,7 +160,7 @@
 				{
 					"name": "appointment.needInvoice",
 					"type": "select",
-					"domainStyle": "width:228px",
+					"domainStyle": "width: 188px",
 					"label": "是否开票",
 					"data-ref": "trueOrFalse",
 					"option-value": "key",
@@ -178,20 +178,20 @@
 				{
 					"name": "appointment.paymentMethod",
 					"type": "text",
-					"domainStyle": "width:228px",
+					"domainStyle": "width:188px",
 					"label": "支付方式"
 				},
 				{
 					"name": "appointment.exchangeRate",
 					"type": "text",
-					"domainStyle": "width:228px",
+					"domainStyle": "width:188px",
 					"label": "约定汇率"
 				},
 				{
 					"name": "appointment.paymentAppointment",
 					"type": "text",
 					"label": "付款约定",
-					"style": "width: 256px"
+					"style": "width: 208px"
 				}]
 			},
 			{
@@ -201,7 +201,7 @@
 					"name": "appointment.otherAppointment",
 					"type": "text",
 					"label": "其他约定",
-					"style": "width: 691px"
+					"style": "width: 600px"
 				}]
 			}
 		]
