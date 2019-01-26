@@ -176,6 +176,21 @@
     <select id="getTotalOutQuantity" resultType="float">
     	select case when sum(outQuantity) is null then 0 else sum(outQuantity) end from tbl_mtl_inout where status='1' and materialId = #{0} and genDate &gt;= #{1} and genDate &lt;= #{2}
     </select>
+    
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into tbl_mtl_inout(id, billId, materialId, genDate, billPeriod, inQuantity, outQuantity, balanceQuantity, summary, modifydate, status) 
+             values
+             <foreach collection="list" item="mtl" index="index" separator=",">
+                 (#{mtl.id} , #{mtl.bill.id}, #{mtl.material.id}, #{mtl.genDate},#{mtl.billPeriod}, #{mtl.inQuantity}, #{mtl.outQuantity}, #{mtl.balanceQuantity}, #{mtl.summary}, sysdate(), '1')
+             </foreach>
+    </insert>
+    
+    <update id="deleteByBill" parameterType="String">
+        update tbl_mtl_inout set 
+          status = '0',
+          modifydate = sysdate()
+        where billId = #{billId}
+    </update>
     <!-- <resultMap type="MaterialIn" id="mtlinmap">
         <result property="id" column="id"/>
         <result property="inDate" column="inDate"/>

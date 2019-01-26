@@ -44,6 +44,7 @@
       <bean name="materialInService" class="com.douniu.imshh.material.service.impl.MaterialInService">
           <property name="dao" ref="materialInDao"></property>
           <property name="mtlService" ref="materialService"></property>
+          <property name="ioService" ref="materialInOutService"></property>
       </bean>
       
       <bean id="materialInDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
@@ -54,6 +55,7 @@
       <bean name="materialOutService" class="com.douniu.imshh.material.service.impl.MaterialOutService">
           <property name="dao" ref="materialOutDao"></property>
           <property name="mtlService" ref="materialService"></property>
+          <property name="ioService" ref="materialInOutService"></property>
       </bean>
       
       <bean id="materialOutDao" class="org.mybatis.spring.mapper.MapperFactoryBean">

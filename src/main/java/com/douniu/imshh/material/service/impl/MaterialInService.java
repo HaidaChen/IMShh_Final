@@ -12,6 +12,7 @@ import com.douniu.imshh.material.domain.BillDetail;
 import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.material.domain.MaterialInBill;
 import com.douniu.imshh.material.domain.MaterialInTableRow;
+import com.douniu.imshh.material.service.IMaterialInOutService;
 import com.douniu.imshh.material.service.IMaterialInService;
 import com.douniu.imshh.material.service.IMaterialService;
 import com.douniu.imshh.utils.LikeFlagUtil;
@@ -20,6 +21,7 @@ public class MaterialInService implements IMaterialInService{
 
 	private IMaterialInDao dao;
 	private IMaterialService mtlService;
+	private IMaterialInOutService ioService;
 	
 	@Override
 	public PageResult getPageResult(MaterialFilter filter) {
@@ -59,6 +61,7 @@ public class MaterialInService implements IMaterialInService{
 		IDInjector.injector(details);
 		dao.insertDetails(details);
 		dao.insert(materialIn);
+		ioService.insert(materialIn);
 	}
 
 	@Override
@@ -78,6 +81,7 @@ public class MaterialInService implements IMaterialInService{
 		}
 		IDInjector.injector(details);
 		dao.insertDetails(materialIn.getDetails());
+		ioService.update(materialIn);
 	}
 
 	@Override
@@ -89,6 +93,7 @@ public class MaterialInService implements IMaterialInService{
 		for (BillDetail detail : details){
 			mtlService.addStorage(detail.getMaterial().getId(), 0-detail.getQuantity());
 		}
+		ioService.delete(id);
 	}
 	
 	private List<MaterialInTableRow> change2TableRows(List<MaterialInBill> bills){
@@ -207,5 +212,8 @@ public class MaterialInService implements IMaterialInService{
 		this.mtlService = mtlService;
 	}
 
-	
+	public void setIoService(IMaterialInOutService ioService) {
+		this.ioService = ioService;
+	}
+
 }
