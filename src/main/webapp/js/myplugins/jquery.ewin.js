@@ -78,6 +78,7 @@
                 backdrop: 'static'
             });
             $('#' + modalId).on('hide.bs.modal', function (e) {
+            	$('body').removeClass('modal-open');
                 $('body').find('#' + modalId).remove();
             });
             return modalId;
@@ -116,6 +117,7 @@
         	
             if (options.rmvWin){
             	$('#' + options.id).on('hide.bs.modal', function (e) {
+            		$('body').removeClass('modal-open');
                 	$('body').find('#' + options.id).remove();
                 });
             }            
@@ -253,6 +255,7 @@
                         options.onReady.call(target, e);
                 });
                 target.on('hide.bs.modal', function (e) {
+                	$('body').removeClass('modal-open');
                     $('body').find(target).remove();
                 });
             }

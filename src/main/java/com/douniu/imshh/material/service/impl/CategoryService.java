@@ -42,6 +42,11 @@ public class CategoryService implements ICategoryService{
 	}
 
 	@Override
+	public Category getByCode(String code) {
+		return dao.getByCode(code);
+	}
+
+	@Override
 	public void newCategory(Category category) {
 		IDInjector.injector(category);
 		dao.insert(category);

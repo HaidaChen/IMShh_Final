@@ -9,6 +9,7 @@ import com.douniu.imshh.order.domain.Order;
 import com.douniu.imshh.order.domain.OrderAppointment;
 import com.douniu.imshh.order.domain.OrderFilter;
 import com.douniu.imshh.order.domain.OrderItem;
+import com.douniu.imshh.order.domain.OrderProductDetail;
 import com.douniu.imshh.order.service.IOrderService;
 import com.douniu.imshh.utils.LikeFlagUtil;
 
@@ -25,6 +26,12 @@ public class OrderService implements IOrderService{
 	}
 	
 	@Override
+	public List<Order> query(OrderFilter filter) {
+		OrderFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"identify"});
+		return dao.query(condition);
+	}
+	
+	@Override
 	public List<Order> getAll(){
 		return dao.getAll();
 	}
@@ -37,6 +44,11 @@ public class OrderService implements IOrderService{
 		pr.setRows(dao.getOrderProductPageResult(filter));
 		pr.setTotal(dao.countOrderProduct(filter));
 		return pr;
+	}
+	
+	@Override
+	public List<OrderProductDetail> queryOrderProduct(OrderFilter filter) {
+		return dao.queryOrderProduct(filter);
 	}
 
 	@Override

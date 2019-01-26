@@ -8,6 +8,9 @@ import com.douniu.imshh.busdata.product.dao.IProductDao;
 import com.douniu.imshh.busdata.product.domain.Product;
 import com.douniu.imshh.common.IDInjector;
 import com.douniu.imshh.common.PageResult;
+import com.douniu.imshh.material.domain.MaterialFilter;
+import com.douniu.imshh.material.domain.MaterialInOut;
+import com.douniu.imshh.material.domain.MaterialInOutMap;
 import com.douniu.imshh.product.dao.IProductInOutDao;
 import com.douniu.imshh.product.domain.BillDetail;
 import com.douniu.imshh.product.domain.PeriodInOut;
@@ -79,6 +82,23 @@ public class ProductInOutService implements IProductInOutService{
 		pr.setRows(maps);
 		pr.setTotal(dao.countTotalInOut(filter));
 		return pr;
+	}
+	
+	@Override
+	public List<ProductInOutMap> queryGlobalInOut(ProductFilter filter) {
+		List<ProductInOutMap> maps = new ArrayList<>();
+		List<ProductInOut> details = dao.queryTotalInOut(filter);
+		for (ProductInOut detail : details){
+			ProductInOutMap map = null;
+			if (!maps.contains(detail)){
+				map = new ProductInOutMap(detail.getProduct());
+				maps.add(map);
+			}else {
+				map = maps.get(maps.indexOf(detail));
+			}
+			map.getIomap().put(detail.getBillPeriod(), new PeriodInOut(detail.getBillPeriod(), detail.getInQuantity(), detail.getOutQuantity()));
+		}
+		return maps;
 	}
 	
 	/**

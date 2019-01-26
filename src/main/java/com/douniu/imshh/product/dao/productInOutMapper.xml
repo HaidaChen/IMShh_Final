@@ -81,6 +81,57 @@
 		 WHERE `status` = '1'
     </select> 
     
+    <select id="queryTotalInOut" parameterType="ProductFilter" resultMap="piomap">
+        SELECT
+            concat(p.id, case when io.billPeriod is null then '' else io.billPeriod end) as id,
+			p.id as p_id,
+			p.code as p_code,
+			p.model as p_model,
+			p.storage as p_storage,
+			io.billPeriod,
+			io.inQuantity,
+			io.outQuantity
+		FROM
+			(
+				SELECT
+					*
+				FROM
+					t_product
+				WHERE
+					`status` = '1'
+				ORDER BY code
+			) p 
+	    left join
+			(
+				SELECT
+					productId,
+					billPeriod,
+					CASE
+				WHEN sum(inQuantity) IS NULL THEN
+					0
+				ELSE
+					sum(inQuantity)
+				END AS inQuantity,
+				CASE
+			WHEN sum(outQuantity) IS NULL THEN
+				0
+			ELSE
+				sum(outQuantity)
+			END AS outQuantity
+			FROM
+				tbl_product_inout
+			WHERE
+			    `status` = '1'
+			and	genDate &gt;= #{startDate}
+			and genDate &lt;= #{endDate}
+			GROUP BY
+				productId,
+				billPeriod
+			) io
+		on
+			p.id = io.productId
+    </select> 
+    
     <select id="getInOutByProduct" resultMap="piomap">
         SELECT
 				l.*, b.id AS b_id, b.number AS b_number

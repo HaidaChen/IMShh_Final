@@ -38,14 +38,12 @@
 		FROM
 			(
 				SELECT
-					*
+					mtl.*
 				FROM
-					tbl_material
-				WHERE
-					`status` = '1'
-				ORDER BY
-					categoryId,
-					id
+					tbl_material mtl, tbl_material_category ctg
+				WHERE mtl.status = '1'
+				  and mtl.categoryId = ctg.id	
+				ORDER BY ctg.code, mtl.name
 				LIMIT #{pageOffset},#{pageSize}
 			) m 
 	    left join
@@ -84,6 +82,57 @@
           FROM tbl_material
 		 WHERE `status` = '1'
     </select> 
+    
+    <select id="queryTotalInOut" parameterType="MaterialFilter" resultMap="miomap">
+        SELECT
+            concat(m.id, case when io.billPeriod is null then '' else io.billPeriod end) as id,
+			m.id as m_id,
+			m. NAME as m_name,
+			m.specification as m_specification,
+			m. STORAGE as m_storage,
+			io.billPeriod,
+			io.inQuantity,
+			io.outQuantity
+		FROM
+			(
+				SELECT
+					mtl.*
+				FROM
+					tbl_material mtl, tbl_material_category ctg
+				WHERE mtl.status = '1'
+				  and mtl.categoryId = ctg.id	
+				ORDER BY ctg.code, mtl.name
+			) m 
+	    left join
+			(
+				SELECT
+					materialId,
+					billPeriod,
+					CASE
+				WHEN sum(inQuantity) IS NULL THEN
+					0
+				ELSE
+					sum(inQuantity)
+				END AS inQuantity,
+				CASE
+			WHEN sum(outQuantity) IS NULL THEN
+				0
+			ELSE
+				sum(outQuantity)
+			END AS outQuantity
+			FROM
+				tbl_mtl_inout
+			WHERE
+			    `status` = '1'
+			and	genDate &gt;= #{startDate}
+			and genDate &lt;= #{endDate}
+			GROUP BY
+				materialId,
+				billPeriod
+			) io
+		on
+			m.id = io.materialId
+    </select>
     
     <select id="getInOutByMaterial" resultMap="miomap">
         SELECT

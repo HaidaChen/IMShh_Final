@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -18,9 +22,12 @@ import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.domain.BillDetail;
 import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.material.domain.MaterialOutBill;
+import com.douniu.imshh.material.domain.MaterialOutTableRow;
 import com.douniu.imshh.material.service.IMaterialOutService;
 import com.douniu.imshh.sys.service.IParameterService;
 import com.douniu.imshh.utils.GsonUtil;
+import com.douniu.imshh.utils.ImportAndExportUtil;
+import com.douniu.imshh.utils.SheetData;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
@@ -104,6 +111,48 @@ public class MaterialOutAction {
 	@ResponseBody
 	public void deleteBill(String id){
 		service.deleteBill(id);
+	}
+	
+	@RequestMapping(value = "exportMaterialOut", method = RequestMethod.GET)  
+    @ResponseBody  
+	public void exportMaterialOut(HttpServletRequest request, HttpServletResponse response, MaterialFilter filter){
+		SheetData data = new SheetData("材料出库单列表");
+		data.put("number", filter.getNumber());
+		String reason = "";
+		if ("01".equals(filter.getBillReason())){
+			reason = "生产出库";
+		}
+		if ("02".equals(filter.getBillReason())){
+			reason = "退货出库";
+		}
+		if ("03".equals(filter.getBillReason())){
+			reason = "其他出库";
+		}
+		data.put("billReason", reason);
+		data.put("startDate", filter.getStartDate());
+		data.put("endDate", filter.getEndDate());
+		List<MaterialOutBill> bills = service.query(filter);
+		
+		int startRowNum = 6;
+		int numberColumn = 1;
+		int billDateColumn = 2;
+		
+		List<CellRangeAddress> ranges = new ArrayList<>();
+		List<MaterialOutTableRow> tableRows = new ArrayList<>();
+		
+		for (MaterialOutBill bill : bills){
+			List<BillDetail> details = bill.getDetails();
+			for (BillDetail detail : details){
+				tableRows.add(new MaterialOutTableRow(bill, detail));
+			}
+			
+			ranges.add(new CellRangeAddress(startRowNum, startRowNum + details.size() - 1, numberColumn, numberColumn));
+			ranges.add(new CellRangeAddress(startRowNum, startRowNum + details.size() - 1, billDateColumn, billDateColumn));
+			startRowNum = startRowNum + details.size() - 1;
+		}
+		data.addDatas(tableRows);
+		data.setRanges(ranges);
+		ImportAndExportUtil.export("材料出库单列表.xls", data, request, response);
 	}
 	
 	/*private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();

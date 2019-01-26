@@ -61,7 +61,7 @@
     
     
     <select id="getPageResult" parameterType="OrderFilter" resultMap="omap">
-        select o.*, a.*               
+        select o.*, a.*, c.id as c_id, c.name as c_name             
           from tbl_order o, 
                tbl_order_appointment a,
                t_customer c             
@@ -78,7 +78,7 @@
           and billStatus = #{billStatus} 
           </if>
           <if test="customerId != null and customerId !=''">
-          and c.name = #{customerId} 
+          and c.id = #{customerId} 
           </if>
           <if test="startDate != null and startDate !=''">
           and orderDate &gt;= #{startDate} 
@@ -107,7 +107,7 @@
           and billStatus = #{billStatus} 
           </if>
           <if test="customerId != null and customerId !=''">
-          and c.name = #{customerId} 
+          and c.id = #{customerId} 
           </if>
           <if test="startDate != null and startDate !=''">
           and orderDate &gt;= #{startDate} 
@@ -116,6 +116,36 @@
           and orderDate &lt;= #{endDate} 
           </if>
     </select> 
+    
+    <select id="query" parameterType="OrderFilter" resultMap="omap">
+        select o.*, a.*, c.id as c_id, c.name as c_name            
+          from tbl_order o, 
+               tbl_order_appointment a,
+               t_customer c             
+         where o.status = '1'
+           and o.id = a.orderId
+           and o.customerId = c.id
+          <if test="identify != null and identify !=''">
+          and identify like #{identify} 
+          </if>
+          <if test="orderType != null and orderType !=0">
+          and orderType = #{orderType} 
+          </if>
+          <if test="billStatus != null and billStatus !=''">
+          and billStatus = #{billStatus} 
+          </if>
+          <if test="customerId != null and customerId !=''">
+          and c.id = #{customerId} 
+          </if>
+          <if test="startDate != null and startDate !=''">
+          and orderDate &gt;= #{startDate} 
+          </if>
+          <if test="endDate != null and endDate !=''">
+          and orderDate &lt;= #{endDate} 
+          </if>
+          order by orderDate desc
+    </select> 
+    
     <select id="getAll" resultMap="omap">
     	select * from tbl_order where status = '1'
     </select>
@@ -145,6 +175,51 @@
            and o.customerId = c.id
            and o.id = i.orderId
            and i.productId = p.id
+    </select>
+    
+    <select id="queryOrderProduct" parameterType="OrderFilter" resultMap="opmap">
+	    select p.id, p.id as p_id, p.code, p.model, p.storage, op.* from t_product p,
+			(select productid, sum(orderquantity) orderQuantity, sum(orderamount) orderAmount, sum(inquantity) inQuantity, sum(outquantity) outQuantity from(
+			  select odr.productId, orderquantity, orderamount, inquantity, outquantity from
+						( 
+						select o.id oid, oi.productid, sum(oi.quantity) orderquantity, sum(oi.amount) orderamount 
+							from tbl_order_item oi, tbl_order o
+						 where o.status = '1'
+				          and o.id = oi.orderid
+				          <if test="startDate != null and startDate !=''">
+				          and orderDate &gt;= #{startDate} 
+				          </if>
+				          <if test="endDate != null and endDate !=''">
+				          and orderDate &lt;= #{endDate} 
+				          </if>
+				          <if test="productId != null and productId !=''">
+				          and oi.productid = #{productId} 
+				          </if>
+						 group by oi.productid
+						)odr 
+			    left join
+						(
+						select o.id oid, d.productid, sum(d.quantity) inquantity 
+							from tbl_bill_dtl_productin d, tbl_bill_productin i, tbl_order o
+						 where d.status = '1'
+			         and o.id = i.orderid
+							 and d.billId = i.id
+						 group by o.id, d.productid
+						)pin
+			      on odr.oid = pin.oid and odr.productid = pin.productid
+			    left join
+						(
+						select o.id oid, d.productid, sum(d.quantity) outquantity
+							from tbl_bill_dtl_productout d, tbl_bill_productout ot, tbl_order o
+						 where d.status = '1'
+			         and o.id = ot.orderid
+							 and d.billId = ot.id
+						 group by o.id, d.productid
+						)pout
+			      on odr.oid = pout.oid and odr.productid = pout.productid 
+			)tbl group by productid)op
+			where p.id = op.productid
+			  and p.status = '1'
     </select>
     
     <select id="getOrderProductPageResult" parameterType="OrderFilter" resultMap="opmap">

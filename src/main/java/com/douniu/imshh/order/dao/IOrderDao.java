@@ -11,10 +11,12 @@ import com.douniu.imshh.order.domain.OrderProductDetail;
 public interface IOrderDao {
 	List<Order> getPageResult(OrderFilter filter);
 	int count(OrderFilter filter);
+	List<Order> query(OrderFilter filter);
 	List<Order> getAll();
 	Order getById(String id);
 	
 	List<OrderProductDetail> getOrderProductPageResult(OrderFilter filter);
+	List<OrderProductDetail> queryOrderProduct(OrderFilter filter);
 	int countOrderProduct(OrderFilter filter);
 	
 	void insert(Order order);

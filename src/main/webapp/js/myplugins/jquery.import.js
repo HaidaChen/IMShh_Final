@@ -53,6 +53,7 @@
                 backdrop: 'static'
             });
             $('#importModal').on('hide.bs.modal', function (e) {
+            	$('body').removeClass('modal-open');
                 $('body').find('#importModal').remove();
             });
             $('#importModal .modal-body button[name="import"]').click(function(){
@@ -66,7 +67,10 @@
         				      　　 url : _options.url,
         				     　　  dataType : 'text',
         				      　　 success : function(data) {
-        				    	  $("#importModal").find(".modal-footer").html(data);	
+        				    	  if (data == 'success')
+        				    		  $("#importModal").find(".modal-footer").html("数据导入成功");
+        				    	  else
+        				    		  $("#importModal").find(".modal-footer").html(data);
         						  $("#importModal").find("input,a").removeAttr("disable");  	 
         						  _options.callback();
         				     },

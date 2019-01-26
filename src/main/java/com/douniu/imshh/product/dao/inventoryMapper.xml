@@ -92,6 +92,14 @@
     	 where productId = #{0}
     </update>
     
+    <insert id="batchInsertCacheItem" parameterType="java.util.List">
+        insert into tbl_tmp_product_inventorydetail(productId, actualQuantity) 
+             values
+             <foreach collection="list" item="dtl" index="index" separator=",">
+                 (#{dtl.product.id} , #{dtl.actualQuantity})
+             </foreach>
+    </insert>
+    
     <select id="queryStorageWithCachePageResult" parameterType="ProductFilter" resultMap="invtdtlmap">
 	     select pdt.id, 
 	            pdt.p_id, 
@@ -99,7 +107,7 @@
 	            pdt.p_code, 
 	            pdt.p_model, 
 	            pdt.expectQuantity,
-	            case when cas.actualQuantity is null then 0 else cas.actualQuantity end as actualQuantity
+	            cas.actualQuantity as actualQuantity
 	       from (select p.id as id,
 		              p.id as p_id,
 		              p.name as p_name,
@@ -121,6 +129,9 @@
         </if>
         <if test="ignore0storage == 1">
           and expectQuantity != 0 
+        </if>
+        <if test="ignoreNullStorage == 1">
+          and actualQuantity is not null 
         </if>
           order by p_name
           limit #{pageOffset},#{pageSize}			  
@@ -135,7 +146,7 @@
 	            pdt.p_code, 
 	            pdt.p_model, 
 	            pdt.expectQuantity,
-	            case when cas.actualQuantity is null then 0 else cas.actualQuantity end as actualQuantity
+	            cas.actualQuantity as actualQuantity
 	       from (select p.id as id,
 		              p.id as p_id,
 		              p.name as p_name,
@@ -157,6 +168,9 @@
         </if>
         <if test="ignore0storage == 1">
           and expectQuantity != 0 
+        </if>
+        <if test="ignoreNullStorage == 1">
+          and actualQuantity is not null 
         </if>
       ) tbl
     </select> 

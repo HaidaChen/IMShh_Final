@@ -66,5 +66,11 @@ public class Product extends BaseQO{
 		return "Product [id=" + id + ", code=" + code + ", name=" + name + ", specification=" + specification
 				+ ", model=" + model + ", storage=" + storage + ", remark=" + remark + ", status=" + status + "]";
 	}
-		
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return this.name.equals(product.name);
+    }	
 }

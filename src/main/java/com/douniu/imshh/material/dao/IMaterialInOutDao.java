@@ -12,6 +12,7 @@ public interface IMaterialInOutDao {
 	
 	List<MaterialInOut> getTotalInOut(MaterialFilter filter);
 	int countTotalInOut(MaterialFilter filter);
+	List<MaterialInOut> queryTotalInOut(MaterialFilter filter);
 	
 	float getTotalInQuantity(String mtlId, Date startDate, Date endDate);
 	float getTotalOutQuantity(String mtlId, Date startDate, Date endDate);

@@ -33,6 +33,15 @@ public class MaterialInService implements IMaterialInService{
 		pr.setTotal(dao.count(condition));
 		return pr;
 	}
+	
+	@Override
+	public List<MaterialInBill> query(MaterialFilter filter) {
+		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"number"});
+		if (!StringUtils.isEmpty(condition.getCtgCode())){
+			condition.setCtgCode(condition.getCtgCode() + "%");
+		}
+		return dao.query(condition);
+	}
 
 	@Override
 	public MaterialInBill getById(String id) {

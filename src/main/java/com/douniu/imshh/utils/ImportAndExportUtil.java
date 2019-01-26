@@ -52,4 +52,37 @@ public class ImportAndExportUtil {
             e.printStackTrace();  
         }  
 	}
+	
+	public static void export(String tmp, SheetData data,HttpServletRequest request, HttpServletResponse response){
+		String tmpPath = request.getRealPath("/templater/export/"+tmp);
+        
+        try {
+        	response.setHeader("Content-Disposition", "attachment;filename=" + new String(data.getName().getBytes("gbk"),"ISO-8859-1")+".xls");
+            response.setContentType("charset=UTF-8");  
+            response.setHeader("Pragma", "no-cache");  
+            response.setHeader("Cache-Control", "no-cache");  
+            response.setDateHeader("Expires", 0); 
+			OutputStream out = response.getOutputStream();
+			ExcelUtils.writeData(tmpPath, out, data);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+	}
+	
+	public static void export(Workbook tmp, SheetData data,HttpServletRequest request, HttpServletResponse response){
+		
+        try {
+        	response.setHeader("Content-Disposition", "attachment;filename=" + new String(data.getName().getBytes("gbk"),"ISO-8859-1")+".xls");
+            response.setContentType("charset=UTF-8");  
+            response.setHeader("Pragma", "no-cache");  
+            response.setHeader("Cache-Control", "no-cache");  
+            response.setDateHeader("Expires", 0); 
+			OutputStream out = response.getOutputStream();
+			ExcelUtils.writeData(tmp, out, data);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+	}
 }

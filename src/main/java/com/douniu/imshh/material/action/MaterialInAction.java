@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -14,14 +18,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.douniu.imshh.busdata.supplier.service.ISupplierService;
 import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.domain.BillDetail;
 import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.material.domain.MaterialInBill;
+import com.douniu.imshh.material.domain.MaterialInTableRow;
+import com.douniu.imshh.material.service.ICategoryService;
 import com.douniu.imshh.material.service.IMaterialInService;
 import com.douniu.imshh.sys.service.IParameterService;
 import com.douniu.imshh.utils.GsonUtil;
+import com.douniu.imshh.utils.ImportAndExportUtil;
+import com.douniu.imshh.utils.SheetData;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
@@ -32,6 +41,10 @@ public class MaterialInAction {
 	private IMaterialInService service;
 	@Autowired
 	private IParameterService pservice;
+	@Autowired
+	private ISupplierService suppService;
+	@Autowired
+	private ICategoryService ctgService;
 	
 	@Authorization("010201")
 	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
@@ -111,6 +124,45 @@ public class MaterialInAction {
 	@ResponseBody
 	public void deleteMaterialIn(String id){
 		service.deleteMaterialIn(id);
+	}
+	
+	@RequestMapping(value = "exportMaterialIn", method = RequestMethod.GET)  
+    @ResponseBody  
+	public void exportMaterialIn(HttpServletRequest request, HttpServletResponse response, MaterialFilter filter){
+		SheetData data = new SheetData("材料入库单列表");
+		data.put("number", filter.getNumber());
+		if (!StringUtils.isEmpty(filter.getSupplier())){
+			data.put("supplier", suppService.getById(filter.getSupplier()).getName());
+		}
+		if (!StringUtils.isEmpty(filter.getCtgCode())){
+			data.put("materialCtg", ctgService.getByCode(filter.getCtgCode()));
+		}
+		data.put("startDate", filter.getStartDate());
+		data.put("endDate", filter.getEndDate());
+		List<MaterialInBill> bills = service.query(filter);
+		
+		int startRowNum = 7;
+		int numberColumn = 1;
+		int billDateColumn = 2;
+		int supplierColumn = 3;
+		
+		List<CellRangeAddress> ranges = new ArrayList<>();
+		List<MaterialInTableRow> tableRows = new ArrayList<>();
+		
+		for (MaterialInBill bill : bills){
+			List<BillDetail> details = bill.getDetails();
+			for (BillDetail detail : details){
+				tableRows.add(new MaterialInTableRow(bill, detail));
+			}
+			
+			ranges.add(new CellRangeAddress(startRowNum, startRowNum + details.size() - 1, numberColumn, numberColumn));
+			ranges.add(new CellRangeAddress(startRowNum, startRowNum + details.size() - 1, billDateColumn, billDateColumn));
+			ranges.add(new CellRangeAddress(startRowNum, startRowNum + details.size() - 1, supplierColumn, supplierColumn));
+			startRowNum = startRowNum + details.size() - 1;
+		}
+		data.addDatas(tableRows);
+		data.setRanges(ranges);
+		ImportAndExportUtil.export("材料入库单列表.xls", data, request, response);
 	}
 	
 	/*private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();

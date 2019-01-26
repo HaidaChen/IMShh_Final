@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.util.StringUtils;
 
@@ -171,15 +172,22 @@ public class ReflectionUtil {
       
     public static Object getFieldValue(Object object, String fieldName){  
     	try { 
+    		if (object == null)
+    			return null;
 	    	if (fieldName.indexOf(".") > 0){
+	    		
 	    		String objName = fieldName.substring(0, fieldName.indexOf("."));
-	    		Field field = getDeclaredField(object, objName);
-	    		field.setAccessible(true);
-	    		Object _object = field.get(object);
-	    		if (_object instanceof List){
-	    			return _object;
+	    		Object _object = null;
+	    		if (object instanceof Map){
+	    			_object = ((Map)object).get(objName);
+	    			
+	    		}else{
+	    			Field field = getDeclaredField(object, objName);
+		    		field.setAccessible(true);
+		    		_object = field.get(object);
 	    		}
 	    		return getFieldValue(_object, fieldName.substring(fieldName.indexOf(".") + 1));
+	    		
 	    	}else{
 	    		//根据 对象和属性名通过取 Field对象  
 	            Field field = getDeclaredField(object, fieldName) ;  

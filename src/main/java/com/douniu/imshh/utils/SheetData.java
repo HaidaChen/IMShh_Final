@@ -1,9 +1,12 @@
-package com.douniu.imshh.utils.test;
+package com.douniu.imshh.utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /** 
  * sheet页数据定制 
@@ -21,7 +24,9 @@ public class SheetData  {
      * 列表数据存储 sheet页中替换${key} 并以列为单位向下赋值 
      */  
     private List<Object>  datas = new LinkedList<Object> ();  
-      
+    
+    private List<CellRangeAddress> ranges = new ArrayList<CellRangeAddress>();
+    
     private String name ;  
       
     public void setName(String name) {  
@@ -70,6 +75,15 @@ public class SheetData  {
    
     public List<Object>  getDatas() {  
         return datas;  
-    }  
-      
+    }
+
+	public List<CellRangeAddress> getRanges() {
+		return ranges;
+	}
+
+	public void setRanges(List<CellRangeAddress> ranges) {
+		this.ranges = ranges;
+	}  
+    
+    
 }  

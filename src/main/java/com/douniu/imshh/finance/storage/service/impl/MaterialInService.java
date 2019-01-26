@@ -5,11 +5,13 @@ import java.util.List;
 import com.douniu.imshh.finance.storage.dao.IMaterialInDao;
 import com.douniu.imshh.finance.storage.domain.MaterialIn;
 import com.douniu.imshh.finance.storage.service.IMaterialInService;
+import com.douniu.imshh.material.service.IMaterialInOutService;
 import com.douniu.imshh.utils.LikeFlagUtil;
 
 public class MaterialInService implements IMaterialInService{
 	
 	private IMaterialInDao dao;
+	private IMaterialInOutService ioService;
 	
 	@Override
 	public List<MaterialIn> query(MaterialIn reception) {

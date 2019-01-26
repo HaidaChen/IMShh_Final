@@ -4,7 +4,7 @@
 <mapper namespace="com.douniu.imshh.material.dao.IMaterialOutDao">
     <resultMap type="MaterialOutBill" id="mobmap">
         <result property="id" column="id"/>
-        <result property="outDate" column="outDate"/>        
+        <result property="billDate" column="billDate"/>        
         <result property="number" column="number"/>
         <result property="preparedBy" column="preparedBy"/>
         <result property="auditor" column="auditor"/>
@@ -32,31 +32,76 @@
 	        <association property="material" javaType="Material">
 	        	<id property="id" column="m_id"/>
 	        	<result property="name" column="m_name"/>
+	        	<result property="specification" column="m_specification"/>
         	</association>
         </collection>
     </resultMap>
     
-    <select id="getPageResult" parameterType="MaterialFilter" resultMap="mobmap">
-        select *
-          from tbl_bill_materialout       
-         where status = '1'
-          <if test="number != null and number !=''">
-          and number like #{number} 
+    <select id="getPageResult" parameterType="MaterialFilter" resultMap="mobwdmap">
+    	select mo.*, mdo.* 
+	      from    
+	        (select * from tbl_bill_materialout
+	          where status = '1'
+	          order by billDate desc
+	          limit #{pageOffset},#{pageSize})mo
+	      left join
+	        (select d.id as dtl_id,
+	                d.billId as dtl_billId, 
+	                d.quantity as dtl_quantity,
+	                d.remark as dtl_remark, 
+	                m.id as m_id,  
+	                m.name as m_name, 
+	                m.specification as m_specification
+	           from tbl_bill_dtl_materialout d, tbl_material m
+	          where d.status = '1'
+	            and d.materialId = m.id)mdo
+	        on mo.id = mdo.dtl_billId
+         where 1 = 1
+         <if test="number != null and number !=''">
+          and mo.number like #{number} 
           </if>
-          <if test="billStatus != null and billStatus !=-1">
-          and billStatus = #{billStatus} 
+          <if test="billReason != null and billReason !=''">
+          and mo.billReason = #{billReason} 
           </if>
           <if test="startDate != null and startDate !=''">
-          and outDate &gt;= #{startDate} 
+          and mo.billDate &gt;= #{startDate} 
           </if>
           <if test="endDate != null and endDate !=''">
-          and outDate &lt;= #{endDate} 
+          and mo.billDate &lt;= #{endDate} 
           </if>
-          <if test="remark != null and remark !=''">
-          and remark like #{remark} 
+    </select>
+    
+    <select id="query" parameterType="MaterialFilter" resultMap="mobwdmap">
+        select mo.*, mdo.* 
+	      from    
+	        (select * from tbl_bill_materialout
+	          where status = '1'
+	          order by billDate desc)mo
+	      left join
+	        (select d.id as dtl_id,
+	                d.billId as dtl_billId, 
+	                d.quantity as dtl_quantity,
+	                d.remark as dtl_remark, 
+	                m.id as m_id,  
+	                m.name as m_name, 
+	                m.specification as m_specification
+	           from tbl_bill_dtl_materialout d, tbl_material m
+	          where d.status = '1'
+	            and d.materialId = m.id)mdo
+	        on mo.id = mdo.dtl_billId
+         where 1 = 1
+         <if test="number != null and number !=''">
+          and mo.number like #{number} 
           </if>
-          order by outDate desc, modifydate desc
-          limit #{pageOffset},#{pageSize}
+          <if test="billReason != null and billReason !=''">
+          and mo.billReason = #{billReason} 
+          </if>
+          <if test="startDate != null and startDate !=''">
+          and mo.billDate &gt;= #{startDate} 
+          </if>
+          <if test="endDate != null and endDate !=''">
+          and mo.billDate &lt;= #{endDate} 
+          </if>
     </select> 
     <select id="count" parameterType="MaterialFilter" resultType="int">
         select count(1)
@@ -65,23 +110,19 @@
           <if test="number != null and number !=''">
           and number like #{number} 
           </if>
-          <if test="billStatus != null and billStatus !=-1">
-          and billStatus = #{billStatus} 
+          <if test="billReason != null and billReason !=''">
+          and billReason = #{billReason} 
           </if>
           <if test="startDate != null and startDate !=''">
-          and outDate &gt;= #{startDate} 
+          and billDate &gt;= #{startDate} 
           </if>
           <if test="endDate != null and endDate !=''">
-          and outDate &lt;= #{endDate} 
-          </if>
-          <if test="remark != null and remark !=''">
-          and remark like #{remark} 
+          and billDate &lt;= #{endDate} 
           </if>
     </select> 
     
     <select id="getById" parameterType="String" resultMap="mobwdmap">
         select mob.*,
-               
                dtl.id as dtl_id,
                dtl.billId as dtl_billId,
                dtl.specification as dtl_specification,
@@ -94,22 +135,21 @@
                m.name as m_name
           from tbl_bill_materialout mob, 
                tbl_bill_dtl_materialout dtl, 
-               t_supplier s,
                tbl_material m             
          where mob.id = #{id}
-           and mib.id = dtl.billId
+           and mob.id = dtl.billId
            and dtl.status = '1'
            and dtl.materialId = m.id
     </select>
     
     <insert id="insert" parameterType="MaterialOutBill">
-        insert into tbl_bill_materialout(id, outDate, number, totalQuantity, totalAmount, preparedBy, auditor, custodian, billReason, modifydate, remark, status)  
-          values(#{id}, #{outDate}, #{number}, #{totalQuantity}, #{totalAmount}, #{preparedBy}, #{auditor}, #{custodian}, #{billReason}, sysdate(), #{remark}, #{status})
+        insert into tbl_bill_materialout(id, billDate, number, totalQuantity, totalAmount, preparedBy, auditor, custodian, billReason, modifydate, remark, status)  
+          values(#{id}, #{billDate}, #{number}, #{totalQuantity}, #{totalAmount}, #{preparedBy}, #{auditor}, #{custodian}, #{billReason}, sysdate(), #{remark}, #{status})
     </insert>
     
     <update id="update" parameterType="MaterialInBill">
     	update tbl_bill_materialout set
-    	  outDate = #{outDate},
+    	  billDate = #{billDate},
     	  number = #{number},
     	  totalQuantity = #{totalQuantity}, 
     	  totalAmount = #{totalAmount},
@@ -147,7 +187,7 @@
     
     <!-- <resultMap type="MaterialOut" id="mtloutmap">
         <result property="id" column="id"/>
-        <result property="outDate" column="outDate"/>
+        <result property="billDate" column="billDate"/>
         <result property="materialId" column="materialId"/>
         <result property="materialName" column="materialName"/>
         <result property="specification1" column="specification1"/>
@@ -171,15 +211,15 @@
          where mo.status = '1' 
            and mo.materialId = m.id 
           <if test="startDate != null">
-          and mo.outDate &gt;= #{startDate}
+          and mo.billDate &gt;= #{startDate}
           </if>
           <if test="endDate != null">
-          and mo.outDate &lt;= #{endDate}
+          and mo.billDate &lt;= #{endDate}
           </if>
           <if test="name != null and name !=''">
           and m.name like #{name} 
           </if>
-          order by mo.outDate desc
+          order by mo.billDate desc
           limit #{pageOffset},#{pageSize}
     </select> 
     
@@ -195,15 +235,15 @@
          where mo.status = '1' 
            and mo.materialId = m.id 
           <if test="startDate != null">
-          and mo.outDate &gt;= #{startDate}
+          and mo.billDate &gt;= #{startDate}
           </if>
           <if test="endDate != null">
-          and mo.outDate &lt;= #{endDate}
+          and mo.billDate &lt;= #{endDate}
           </if>
           <if test="name != null and name !=''">
           and m.name like #{name} 
           </if>
-          order by mo.outDate desc
+          order by mo.billDate desc
     </select>
     
     <select id="count" parameterType="MaterialFilter" resultType="int">
@@ -213,10 +253,10 @@
          where mo.status = '1' 
            and mo.materialId = m.id 
           <if test="startDate != null">
-          and mo.outDate &gt;= #{startDate}
+          and mo.billDate &gt;= #{startDate}
           </if>
           <if test="endDate != null">
-          and mo.outDate &lt;= #{endDate}
+          and mo.billDate &lt;= #{endDate}
           </if>
           <if test="name != null and name !=''">
           and m.name like #{name} 
@@ -238,15 +278,15 @@
     </select>
     
     <insert id="insert" parameterType="MaterialOut">
-        insert into tbl_material_out(id, outDate, materialId, amount, modifydate, remark, status)  
-          values(#{id}, #{outDate}, #{materialId}, #{amount}, sysdate(), #{remark}, #{status})
+        insert into tbl_material_out(id, billDate, materialId, amount, modifydate, remark, status)  
+          values(#{id}, #{billDate}, #{materialId}, #{amount}, sysdate(), #{remark}, #{status})
     </insert>
     
     <insert id="batchInsert" parameterType="java.util.List">
-        insert into tbl_material_out(id, outDate, materialId, amount, modifydate, remark, status) 
+        insert into tbl_material_out(id, billDate, materialId, amount, modifydate, remark, status) 
              values
              <foreach collection="list" item="mtlout" index="index" separator=",">
-                 (#{mtlout.id} , #{mtlout.outDate}, #{mtlout.materialId}, #{mtlout.amount}, sysdate(), #{mtlout.remark}, '1')
+                 (#{mtlout.id} , #{mtlout.billDate}, #{mtlout.materialId}, #{mtlout.amount}, sysdate(), #{mtlout.remark}, '1')
              </foreach>
     </insert>
     

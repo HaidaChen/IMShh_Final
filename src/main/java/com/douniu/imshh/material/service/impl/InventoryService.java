@@ -6,18 +6,21 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 import com.douniu.imshh.common.IDInjector;
+import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.dao.IInventoryDao;
 import com.douniu.imshh.material.domain.Inventory;
 import com.douniu.imshh.material.domain.InventoryDetail;
 import com.douniu.imshh.material.domain.InventoryMap;
+import com.douniu.imshh.material.domain.Material;
 import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.material.service.IInventoryService;
+import com.douniu.imshh.material.service.IMaterialService;
 import com.douniu.imshh.utils.LikeFlagUtil;
 
 public class InventoryService implements IInventoryService {
 	private IInventoryDao dao;
-	
+	private IMaterialService mtlService;
 	/**
 	 * 保存盘点结果，所有实际盘点数据都暂存在临时表中，所以不需要传递参数
 	 */
@@ -70,6 +73,37 @@ public class InventoryService implements IInventoryService {
 		return pr;
 	}
 	
+	@Override
+	public void importCacheItem(List<InventoryDetail> inventoryDetails) {
+		List<Material> allMaterial = mtlService.query(new MaterialFilter());
+		List<InventoryDetail> target = new ArrayList<>();
+		initCashInventory();
+		for (InventoryDetail detail : inventoryDetails){
+			int pos = allMaterial.indexOf(detail.getMaterial());
+			Material m = allMaterial.get(pos);
+			detail.setMaterial(m);
+			target.add(detail);
+		}
+		dao.batchInsertCacheItem(target);
+	}
+
+	@Override
+	public List<ImportException> checkImport(List<InventoryDetail> inventoryDetails) {
+		List<ImportException> exceptions = new ArrayList<ImportException>();
+		String unassociation_material = "";
+		List<Material> allMaterial = mtlService.query(new MaterialFilter());
+		for (int i = 0; i < inventoryDetails.size(); i++){
+			inventoryDetails.get(i).getMaterial();
+			if(!allMaterial.contains(inventoryDetails.get(i).getMaterial())){
+				unassociation_material += "," + (i+2);
+			}
+		}
+		if (!unassociation_material.equals("")){
+			exceptions.add(new ImportException("无法关联原材料", "原材料名称、规格；与系统中已经存在的原材料品类不匹配，导致无法关联", unassociation_material.substring(1), ""));
+		}
+		return exceptions;
+	}
+
 	/**
 	 * 初始化缓存表
 	 */
@@ -128,6 +162,8 @@ public class InventoryService implements IInventoryService {
 	public void setDao(IInventoryDao dao) {
 		this.dao = dao;
 	}
-	
-	
+
+	public void setMtlService(IMaterialService mtlService) {
+		this.mtlService = mtlService;
+	}
 }

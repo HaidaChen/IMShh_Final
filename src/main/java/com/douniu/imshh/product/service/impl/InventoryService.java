@@ -3,7 +3,10 @@ package com.douniu.imshh.product.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.douniu.imshh.busdata.product.domain.Product;
+import com.douniu.imshh.busdata.product.service.IProductService;
 import com.douniu.imshh.common.IDInjector;
+import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.product.dao.IInventoryDao;
 import com.douniu.imshh.product.domain.Inventory;
@@ -15,6 +18,7 @@ import com.douniu.imshh.utils.LikeFlagUtil;
 
 public class InventoryService implements IInventoryService {
 	private IInventoryDao dao;
+	private IProductService pdtService;
 	
 	/**
 	 * 保存盘点结果，所有实际盘点数据都暂存在临时表中，所以不需要传递参数
@@ -62,6 +66,36 @@ public class InventoryService implements IInventoryService {
 		pr.setRows(rs);
 		pr.setTotal(count);
 		return pr;
+	}
+	
+	@Override
+	public void importCacheItem(List<InventoryDetail> inventoryDetails) {
+		List<Product> allProduct = pdtService.queryNoPage(new Product());
+		List<InventoryDetail> target = new ArrayList<>();
+		initCashInventory();
+		for (InventoryDetail detail : inventoryDetails){
+			int pos = allProduct.indexOf(detail.getProduct());
+			Product p = allProduct.get(pos);
+			detail.setProduct(p);
+			target.add(detail);
+		}
+		dao.batchInsertCacheItem(target);
+	}
+
+	@Override
+	public List<ImportException> checkImport(List<InventoryDetail> inventoryDetails) {
+		List<ImportException> exceptions = new ArrayList<ImportException>();
+		String unassociation_pdt = "";
+		List<Product> allProduct = pdtService.queryNoPage(new Product());
+		for (int i = 0; i < inventoryDetails.size(); i++){
+			if(!allProduct.contains(inventoryDetails.get(i).getProduct())){
+				unassociation_pdt += "," + (i+2);
+			}
+		}
+		if (!unassociation_pdt.equals("")){
+			exceptions.add(new ImportException("无法关联成品", "成品货号，与系统中已经存在的原材料品类不匹配，导致无法关联", unassociation_pdt.substring(1), ""));
+		}
+		return exceptions;
 	}
 	
 	/**
@@ -119,6 +153,8 @@ public class InventoryService implements IInventoryService {
 	public void setDao(IInventoryDao dao) {
 		this.dao = dao;
 	}
-	
-	
+
+	public void setPdtService(IProductService pdtService) {
+		this.pdtService = pdtService;
+	}
 }

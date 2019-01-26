@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -14,13 +17,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.douniu.imshh.busdata.customer.service.ICustomerService;
+import com.douniu.imshh.busdata.product.service.IProductService;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.order.domain.Order;
 import com.douniu.imshh.order.domain.OrderFilter;
 import com.douniu.imshh.order.domain.OrderItem;
+import com.douniu.imshh.order.domain.OrderProductDetail;
 import com.douniu.imshh.order.service.IOrderService;
 import com.douniu.imshh.sys.service.IParameterService;
 import com.douniu.imshh.utils.GsonUtil;
+import com.douniu.imshh.utils.ImportAndExportUtil;
+import com.douniu.imshh.utils.SheetData;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
@@ -31,6 +39,10 @@ public class OrderAction {
 	private IOrderService service;
 	@Autowired
 	private IParameterService pservice;
+	@Autowired
+	private ICustomerService custService;
+	@Autowired
+	private IProductService pdtService;
 	
 	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
 	@ResponseBody
@@ -118,5 +130,34 @@ public class OrderAction {
 	@ResponseBody
 	public void deleteOrder(String id){
 		service.deleteOrder(id);
+	}
+	
+	@RequestMapping(value = "exportOrder", method = RequestMethod.GET)  
+    @ResponseBody  
+	public void exportOrder(HttpServletRequest request, HttpServletResponse response, OrderFilter filter){
+		SheetData data = new SheetData("订单列表");
+		data.put("identify", filter.getIdentify());
+		data.put("orderType", filter.getOrderType().equals("0") ? "" : filter.getOrderType().equals("1") ? "海外订单" : "国内订单");
+		if (!filter.getCustomerId().equals("")){
+			data.put("customer", custService.getById(filter.getCustomerId()).getName());
+		}
+		data.put("startDate", filter.getStartDate());
+		data.put("endDate", filter.getEndDate());
+		List<Order> orders = service.query(filter);
+		data.addDatas(orders);
+		ImportAndExportUtil.export("订单列表.xls", data, request, response);
+	}
+	
+	@RequestMapping(value = "exportProdcutOrder", method = RequestMethod.GET)  
+    @ResponseBody  
+	public void exportProdcutOrder(HttpServletRequest request, HttpServletResponse response, OrderFilter filter){
+		SheetData data = new SheetData("成品订购明细");
+		if (!StringUtils.isEmpty(filter.getProductId()))
+			data.put("product", pdtService.getById(filter.getProductId()).getCode());
+		data.put("startDate", filter.getStartDate());
+		data.put("endDate", filter.getEndDate());
+		List<OrderProductDetail> orders = service.queryOrderProduct(filter);
+		data.addDatas(orders);
+		ImportAndExportUtil.export("成品订购明细.xls", data, request, response);
 	}
 }

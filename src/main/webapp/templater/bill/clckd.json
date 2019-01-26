@@ -19,14 +19,14 @@
 	],
 	"title": {"name":"浏阳市华辉烟花制造有限公司原材料出库单",
 			  "siderItems": [
-		          { "name": "identify",
+		          { "name": "number",
 					"type": "indentify",
 					"label": "编号",
 					"src": "/mtlout/getBillCode.do"
 				  }
 	          ]},
 	"top-columns": [{
-				"name": "outReason",
+				"name": "billReason",
 				"type": "select",
 				"label": "出库类型",
 				"data-ref": "outReasonOption",
@@ -35,7 +35,7 @@
 				"length": "30%"
 			},
 			{
-				"name": "outDate",
+				"name": "billDate",
 				"type": "date",
 				"label": "发生日期",
 				"formatter": "yyyy-MM-dd",

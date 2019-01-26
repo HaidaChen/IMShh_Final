@@ -63,6 +63,10 @@
         select * from tbl_material_category where id = #{id}
     </select>
     
+    <select id="getByCode" parameterType="String" resultType="MaterialCategory">
+        select * from tbl_material_category where code = #{code}
+    </select>
+    
     <insert id="insert" parameterType="MaterialCategory">
         insert into tbl_material_category (id, code, name, parentId, modifydate, remark, status)  
           values(#{id}, #{code}, #{name}, #{parentId}, sysdate(), #{remark}, #{status})

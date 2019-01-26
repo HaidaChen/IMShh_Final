@@ -11,6 +11,7 @@ public class ProductFilter extends BaseQO{
 	private String endPeriod;
 	private int billStatus = -1;
 	private int profitLoss;
+	private int ignoreNullStorage;
 	private int ignore0storage;
 	
 	public String getNumber() {
@@ -57,6 +58,12 @@ public class ProductFilter extends BaseQO{
 	public void setIgnore0storage(int ignore0storage) {
 		this.ignore0storage = ignore0storage;
 	}
+	public int getIgnoreNullStorage() {
+		return ignoreNullStorage;
+	}
+	public void setIgnoreNullStorage(int ignoreNullStorage) {
+		this.ignoreNullStorage = ignoreNullStorage;
+	}
 	public String getStartPeriod() {
 		return startPeriod;
 	}
@@ -73,7 +80,8 @@ public class ProductFilter extends BaseQO{
 	public String toString() {
 		return "ProductFilter [number=" + number + ", billReason=" + billReason + ", pdtId=" + pdtId + ", code=" + code
 				+ ", startPeriod=" + startPeriod + ", endPeriod=" + endPeriod + ", billStatus=" + billStatus
-				+ ", profitLoss=" + profitLoss + ", ignore0storage=" + ignore0storage + "]";
+				+ ", profitLoss=" + profitLoss + ", ignoreNullStorage=" + ignoreNullStorage + ", ignore0storage="
+				+ ignore0storage + "]";
 	}
 	
 }

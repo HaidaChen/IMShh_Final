@@ -24,14 +24,9 @@
 		    <label class="sr-only" for="filter_billReason">出库说明</label>
 		    <select class="form-control" id="filter_billReason">
 		      <option value="">--选择出库说明--</option>
-		      <option value="1">发货出库</option>
-		      <option value="2">其他出库</option>
-		    </select>
-		  </div>
-		  <div class="form-group">
-		    <label class="sr-only" for="filter_product">成品</label>
-		    <select class="form-control" id="filter_product" style="width: 140px">
-		      <option value=""></option>
+		      <option value="01">生产出库</option>
+		      <option value="02">退货出库</option>
+		      <option value="03">其他出库</option>
 		    </select>
 		  </div>
 		  <div class="form-group">
@@ -48,7 +43,7 @@
     </div>
 	<div id="panel_table" class="panel">
         <div class="panel-head">
-            <span><i class="fa fa-navicon"></i> 成品出库单列表</span>
+            <span><i class="fa fa-navicon"></i> 材料出库单列表</span>
             
             <div class="btn-group pull-right" role="group" style="margin-left: 20px">
 	            <button id="btn_export" class="btn btn-default btn-sm"><i class="fa fa-download"></i> 导出</button>	
@@ -56,7 +51,7 @@
         	</div>
         </div>
 		
-		<table id="tbl_productOut" class="table table-hover">
+		<table id="tbl_materialOut" class="table table-hover">
 		</table>			
 	</div>
 	<script src="../jquery/jquery-2.0.3.min.js"></script>
@@ -74,7 +69,7 @@
 	
 	<script>
 		$(function(){
-			App.productOutList();
+			App.materialOutList();
 		});
 	</script>
 </body>

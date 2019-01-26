@@ -1,11 +1,14 @@
 package com.douniu.imshh.material.service;
 
+import java.util.List;
+
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.material.domain.MaterialInBill;
 
 public interface IMaterialInService {
 	PageResult getPageResult(MaterialFilter filter);
+	List<MaterialInBill> query(MaterialFilter filter);
 	MaterialInBill getById(String id);
 	void newMaterialIn(MaterialInBill materialIn);
 	void updateMaterialIn(MaterialInBill materialIn);

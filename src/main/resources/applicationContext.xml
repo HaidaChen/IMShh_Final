@@ -73,6 +73,7 @@
       
       <bean name="materialInventoryService" class="com.douniu.imshh.material.service.impl.InventoryService">
           <property name="dao" ref="materialInventoryDao"></property>
+          <property name="mtlService" ref="materialService"></property>
       </bean>
       
       <bean id="materialInventoryDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
@@ -105,6 +106,7 @@
       
       <bean name="productInventoryService" class="com.douniu.imshh.product.service.impl.InventoryService">
           <property name="dao" ref="productInventoryDao"></property>
+          <property name="pdtService" ref="productService"></property>
       </bean>
       
       <bean id="productInventoryDao" class="org.mybatis.spring.mapper.MapperFactoryBean">

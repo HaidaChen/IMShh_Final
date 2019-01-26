@@ -12,6 +12,7 @@ public interface IProductInOutDao {
 	
 	List<ProductInOut> getTotalInOut(ProductFilter filter);
 	int countTotalInOut(ProductFilter filter);
+	List<ProductInOut> queryTotalInOut(ProductFilter filter);
 	
 	int getTotalInQuantity(String pdtId, Date startDate, Date endDate);
 	int getTotalOutQuantity(String pdtId, Date startDate, Date endDate);

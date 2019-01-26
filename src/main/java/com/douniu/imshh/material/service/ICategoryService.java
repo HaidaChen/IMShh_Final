@@ -10,6 +10,7 @@ public interface ICategoryService {
 	List<Category> query(MaterialFilter filter);
 	PageResult getPageResult(MaterialFilter filter);
 	Category getById(String id);
+	Category getByCode(String code);
 	void newCategory(Category category);
 	void updateCategory(Category category);
 	void deleteCategory(String id);

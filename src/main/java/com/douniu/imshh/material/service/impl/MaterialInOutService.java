@@ -65,7 +65,6 @@ public class MaterialInOutService implements IMaterialInOutService{
 	public PageResult getGlobalInOutPageResult(MaterialFilter filter) {
 		PageResult pr = new PageResult();
 		List<MaterialInOutMap> maps = new ArrayList<>();
-		// 2、期初库存 = 对应开始单据期的上次盘点库存 + 上次盘点时间的入库数 - 上次盘点时间的出库数；
 		List<MaterialInOut> details = dao.getTotalInOut(filter);
 		for (MaterialInOut detail : details){
 			MaterialInOutMap map = null;
@@ -81,8 +80,25 @@ public class MaterialInOutService implements IMaterialInOutService{
 		pr.setRows(maps);
 		pr.setTotal(dao.countTotalInOut(filter));
 		return pr;
-	}
+	}	
 	
+	@Override
+	public List<MaterialInOutMap> queryGlobalInOut(MaterialFilter filter) {
+		List<MaterialInOutMap> maps = new ArrayList<>();
+		List<MaterialInOut> details = dao.queryTotalInOut(filter);
+		for (MaterialInOut detail : details){
+			MaterialInOutMap map = null;
+			if (!maps.contains(detail)){
+				map = new MaterialInOutMap(detail.getMaterial());
+				maps.add(map);
+			}else {
+				map = maps.get(maps.indexOf(detail));
+			}
+			map.getIomap().put(detail.getBillPeriod(), new PeriodInOut(detail.getBillPeriod(), detail.getInQuantity(), detail.getOutQuantity()));
+		}
+		return maps;
+	}
+
 	/**
 	 * 列举单个原材料的出入明细，明细包含指定月份的出入流水和入库数量、入库金额、出库数量、出库金额汇总、当前库存汇总五个指标
 	 */

@@ -214,7 +214,7 @@ var App = function () {
 		var bill;
 		var initBill = function(){
 			$.ajaxSettings.async = false;
-			$.getJSON("../templater/dght.json", "", function(data){
+			$.getJSON("../templater/bill/dght.json", "", function(data){
         		bill = $('#orderBill').eBill(data);	
 			});
 			$.ajaxSettings.async = true;
@@ -225,7 +225,7 @@ var App = function () {
 				if ($("input[name='id']").val() == ''){
 					bill.commit(getProjectName()+'/order/newOrder.do', '订购合同新增成功');
 				}else{
-					bill.commit(getProjectName()+'/order/updateOrder.do', '订购合同修改成功');
+					bill.commit(getProjectName()+'/order/updateOrder.do', '订购合同修改成功', false);
 				}
         	});
 			
@@ -388,6 +388,18 @@ var App = function () {
 			});
 		}
 		
+		var doExport = function(){
+            $('#btn_export').click(function(){
+            	var identify = $("#filter_identify").val();
+                var orderType = $("#filter_orderType").val();
+                var customerId = $("#filter_customer").val();
+                var startDate = $("#filter_startDate").val();
+                var endDate = $("#filter_endDate").val();
+            	var url = getProjectName() + "/order/exportOrder.do?identify=" + identify + "&orderType=" + orderType + "&customerId=" + customerId + "&startDate=" + startDate + "&endDate=" + endDate;
+            	window.open(url);
+            });
+		}
+		
 		return {
 			init: function(){
 				initOption();
@@ -395,6 +407,7 @@ var App = function () {
 				doQuery();
 				doAdd();
 				doEditOrder();
+				doExport();
 			}
 		}
 	}
@@ -467,11 +480,22 @@ var App = function () {
 			});
 		}
 		
+		var doExport = function(){
+            $('#btn_export').click(function(){
+            	var productId = $("#filter_product").val();
+                var startDate = $("#filter_startDate").val();
+                var endDate = $("#filter_endDate").val();
+            	var url = getProjectName() + "/order/exportProdcutOrder.do?productId=" + productId + "&startDate=" + startDate + "&endDate=" + endDate;
+            	window.open(url);
+            });
+		}
+		
 		return {
 			init: function(){
 				initFilter();
 				loadOrderProductTable();
 				doQuery();
+				doExport();
 			}
 		}
 	}
@@ -952,7 +976,7 @@ var App = function () {
 		var bill;
 		var initBill = function(){
 			$.ajaxSettings.async = false;
-			$.getJSON("../templater/clrkd.json", "", function(data){
+			$.getJSON("../templater/bill/clrkd.json", "", function(data){
         		bill = $('#eBill').eBill(data);	
 			});
 			$.ajaxSettings.async = true;
@@ -963,7 +987,7 @@ var App = function () {
 				if ($("input[name='id']").val() == ''){
 					bill.commit(getProjectName()+'/mtlin/newMaterialIn.do', '原材料入库单新增成功');
 				}else{
-					bill.commit(getProjectName()+'/mtlin/updateMaterialIn.do', '原材料入库单修改成功');
+					bill.commit(getProjectName()+'/mtlin/updateMaterialIn.do', '原材料入库单修改成功', false);
 				}
         	});
 			
@@ -1001,7 +1025,7 @@ var App = function () {
 		var bill;
 		var initBill = function(){
 			$.ajaxSettings.async = false;
-			$.getJSON("../templater/clckd.json", "", function(data){
+			$.getJSON("../templater/bill/clckd.json", "", function(data){
         		bill = $('#mtl_out_bill').eBill(data);	
 			});
 			$.ajaxSettings.async = true;
@@ -1012,7 +1036,7 @@ var App = function () {
 				if ($("input[name='id']").val() == ''){
 					bill.commit(getProjectName()+'/mtlout/newBill.do', '原材料出库单新增成功');
 				}else{
-					bill.commit(getProjectName()+'/mtlout/updateBill.do', '原材料出库单修改成功');
+					bill.commit(getProjectName()+'/mtlout/updateBill.do', '原材料出库单修改成功', false);
 				}
         	});
 			
@@ -1225,6 +1249,17 @@ var App = function () {
 		    });
 		}
 		
+		var doExport = function(){
+            $('#btn_export').click(function(){
+            	var number = $("#filter_number").val();
+                var supplier = $("#filter_supplier").val();
+                var ctgCode = $("#filter_ctgCode").val();
+                var startDate = $("#filter_startDate").val();
+                var endDate = $("#filter_endDate").val();
+            	var url = getProjectName() + "/mtlin/exportMaterialIn.do?number=" + number + "&supplier=" + supplier + "&ctgCode=" + ctgCode + "&startDate=" + startDate + "&endDate=" + endDate;
+            	window.open(url);
+            });
+		}
 		
 		return {
 			init: function(){
@@ -1233,11 +1268,177 @@ var App = function () {
 				doQuery();
 				doAdd();
 				doEditBill();
+				doExport();
 			}
 		}
 	}
 	
-	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化原材料出库单列表模块
+	/*-----------------------------------------------------------------------------------*/	
+	var initMaterialOutList = function(){
+		var loadMaterialOutTable = function(){
+			$('#tbl_materialOut').bootstrapTable({
+				url: getProjectName() + "/mtlout/getPageResult.do",
+				method: "get",
+				pagination: true,
+				sidePagination: "server", 
+				clickToSelect: true,
+				columns: [{
+		            field: 'number',
+		            title: '出库单号'
+		        }, {
+		            field: 'billDate',
+		            title: '出库日期'
+		        }, {
+		            field: 'material.name',
+		            title: '材料名称'
+		        }, {
+		            field: 'material.specification',
+		            title: '材料规格'
+		        }, {
+		        	field: 'quantity',
+		        	title: '入库数量'
+		        }, {
+		        	field: '',
+		        	title: '操作',
+		        	formatter: function(value, row, index){
+		        		return '<a opt="update" rowid="'+row.id+'">修改</a>&nbsp;<a opt="delete" rowid="'+row.id+'">删除</a>';
+		        	}
+		        }],
+		        queryParams: function(params){
+		        	return {
+		                pageSize: params.limit,
+		                pageOffset: params.offset,                    
+		                number: $("#filter_number").val(),
+		                billReason: $("#filter_billReason").val(),
+		                startDate: $("#filter_startDate").val(),
+		                endDate: $("#filter_endDate").val()
+		            }
+		        },
+		        onLoadSuccess: function (data) {
+		        	mergeCells($('#tbl_materialOut'));
+	            }
+			});
+		}
+		
+		var doQuery = function(){
+			$('#btn_search').click(function(){
+				$('#tbl_materialOut').bootstrapTable('refresh', {url: getProjectName() + "/mtlout/getPageResult.do"});
+			});
+		}
+		
+		var doAdd = function(){
+			$('#btn_add').click(function(){
+				var nthTabs = window.parent.getTabs();
+		        nthTabs.addTab({
+		        	id:'0202',
+		            title:'材料出库',
+		            active:true,
+		            allowClose:true,
+		            content:'mtl_out_bill.html',
+		        });
+			});
+		}
+		
+		var doEditBill = function(){
+			$('#tbl_materialOut').on('click', 'a', function(){
+				var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				if (opt == 'update'){
+					var nthTabs = window.parent.getTabs();
+			        nthTabs.addTab({
+			        	id:'0202',
+			            title:'材料出库',
+			            active:true,
+			            allowClose:true,
+			            content:'mtl_out_bill.html',
+			        });
+			        
+			        setTimeout(function(){
+			        	window.parent.$('#if0202')[0].contentWindow.fillBill(id);
+			        }, 1000);
+				}
+				if (opt == 'delete'){
+					Ewin.confirm({message: "确定要删除该出库单吗？"}).on(function(e){
+						if (!e){
+							return;
+						}
+						if (window.parent.$('#if0202')[0]){
+							var billId = window.parent.$('#if0202')[0].contentWindow.getBillId();
+							if (billId == id){
+								Ewin.alert("当前待删除出库单正在修改中，无法删除");
+								return;
+							}
+						}
+						$.ajax({
+							url: getProjectName() + "/mtlout/deleteBill.do?id="+id,
+							success: function(){
+								Ewin.toast('材料入库单删除成功');
+								$('#tbl_materialOut').bootstrapTable('refresh', {url: getProjectName() + "/mtlout/getPageResult.do"});
+							}
+						});
+					});
+				}
+			});
+		}
+		
+		var mergeCells = function(target) {
+			var rows = target.find('tr');
+		    var _row;
+		    var rowspan = 1;
+			$.each(rows, function(i, row){
+				if (i == 0){
+					return;
+				}else if (i == 1){
+					_row = row;
+					return;
+				}else{
+					if ($($(row).find('td')[0]).html() == $($(_row).find('td')[0]).html()){
+						$($(row).find('td')[0]).remove();
+						$($(row).find('td')[0]).remove();
+						$($(row).find('td')[3]).remove();
+						rowspan++;
+						if (i == rows.length - 1){
+							$($(_row).find('td')[0]).attr('rowspan', rowspan);
+							$($(_row).find('td')[1]).attr('rowspan', rowspan);
+							$($(_row).find('td')[5]).attr('rowspan', rowspan);
+						}
+					}else{
+						if (rowspan > 1){
+							$($(_row).find('td')[0]).attr('rowspan', rowspan);
+							$($(_row).find('td')[1]).attr('rowspan', rowspan);
+							$($(_row).find('td')[5]).attr('rowspan', rowspan);
+							rowspan = 1;
+						}
+						_row = row;
+					}
+				}
+				
+		    });
+		}
+		
+		var doExport = function(){
+            $('#btn_export').click(function(){
+            	var number = $("#filter_number").val();
+                var billReason = $("#filter_billReason").val();
+                var startDate = $("#filter_startDate").val();
+                var endDate = $("#filter_endDate").val();
+            	var url = getProjectName() + "/mtlout/exportMaterialOut.do?number=" + number + "&billReason=" + billReason + "&startDate=" + startDate + "&endDate=" + endDate;
+            	window.open(url);
+            });
+		}
+		
+		return {
+			init: function(){
+				loadMaterialOutTable();
+				doQuery();
+				doAdd();
+				doEditBill();
+				doExport();
+			}
+		}
+	}
 	/*-----------------------------------------------------------------------------------*/
 	/*	初始化单个原材料出入明细模块
 	/*-----------------------------------------------------------------------------------*/
@@ -1366,12 +1567,23 @@ var App = function () {
 			});
 		}
 		
+		var doExport = function(){
+            $('#btn_export').click(function(){
+            	var materialId = $('#filter_materialId').val();
+            	var startPeriod = $('#filter_speriod').val();
+        		var endPeriod = $('#filter_eperiod').val();
+            	var url = getProjectName() + "/mtlio/exportInOutByMaterial.do?materialId=" + materialId + "&startPeriod=" + startPeriod + "&endPeriod=" + endPeriod;
+            	window.open(url);
+            });
+		}
+		
 		return {
 			init: function(){
 				initPeriod();
 				loadInoutTable();
 				doQuery();
 				initOtherOpt();
+				doExport();
 			}
 		}
 	}
@@ -1498,11 +1710,21 @@ var App = function () {
 			});
 		}
 		
+		var doExport = function(){
+            $('#btn_export').click(function(){
+            	var startPeriod = $('#filter_speriod').val();
+        		var endPeriod = $('#filter_eperiod').val();
+            	var url = getProjectName() + "/mtlio/exportGlobalInOut.do?startPeriod=" + startPeriod + "&endPeriod=" + endPeriod;
+            	window.open(url);
+            });
+		}
+		
 		return {
 			init: function(){
 				initPeriod();
 				loadInoutTable();
 				doQuery();
+				doExport();
 			}
 		}
 	}
@@ -1582,6 +1804,7 @@ var App = function () {
 		                name: $('#filter_mtlName').val(),
 		                ctgCode: $('#filter_mtlCtg').val(),
 		                ignore0storage: $('#filter_ignore0storage:checked').val(),
+		                ignoreNullStorage: $('#filter_ignoreNullStorage:checked').val(),
 		                profitLoss: $('#filter_profitLoss:checked').val() 
 		            }
 		        }
@@ -1665,13 +1888,24 @@ var App = function () {
 		
 		var doExport = function(){
 			$('#btn_export').click(function(){
-				
+				var name = $('#filter_mtlName').val();
+                var ctgCode = $('#filter_mtlCtg').val();
+                var ignore0storage = $('#filter_ignore0storage:checked').val();
+                if (!ignore0storage)
+                	ignore0storage = 0;
+            	var url = getProjectName() + "/mtlinv/exportInventory.do?name=" + name + "&ctgCode=" + ctgCode + "&ignore0storage=" + ignore0storage;
+            	window.open(url);
 			});
 		}
 		
 		var doImport = function(){
 			$('#btn_import').click(function(){
-				
+				ImportData.show({url: getProjectName() + "/mtlinv/importInventory.do",
+					templaterName: getProjectName() + "/templater/import/材料盘点.xls",
+					callback: function(){
+						$("#tbl_inventory").bootstrapTable("refresh", {url: getProjectName() + "/mtlinv/loadSystemInventory.do", cache: false});
+					}
+				});
 			});
 		}
 		
@@ -1832,7 +2066,7 @@ var App = function () {
 		var bill;
 		var initBill = function(){
 			$.ajaxSettings.async = false;
-			$.getJSON("../templater/cprkd.json", "", function(data){
+			$.getJSON("../templater/bill/cprkd.json", "", function(data){
         		bill = $('#productInBill').eBill(data);	
 			});
 			$.ajaxSettings.async = true;
@@ -1843,7 +2077,7 @@ var App = function () {
 				if ($("input[name='id']").val() == ''){
 					bill.commit(getProjectName()+'/pdtin/newProductIn.do', '成品入库单新增成功');
 				}else{
-					bill.commit(getProjectName()+'/pdtin/updateProductIn.do', '成品入库单修改成功');
+					bill.commit(getProjectName()+'/pdtin/updateProductIn.do', '成品入库单修改成功', false);
 				}
         	});
 			
@@ -2078,7 +2312,7 @@ var App = function () {
 		var bill;
 		var initBill = function(){
 			$.ajaxSettings.async = false;
-			$.getJSON("../templater/cpckd.json", "", function(data){
+			$.getJSON("../templater/bill/cpckd.json", "", function(data){
         		bill = $('#productOutBill').eBill(data);	
 			});
 			$.ajaxSettings.async = true;
@@ -2089,7 +2323,7 @@ var App = function () {
 				if ($("input[name='id']").val() == ''){
 					bill.commit(getProjectName()+'/pdtout/newProductOut.do', '成品出库单新增成功');
 				}else{
-					bill.commit(getProjectName()+'/pdtout/updateProductOut.do', '成品出库单修改成功');
+					bill.commit(getProjectName()+'/pdtout/updateProductOut.do', '成品出库单修改成功', false);
 				}
         	});
 			
@@ -2374,6 +2608,7 @@ var App = function () {
 		                pageOffset: params.offset,  
 		                code: $('#filter_pdtCode').val(),
 		                ignore0storage: $('#filter_ignore0storage:checked').val(),
+		                ignoreNullStorage: $('#filter_ignoreNullStorage:checked').val(),
 		                profitLoss: $('#filter_profitLoss:checked').val() 
 		            }
 		        }
@@ -2457,13 +2692,23 @@ var App = function () {
 		
 		var doExport = function(){
 			$('#btn_export').click(function(){
-				
+				var code = $('#filter_pdtCode').val();
+                var ignore0storage = $('#filter_ignore0storage:checked').val();
+                if (!ignore0storage)
+                	ignore0storage = 0;
+            	var url = getProjectName() + "/pdtinv/exportInventory.do?code=" + code + "&ignore0storage=" + ignore0storage;
+            	window.open(url);
 			});
 		}
 		
 		var doImport = function(){
 			$('#btn_import').click(function(){
-				
+				ImportData.show({url: getProjectName() + "/pdtinv/importInventory.do",
+					templaterName: getProjectName() + "/templater/import/成品盘点.xls",
+					callback: function(){
+						$("#tbl_inventory").bootstrapTable("refresh", {url: getProjectName() + "/pdtinv/loadSystemInventory.do", cache: false});
+					}
+				});
 			});
 		}
 		
@@ -2744,12 +2989,23 @@ var App = function () {
 			});
 		}
 		
+		var doExport = function(){
+            $('#btn_export').click(function(){
+            	var productId = $('#filter_product').val();
+            	var startPeriod = $('#filter_speriod').val();
+        		var endPeriod = $('#filter_eperiod').val();
+            	var url = getProjectName() + "/pdtio/exportInOutByProduct.do?pdtId=" + productId + "&startPeriod=" + startPeriod + "&endPeriod=" + endPeriod;
+            	window.open(url);
+            });
+		}
+		
 		return {
 			init: function(){
 				initPeriod();
 				loadInoutTable();
 				doQuery();
 				initOtherOpt();
+				doExport();
 			}
 		}
 	}
@@ -2876,11 +3132,21 @@ var App = function () {
 			});
 		}
 		
+		var doExport = function(){
+            $('#btn_export').click(function(){
+            	var startPeriod = $('#filter_speriod').val();
+        		var endPeriod = $('#filter_eperiod').val();
+            	var url = getProjectName() + "/pdtio/exportGlobalInOut.do?startPeriod=" + startPeriod + "&endPeriod=" + endPeriod;
+            	window.open(url);
+            });
+		}
+		
 		return {
 			init: function(){
 				initPeriod();
 				loadInoutTable();
 				doQuery();
+				doExport();
 			}
 		}
 	}
@@ -3081,7 +3347,7 @@ var App = function () {
 		var bill;
 		var initBill = function(){
 			$.ajaxSettings.async = false;
-			$.getJSON("../templater/voucher.json", "", function(data){
+			$.getJSON("../templater/bill/voucher.json", "", function(data){
         		bill = $('#voucherBill').eBill(data);	
 			});
 			$.ajaxSettings.async = true;
@@ -3092,7 +3358,7 @@ var App = function () {
 				if ($("input[name='id']").val() == ''){
 					bill.commit(getProjectName()+'/voc/addVoucher.do', '记账凭证新增成功');
 				}else{
-					bill.commit(getProjectName()+'/voc/updateVoucher.do', '记账凭证修改成功');
+					bill.commit(getProjectName()+'/voc/updateVoucher.do', '记账凭证修改成功', false);
 				}
         	});
 			
@@ -3499,11 +3765,22 @@ var App = function () {
 				}
 			});
 		}
+		
+		var doExport = function(){
+            $('#btn_export').click(function(){
+            	var subjectId = $("#filter_subject").val();
+        		var billPeriod = $("#filter_billPeriod").val();
+            	var url = getProjectName() + "/subLedger/exportAccount.do?subjectId=" + subjectId + "&billPeriod=" + billPeriod;
+            	window.open(url);
+            });
+		}
+		
 		return {
 			init: function(){
 				loadAssciation();
 				loadAccountTable();
 				initEvent();
+				doExport();
 			}
 		};
 	}
@@ -3579,11 +3856,21 @@ var App = function () {
 				$("#tbl_account").bootstrapTable("refresh", {url: getProjectName() + "/genLedger/getAccount.do", cache: false});
 			});
 		}
+		
+		var doExport = function(){
+            $('#btn_export').click(function(){
+            	var billPeriod = $("#filter_billPeriod").val();
+            	var url = getProjectName() + "/genLedger/exportAccount.do?billPeriod=" + billPeriod;
+            	window.open(url);
+            });
+		}
+		
 		return {
 			init: function(){
 				loadAssciation();
 				loadAccountTable();
 				initEvent();
+				doExport();
 			}
 		};
 	}
@@ -3631,6 +3918,10 @@ var App = function () {
         
         materialInList: function(){
         	initMaterialInList().init();
+        },
+        
+        materialOutList: function(){
+        	initMaterialOutList().init();
         },
         
         singleMaterialInOut: function(){

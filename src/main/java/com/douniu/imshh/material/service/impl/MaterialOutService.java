@@ -1,5 +1,6 @@
 package com.douniu.imshh.material.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.douniu.imshh.common.IDInjector;
@@ -8,6 +9,7 @@ import com.douniu.imshh.material.dao.IMaterialOutDao;
 import com.douniu.imshh.material.domain.BillDetail;
 import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.material.domain.MaterialOutBill;
+import com.douniu.imshh.material.domain.MaterialOutTableRow;
 import com.douniu.imshh.material.service.IMaterialOutService;
 import com.douniu.imshh.material.service.IMaterialService;
 import com.douniu.imshh.utils.LikeFlagUtil;
@@ -19,11 +21,20 @@ public class MaterialOutService implements IMaterialOutService{
 	@Override
 	public PageResult getPageResult(MaterialFilter filter) {
 		PageResult pr = new PageResult();
-		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"number", "remark"});
-		pr.setRows(dao.getPageResult(condition));
+		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"number"});
+		
+		List<MaterialOutBill> result = dao.getPageResult(condition);
+		pr.setRows(change2TableRows(result));
 		pr.setTotal(dao.count(condition));
 		return pr;
 	}
+	
+	@Override
+	public List<MaterialOutBill> query(MaterialFilter filter) {
+		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"number"});
+		return dao.query(condition);
+	}
+
 	@Override
 	public MaterialOutBill getById(String id) {
 		return dao.getById(id);
@@ -48,15 +59,15 @@ public class MaterialOutService implements IMaterialOutService{
 			mtlService.addStorage(detail.getMaterial().getId(), detail.getQuantity());
 		}
 		
-		dao.update(o_bill);
-		dao.deleteDetailsByBillId(o_bill.getId());
-		List<BillDetail> details = o_bill.getDetails();
+		dao.update(bill);
+		dao.deleteDetailsByBillId(bill.getId());
+		List<BillDetail> details = bill.getDetails();
 		for (BillDetail detail : details){
-			detail.setBillId(o_bill.getId());
+			detail.setBillId(bill.getId());
 			mtlService.addStorage(detail.getMaterial().getId(), 0 - detail.getQuantity());
 		}
 		IDInjector.injector(details);
-		dao.insertDetails(o_bill.getDetails());
+		dao.insertDetails(bill.getDetails());
 	}
 	
 	@Override
@@ -70,7 +81,17 @@ public class MaterialOutService implements IMaterialOutService{
 		}
 	}
 	
-	
+	private List<MaterialOutTableRow> change2TableRows(List<MaterialOutBill> bills){
+		List<MaterialOutTableRow> rows = new ArrayList<>();
+		for (MaterialOutBill bill : bills){
+			List<BillDetail> details = bill.getDetails();
+			for (BillDetail detail : details){
+				MaterialOutTableRow row = new MaterialOutTableRow(bill, detail);
+				rows.add(row);
+			}
+		}
+		return rows;
+	}
 	/*@Override
 	public List<MaterialOut> query(MaterialFilter filter) {
 		MaterialFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"name"});

@@ -13,6 +13,8 @@ public interface ICategoryDao {
 	int count(MaterialFilter filter);
 	
 	Category getById(String id);
+	
+	Category getByCode(String code);
 
 	void insert(Category category);
 	

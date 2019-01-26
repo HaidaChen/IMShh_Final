@@ -11,15 +11,18 @@ public class MaterialFilter extends BaseQO{
 	private String category;
 	private String ctgCode;
 	private String billPeriod;
+	private String billReason;
 	private String startPeriod;
 	private String endPeriod;
 	private String lowerStorage;
 	private String upperStorage;
 	private String remark;
 	private String supplier;
+	
 	private int billStatus = -1;
 	private int profitLoss;
 	private int ignore0storage;
+	private int ignoreNullStorage;
 	
 	public String getSupplier() {
 		return supplier;
@@ -50,6 +53,12 @@ public class MaterialFilter extends BaseQO{
 	}
 	public void setBillPeriod(String billPeriod) {
 		this.billPeriod = billPeriod;
+	}
+	public String getBillReason() {
+		return billReason;
+	}
+	public void setBillReason(String billReason) {
+		this.billReason = billReason;
 	}
 	public String getStartPeriod() {
 		return startPeriod;
@@ -119,13 +128,21 @@ public class MaterialFilter extends BaseQO{
 	public void setIgnore0storage(int ignore0storage) {
 		this.ignore0storage = ignore0storage;
 	}
+	
+	public int getIgnoreNullStorage() {
+		return ignoreNullStorage;
+	}
+	public void setIgnoreNullStorage(int ignoreNullStorage) {
+		this.ignoreNullStorage = ignoreNullStorage;
+	}
 	@Override
 	public String toString() {
 		return "MaterialFilter [materialId=" + materialId + ", name=" + name + ", number=" + number + ", specification="
 				+ specification + ", category=" + category + ", ctgCode=" + ctgCode + ", billPeriod=" + billPeriod
-				+ ", startPeriod=" + startPeriod + ", endPeriod=" + endPeriod + ", lowerStorage=" + lowerStorage
-				+ ", upperStorage=" + upperStorage + ", remark=" + remark + ", supplier=" + supplier + ", billStatus="
-				+ billStatus + ", profitLoss=" + profitLoss + ", ignore0storage=" + ignore0storage + "]";
+				+ ", billReason=" + billReason + ", startPeriod=" + startPeriod + ", endPeriod=" + endPeriod
+				+ ", lowerStorage=" + lowerStorage + ", upperStorage=" + upperStorage + ", remark=" + remark
+				+ ", supplier=" + supplier + ", billStatus=" + billStatus + ", profitLoss=" + profitLoss
+				+ ", ignore0storage=" + ignore0storage + ", ignoreNullStorage=" + ignoreNullStorage + "]";
 	}
 	
 }

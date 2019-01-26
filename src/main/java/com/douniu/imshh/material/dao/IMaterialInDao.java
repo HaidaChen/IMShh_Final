@@ -8,6 +8,7 @@ import com.douniu.imshh.material.domain.MaterialInBill;
 
 public interface IMaterialInDao {
 	List<MaterialInBill> getPageResult(MaterialFilter filter);
+	List<MaterialInBill> query(MaterialFilter filter);
 	int count(MaterialFilter filter);
 	MaterialInBill getById(String id);
 	

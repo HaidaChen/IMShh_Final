@@ -70,7 +70,7 @@ public class DateUtil {
 		cal.setTime(date);
 		
         cal.add(cal.MONTH, 1);
-        SimpleDateFormat dft = new SimpleDateFormat("yyyyMM");
+        SimpleDateFormat dft = new SimpleDateFormat(format);
         String nextMonth = dft.format(cal.getTime());
         return nextMonth;
 	}

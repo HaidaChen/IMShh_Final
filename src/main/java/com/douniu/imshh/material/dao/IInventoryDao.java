@@ -17,6 +17,7 @@ public interface IInventoryDao {
 	int existCacheItem(String materialId);
 	void insertCacheItem(String materialId, float quantity);
 	void updateCacheItem(String materialId, float quantity);
+	void batchInsertCacheItem(List<InventoryDetail> details);
 	
 	List<InventoryDetail> queryStorageWithCachePageResult(MaterialFilter filter);
 	int countStorageWithCache(MaterialFilter filter);

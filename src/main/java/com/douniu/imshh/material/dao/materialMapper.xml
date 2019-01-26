@@ -83,6 +83,9 @@
           <if test="upperStorage != null and upperStorage !=0f">
           and m.storage &lt;= #{upperStorage} 
           </if>
+          <if test="ignore0storage == 1">
+          and m.storage != 0
+          </if>
           <if test="remark != null and remark !=''">
           and m.remark like #{remark} 
           </if>

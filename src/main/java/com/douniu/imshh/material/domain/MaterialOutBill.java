@@ -1,11 +1,6 @@
 package com.douniu.imshh.material.domain;
 
-import java.util.Date;
-
-
 public class MaterialOutBill extends MaterialBill {
-	private String id;
-	private Date outDate;         /*发生日期*/
 	private String preparedBy;   /*制单人*/	
 	private String auditor;      /*审核人*/
 	private String custodian;    /*保管*/
@@ -14,18 +9,6 @@ public class MaterialOutBill extends MaterialBill {
 	private String remark;
 	private int status = 1;
 	
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public Date getOutDate() {
-		return outDate;
-	}
-	public void setOutDate(Date outDate) {
-		this.outDate = outDate;
-	}
 	public String getPreparedBy() {
 		return preparedBy;
 	}
@@ -63,13 +46,10 @@ public class MaterialOutBill extends MaterialBill {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	
 	@Override
 	public String toString() {
-		return "MaterialOutBill [outDate=" + outDate + ", preparedBy=" + preparedBy + ", auditor=" + auditor
-				+ ", custodian=" + custodian + ", billStatus=" + billStatus + ", remark="
-				+ remark + ", status=" + status + "]";
+		return "MaterialOutBill [preparedBy=" + preparedBy + ", auditor=" + auditor + ", custodian="
+				+ custodian + ", billStatus=" + billStatus + ", remark=" + remark + ", status=" + status + "]";
 	}
-	
 	
 }

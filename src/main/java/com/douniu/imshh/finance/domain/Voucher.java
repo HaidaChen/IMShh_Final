@@ -10,6 +10,8 @@ public class Voucher {
 	private int word;
 	/*凭证号*/
 	private int number;
+	/*凭证字号*/
+	private String wordNumber;
 	/*制单人*/
 	private String preparedBy;
 	/*审核人*/
@@ -40,12 +42,40 @@ public class Voucher {
 	}
 	public void setWord(int word) {
 		this.word = word;
+		setWordNumber();
 	}
 	public int getNumber() {
 		return number;
 	}
 	public void setNumber(int number) {
 		this.number = number;
+		setWordNumber();
+	}
+	public String getWordNumber() {
+		return wordNumber;
+	}
+	public void setWordNumber() {
+		String str = "";
+		if (this.word != 0 && this.number != 0){
+			switch (word) {
+			case 1:
+				str += "记";
+				break;
+			case 2:
+				str += "付";
+				break;
+			case 3:
+				str += "收";
+				break;
+			case 4:
+				str += "转";
+				break;
+			default:
+				break;
+			}
+			str += number;
+		}
+		this.wordNumber = str;
 	}
 	public String getPreparedBy() {
 		return preparedBy;

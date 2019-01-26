@@ -724,9 +724,13 @@
 			return JSON.stringify(this.item_table.tableData);
 		},
 		
-		submitBill: function(url, successMsg){
+		submitBill: function(url, successMsg, resetBill){
 			var self = this;
 			var tableParam = {};
+			var _resetBill = true;
+			if (resetBill != undefined){
+				_resetBill = resetBill;
+			}
 			tableParam['billItem'] = this.getBillData();
 			
 			$('#bill_form').ajaxSubmit({
@@ -734,7 +738,9 @@
 				url: url,
 				data: tableParam,
 				success:function(result){
-					self.resetBill();
+					if (_resetBill){
+						self.resetBill();
+					}
 					Ewin.toast(successMsg);
 				},
 				error:function(XMLHttpRequest, textStatus, errorThrown){
@@ -792,8 +798,8 @@
 			fillBillItem: function(selections){
 				eBill.fillBillItem(selections);
 			},
-			commit: function(url, successMsg){
-				eBill.submitBill(url, successMsg);
+			commit: function(url, successMsg, reset){
+				eBill.submitBill(url, successMsg, reset);
 			},
 			fillBill: function(obj){
 				eBill.fillBill(obj);
