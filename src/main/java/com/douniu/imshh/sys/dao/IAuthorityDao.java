@@ -11,5 +11,6 @@ public interface IAuthorityDao {
 	List<Authority> queryByUser(String userId);
 	List<Menu> queryMenuByUser(String userId);
 	List<Menu> getAllMenu();
+	Menu findMenuById(String menuId);
 	Authority findById(String id);
 }

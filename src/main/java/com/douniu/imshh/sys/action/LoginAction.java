@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.douniu.imshh.sys.domain.Authority;
@@ -18,6 +19,7 @@ import com.douniu.imshh.sys.service.IAuthorityService;
 import com.douniu.imshh.sys.service.IParameterService;
 import com.douniu.imshh.sys.service.IUserService;
 import com.douniu.imshh.utils.EncryptUnit;
+import com.douniu.imshh.utils.GsonUtil;
 import com.google.gson.Gson;
 
 @Controller
@@ -125,5 +127,37 @@ public class LoginAction {
 		}else{
 			return "offLine";
 		}
+	}
+	
+	@RequestMapping(value="/setHomePage", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String setHomePage(HttpSession session, String homePage){
+		User user = getSessionUser(session);
+		service.setHomePage(user.getId(), homePage);
+		return "success";
+	}
+	
+	@RequestMapping(value="/getHomePage", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getHomePage(HttpSession session){
+		User user = getSessionUser(session);
+		Menu menu = authorityService.findMenuById(user.getHomePage());
+		return GsonUtil.toJson(menu);
+	}
+	
+	
+	@RequestMapping(value="/loadAllPage", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String loadAllPage(HttpSession session){
+		User user = getSessionUser(session);
+		List<Menu> menus = authorityService.queryMenuByUser(user.getId());
+		return GsonUtil.toJson(menus);
+	}
+	
+	private User getSessionUser(HttpSession session){
+		Object obj = session.getAttribute("user");
+		if (obj == null)
+			return null;
+		return (User)obj;
 	}
 }

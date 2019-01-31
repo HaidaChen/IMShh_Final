@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.douniu.imshh.common.IDInjector;
 import com.douniu.imshh.common.PageResult;
+import com.douniu.imshh.sys.domain.Menu;
 import com.douniu.imshh.sys.domain.SystemFilter;
 import com.douniu.imshh.sys.domain.User;
 import com.douniu.imshh.sys.service.IUserService;
@@ -25,6 +28,7 @@ public class UserAction {
 	
 	@Autowired
 	private IUserService service;
+	
 	
 	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
 	@ResponseBody
@@ -147,6 +151,7 @@ public class UserAction {
 		service.update(user);	
 		return "success";
 	}
+	
 	
 	/*
 	private List<Role> getFreeRoles(List<Role> allRole, List<Role> userRole){

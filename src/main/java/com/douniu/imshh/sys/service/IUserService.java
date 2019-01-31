@@ -14,7 +14,7 @@ public interface IUserService{
 	//int count(User user);
 	User findById(String id);
 	void update(User user);
-	void updateProfile(User user);
+	
 	void add(User user);
 	void remove(String id);
 	boolean verify(User user);
@@ -22,4 +22,6 @@ public interface IUserService{
 	
 	void addRoleRelation(List<UserRole> userRoles);
 	void deleteRoleRelation(String userId);
+	
+	void setHomePage(String id, String homePage);
 }

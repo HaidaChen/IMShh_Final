@@ -118,7 +118,7 @@ button.active{
 	float: left;
 }
 
-.header-nav > li > a {
+.header-nav > li > .dropdown > a {
     color: white;
     text-decoration: none;
     display: inline-block;
@@ -127,7 +127,7 @@ button.active{
 	padding: 0px 14px;
 }
 
-.header-nav > li > a:hover {
+.header-nav >li > .dropdown >  a:hover {
 	cursor: pointer;
 	background: rgba(0, 0, 0, 0.9);
 }

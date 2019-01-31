@@ -1,0 +1,38 @@
+<meta charset="UTF-8">
+<form id="homePageForm" class="form-horizontal">
+    <div class="form-group">
+    	<label for="input_code" class="col-sm-2 control-label">我的首页：</label>
+    	<div class="col-sm-10">
+    	    <select class="form-control" id="select_home" name="homePage">
+    	    	<option value=""></option>
+    	    </select>
+   		</div>
+    </div>
+</form>
+<div id="authorityTree"></div>
+<div class="clearfix">
+  <input type="button" id="btn_save" value="保存" class="btn btn-success pull-right m-l-5">
+  <input type="button" id="btn_close" value="关闭" class="btn btn-default pull-right" data-dismiss="modal">
+</div>
+
+<script>
+$(function(){
+	$('#btn_save').click(function(){
+		$("#homePageForm").ajaxSubmit({
+			type: "post",
+			url: getProjectName() + "/login/setHomePage.do", 
+			dataType: "text",
+			success:function(result){
+				Ewin.toast('个人主页设置成功，重新登录系统后生效');
+				var modal = $('#homePage_edit');
+				modal.modal('hide');
+				modal.on('hide.bs.modal', function (e) {
+					$('body').removeClass('modal-open');
+					modal.remove();
+                });
+			}
+		});
+	});
+})
+
+</script>

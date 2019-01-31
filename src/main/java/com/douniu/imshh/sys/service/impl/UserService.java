@@ -48,11 +48,6 @@ public class UserService implements IUserService{
 	}
 	
 	@Override
-	public void updateProfile(User user) {
-		dao.updateProfile(user);
-	}
-
-	@Override
 	public void add(User user) {
 		dao.insert(user);
 	}
@@ -82,10 +77,15 @@ public class UserService implements IUserService{
 		dao.deleteRoleRelation(userId);
 	}
 
+	
+	@Override
+	public void setHomePage(String id, String homePage) {
+		dao.setHomePage(id, homePage);
+	}
+
+
 	public void setDao(IUserDao dao) {
 		this.dao = dao;
 	}
-
-	
 
 }

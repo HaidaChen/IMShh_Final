@@ -7,17 +7,7 @@
         <result property="userName" column="userName"/>
         <result property="password" column="password"/>
         <result property="fullName" column="fullName"/>
-        
-        <result property="birthday" column="birthday"/>
-        <result property="gender" column="gender"/>
-        <result property="workNo" column="workNo"/>
-        <result property="position" column="position"/>
-        <result property="phone" column="phone"/>
-        
-        <result property="email" column="email"/>
-        <result property="QQ" column="QQ"/>
-        <result property="weichat" column="weichat"/>
-        <result property="head" column="head"/>
+        <result property="homePage" column="homePage"/>
         <result property="remark" column="remark"/>
         <result property="status" column="status"/>
         
@@ -56,53 +46,28 @@
         </if>         
           order by modifydate desc
     </select>
-     <!-- 
-    <select id="count" parameterType="User" resultType="int">
-        select count(1) from t_user where status = 1
-        <if test="condition != null and condition !=''">
-          and (username like #{condition} 
-           or fullname like #{condition}
-           or email like #{condition}
-           or weichat like #{condition})          
-        </if>
-    </select> -->
     
     <select id="findById" parameterType="String" resultMap="usermap">
         select * from t_user where id = #{id}
     </select>
     
     <insert id="insert" parameterType="User">
-        insert into t_user(id, userName, password, fullName, email, weichat, modifydate, status) 
-          values(#{id}, #{userName}, #{password}, #{fullName}, #{email}, #{weichat}, sysdate(), '1')
+        insert into t_user(id, userName, password, fullName, modifydate, status) 
+          values(#{id}, #{userName}, #{password}, #{fullName}, sysdate(), '1')
     </insert>
     
     <update id="update" parameterType="User">
         update t_user set 
-          userName = #{userName},          
-          password = #{password},
+          userName = #{userName},
           fullName = #{fullName},
-          email = #{email},
-          weichat = #{weichat},
           modifydate = sysdate()
     where id = #{id}
     </update>
     
-    <update id="updateProfile" parameterType="User">
+    <update id="setHomePage" parameterType="User">
         update t_user set 
-          fullName = #{fullName},
-          birthday = #{birthday},
-          gender = #{gender},
-          workNo = #{workNo},
-          dept = #{dept},
-          position = #{position},
-          phone = #{phone},
-          email = #{email},
-          QQ = #{QQ},
-          weichat = #{weichat},
-          head = #{head},
-          remark = #{remark},
-          modifydate = sysdate()
-    where id = #{id}
+          homePage = #{1}
+    where id = #{0}
     </update>
     
     <update id="delete" parameterType="String">

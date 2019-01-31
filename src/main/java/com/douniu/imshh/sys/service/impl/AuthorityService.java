@@ -3,6 +3,8 @@ package com.douniu.imshh.sys.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.util.StringUtils;
+
 import com.douniu.imshh.sys.dao.IAuthorityDao;
 import com.douniu.imshh.sys.domain.Authority;
 import com.douniu.imshh.sys.domain.Menu;
@@ -42,12 +44,29 @@ public class AuthorityService implements IAuthorityService{
 	}
 	
 	@Override
+	public List<Menu> queryMenuByUser(String userId) {
+		List<Menu> menus = dao.queryMenuByUser(userId);
+		List<Menu> _menus = new ArrayList<>();
+		for (Menu menu : menus){
+			if (!StringUtils.isEmpty(menu.getUrl())){
+				_menus.add(menu);
+			}
+		}
+		return _menus;
+	}
+	
+	@Override
 	public List<Menu> getAllMenu() {
 		List<Menu> menus = dao.getAllMenu();
 		Menu root = new Menu();
 		root.setId("0");
 		menuList2Tree(menus, root);
 		return root.getSubmenu();
+	}
+
+	@Override
+	public Menu findMenuById(String menuId) {
+		return dao.findMenuById(menuId);
 	}
 
 	private void menuList2Tree(List<Menu> src, Menu parent){

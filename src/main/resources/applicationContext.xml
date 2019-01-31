@@ -208,14 +208,6 @@
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       
-      <bean name="menuService" class="com.douniu.imshh.sys.service.impl.MenuService">
-          <property name="dao" ref="menuDao"></property>
-      </bean>
-      <bean id="menuDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.sys.dao.IMenuDao"/>
-          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean>
-      
       <bean name="paramService" class="com.douniu.imshh.sys.service.impl.ParameterService">
           <property name="dao" ref="paramDao"></property>
       </bean>

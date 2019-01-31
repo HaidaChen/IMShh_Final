@@ -71,6 +71,28 @@ var App = function () {
 		}
 	}
 	
+	var handleHomePage = function(){
+		$("#nav_homePage").click(function(){
+			Ewin.load({id: 'homePage_edit', title: '设置个人首页', url: 'fragment/homePage_edit.html', callback: function(){
+				$.getJSON(getProjectName() + "/login/loadAllPage.do",
+						function(result){
+							$.each(result, function(index, menu){
+								$('#select_home').append('<option value="'+menu.id+'">'+menu.name+'</option>');
+							});
+							$("#select_home").select2({
+								placeholder: "请选择个人主页",
+								allowClear: true
+							});
+							$.getJSON(getProjectName() + "/login/getHomePage.do",
+									function(result){
+										$('#select_home').val(result.id);
+										$("#select_home").select2();
+							});
+				});
+			}});
+		});
+	}
+	
 	var handleChangePWD = function(){
 		$("#nav_changePWD").click(function(){
 			var html = ''+
@@ -197,13 +219,18 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initFrameModule = function(){
 		nthTabs = $("#editor-tabs").nthTabs();
-        nthTabs.addTab({
-            id:'0501',
-            title:'原材料.品类',
-            active:true,
-            allowClose:false,
-            content:'mtl_category.html',
-        });
+		$.getJSON(getProjectName() + "/login/getHomePage.do",
+				function(result){
+					if (result == "")
+						return;
+					nthTabs.addTab({
+			            id:result.id,
+			            title:result.name,
+			            active:true,
+			            allowClose:false,
+			            content:result.url
+			        });
+		});
 	}
 	
 	
@@ -4335,6 +4362,21 @@ var App = function () {
 		}
 	}
 	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始系统设置列表模块
+	/*-----------------------------------------------------------------------------------*/	
+	var initSystemSetting = function(){
+		var loadOptions = function(){
+			
+		}
+		
+		return {
+			init: function(){
+				loadOptions();
+			}
+		}
+	}
+	
 	return {
 		/****************公共模块****************/
         login: function () {
@@ -4343,10 +4385,11 @@ var App = function () {
 
         main: function () {
         	handleSidebar();
-        	initFrameModule();
+        	handleHomePage();
             handleChangePWD();
 			handleSignOut();
 			handleSidebarCollapse();
+			initFrameModule();
 			return nthTabs;
         },
         
@@ -4469,8 +4512,11 @@ var App = function () {
         
         roleList: function(){
         	initRoleList().init();
-        }
+        },
         
+        systemSetting: function(){
+        	initSystemSetting().init();
+        }
     };
 }();
 

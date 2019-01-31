@@ -40,6 +40,10 @@
         select * from t_menu m order by id 
     </select>
     
+    <select id="findMenuById" parameterType="String" resultType="Menu">
+        select * from t_menu m where id = #{menuId}
+    </select>
+    
     <select id="findById" parameterType="String" resultMap="authoritymap">
         select * from t_authority where id = #{id}
     </select>
