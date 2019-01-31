@@ -1,6 +1,6 @@
 package com.douniu.imshh.material.domain;
 
-import com.douniu.imshh.busdata.supplier.domain.Supplier;
+import com.douniu.imshh.supplier.domain.Supplier;
 
 public class MaterialInBill extends MaterialBill{
 	private Supplier supplier;   /*供应商*/

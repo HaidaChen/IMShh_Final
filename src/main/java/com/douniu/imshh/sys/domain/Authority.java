@@ -6,7 +6,9 @@ public class Authority {
 	private String parentId;
 	private String action;
 	private String dependents;	
-	private String remark;	
+	
+	private String remark;
+	
 	
 	public String getId() {
 		return id;
@@ -44,6 +46,5 @@ public class Authority {
 	public void setDependents(String dependents) {
 		this.dependents = dependents;
 	}
-	
 	
 }

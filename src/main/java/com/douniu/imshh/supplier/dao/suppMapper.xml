@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.douniu.imshh.supplier.dao.ISupplierDao">
+    <resultMap type="Supplier" id="suppmap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="address" column="address"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="fax" column="fax"/>
+        <result property="contacts" column="contacts"/>
+        <result property="remark" column="remark"/>
+        <result property="createDate" column="createDate"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    
+    <select id="findById" parameterType="String" resultMap="suppmap">
+        select * from tbl_supplier where id = #{id}
+    </select>
+    
+    <select id="getPageResult" parameterType="SupplierFilter" resultMap="suppmap">
+        select * from tbl_supplier where status = 1
+        <if test="suppName != null and suppName !=''">
+          and name like #{suppName}
+        </if> 
+        <if test="suppPhone != null and suppPhone !=''">
+          and phone like #{suppPhone}
+        </if>
+        <if test="suppContacts != null and suppContacts !=''">
+          and contacts like #{suppContacts}
+        </if>
+        <if test="remark != null and remark !=''">
+          and remark like #{remark}
+        </if>       
+          order by modifydate desc
+          limit #{pageOffset},#{pageSize}
+    </select> 
+    
+    <select id="query" parameterType="SupplierFilter" resultMap="suppmap">
+        select * from tbl_supplier where status = 1
+        <if test="suppName != null and suppName !=''">
+          and name like #{suppName}
+        </if> 
+        <if test="suppPhone != null and suppPhone !=''">
+          and phone like #{suppPhone}
+        </if>
+        <if test="suppContacts != null and suppContacts !=''">
+          and contacts like #{suppContacts}
+        </if>
+        <if test="remark != null and remark !=''">
+          and remark like #{remark}
+        </if>       
+          order by modifydate desc
+    </select>
+    <select id="count" parameterType="Supplier" resultType="int">
+        select count(1) from tbl_supplier where status = 1
+        <if test="suppName != null and suppName !=''">
+          and name like #{suppName}
+        </if> 
+        <if test="suppPhone != null and suppPhone !=''">
+          and phone like #{suppPhone}
+        </if>
+        <if test="suppContacts != null and suppContacts !=''">
+          and contacts like #{suppContacts}
+        </if>
+        <if test="remark != null and remark !=''">
+          and remark like #{remark}
+        </if>       
+    </select>   
+    <insert id="insert" parameterType="Supplier">
+        insert into tbl_supplier(id, name, address, phone, email, fax, contacts, createDate, modifydate, remark, status) 
+          values(#{id}, #{name}, #{address}, #{phone}, #{email}, #{fax}, #{contacts}, #{createDate}, sysdate(), #{remark}, #{status})
+    </insert>
+    
+    <insert id="batchInsert" parameterType="java.util.List">
+        
+        insert into tbl_supplier(id, name, address, phone, email, fax, contacts, createDate, modifydate, remark, status) 
+             values
+             <foreach collection="list" item="supp" index="index" separator=",">
+                 (CONCAT(current_timestamp()+1, #{index}) , #{supp.name}, #{supp.address}, #{supp.phone}, #{supp.email}, #{supp.fax}, #{supp.contacts}, sysdate(), sysdate(), #{supp.remark}, '1')
+             </foreach>
+    </insert>
+    
+    <update id="update" parameterType="Supplier">
+        update tbl_supplier set 
+          name = #{name},          
+          address = #{address},
+          phone = #{phone},
+          email = #{email},
+          fax = #{fax},
+          contacts = #{contacts},
+          remark = #{remark},
+          modifydate = sysdate()
+    where id = #{id}
+    </update>
+    <update id="deleteById" parameterType="String">
+        update tbl_supplier set 
+          status = '0',
+          modifydate = sysdate()
+        where id = #{id}
+    </update>
+    
+</mapper>

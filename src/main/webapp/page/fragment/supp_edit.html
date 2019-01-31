@@ -1,0 +1,107 @@
+<meta charset="UTF-8">
+<form id="supplierForm" class="form-horizontal">
+  <input id="hid_id" type="hidden" name="id" value="">
+  <div class="form-group">
+    <label for="input_name" class="col-sm-2 control-label">单位名称：</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="input_name" name="name">
+   </div>
+  </div>
+  <div class="form-group">
+    <label for="input_address" class="col-sm-2 control-label">单位地址：</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="input_address" name="address" >
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="input_fax" class="col-sm-2 control-label">传真：</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="input_fax" name="fax" >
+  	</div>
+  </div>
+  <div class="form-group">
+    <label for="input_contacts" class="col-sm-2 control-label">联系人：</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="input_contacts" name="contacts" >
+  	</div>
+  </div>
+  <div class="form-group">
+    <label for="input_phone" class="col-sm-2 control-label">联系电话：</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="input_phone" name="phone" >
+  	</div>
+  </div>
+  <div class="form-group">
+    <label for="input_remark" class="col-sm-2 control-label">备注：</label>
+    <div class="col-sm-10">
+      <textarea class="form-control" id="input_remark" name="remark" row="2"></textarea>
+    </div>
+  </div>
+</form>
+<div class="clearfix">
+  <input type="button" id="btn_save" value="保存" class="btn btn-success pull-right m-l-5">
+  <input type="button" id="btn_close" value="关闭" class="btn btn-default pull-right" data-dismiss="modal">
+</div>
+
+<script>
+$(function(){
+	
+	$('#btn_save').click(function(){
+		$("#supplierForm").bootstrapValidator({
+			fields: {
+				name : {
+					validators: {
+						notEmpty : {},
+						/* remote: {
+							url: getProjectName()+'/supp/existSupplier.do',
+							message: '已经存在同名供应商',
+							delay: '2000',
+							data: {id: $("#hid_id").val(), name: $("#input_name").val()}
+						} */
+						callback: {
+							message: '已经存在同名供应商，请重新输入',
+							callback: function(value, validator){
+								var res;
+								$.ajax({
+									url: getProjectName()+'/supp/existSupplier.do',
+									data: {id: $("#hid_id").val(), name: $("#input_name").val()},
+									async:false, 
+									success: function(result){
+										res = result.valid;
+									}
+								});
+								return res;
+							}
+						}
+				}}
+	        }
+		});
+		
+		var bootstrapValidator = $("#supplierForm").data('bootstrapValidator');
+		bootstrapValidator.validate();
+		if(!bootstrapValidator.isValid()){
+			return;
+		}
+		
+		var opturl = '';
+		var optResult = '';
+		if ($('#hid_id').val() == ''){
+			opturl = getProjectName()+"/supp/newSupplier.do";
+			optResult = '供应商新增成功';
+		}else{
+			opturl = getProjectName()+"/supp/updateSupplier.do";
+			optResult = '供应商修改成功';
+		}
+		$("#supplierForm").ajaxSubmit({
+			type: "post",
+			url: opturl, 
+			dataType: "text",
+			success:function(result){
+				Ewin.toast(optResult);
+				$("#tbl_supplier").bootstrapTable("refresh", {url: getProjectName() + "/supp/getPageResult.do", cache: false});
+			}
+		});
+	});
+})
+
+</script>

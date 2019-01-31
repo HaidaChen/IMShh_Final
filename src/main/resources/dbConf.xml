@@ -41,7 +41,9 @@
         <typeAlias alias="VoucherEntry" type="com.douniu.imshh.finance.domain.VoucherEntry"/>
         <typeAlias alias="FinanceAccount" type="com.douniu.imshh.finance.domain.Account"/>
         
-        
+        <!-- 05 基础数据模块 -->
+        <typeAlias alias="SupplierFilter" type="com.douniu.imshh.supplier.domain.SupplierFilter"/>
+        <typeAlias alias="Supplier" type="com.douniu.imshh.supplier.domain.Supplier"/>
         
         <!-- 
         <typeAlias alias="Order" type="com.douniu.imshh.finance.order.domain.Order"/>
@@ -49,7 +51,7 @@
         <typeAlias alias="MaterialStorage" type="com.douniu.imshh.finance.storage.domain.MaterialStorage"/>
         <typeAlias alias="ProductIn" type="com.douniu.imshh.finance.storage.domain.ProductIn"/>
         <typeAlias alias="ProductOut" type="com.douniu.imshh.finance.storage.domain.ProductOut"/>
-         -->
+        
         <typeAlias alias="Invoice" type="com.douniu.imshh.finance.invoice.domain.Invoice"/>
                 
         <typeAlias alias="Reception" type="com.douniu.imshh.finance.reception.domain.Reception"/>
@@ -61,12 +63,13 @@
         
         <typeAlias alias="Account" type="com.douniu.imshh.finance.account.domain.Account"/>
         <typeAlias alias="Transaction" type="com.douniu.imshh.finance.account.domain.Transaction"/>
-        
+         -->
         <typeAlias alias="Customer" type="com.douniu.imshh.busdata.customer.domain.Customer"/>
-        <typeAlias alias="Supplier" type="com.douniu.imshh.busdata.supplier.domain.Supplier"/>
+        
         <typeAlias alias="Product" type="com.douniu.imshh.busdata.product.domain.Product"/>
         
-        
+        <!-- 06 系统管理模块 -->
+        <typeAlias alias="SystemFilter" type="com.douniu.imshh.sys.domain.SystemFilter"/>
         <typeAlias alias="User" type="com.douniu.imshh.sys.domain.User"/>
         <typeAlias alias="Role" type="com.douniu.imshh.sys.domain.Role"/>
         <typeAlias alias="Authority" type="com.douniu.imshh.sys.domain.Authority"/>
@@ -94,19 +97,9 @@
     	<mapper resource="/com/douniu/imshh/finance/dao/voucherMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/finance/dao/accountMapper.xml"/>
     	
-    	 
-        <mapper resource="/com/douniu/imshh/finance/invoice/dao/invoiceMapper.xml"/>
-        
-        <mapper resource="/com/douniu/imshh/finance/reception/dao/receptionMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/finance/payment/dao/paymentMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/finance/dashboard/dao/productViewMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/finance/dashboard/dao/materialViewMapper.xml"/>
-        
-        <mapper resource="/com/douniu/imshh/finance/account/dao/accountMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/finance/account/dao/transactionMapper.xml"/>
+    	<mapper resource="/com/douniu/imshh/supplier/dao/suppMapper.xml"/>
         
         <mapper resource="/com/douniu/imshh/busdata/customer/dao/custMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/busdata/supplier/dao/suppMapper.xml"/>
         <mapper resource="/com/douniu/imshh/busdata/product/dao/pdtMapper.xml"/>
         
         

@@ -2,12 +2,16 @@ package com.douniu.imshh.sys.dao;
 
 import java.util.List;
 
+import com.douniu.imshh.sys.domain.SystemFilter;
 import com.douniu.imshh.sys.domain.User;
 import com.douniu.imshh.sys.domain.UserRole;
 
 public interface IUserDao {
-	List<User> query(User user);
-	int count(User user);
+	List<User> getPageResult(SystemFilter filter);
+	int count(SystemFilter filter);
+	List<User> queryWithInvalid(SystemFilter filter);
+	/*List<User> query(User user);
+	int count(User user);*/
 	User findById(String id);
 	User findByNmPwd(User user);
 	User findByName(String userName);

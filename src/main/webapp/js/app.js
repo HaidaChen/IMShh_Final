@@ -845,7 +845,7 @@ var App = function () {
 			
 			$('#btn_import').click(function(){
 				ImportData.show({url: getProjectName() + "/mtl/importMaterial.do",
-					templaterName: getProjectName() + "/templaters/原材料品类列表.xlsx",
+					templaterName: getProjectName() + "/templater/import/原材料列表.xls",
 					callback: function(){
 						$("#tbl_material").bootstrapTable("refresh", {url: getProjectName() + "/mtl/getPageResult.do", cache: false});
 					}
@@ -3875,6 +3875,465 @@ var App = function () {
 		};
 	}
 	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始供应商列表模块
+	/*-----------------------------------------------------------------------------------*/	
+	var initSupplierList = function(){
+		var loadSupplierTable = function(){
+			$("#tbl_supplier").bootstrapTable({
+				url: getProjectName() + "/supp/getPageResult.do",
+				method: "get",
+				pagination: true,
+				sidePagination: "server", 
+				clickToSelect: true,
+				columns: [{
+		            field: 'name',
+		            title: '公司名称'
+		        }, {
+		            field: 'address',
+		            title: '公司地址'
+		        }, {
+		            field: 'fax',
+		            title: '传真'
+		        }, {
+		            field: 'contacts',
+		            title: '联系人'
+		        }, {
+		            field: 'phone',
+		            title: '联系电话'
+		        }, {
+		        	field: 'remark',
+		        	title: '备注'
+		        }, {
+		        	field: '',
+		        	title: '操作',
+		        	formatter: function(value, row, index){
+		        		return '<a opt="update" rowid="'+row.id+'">修改</a>&nbsp;<a opt="delete" rowid="'+row.id+'">删除</a>';
+		        	}
+		        }],
+		        queryParams: function(params){
+		        	return {
+		                pageSize: params.limit,
+		                pageOffset: params.offset,                    
+		                suppName: $("#filter_name").val(),
+		                suppPhone: $("#filter_phone").val(),
+		                suppContacts: $("#filter_contacts").val(),
+		                remark: $("#filter_remark").val()
+		            }
+		        }
+			});
+		}
+		
+		var filterWin;
+		var initQueryOpt = function(){
+			filterWin = Ewin.load({id: 'supp_filter', title: '更多查询', url: 'fragment/supp_filter.html', rmvWin: false, initShow: false, callback: function(){
+				$("#btn_query").click(function(){
+					querySupplier();
+					$('#supp_filter').modal('hide');
+				});
+			}});
+			
+			$('#btn_more').click(function(){
+				filterWin.modal.modal('show');
+			});
+			
+			$('#btn_search').click(function(){
+				querySupplier();
+			});
+			
+		}
+		
+		var querySupplier = function(){
+			createFilterTip({
+				assWin: $('#supp_filter'), 
+				items: [{assId: 'filter_contacts', label: '联系人', rule: '包含'}, 
+					    {assId: 'filter_phone', label: '联系电话', rule: '包含'},
+				        {assId: 'filter_remark', label: '备注', rule: '包含'}],
+		        changeCall: function(){
+		        	$("#tbl_supplier").bootstrapTable("refresh", {url: getProjectName() + "/supp/getPageResult.do", cache: false});
+	        }});
+			$("#tbl_supplier").bootstrapTable("refresh", {url: getProjectName() + "/supp/getPageResult.do", cache: false});
+		}
+		
+		var doEditSupplier = function(id){
+			$('#btn_add').click(function(){					
+				Ewin.load({id: 'supp_edit', title: '新的供应商', url: 'fragment/supp_edit.html'});					
+			});
+			
+			$('#tbl_supplier').on('click', 'a', function(){
+				var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				if (opt == 'update'){
+					Ewin.load({id: 'supp_edit', title: '修改供应商', url: 'fragment/supp_edit.html', callback: function(){
+						$.ajax({
+							url: getProjectName()+"/supp/getById.do?id="+id, 
+							success: function(result){
+								fillForm($("#supplierForm"), {
+									id: result.id, 
+									name: result.name, 
+									address: result.address, 
+									fax: result.fax, 
+									contacts: result.contacts, 
+									phone: result.phone, 
+									remark: result.remark});
+							}
+						});
+					}});
+				}
+				
+				if (opt == 'delete'){
+					Ewin.confirm({message: "确定要删除选中的供应商吗？"}).on(function(e){
+						if (!e){
+							return;
+						}
+						$.ajax({
+							url: getProjectName()+"/supp/delete.do?id="+id,
+							type: "get",
+							success: function(){
+								$("#tbl_supplier").bootstrapTable("refresh", {url: getProjectName() + "/supp/getPageResult.do", cache: false});
+							}
+						});
+					});
+				}
+			});
+		}
+		
+		var doExport = function(){
+			$('#btn_export').click(function(){
+				var url = getProjectName() + "/supp/exportSupplier.do?suppName=" + $('#filter_name').val();
+            	window.open(url);
+			});
+		}
+		
+		var doImport = function(){
+			$('#btn_import').click(function(){
+				ImportData.show({url: getProjectName() + "/supp/importSupplier.do",
+					templaterName: getProjectName() + "/templater/import/供应商列表.xls",
+					callback: function(){
+						$("#tbl_supplier").bootstrapTable("refresh", {url: getProjectName() + "/supp/getPageResult.do", cache: false});
+					}
+				});
+			});
+		}
+		
+		return {
+			init: function(){
+				initQueryOpt();
+				loadSupplierTable();
+				doEditSupplier();
+				doExport();
+				doImport();
+			}
+		}
+	}
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始系统用户列表模块
+	/*-----------------------------------------------------------------------------------*/	
+	var initUserList = function(){
+		var loadUserTable = function(){
+			$("#tbl_user").bootstrapTable({
+				url: getProjectName() + "/user/getPageResult.do",
+				method: "get",
+				pagination: true,
+				sidePagination: "server", 
+				clickToSelect: true,
+				columns: [{
+		            field: 'userName',
+		            title: '用户名',
+		            width: 100
+		        }, {
+		            field: 'password',
+		            title: '密码',
+		            width: 100,
+		            formatter: function(value, row, index){
+		            	return '******';
+		            }
+		        }, {
+		            field: 'fullName',
+		            title: '姓名',
+		            width: 100
+		        }, {
+		            field: '',
+		            title: '角色',
+		            width: 100,
+		            formatter: function(value, row, index){
+		            	var roleList = "";
+		            	$.each(row.roles, function(i, role){
+		            		roleList += "," + role.name;
+		            	});
+		            	if (roleList.length > 0){
+		            		roleList = roleList.substring(1, roleList.length);
+		            	}
+		        		return roleList;
+		        	}
+		        }, {
+		        	field: '',
+		        	title: '操作',
+		        	width: 140,
+		        	formatter: function(value, row, index){
+		        		return '<a opt="update" rowid="'+row.id+'">修改</a>&nbsp;<a opt="delete" rowid="'+row.id+'">删除</a>&nbsp;<a opt="reset" rowid="'+row.id+'">重置密码</a>';
+		        	}
+		        }, {
+		            field: '',
+		            title: '',
+		            formatter: function(value, row, index){
+		            	return '';
+		            }
+		        }],
+		        queryParams: function(params){
+		        	return {
+		                pageSize: params.limit,
+		                pageOffset: params.offset,                    
+		                username: $("#filter_name").val()
+		            }
+		        },
+		        onLoadSuccess: function (data) {
+		        	var rowNum = $("#tbl_user").find('tr').length - 1;
+		        	var firstDataRow = $("#tbl_user").find('tr:nth-child(1)');
+		        	var otherDataRow = $("#tbl_user").find('tr').not(firstDataRow);
+		        	otherDataRow.find('td:last-child').remove();
+		        	firstDataRow.children('td:last-child').attr('rowspan', rowNum);
+	            }
+			});
+		}
+		
+		var initQueryOpt = function(){
+			$('#btn_search').click(function(){
+				queryUser();
+			});
+			
+		}
+		
+		var queryUser = function(){
+			$("#tbl_user").bootstrapTable("refresh", {url: getProjectName() + "/user/getPageResult.do", cache: false});
+		}
+		
+		var doEditUser = function(id){
+			$('#btn_add').click(function(){					
+				Ewin.load({id: 'user_edit', title: '新的系统用户', url: 'fragment/user_edit.html'});					
+			});
+			
+			$('#tbl_user').on('click', 'a', function(){
+				var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				if (opt == 'update'){
+					Ewin.load({id: 'user_edit', title: '修改用户', url: 'fragment/user_edit.html', callback: function(){
+						$.ajax({
+							url: getProjectName()+"/user/findById.do?id="+id, 
+							success: function(result){
+								fillForm($("#userForm"), {
+									id: result.id, 
+									userName: result.userName, 
+									password: result.password, 
+									fullName: result.fullName});
+							}
+						});
+					}});
+				}
+				
+				if (opt == 'delete'){
+					Ewin.confirm({message: "确定要删除选中的用户吗？"}).on(function(e){
+						if (!e){
+							return;
+						}
+						$.ajax({
+							url: getProjectName()+"/user/delete.do?id="+id,
+							type: "get",
+							dataType: "text",
+							success: function(){
+								$("#tbl_user").bootstrapTable("refresh", {url: getProjectName() + "/user/getPageResult.do", cache: false});
+							}
+						});
+					});
+				}
+				
+				if (opt == 'reset'){
+					Ewin.confirm({message: "确定要重置选中的用户吗？"}).on(function(e){
+						if (!e){
+							return;
+						}
+						$.ajax({
+							url: getProjectName()+"/user/resetPassword.do?id="+id,
+							type: "get",
+							dataType: "text",
+							success: function(){
+								Ewin.toast("密码重置成功");
+							}
+						});
+					});
+				}
+			});
+		}
+		
+		var doExport = function(){
+			$('#btn_export').click(function(){
+				var url = getProjectName() + "/user/exportUser.do?suppName=" + $('#filter_name').val();
+            	window.open(url);
+			});
+		}
+		
+		var doImport = function(){
+			$('#btn_import').click(function(){
+				ImportData.show({url: getProjectName() + "/user/importUser.do",
+					templaterName: getProjectName() + "/templater/import/系统用户列表.xls",
+					callback: function(){
+						$("#tbl_user").bootstrapTable("refresh", {url: getProjectName() + "/user/getPageResult.do", cache: false});
+					}
+				});
+			});
+		}
+		
+		return {
+			init: function(){
+				initQueryOpt();
+				loadUserTable();
+				doEditUser();
+				doExport();
+				doImport();
+			}
+		}
+	}
+
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始系统角色列表模块
+	/*-----------------------------------------------------------------------------------*/	
+	var initRoleList = function(){
+		var loadRoleTable = function(){
+			$("#tbl_role").bootstrapTable({
+				url: getProjectName() + "/role/loadRoles.do",
+				method: "get",
+				pagination: false,
+				clickToSelect: true,
+				columns: [{
+		            field: 'name',
+		            title: '角色名',
+		            width: 120,
+		            formatter: function(value, row, index){
+		            	return '<a opt="view" rowid="'+row.id+'">'+value+'</a>';
+		        	}
+		        }, {
+		            field: 'remark',
+		            title: '角色说明',
+		            width: 300
+		        },{
+		        	field: '',
+		        	title: '操作',
+		        	width: 100,
+		        	formatter: function(value, row, index){
+		        		if (row.buildIn == '1')
+		        			return '';
+		        		return '<a opt="update" rowid="'+row.id+'">修改</a>&nbsp;<a opt="delete" rowid="'+row.id+'">删除</a>';
+		        	}
+		        }, {
+		            field: '',
+		            title: '',
+		            formatter: function(value, row, index){
+		            	return '';
+		            }
+		        }],
+		        queryParams: function(params){
+		        	return {
+		                roleName: $("#filter_name").val()
+		            }
+		        },
+		        onLoadSuccess: function (data) {
+		        	var rowNum = $("#tbl_role").find('tr').length - 1;
+		        	var firstDataRow = $("#tbl_role").find('tr:nth-child(1)');
+		        	var otherDataRow = $("#tbl_role").find('tr').not(firstDataRow);
+		        	otherDataRow.find('td:last-child').remove();
+		        	firstDataRow.children('td:last-child').attr('rowspan', rowNum);
+	            }
+			});
+		}
+		
+		var initQueryOpt = function(){
+			$('#btn_search').click(function(){
+				queryRole();
+			});
+		}
+		
+		var queryRole = function(){
+			$("#tbl_role").bootstrapTable("refresh", {url: getProjectName() + "/role/loadRoles.do", cache: false});
+		}
+		
+		var doEditRole = function(id){
+			$('#btn_add').click(function(){					
+				Ewin.load({id: 'role_edit', title: '修改角色', url: 'fragment/role_edit.html', callback: function(){
+					loadAuthrityTree("");
+				}});
+			});
+			
+			$('#tbl_role').on('click', 'a', function(){
+				var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				if (opt == 'update'){
+					Ewin.load({id: 'role_edit', title: '修改角色', url: 'fragment/role_edit.html', callback: function(){
+						$.ajax({
+							url: getProjectName()+"/role/findById.do?id="+id, 
+							success: function(result){
+								fillForm($("#roleForm"), {
+									id: result.id, 
+									name: result.name, 
+									remark: result.remark});
+								loadAuthrityTree(id);
+							}
+						});
+					}});
+				}
+				
+				if (opt == 'delete'){
+					Ewin.confirm({message: "确定要删除选中的角色吗？"}).on(function(e){
+						if (!e){
+							return;
+						}
+						$.ajax({
+							url: getProjectName()+"/role/delete.do?id="+id,
+							type: "get",
+							dataType: "text",
+							success: function(){
+								Ewin.toast("角色删除成功");
+								$("#tbl_role").bootstrapTable("refresh", {url: getProjectName() + "/role/loadRoles.do", cache: false});
+							}
+						});
+					});
+				}
+				if (opt == 'view'){
+					Ewin.load({id: 'role_edit', title: $(this).text(), url: 'fragment/role_view.html', callback: function(){
+						$.ajax({
+							url: getProjectName()+"/role/findById.do?id="+id, 
+							success: function(result){
+								$('#div_remark').html(result.remark);
+								loadAuthrityTree(id);
+							}
+						});
+					}});
+				}
+			});
+			
+			var loadAuthrityTree = function(id){
+				var tree = $('#authorityTree');
+				tree.data('jstree', false).empty();
+				tree.jstree({
+				    'core' : {
+				      'data' : {
+				        "url" : getProjectName() + "/role/roleAuthority.do?roleId="+id,
+				        "dataType" : "json"
+				      }
+				    },
+				    "plugins" : ["wholerow","checkbox" ]
+				});	
+			}
+		}
+		
+		return {
+			init: function(){
+				initQueryOpt();
+				loadRoleTable();
+				doEditRole();
+			}
+		}
+	}
 	
 	return {
 		/****************公共模块****************/
@@ -3997,6 +4456,19 @@ var App = function () {
         /****************基础数据模块****************/
         product: function(){
         	initProduct().init();
+        },
+        
+        supplierList: function(){
+        	initSupplierList().init();
+        },
+        
+        /****************系统管理模块****************/
+        userList: function(){
+        	initUserList().init();
+        },
+        
+        roleList: function(){
+        	initRoleList().init();
         }
         
     };

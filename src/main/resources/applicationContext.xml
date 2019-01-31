@@ -157,6 +157,14 @@
       </bean>
       
       <!-- 05 基础数据 -->
+      <bean name="supplierService" class="com.douniu.imshh.supplier.service.impl.SupplierService">
+          <property name="dao" ref="supplierDao"></property>
+      </bean>
+      <bean id="supplierDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.supplier.dao.ISupplierDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
       <bean name="customerService" class="com.douniu.imshh.busdata.customer.service.impl.CustomerService">
           <property name="dao" ref="customerDao"></property>
       </bean>
@@ -165,13 +173,7 @@
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       
-      <bean name="supplierService" class="com.douniu.imshh.busdata.supplier.service.impl.SupplierService">
-          <property name="dao" ref="supplierDao"></property>
-      </bean>
-      <bean id="supplierDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.busdata.supplier.dao.ISupplierDao"/>
-          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean>
+      
       
       <bean name="productService" class="com.douniu.imshh.busdata.product.service.impl.ProductService">
           <property name="dao" ref="productDao"></property>

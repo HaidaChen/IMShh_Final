@@ -2,7 +2,9 @@ package com.douniu.imshh.sys.service.impl;
 
 import java.util.List;
 
+import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.sys.dao.IUserDao;
+import com.douniu.imshh.sys.domain.SystemFilter;
 import com.douniu.imshh.sys.domain.User;
 import com.douniu.imshh.sys.domain.UserRole;
 import com.douniu.imshh.sys.service.IUserService;
@@ -12,23 +14,27 @@ public class UserService implements IUserService{
 
 	private IUserDao dao;
 	
+	
 	@Override
-	public List<User> query(User user) {
-		User condition = LikeFlagUtil.appendLikeFlag(user, new String[]{"condition"});
-		return dao.query(condition);
-	}	
+	public PageResult getPageResult(SystemFilter filter) {
+		PageResult pr = new PageResult();
+		SystemFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"username"});
+		pr.setRows(dao.getPageResult(condition));
+		pr.setTotal(dao.count(condition));
+		return pr;
+	}
+
+	
+	@Override
+	public List<User> queryWithInvalid(SystemFilter filter) {
+		SystemFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"username"});
+		return dao.getPageResult(condition);
+	}
+
 
 	@Override
 	public User findByNmPwd(User user) {
 		return dao.findByNmPwd(user);
-	}
-
-
-
-	@Override
-	public int count(User user) {
-		User condition = LikeFlagUtil.appendLikeFlag(user, new String[]{"userName", "fullName", "email", "weichat"});
-		return dao.count(condition);
 	}
 
 	@Override

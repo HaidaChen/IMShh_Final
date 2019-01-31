@@ -284,13 +284,13 @@ button.active{
 	color: rgba(0, 0, 0, .9);
 	cursor: pointer;
 }
-.table-search {
+.table-search, .table-search-nomore {
 	display: inline;
 	position: relative;
 	margin: 0;
 }
 .table-search .form-control, 
-.table-search .form-control:focus {
+.table-search .form-control:focus{
 	display: inline;
 	border: 1px solid rgba(188, 188, 188, .5);
 	width: 188px;
@@ -300,20 +300,41 @@ button.active{
 	padding-right: 48px;
 	box-shadow: none;	
 }
-.table-search a {
+
+.table-search-nomore .form-control,
+.table-search-nomore .form-control:focus {
+	display: inline;
+	border: 1px solid rgba(188, 188, 188, .5);
+	width: 188px;
+	/* font-size: 13px; */
+	color: #4c5667;
+	padding-left: 20px;
+	padding-right: 24px;
+	box-shadow: none;	
+}
+
+.table-search a,
+.table-search-nomore a {
 	font-size: 13px;
 	position: absolute;
 	color: rgba(0, 0, 0, .5);
 	padding: 20px 0;
 }
 
-.table-search a:hover {
+.table-search a:hover, 
+.table-search-nomore a:hover {
 	cursor: pointer;
 	color: rgba(0, 0, 0, .9);
 }
+
 .table-search > .search{
 	top: -18px;
 	right: 30px;
+}
+
+.table-search-nomore > .search{
+	top: -18px;
+	right: 15px;
 }
 .table-search > .more{
 	top: -18px;

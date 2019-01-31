@@ -1,20 +1,23 @@
 package com.douniu.imshh.sys.action;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.douniu.imshh.sys.domain.Authority;
 import com.douniu.imshh.sys.domain.JSTree;
 import com.douniu.imshh.sys.domain.Role;
-import com.douniu.imshh.sys.domain.RoleAuthority;
+import com.douniu.imshh.sys.domain.SystemFilter;
 import com.douniu.imshh.sys.service.IAuthorityService;
 import com.douniu.imshh.sys.service.IRoleService;
+import com.douniu.imshh.utils.GsonUtil;
 import com.google.gson.Gson;
 
 @Controller
@@ -25,34 +28,51 @@ public class RoleAction {
 	@Autowired
 	private IAuthorityService authorityService;
 	
-	@RequestMapping(value="/getAllRoles", produces = "application/json; charset=utf-8")
+	@RequestMapping(value="/loadRoles", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String getAllRoles(){
-		List<Role> roles = service.query();
+	public String loadRoles(SystemFilter filter){
+		List<Role> roles = service.query(filter);
 		Gson gson = new Gson();
 		return gson.toJson(roles);
 	}
 	
-	@RequestMapping("/edit")
-	public ModelAndView edit(Role role){
-		ModelAndView mav = new ModelAndView();
-		if (!"".equals(role.getId()) && role.getId() != null){
-			Role oRole = service.findById(role.getId());
-			mav.addObject("role", oRole);
-		}
-        mav.setViewName("/sys/roleEdit");
-        return mav;
+	@RequestMapping(value="/findById", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String findById(String id){
+		Role role = service.findById(id);
+		return GsonUtil.toJson(role);
 	}
 	
-	@RequestMapping(value="/saveRole", produces = "application/json; charset=utf-8")
+
+	@RequestMapping(value="/newRole", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String save(Role role){
-		String id = System.currentTimeMillis() + "";
-		role.setId(id);
-		service.add(role);
-		Gson gson = new Gson();
-		return gson.toJson(role);
-	}	
+	public String newRole(Role role, String authorityIds){
+		service.newRole(role, authorityIds);
+		return "success";
+	}
+	
+	@RequestMapping(value="/updateRole", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String updateRole(Role role, String authorityIds){
+		service.updateRole(role, authorityIds);
+		return "success";
+	}
+			
+	@RequestMapping(value="/existRole", method=RequestMethod.GET, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String existRole(String id, String roleName){
+		Map<String, Boolean> result = new HashMap<>();
+		result.put("valid", true);
+		List<Role> roles = service.query(new SystemFilter());
+		for (Role role : roles){
+			if (roleName.equals(role.getName()) && !id.equals(role.getId())){
+				result.put("valid", false);
+				break;
+			}
+		}
+				
+		return GsonUtil.toJson(result);
+	}
 	
 	
 	@RequestMapping("/delete")
@@ -61,9 +81,9 @@ public class RoleAction {
 		service.delete(id);
 	}	
 	
-	@RequestMapping(value ="/allAuthority", produces = "application/json; charset=utf-8")
+	@RequestMapping(value ="/roleAuthority", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String queryAllAuthority(String roleId){
+	public String roleAuthority(String roleId){
 		List<Authority> auList = authorityService.query();
 		List<Authority> roleAuthList = authorityService.queryByRole(roleId);
 		JSTree root = new JSTree("0", "系统权限");
@@ -73,7 +93,7 @@ public class RoleAction {
 		Gson gson = new Gson();
 		return gson.toJson(root);
 	}
-	
+	/*
 	@RequestMapping(value ="/saveAuthority", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void saveAuthority(String roleId, String authorityIds){
@@ -87,7 +107,7 @@ public class RoleAction {
 		}
 		service.addAuthorityRelation(roleAuthorities);
 	}
-	
+	*/
 	private void loadChildTree(JSTree parent, List<Authority> auList, List<Authority> roleAuthList){
 		List<JSTree> childs = new ArrayList<JSTree>();
 		for (Authority authority : auList){

@@ -1,0 +1,83 @@
+<meta charset="UTF-8">
+<form id="userForm" class="form-horizontal">
+  <input id="hid_id" type="hidden" name="id" value="">
+  <div class="form-group">
+    <label for="input_username" class="col-sm-2 control-label">用户名：</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="input_username" name="userName">
+   </div>
+  </div>
+  <div class="form-group">
+    <label for="input_password" class="col-sm-2 control-label">密 码：</label>
+    <div class="col-sm-10">
+      <input type="password" class="form-control" id="input_password" name="password" >
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="input_fullname" class="col-sm-2 control-label">姓 名：</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="input_fullname" name="fullName" >
+  	</div>
+  </div>
+</form>
+<div class="clearfix">
+  <input type="button" id="btn_save" value="保存" class="btn btn-success pull-right m-l-5">
+  <input type="button" id="btn_close" value="关闭" class="btn btn-default pull-right" data-dismiss="modal">
+</div>
+
+<script>
+$(function(){
+	
+	$('#btn_save').click(function(){
+		$("#userForm").bootstrapValidator({
+			fields: {
+				userName : {
+					validators: {
+						notEmpty : {},
+						callback: {
+							message: '用户名已存在或曾经被使用，请重新输入',
+							callback: function(value, validator){
+								var res;
+								$.ajax({
+									url: getProjectName()+'/user/existUser.do',
+									data: {id: $("#hid_id").val(), userName: $("#input_username").val()},
+									async: false, 
+									success: function(result){
+										res = result.valid;
+									}
+								});
+								return res;
+							}
+						}
+				}}
+	        }
+		});
+		
+		var bootstrapValidator = $("#userForm").data('bootstrapValidator');
+		bootstrapValidator.validate();
+		if(!bootstrapValidator.isValid()){
+			return;
+		}
+		
+		var opturl = '';
+		var optResult = '';
+		if ($('#hid_id').val() == ''){
+			opturl = getProjectName()+"/user/newUser.do";
+			optResult = '系统用户新增成功';
+		}else{
+			opturl = getProjectName()+"/user/updateUser.do";
+			optResult = '系统用户修改成功';
+		}
+		$("#userForm").ajaxSubmit({
+			type: "post",
+			url: opturl, 
+			dataType: "text",
+			success:function(result){
+				Ewin.toast(optResult);
+				$("#tbl_user").bootstrapTable("refresh", {url: getProjectName() + "/user/getPageResult.do", cache: false});
+			}
+		});
+	});
+})
+
+</script>

@@ -2,7 +2,7 @@ package com.douniu.imshh.material.domain;
 
 import java.util.Date;
 
-import com.douniu.imshh.busdata.supplier.domain.Supplier;
+import com.douniu.imshh.supplier.domain.Supplier;
 
 public class MaterialInTableRow {
 	private String id;

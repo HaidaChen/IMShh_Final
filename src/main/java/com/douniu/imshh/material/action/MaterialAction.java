@@ -7,9 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,27 +17,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.common.PageResult;
+import com.douniu.imshh.material.domain.Category;
 import com.douniu.imshh.material.domain.Material;
 import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.material.service.IMaterialService;
-import com.douniu.imshh.utils.ExcelBean;
 import com.douniu.imshh.utils.GsonUtil;
 import com.douniu.imshh.utils.ImportAndExportUtil;
-import com.douniu.imshh.utils.POIExcelAdapter;
-import com.douniu.imshh.utils.RequestParameterLoader;
+import com.douniu.imshh.utils.SheetData;
 
 @Controller
 @RequestMapping("/mtl")
 public class MaterialAction {
-	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
-	static{
-		mapper.add(new ExcelBean("品名","name",0));  
-		mapper.add(new ExcelBean("规格","specification",0)); 		  
-		mapper.add(new ExcelBean("分类","ctg.code",0));  
-		mapper.add(new ExcelBean("单位","unit",0));
-		mapper.add(new ExcelBean("库存","storage",0));
-		mapper.add(new ExcelBean("备注","remark",0));  
-	}
 	
 	@Autowired
 	private IMaterialService service;
@@ -102,10 +90,22 @@ public class MaterialAction {
 	@Authorization("010102")
 	@RequestMapping(value="importMaterial",method={RequestMethod.GET,RequestMethod.POST}, produces = "text/html; charset=utf-8")  
     @ResponseBody
-	public String importMaterial(HttpServletRequest request,HttpServletResponse response) throws Exception{
+	public String importMaterial(HttpServletRequest request) throws Exception{
 		List<List<Object>> data = ImportAndExportUtil.importPreprocess(request);
-        List<Material> materials = POIExcelAdapter.toDomainList(data, mapper, Material.class);
-        List<ImportException> checkResults = service.checkImport(materials);
+        List<Material> materials = new ArrayList<>();
+		for (List<Object> rowData : data){
+			Material mtl = new Material();
+			mtl.setName(rowData.get(0).toString());
+			mtl.setSpecification(rowData.get(1).toString());
+			Category ctg = new Category();
+			ctg.setCode(rowData.get(2).toString());
+			mtl.setCtg(ctg);
+			mtl.setUnit(rowData.get(3).toString());
+			mtl.setStorage(new Float(rowData.get(4).toString()));
+			mtl.setRemark(rowData.get(5).toString());
+			materials.add(mtl);
+		}
+		List<ImportException> checkResults = service.checkImport(materials);
         if (!checkResults.isEmpty())
         	return GsonUtil.toJson(checkResults);
         service.importMaterial(materials);
@@ -115,20 +115,17 @@ public class MaterialAction {
 	@Authorization("010105")
 	@RequestMapping(value = "exportMaterial", method = RequestMethod.GET, produces = "text/html; charset=utf-8")  
     @ResponseBody  
-	public void exportMaterial(HttpServletRequest request,HttpServletResponse response,HttpSession session){
-		ImportAndExportUtil.exportPreprocess(response, "原材料品类列表");
+	public void exportMaterial(HttpServletRequest request,HttpServletResponse response, MaterialFilter filter){
+		SheetData data = new SheetData("原材料列表");
+		/*data.put("name", filter.getName());
+		data.put("ctgCode", filter.getCtgCode());
+		data.put("specification", filter.getSpecification());
+		data.put("lowerStorage", filter.getLowerStorage());
+		data.put("upperStorage", filter.getUpperStorage());
+		data.put("remark", filter.getRemark());*/
 		
-		String[] params = {"name", "ctgCode", "specification", "lowerStorage", "upperStorage", "remark"};
-		MaterialFilter filter = new MaterialFilter();
-		RequestParameterLoader.loadParameter(request, filter, params);
-		List<Material> materialList = service.exportMaterial(filter);
-		
-        Workbook workbook=null;  
-        try {
-        	workbook = POIExcelAdapter.toWorkBook(materialList, mapper, Material.class); 
-        } catch (Exception e) {  
-            e.printStackTrace();  
-        }  
-        ImportAndExportUtil.exportProcess(response, workbook);
+		List<Material> materials = service.exportMaterial(filter);
+		data.addDatas(materials);
+		ImportAndExportUtil.export("原材料列表.xls", data, request, response);
 	}
 }

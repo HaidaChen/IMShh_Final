@@ -1,28 +1,22 @@
 package com.douniu.imshh.sys.action;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
+import com.douniu.imshh.common.IDInjector;
 import com.douniu.imshh.common.PageResult;
-import com.douniu.imshh.sys.domain.Role;
+import com.douniu.imshh.sys.domain.SystemFilter;
 import com.douniu.imshh.sys.domain.User;
-import com.douniu.imshh.sys.domain.UserRole;
-import com.douniu.imshh.sys.service.IRoleService;
 import com.douniu.imshh.sys.service.IUserService;
+import com.douniu.imshh.utils.EncryptUnit;
+import com.douniu.imshh.utils.GsonUtil;
 import com.google.gson.Gson;
 
 @Controller
@@ -31,9 +25,14 @@ public class UserAction {
 	
 	@Autowired
 	private IUserService service;
-	@Autowired
-	private IRoleService roleService;
 	
+	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getPageResult(SystemFilter filter){
+		PageResult pr = service.getPageResult(filter);
+		return GsonUtil.toJson(pr, null);
+	}
+	/*	
 	@RequestMapping(value ="/userProfile", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String userProfile(HttpSession httpSession){
@@ -65,6 +64,7 @@ public class UserAction {
 		httpSession.setAttribute("user", user);
 	}
 	
+
 	@RequestMapping(value ="/loaduser", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String loadUser(User user){
@@ -86,69 +86,68 @@ public class UserAction {
 		List<Role> roles = roleService.query();
 		Gson gson = new Gson();
 		return gson.toJson(roles);
-	}
+	}*/
 	
-	@RequestMapping(value="/edit", produces = "application/json; charset=utf-8")
+	@RequestMapping(value="/findById", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String edit(User user){
-		User oUser = service.findById(user.getId());
+	public String findById(String id){
+		User oUser = service.findById(id);
 		Gson gson = new Gson();
         return gson.toJson(oUser);
 	}
 	
-	@RequestMapping(value="/save", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@RequestMapping(value="/newUser", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public int save(User user, String[] roles_id){
-		if (!"".equals(user.getId()) && user.getId() != null){
-			service.update(user);
-		}else{
-			String id = System.currentTimeMillis() + "";
-			user.setId(id);
-			service.add(user);
-		}
-		
-		if (roles_id != null){
-			List<UserRole> userRoleList = new ArrayList<>();
-			for (String roleId : roles_id){
-				UserRole ur = new UserRole(user.getId(), roleId);
-				userRoleList.add(ur);
-			}
-			service.deleteRoleRelation(user.getId());
-			service.addRoleRelation(userRoleList);
-		}
-		return 1;
-	}	
-	
-	
-	@RequestMapping("/delete")
-	@ResponseBody
-	public void delete(String id){
-		service.remove(id);
+	public String newUser(User user){
+		IDInjector.injector(user);
+		String pwd = EncryptUnit.encrypt(user.getPassword());
+		user.setPassword(pwd);
+		service.add(user);
+		return "success";
 	}
 	
-	@RequestMapping("/existUser")
+	@RequestMapping(value="/updateUser", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String updateUser(User user){
+		String pwd = EncryptUnit.encrypt(user.getPassword());
+		user.setPassword(pwd);
+		service.update(user);
+		return "success";
+	}
+		
+	@RequestMapping("/delete")
+	@ResponseBody
+	public String delete(String id){
+		service.remove(id);
+		return "success";
+	}
+	
+	@RequestMapping(value="/existUser", method=RequestMethod.GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String existUser(String id, String userName){
 		Map<String, Boolean> result = new HashMap<>();
-		
-		if (!"".equals(id)){
-			User user = service.findById(id);
-			if (userName.equals(user.getUserName())){
-				result.put("valid", true);
-			}else{
+		result.put("valid", true);
+		List<User> users = service.queryWithInvalid(new SystemFilter());
+		for (User user : users){
+			if (userName.equals(user.getUserName()) && !id.equals(user.getId())){
 				result.put("valid", false);
-			}
-		}else{
-			if(service.existUserName(userName)){
-				result.put("valid", false);
-			}else{
-				result.put("valid", true);
+				break;
 			}
 		}
 				
-		Gson gson = new Gson();
-		return gson.toJson(result);
+		return GsonUtil.toJson(result);
 	}
+	
+	@RequestMapping(value="/resetPassword", method=RequestMethod.GET, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String resetPassword(String id){
+		User user = service.findById(id);
+		String pwd = EncryptUnit.encrypt("123456");
+		user.setPassword(pwd);
+		service.update(user);	
+		return "success";
+	}
+	
 	/*
 	private List<Role> getFreeRoles(List<Role> allRole, List<Role> userRole){
 		List<Role> freeRoles = new ArrayList<>();

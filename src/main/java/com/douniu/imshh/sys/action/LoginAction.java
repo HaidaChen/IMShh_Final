@@ -17,6 +17,7 @@ import com.douniu.imshh.sys.domain.User;
 import com.douniu.imshh.sys.service.IAuthorityService;
 import com.douniu.imshh.sys.service.IParameterService;
 import com.douniu.imshh.sys.service.IUserService;
+import com.douniu.imshh.utils.EncryptUnit;
 import com.google.gson.Gson;
 
 @Controller
@@ -36,6 +37,8 @@ public class LoginAction {
 		// 判断是否存在当前用户
 		if (!service.existUserName(user.getUserName())) return 0;
 		
+		String pwd = EncryptUnit.encrypt(user.getPassword());
+		user.setPassword(pwd);
 		// 判断用户名密码是否正确
 		if (service.verify(user)){
 			User oUser = service.findByNmPwd(user);
@@ -90,9 +93,11 @@ public class LoginAction {
 		Object oUser = httpSession.getAttribute("user");
 		if (oUser instanceof User){
 			User tUser = (User)oUser;
-			if (!tUser.getPassword().equals(opassword))
+			String _opassword = EncryptUnit.encrypt(opassword);
+			if (!tUser.getPassword().equals(_opassword))
 				return -1;
-			tUser.setPassword(npassword);
+			String _npassword = EncryptUnit.encrypt(npassword);
+			tUser.setPassword(_npassword);
 			service.update(tUser);
 			return 1;
 		}

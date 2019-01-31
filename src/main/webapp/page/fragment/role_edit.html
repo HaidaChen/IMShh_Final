@@ -1,0 +1,88 @@
+<meta charset="UTF-8">
+<form id="roleForm" class="form-horizontal">
+  <input id="hid_id" type="hidden" name="id" value="">
+  <div class="form-group">
+    <label for="input_name" class="col-sm-2 control-label">角色名称：</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="input_name" name="name">
+   </div>
+  </div>
+  <div class="form-group">
+    <label for="input_remark" class="col-sm-2 control-label">角色说明：</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="input_remark" name="remark" >
+    </div>
+  </div>
+</form>
+<div id="authorityTree"></div>
+<div class="clearfix">
+  <input type="button" id="btn_save" value="保存" class="btn btn-success pull-right m-l-5">
+  <input type="button" id="btn_close" value="关闭" class="btn btn-default pull-right" data-dismiss="modal">
+</div>
+
+<script>
+$(function(){
+	$('#btn_save').click(function(){
+		$("#roleForm").bootstrapValidator({
+			fields: {
+				name : {
+					validators: {
+						notEmpty : {},
+						callback: {
+							message: '角色名已存在或曾经被使用，请重新输入',
+							callback: function(value, validator){
+								var res;
+								$.ajax({
+									url: getProjectName()+'/role/existRole.do',
+									data: {id: $("#hid_id").val(), roleName: $("#input_name").val()},
+									async: false, 
+									success: function(result){
+										res = result.valid;
+									}
+								});
+								return res;
+							}
+						}
+				}}
+	        }
+		});
+		
+		var bootstrapValidator = $("#roleForm").data('bootstrapValidator');
+		bootstrapValidator.validate();
+		if(!bootstrapValidator.isValid()){
+			return;
+		}
+		
+		var opturl = '';
+		var optResult = '';
+		if ($('#hid_id').val() == ''){
+			opturl = getProjectName()+"/role/newRole.do";
+			optResult = '角色新增成功';
+		}else{
+			opturl = getProjectName()+"/role/updateRole.do";
+			optResult = '角色修改成功';
+		}
+		
+		var selectedAuthorites = [];
+		var tree = $('#authorityTree').jstree(true);
+		selectedAuthorites = tree.get_selected(false);
+		$("#roleForm").ajaxSubmit({
+			type: "post",
+			url: opturl, 
+			dataType: "text",
+			data: {authorityIds: selectedAuthorites.join(",")},
+			success:function(result){
+				Ewin.toast(optResult);
+				$("#tbl_role").bootstrapTable("refresh", {url: getProjectName() + "/role/loadRoles.do", cache: false});
+				var modal = $('#role_edit');
+				modal.modal('hide');
+				modal.on('hide.bs.modal', function (e) {
+					$('body').removeClass('modal-open');
+	                $('body').find('#role_edit').remove();
+                });
+			}
+		});
+	});
+})
+
+</script>

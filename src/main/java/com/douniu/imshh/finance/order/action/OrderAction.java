@@ -42,7 +42,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 public class OrderAction {
-	private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
+	/*private static List<ExcelBean> mapper = new ArrayList<ExcelBean>();
 	static{
 		mapper.add(new ExcelBean("订单编号","identify",0));
 		mapper.add(new ExcelBean("订单类型","orderType",0));
@@ -71,9 +71,9 @@ public class OrderAction {
 	@Autowired
 	private IRoleService roleService;
 	
-	/**
+	*//**
 	 * 查询订单，需要根据订单号、状态、日期、客户查询订单
-	 */
+	 *//*
 	@RequestMapping(value ="/loadorder", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String queryOrder(HttpSession session, Order condition){
@@ -85,9 +85,9 @@ public class OrderAction {
 		return getResultByRole(session, pr);
 	}
 	
-	/**
+	*//**
 	 * 查询订单，需要根据订单号、状态、日期、客户查询订单
-	 */
+	 *//*
 	@RequestMapping(value ="/loadallorder", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String queryAllOrder(HttpSession session,Order condition){
@@ -236,5 +236,5 @@ public class OrderAction {
 			}).create();
 		}
 		return gson.toJson(src);
-    }
+    }*/
 }

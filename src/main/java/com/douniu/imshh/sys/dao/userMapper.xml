@@ -33,18 +33,30 @@
         select r.* from t_role r, t_user_role ur where r.id = ur.roleId and ur.userId = #{id}
     </select>
     
-    <select id="query" parameterType="User" resultMap="usermap">
+    <select id="getPageResult" parameterType="SystemFilter" resultMap="usermap">
         select * from t_user where status = 1
-        <if test="condition != null and condition !=''">
-          and (username like #{condition} 
-           or fullname like #{condition}
-           or email like #{condition}
-           or weichat like #{condition})          
+        <if test="username != null and username !=''">
+          and username like #{username}          
         </if>         
           order by modifydate desc
           limit #{pageOffset},#{pageSize}
     </select>
     
+    <select id="count" parameterType="SystemFilter" resultType="int">
+        select count(1) from t_user where status = 1
+        <if test="username != null and username !=''">
+          and username like #{username}         
+        </if>
+    </select>
+    
+   <select id="queryWithInvalid" parameterType="SystemFilter" resultMap="usermap">
+        select * from t_user where 1 = 1
+        <if test="username !=''">
+          and username like #{"username !=''"}        
+        </if>         
+          order by modifydate desc
+    </select>
+     <!-- 
     <select id="count" parameterType="User" resultType="int">
         select count(1) from t_user where status = 1
         <if test="condition != null and condition !=''">
@@ -53,7 +65,7 @@
            or email like #{condition}
            or weichat like #{condition})          
         </if>
-    </select>
+    </select> -->
     
     <select id="findById" parameterType="String" resultMap="usermap">
         select * from t_user where id = #{id}
@@ -62,7 +74,7 @@
     <insert id="insert" parameterType="User">
         insert into t_user(id, userName, password, fullName, email, weichat, modifydate, status) 
           values(#{id}, #{userName}, #{password}, #{fullName}, #{email}, #{weichat}, sysdate(), '1')
-    </insert>    
+    </insert>
     
     <update id="update" parameterType="User">
         update t_user set 
@@ -107,7 +119,7 @@
     </select>
     
     <select id="findByName" parameterType="String" resultType="User">
-    	select * from t_user where status = '1'
+    	select * from t_user where 1 = 1
           and username = #{userName}
     </select>
     

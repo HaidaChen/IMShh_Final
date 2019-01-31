@@ -12,38 +12,28 @@
 	<link rel="stylesheet" href="../css/default.css">
 </head>
 <body>
-    <div id="panel_table" class="panel">
+	<div id="panel_table" class="panel">
         <div class="panel-head">
-            <span><i class="fa fa-navicon"></i> 明细分类账</span>
-            
+            <span><i class="fa fa-navicon"></i> 供应商列表</span>
             <div class="btn-group pull-right" role="group" style="margin-left: 20px">
-	            <button id="btn_export" class="btn btn-primary btn-sm"><i class="fa fa-download"></i> 导出</button>          
+            	<button id="btn_add" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>	            
+	            <button id="btn_export" class="btn btn-default btn-sm"><i class="fa fa-download"></i> 导出</button>	
+	            <button id="btn_import" class="btn btn-default btn-sm"><i class="fa fa-upload"></i> 导入</button>
         	</div>
         	<div class="table-search pull-right" role="search">
-				<select id="filter_billPeriod">
-					
-				</select>
-				<button id="btn_search" class="btn btn-default btn-sm"><i class="fa fa-search"></i></button>
+				<input id="filter_name" class="form-control" type="text" placeholder="供应商名称"/>
+				<a id="btn_search" class="search" title="查询"><i class="fa fa-search"></i></a>
+				<a id="btn_more" class="more" title="更多条件"><i class="fa fa-bars"></i></a>
 			</div>
+			<div class="table-fliter">
+				
+			</div>
+        	
         </div>
-        <div class="container-fluid">
-			<div class="row"  style="margin-left:0px; margin-right:0px;">
-				<div class="col-md-9">
-				    <div>科目：<span id="label_subject"></span><input id="filter_subject" type="hidden"></div>
-					<table id="tbl_account" class="table table-hover"> </table>
-				</div>
-				<div class="col-md-3">
-					<div id="panel_subject" class="panel">
-				        <div class="panel-head">
-				          <span><i class="fa fa-folder-o"></i> 会计科目</span>
-				        </div>
-				        <div class="panel-body">
-				          <div id="subject_tree"></div>
-				        </div>
-				    </div>
-				</div>
-			</div>
-		</div>
+		
+		<table id="tbl_supplier" class="table table-hover">
+			
+		</table>			
 	</div>
 	
 	<script src="../jquery/jquery-2.0.3.min.js"></script>
@@ -64,7 +54,7 @@
 	
 	<script>
 		$(function(){
-			App.subsidiaryLedger();
+			App.supplierList();
 		});
 	</script>
 </body>
