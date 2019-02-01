@@ -111,7 +111,7 @@ public class VoucherService implements IVoucherService{
 	}
 	
 	private FinanceFilter processCondition(FinanceFilter filter){
-		FinanceFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"preparedBy", "auditor", "voucherSummary", "subName", "remark"});
+		FinanceFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"auditor", "voucherSummary", "subName", "remark"});
 		if (!StringUtils.isEmpty(condition.getSubCode())){
 			condition.setSubCode(condition.getSubCode() + "%");
 		}

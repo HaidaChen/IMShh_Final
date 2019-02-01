@@ -18,6 +18,7 @@ public class Subject {
 	private Subject parent;
 	/*初始余额*/
 	private float initBalance;
+	private int privateSubject;
 	private String remark;
 	private int status = 1;
 	
@@ -65,6 +66,12 @@ public class Subject {
 	public void setInitBalance(float initBalance) {
 		this.initBalance = initBalance;
 	}
+	public int getPrivateSubject() {
+		return privateSubject;
+	}
+	public void setPrivateSubject(int privateSubject) {
+		this.privateSubject = privateSubject;
+	}
 	public String getRemark() {
 		return remark;
 	}
@@ -80,7 +87,8 @@ public class Subject {
 	@Override
 	public String toString() {
 		return "Subject [id=" + id + ", code=" + code + ", name=" + name + ", fullName=" + fullName + ", category="
-				+ category + ", parent=" + parent + ", initBalance=" + initBalance + ", remark=" + remark + ", status="
-				+ status + "]";
-	}	
+				+ category + ", parent=" + parent + ", initBalance=" + initBalance + ", privateSubject="
+				+ privateSubject + ", remark=" + remark + ", status=" + status + "]";
+	}
+	
 }

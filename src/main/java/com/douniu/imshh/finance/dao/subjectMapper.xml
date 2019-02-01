@@ -8,7 +8,6 @@
         <result property="name" column="name"/> 
         <result property="fullName" column="fullName"/>
         <result property="category" column="category"/> 
-        <result property="initBalance" column="initBalance"/>
         <result property="remark" column="remark"/>
         <result property="status" column="status"/>
         <association property="parent" javaType="FinanceSubject">
@@ -18,7 +17,12 @@
         </association>
     </resultMap>
     
-    <select id="query" parameterType="FinanceFilter" resultMap="finsubmap">
+    <resultMap type="FinanceSubject" id="finsubconfmap" extends="finsubmap">
+        <result property="initBalance" column="initBalance"/>
+        <result property="privateSubject" column="privateSubject"/>
+    </resultMap>
+    
+    <select id="query" parameterType="FinanceFilter" resultMap="finsubconfmap">
         select m.*,
                p.id as p_id,
                p.name as p_name,
@@ -41,7 +45,7 @@
           </if>
           order by m.code
     </select> 
-    <select id="getAll" resultMap="finsubmap">
+    <select id="getAll" resultMap="finsubconfmap">
         select m.*,
                p.id as p_id,
                p.name as p_name,
@@ -52,7 +56,7 @@
          where m.status = '1'
          order by m.code
     </select>
-    <select id="getByCategory" parameterType="String" resultMap="finsubmap">
+    <select id="getByCategory" parameterType="String" resultMap="finsubconfmap">
         select m.*,
                p.id as p_id,
                p.name as p_name,
@@ -64,7 +68,7 @@
            and m.category = #{subCategory} 
          order by m.code
     </select>
-    <select id="getByParent" parameterType="String" resultMap="finsubmap">
+    <select id="getByParent" parameterType="String" resultMap="finsubconfmap">
         select m.*,
                p.id as p_id,
                p.name as p_name,
@@ -76,7 +80,7 @@
            and m.parentId = #{parentId} 
          order by m.code
     </select>
-    <select id="getById" parameterType="String" resultMap="finsubmap">
+    <select id="getById" parameterType="String" resultMap="finsubconfmap">
         select m.*,
                p.id as p_id,
                p.name as p_name,
@@ -86,7 +90,7 @@
             on m.parentId = p.id      
          where m.id = #{id}
     </select>
-    <select id="getByCode" parameterType="String" resultMap="finsubmap">
+    <select id="getByCode" parameterType="String" resultMap="finsubconfmap">
         select m.*,
                p.id as p_id,
                p.name as p_name,
@@ -97,6 +101,30 @@
          where m.status = '1'
            and m.code = #{code}
     </select>
+    
+    <select id="queryConfig" parameterType="FinanceFilter" resultMap="finsubconfmap">
+        select m.*,
+               p.id as p_id,
+               p.name as p_name,
+               p.code as p_code
+          from tbl_fin_subject m 
+          left join tbl_fin_subject p
+            on m.parentId = p.id      
+         where m.status = '1'
+          <if test="subName != null and subName !=''">
+          and m.name like #{subName} 
+          </if>
+          <if test="subCode != null and subCode !=''">
+          and m.code like #{subCode}
+          </if>
+          <if test="subCategory != null and subCategory !=''">
+          and m.category = #{subCategory} 
+          </if>
+          <if test="remark != null and remark !=''">
+          and m.remark like #{remark} 
+          </if>
+          order by m.code
+    </select> 
     
     <insert id="insert" parameterType="FinanceSubject">
         insert into tbl_fin_subject(id, code, name, fullName, category, parentId, initBalance, modifydate, remark, status)  
@@ -109,10 +137,21 @@
     	  name = #{name},
     	  fullName = #{fullName},
     	  category = #{category},
-    	  initBalance = #{initBalance},
     	  remark = #{remark},
     	  modifydate = sysdate()
         where id = #{id}
+    </update>
+    
+    <update id="setInitBalance" >
+    	update tbl_fin_subject set
+    	  initBalance = #{1}
+        where id = #{0}
+    </update>
+    
+    <update id="setPrivateSubject" >
+    	update tbl_fin_subject set
+    	  privateSubject = #{1}
+        where id = #{0}
     </update>
     
     <update id="delete" parameterType="String">

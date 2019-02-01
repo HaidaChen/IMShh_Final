@@ -1466,6 +1466,7 @@ var App = function () {
 			}
 		}
 	}
+	
 	/*-----------------------------------------------------------------------------------*/
 	/*	初始化单个原材料出入明细模块
 	/*-----------------------------------------------------------------------------------*/
@@ -3217,9 +3218,6 @@ var App = function () {
 		            	return indent + row.name;
 		        	}
 		        }, {
-		            field: 'initBalance',
-		            title: '期初余额'
-		        }, {
 		            field: 'remark',
 		            title: '备注'
 		        }, {
@@ -3366,6 +3364,167 @@ var App = function () {
 		}
 	}
 	
+	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化会计科目设置模块
+	/*-----------------------------------------------------------------------------------*/	
+	var initFinSubjectConfig = function(){
+		var loadSubjectTable = function(){
+			$("#tbl_fin_subject").bootstrapTable({
+				url: getProjectName() + "/finsub/queryConfig.do",
+				method: "get",
+				pagination: false,
+				clickToSelect: true,
+				singleSelect: true,   
+				columns: [{
+		            field: '',
+		            title: '科目编号',
+		            formatter: function(value, row, index){
+		            	var indent = '';
+		            	
+		            	var indentLevel = row.code.length - 4;
+		            	for (var i = 0; i< indentLevel; i++){
+		            		indent += '&nbsp;&nbsp;';
+		            	}
+		            	return indent + row.code;
+		        	}
+		        }, {
+		            field: '',
+		            title: '科目名称',
+		            formatter: function(value, row, index){
+		            	var indent = '';
+		            	
+		            	var indentLevel = row.code.length - 4;
+		            	for (var i = 0; i< indentLevel; i++){
+		            		indent += '&nbsp;&nbsp;';
+		            	}
+		            	return indent + row.name;
+		        	}
+		        }, {
+		            field: 'initBalance',
+		            title: '初始余额',
+	            	formatter: function(value, row, index){
+		            	if (value == 0)
+		            		return '<span name="initBalance" subId="'+row.id+'"></span>';
+		            	else
+		            	    return '<span name="initBalance" subId="'+row.id+'">'+value+'</span>';
+		        	},
+		        	width: 150
+		        }, {
+		            field: 'privateSubject',
+		            title: '非公开科目',
+	            	formatter: function(value, row, index){
+		            	if (value == 1)
+		            		return '<input type="checkbox" name="privateSubject" value="1" subId="'+row.id+'" checked>';
+		            	else
+		            	    return '<input type="checkbox" name="privateSubject" value="1" subId="'+row.id+'">';
+		        	},
+		        	width: 150
+		        }],
+		        queryParams: function(params){
+		        	return {
+		        		subCategory: $("#filter_subCtg").val(),
+		        		subName: $("#filter_name").val()
+		            }
+		        }
+			})
+		}
+		
+		var doQuery = function(){
+			$('button[name="btn_ctg"]').click(function(){
+				var code = $(this).attr('code');
+				$(this).addClass('active');
+				$('button[name="btn_ctg"]').not(this).removeClass('active');
+				$('#filter_subCtg').val(code);
+				$("#tbl_fin_subject").bootstrapTable("refresh", {url: getProjectName() + "/finsub/queryConfig.do", cache: false});
+			});
+			$('#btn_search').click(function(){
+				$("#tbl_fin_subject").bootstrapTable("refresh", {url: getProjectName() + "/finsub/queryConfig.do", cache: false});
+			})
+		}
+		
+		var doEditConfig = function(code){
+			$('#tbl_fin_subject').on('click', 'input[type="checkbox"]', function(){
+				var subjectId = $(this).attr('subId');
+				var privateSubject = 0;
+				if($(this).is(':checked')){
+					privateSubject = 1;
+				}
+				$.ajax({
+					url: getProjectName() + "/finsub/setPrivateSubject.do",
+					type: 'post',
+					data: {subId: subjectId, privateSubject: parseInt(privateSubject)},
+					dataType: 'text',
+					success: function(){
+						
+					}
+				});
+			});
+			
+			$('#tbl_fin_subject').on('click', 'td', function(){
+				if ($(this).children('span[name="initBalance"]').length == 1){
+					if ($(this).children('input').length == 1){
+						$(this).children('input').focus();
+						return;
+					}
+					var td = $(this);
+					td.css('padding', '1px');
+					var width = td.width();
+					var height = td.height();
+					var text = td.children('span').text();
+					var subjectId = td.children('span').attr('subId');
+										
+					var _input = $('<input type="text" style="height: '+(height-5)+'px; width: '+(width-4)+'px; border: 1px solid dodgerblue; ">');
+					if (text!=''){
+						_input.val(text);
+						td.children('span').remove();
+					}
+					td.append(_input);
+					_input.focus();
+
+					_input.blur(function(){
+						var val = $(this).val();
+						$(this).remove();
+						
+						if ($.trim(val) != text){
+							var initBalance = 0;
+							if (val != ''){
+								initBalance = val;
+							}
+							if (parseInt(val) == 0  && text == ''){
+								td.html('<span name="initBalance" subId="'+subjectId+'"></span>');
+							}else{
+								$.ajax({
+									url: getProjectName() + "/finsub/setInitBalance.do",
+									type: 'post',
+									data: {subId: subjectId, initBalance: initBalance},
+									dataType: 'text',
+									success: function(){
+										if (initBalance == 0){
+											td.html('<span name="initBalance" subId="'+subjectId+'"></span>');
+										}else{
+											td.html('<span name="initBalance" subId="'+subjectId+'">'+initBalance+'</span>');
+										}
+									}
+								});
+							}
+							
+						}else{
+							td.html('<span name="initBalance" subId="'+subjectId+'">'+text+'</span>');
+						}
+					});
+				}
+			});
+		}	
+		
+		return {
+			init: function(){
+				loadSubjectTable();
+				doQuery();
+				doEditConfig();
+			}
+		}
+	}
 	
 	/*-----------------------------------------------------------------------------------*/
 	/*	初始化凭证录入模块
@@ -4478,6 +4637,10 @@ var App = function () {
         /****************财务模块****************/
         financeSubject: function(){
         	initFinSubject().init();
+        },
+        
+        financeSubjectConfig:function(){
+        	initFinSubjectConfig().init();
         },
         
         voucher: function(){

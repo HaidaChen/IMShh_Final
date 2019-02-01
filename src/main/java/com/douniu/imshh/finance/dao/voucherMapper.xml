@@ -59,7 +59,7 @@
           and v.billStatus = #{billStatus} 
           </if>
           <if test="preparedBy != null and preparedBy !=''">
-          and v.preparedBy like #{preparedBy} 
+          and v.preparedBy = #{preparedBy} 
           </if>
           <if test="auditor != null and auditor !=''">
           and v.auditor like #{auditor}
@@ -119,7 +119,7 @@
 		          and v.billStatus = #{billStatus} 
 		          </if>
 		          <if test="preparedBy != null and preparedBy !=''">
-		          and v.preparedBy like #{preparedBy} 
+		          and v.preparedBy = #{preparedBy} 
 		          </if>
 		          <if test="auditor != null and auditor !=''">
 		          and v.auditor like #{auditor}
@@ -177,7 +177,7 @@
           and v.billStatus = #{billStatus} 
           </if>
           <if test="preparedBy != null and preparedBy !=''">
-          and v.preparedBy like #{preparedBy} 
+          and v.preparedBy = #{preparedBy} 
           </if>
           <if test="auditor != null and auditor !=''">
           and v.auditor like #{auditor}

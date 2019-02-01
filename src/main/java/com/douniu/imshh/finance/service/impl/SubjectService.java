@@ -34,6 +34,15 @@ public class SubjectService implements ISubjectService{
 	}
 
 	@Override
+	public List<Subject> queryConfig(FinanceFilter filter) {
+		FinanceFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"subName"});
+		if (!StringUtils.isEmpty(condition.getSubCode())){
+			condition.setSubCode(condition.getSubCode() + "%");
+		}
+		return dao.queryConfig(condition);
+	}
+
+	@Override
 	public Subject getById(String id) {
 		return dao.getById(id);
 	}
@@ -56,9 +65,12 @@ public class SubjectService implements ISubjectService{
 
 	@Override
 	public void setInitBalance(String id, float initBalance) {
-		Subject subject = dao.getById(id);
-		subject.setInitBalance(initBalance);
-		dao.update(subject);
+		dao.setInitBalance(id, initBalance);
+	}
+
+	@Override
+	public void setPrivateSubject(String id, int privateSubject) {
+		dao.setPrivateSubject(id, privateSubject);
 	}
 
 	@Override

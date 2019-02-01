@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -16,6 +18,8 @@ import com.douniu.imshh.finance.domain.FinanceFilter;
 import com.douniu.imshh.finance.domain.Voucher;
 import com.douniu.imshh.finance.domain.VoucherEntry;
 import com.douniu.imshh.finance.service.IVoucherService;
+import com.douniu.imshh.sys.domain.Role;
+import com.douniu.imshh.sys.domain.User;
 import com.douniu.imshh.sys.service.IParameterService;
 import com.douniu.imshh.utils.GsonUtil;
 import com.google.gson.GsonBuilder;
@@ -31,7 +35,21 @@ public class VoucherAction {
 	
 	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String getPageResult(FinanceFilter filter){
+	public String getPageResult(HttpSession session ,FinanceFilter filter){
+		User user = (User)session.getAttribute("user");
+		List<Role> roles = user.getRoles();
+		boolean filterRow = true;
+		for(Role role : roles){
+			if ("02".equals(role.getId())){
+				filterRow = false;
+				break;
+			}
+		}
+		
+		if (filterRow){
+			filter.setPreparedBy(user.getUserName());
+		}
+
 		PageResult pr = service.getPageResult(filter);
 		return GsonUtil.toJson(pr, null);
 	}

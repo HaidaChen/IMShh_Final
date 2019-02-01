@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.douniu.imshh.finance.domain.FinanceFilter;
 import com.douniu.imshh.finance.domain.Subject;
 import com.douniu.imshh.finance.service.ISubjectService;
+import com.douniu.imshh.sys.domain.Role;
+import com.douniu.imshh.sys.domain.User;
 import com.douniu.imshh.utils.GsonUtil;
 
 @Controller
@@ -24,25 +28,35 @@ public class SubjectAction {
 	
 	@RequestMapping(value ="/query", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String query(FinanceFilter filter){
+	public String query(FinanceFilter filter, HttpSession session){
 		List<Subject> subjects = service.query(filter);
+		filterPrivate(session, subjects);
 		return GsonUtil.toJson(subjects);
 	}	
 	
 	@RequestMapping(value ="/getJSTree", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String getJSTree(String categoryId){
+	public String getJSTree(String categoryId, HttpSession session){
 		List<Subject> subjects = service.getByCategory(categoryId);
+		filterPrivate(session, subjects);
 		List<JSTreeItem> jsTree = getJSTree(subjects);
 		return GsonUtil.toJson(jsTree, null);
 	}
 	
 	@RequestMapping(value ="/getFullJSTree", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String getFullJSTree(){
+	public String getFullJSTree(HttpSession session){
 		List<Subject> allSubjects = service.query(new FinanceFilter());
+		filterPrivate(session, allSubjects);
 		List<JSTreeItem> jsTree = getJSTree(allSubjects);
 		return GsonUtil.toJson(jsTree, null);
+	}	
+	
+	@RequestMapping(value ="/queryConfig", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String queryConfig(FinanceFilter filter){
+		List<Subject> subjects = service.queryConfig(filter);
+		return GsonUtil.toJson(subjects);
 	}
 	
 	@RequestMapping(value ="/getFirstSubject", produces = "application/json; charset=utf-8")
@@ -71,6 +85,20 @@ public class SubjectAction {
 		service.updateSubject(subject);
 	}
 	
+	@RequestMapping(value="/setInitBalance", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String setInitBalance(String subId, float initBalance){
+		service.setInitBalance(subId, initBalance);
+		return "success";
+	}
+	
+	@RequestMapping(value="/setPrivateSubject", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String setPrivateSubject(String subId, int privateSubject){
+		service.setPrivateSubject(subId, privateSubject);
+		return "success";
+	}
+	
 	@RequestMapping(value="/validateUnique", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String validateUnique(String code){
@@ -85,6 +113,28 @@ public class SubjectAction {
 	@ResponseBody
 	public void deleteSubject(String id){
 		service.deleteSubject(id);
+	}
+	
+	private void filterPrivate(HttpSession session, List<Subject> src){
+		User user = (User)session.getAttribute("user");
+		List<Role> roles = user.getRoles();
+		boolean filter = true;
+		for (Role role : roles){
+			if ("02".equals(role.getId())){
+				filter = false;
+				break;
+			}
+		}
+		
+		List<Subject> filterSubs = new ArrayList<>();
+		if (filter){
+			for(Subject sub : src){
+				if (sub.getPrivateSubject() == 1){
+					filterSubs.add(sub);
+				}
+			}
+		}
+		src.removeAll(filterSubs);
 	}
 	
 	private List<JSTreeItem> getJSTree(List<Subject> subjects){
