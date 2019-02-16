@@ -1,3 +1,14 @@
+$(function(){
+	$.ajaxSetup({
+		dataFilter:function() {
+			if (arguments[0] == 'has no permission'){
+				window.top.location.href = "http://localhost:8080/FinalIMShh/";
+			}else{
+				return arguments[0];
+			}
+		}
+	});
+});
 
 var App = function () {
 	var nthTabs;
@@ -183,7 +194,6 @@ var App = function () {
 	/*	处理登录模块
 	/*-----------------------------------------------------------------------------------*/	
 	var initLoginModule = function(){
-		
 		$("#loginform").bootstrapValidator({
 			fields: {
 	        	userName : {validators: {notEmpty : {}}},

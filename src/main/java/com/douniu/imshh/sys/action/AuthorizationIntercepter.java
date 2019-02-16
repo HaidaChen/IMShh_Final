@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -49,8 +50,30 @@ public class AuthorizationIntercepter implements HandlerInterceptor{
 						if (authority.getId().equals(authCode))
 							return true;
 					}
+				}else{
+					StringBuilder sb = new StringBuilder();
+					String port = "",contextPath="";
+					if(request.getServerPort()!=80){
+						port = ":" + request.getServerPort();
+					}
+					if(StringUtils.isEmpty(request.getContextPath().replace("/", ""))){
+						contextPath = request.getContextPath();
+					}
+					sb.append(request.getScheme()).append("://").append(request.getServerName()).append(port).append(contextPath);
+					
+					String loginPath =  sb.toString(); 
+					String type = request.getHeader("X-Requested-With")==null?"":request.getHeader("X-Requested-With");
+					if ("XMLHttpRequest".equals(type)) {
+	                    //response.setHeader("REDIRECT", "REDIRECT");//告诉ajax这是重定向  
+	                    //response.setHeader("CONTEXTPATH", loginPath);//重定向地址  
+	                    //response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+	                    response.getWriter().write("has no permission");
+	                    return false;
+	                }else{//如果不是ajax请求，则直接重定向
+	                    response.sendRedirect(loginPath);  
+	                    return false;  
+	                } 
 				}
-				throw new NoPermissionException();
 			}
 		}
 		
