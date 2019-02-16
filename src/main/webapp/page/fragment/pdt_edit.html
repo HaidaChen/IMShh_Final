@@ -1,0 +1,104 @@
+<meta charset="UTF-8">
+<form id="productForm" class="form-horizontal">
+  <input type="hidden" id="hid_id" name="id">
+  <div class="form-group">
+    <label for="input_code" class="col-sm-2 control-label">货号：</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="input_code" name="code">
+   </div>
+  </div>
+  <div class="form-group">
+    <label for="input_name" class="col-sm-2 control-label">品名：</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="input_name" name="name">
+   </div>
+  </div>
+  <div class="form-group">
+    <label for="input_spe" class="col-sm-2 control-label">规格：</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="input_spe" name="specification" >
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="input_model" class="col-sm-2 control-label">含量：</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="input_model" name="model" >
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="input_storage" class="col-sm-2 control-label">库存：</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="input_storage" name="storage" value="0">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="input_remark" class="col-sm-2 control-label">备注：</label>
+    <div class="col-sm-10">
+      <textarea class="form-control" id="input_remark" name="remark" rows="2"></textarea>
+    </div>
+  </div>
+</form>
+<div class="clearfix">
+  <input type="button" id="btn_save" value="保存" class="btn btn-success pull-right m-l-5">
+  <input type="button" id="btn_close" value="关闭" class="btn btn-default pull-right" data-dismiss="modal">
+</div>
+
+<script>
+$(function(){
+	
+	$('#btn_save').click(function(){
+		$("#productForm").bootstrapValidator({
+			fields: {
+				code : {
+					validators: {
+						notEmpty : {},
+						callback: {
+							message: '成品已存在，请重新输入',
+							callback: function(value, validator){
+								var res;
+								$.ajax({
+									url: getProjectName()+'/pdt/validateUnique.do',
+									data: {code: $("#input_code").val()},
+									async: false, 
+									success: function(result){
+										res = result.valid;
+									}
+								});
+								return res;
+							}
+						}
+				}},
+				storage : {validators: {regexp : { 
+					regexp: /^(-)?\d+(\.\d+)?$/,
+                    message: '请输入数字类型的库存'}}}
+	        }
+		});
+		
+		var bootstrapValidator = $("#productForm").data('bootstrapValidator');
+		bootstrapValidator.validate();
+		if(!bootstrapValidator.isValid()){
+			return;
+		}
+		
+		var opturl = '';
+		var optResult = '';
+		if ($('#hid_id').val() == ''){
+			opturl = getProjectName()+"/pdt/addProduct.do";
+			optResult = '系统用户新增成功';
+		}else{
+			opturl = getProjectName()+"/pdt/updateProduct.do";
+			optResult = '系统用户修改成功';
+		}
+		$("#productForm").ajaxSubmit({
+			type: "post",
+			url: opturl, 
+			dataType: "text",
+			success:function(result){
+				Ewin.toast(optResult);
+				$("#tbl_product").bootstrapTable("refresh", {url: getProjectName() + "/pdt/getPageResult.do", cache: false});
+			}
+		});
+	});
+})
+
+</script>

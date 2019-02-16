@@ -11,6 +11,7 @@ public class ProductBill {
 	private Order order;
 	private Date billDate;      /*发生日期*/
 	private String billReason;
+	private String orderId;
 	private List<BillDetail> details;  /*分录*/
 	private int totalQuantity; /*合计数量*/
 	
@@ -37,6 +38,12 @@ public class ProductBill {
 	}
 	public void setBillDate(Date billDate) {
 		this.billDate = billDate;
+	}
+	public String getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
 	}
 	public String getBillReason() {
 		return billReason;
@@ -95,8 +102,9 @@ public class ProductBill {
 	@Override
 	public String toString() {
 		return "ProductBill [id=" + id + ", number=" + number + ", order=" + order + ", billDate=" + billDate
-				+ ", billReason=" + billReason + ", details=" + details + ", totalQuantity=" + totalQuantity
-				+ ", preparedBy=" + preparedBy + ", auditor=" + auditor + ", custodian=" + custodian + ", remark="
-				+ remark + ", status=" + status + "]";
+				+ ", billReason=" + billReason + ", orderId=" + orderId + ", details=" + details + ", totalQuantity="
+				+ totalQuantity + ", preparedBy=" + preparedBy + ", auditor=" + auditor + ", custodian=" + custodian
+				+ ", remark=" + remark + ", status=" + status + "]";
 	}
+	
 }

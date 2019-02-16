@@ -42,7 +42,7 @@
     </resultMap>
     
     <select id="getPageResult" parameterType="MaterialFilter" resultMap="mibwdmap">
-        select mi.id as mib_id, mi.number as mib_number, mi.billDate as mib_billDate, mi.s_id, mi.s_name, mdi.* 
+        select mi.id as mib_id, mi.number as mib_number, mi.billDate as mib_billDate, mi.s_id, mi.s_name, mi.totalAmount as mib_totalAmount, mdi.* 
 	      from    
 	        (select mti.*, s.id as s_id, s.name as s_name from tbl_bill_materialin mti, t_supplier s 
 	          where mti.status = '1'
@@ -76,52 +76,29 @@
           <if test="endDate != null and endDate !=''">
           and mi.billDate &lt;= #{endDate} 
           </if>
-          <if test="ctgCode != null and ctgCode !=''">
+          <!-- <if test="ctgCode != null and ctgCode !=''">
           and mdi.code like #{ctgCode} 
-          </if>
+          </if> -->
     </select> 
     <select id="count" parameterType="MaterialFilter" resultType="int">
-    	select count(1) from (
-	        select mi.*, mdi.* 
-		      from    
-		        (select mti.*, s.id as s_id, s.name as s_name from tbl_bill_materialin mti, t_supplier s 
-		          where mti.status = '1'
-		            and mti.supplierId = s.id)mi
-		      left join
-		        (select d.id as dtl_id,
-		                d.billId as dtl_billId, 
-		                d.quantity as dtl_quantity,
-		                d.remark as dtl_remark, 
-		                m.id as m_id,  
-		                m.name as m_name, 
-		                m.specification as m_specification,
-		                mc.code
-		           from tbl_bill_dtl_materialin d, tbl_material m, tbl_material_category mc
-		          where d.status = '1'
-		            and d.materialId = m.id
-		            and m.categoryId = mc.id)mdi
-		        on mi.id = mdi.dtl_billId
+    	select count(1) from tbl_bill_materialin
 	         where 1 = 1
-	         <if test="number != null and number !=''">
-	          and mi.number like #{number} 
+	          <if test="number != null and number !=''">
+	          and number like #{number} 
 	          </if>
 	          <if test="supplier != null and supplier !=''">
-	          and mi.s_id = #{supplier} 
+	          and supplierid = #{supplier} 
 	          </if>
 	          <if test="startDate != null and startDate !=''">
-	          and mi.billDate &gt;= #{startDate} 
+	          and billDate &gt;= #{startDate} 
 	          </if>
 	          <if test="endDate != null and endDate !=''">
-	          and mi.billDate &lt;= #{endDate} 
+	          and billDate &lt;= #{endDate} 
 	          </if>
-	          <if test="ctgCode != null and ctgCode !=''">
-	          and mdi.code like #{ctgCode} 
-	          </if>
-          )tbl
     </select> 
     
     <select id="query" parameterType="MaterialFilter" resultMap="mibwdmap">
-        select mi.id as mib_id, mi.number as mib_number, mi.billDate as mib_billDate, mi.s_id, mi.s_name, mdi.* 
+        select mi.id as mib_id, mi.number as mib_number, mi.billDate as mib_billDate, mi.s_id, mi.s_name, mi.totalAmount as mib_totalAmount, mdi.* 
 	      from    
 	        (select mti.*, s.id as s_id, s.name as s_name from tbl_bill_materialin mti, t_supplier s 
 	          where mti.status = '1'
@@ -154,9 +131,9 @@
           <if test="endDate != null and endDate !=''">
           and mi.billDate &lt;= #{endDate} 
           </if>
-          <if test="ctgCode != null and ctgCode !=''">
+          <!-- <if test="ctgCode != null and ctgCode !=''">
           and mdi.code like #{ctgCode} 
-          </if>
+          </if> -->
     </select> 
     
     <select id="getById" parameterType="String" resultMap="mibwdmap">

@@ -32,7 +32,7 @@ public class SystemTask implements ApplicationContextAware{
         String period = periodFormat.format(now);
         String periodText = periodTextFormat.format(now);
         
-        pService.putDictionary("bill.account.period", period, periodText);
+        //pService.putDictionary("bill.account.period", period, periodText);
 	}
 	
 	@Override

@@ -2,8 +2,6 @@ package com.douniu.imshh.product.domain;
 
 import java.util.Date;
 
-import com.douniu.imshh.busdata.product.domain.Product;
-
 public class ProductInOut {
 	private String id;	
 	private Date genDate;

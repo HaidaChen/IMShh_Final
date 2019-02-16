@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.domain.Material;
 import com.douniu.imshh.material.domain.MaterialFilter;
@@ -42,6 +43,7 @@ public class MaterialInOutAction {
 	@Autowired
 	private IMaterialService mtlService;
 	
+	@Authorization("0208")
 	@RequestMapping(value ="/getGlobalInOutPageResult", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getGlobalInOutPageResult(MaterialFilter filter){
@@ -55,6 +57,7 @@ public class MaterialInOutAction {
 		return GsonUtil.toJson(rs, null);
 	}
 	
+	@Authorization("0208")
 	@RequestMapping(value = "exportGlobalInOut", method = RequestMethod.GET)  
     @ResponseBody  
 	public void exportGlobalInOut(HttpServletRequest request, HttpServletResponse response, MaterialFilter filter){
@@ -70,9 +73,9 @@ public class MaterialInOutAction {
 		List<String> periodList = new ArrayList<>();
 		periodList.add(sPeriod);
 		String currentPeriod = sPeriod;
-		while(!DateUtil.getNexMonth(currentPeriod, "yyyy-MM").equals(ePeriod)){
-			periodList.add(DateUtil.getNexMonth(currentPeriod, "yyyy-MM"));
-			currentPeriod = DateUtil.getNexMonth(currentPeriod, "yyyy-MM");
+		while(!DateUtil.getNextMonth(currentPeriod, "yyyy-MM").equals(ePeriod)){
+			periodList.add(DateUtil.getNextMonth(currentPeriod, "yyyy-MM"));
+			currentPeriod = DateUtil.getNextMonth(currentPeriod, "yyyy-MM");
 		}
 		periodList.add(ePeriod);
 		
@@ -139,6 +142,7 @@ public class MaterialInOutAction {
 		ImportAndExportUtil.export(wb, data, request, response);
 	}
 	
+	@Authorization("0207")
 	@RequestMapping(value ="/getInOutByMaterial", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getInOutByMaterial(String materialId, String sPeriod, String ePeriod){
@@ -152,6 +156,7 @@ public class MaterialInOutAction {
 		return GsonUtil.toJson(ios, "yyyy-MM-dd");
 	}
 	
+	@Authorization("0207")
 	@RequestMapping(value = "exportInOutByMaterial", method = RequestMethod.GET)  
     @ResponseBody  
 	public void exportInOutByMaterial(HttpServletRequest request, HttpServletResponse response, MaterialFilter filter){

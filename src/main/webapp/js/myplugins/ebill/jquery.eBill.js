@@ -99,7 +99,11 @@
 			    if (opt.value){
 			    	if (opt.value == 'now'){
 			    		var now = new Date();
-			    		var _value = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
+			    		var mon = (now.getMonth() + 1);
+			    		var day = now.getDate();
+			    		if (mon < 10) mon = '0' + mon;
+			    		if (day < 10) day = '0' + day;
+			    		var _value = now.getFullYear() + '-' + mon + '-' + day;
 			    		html += '<input type="date" name="'+opt.name+'" value="'+_value+'" style="'+style+'">';
 			    	}else{
 			    		html += '<input type="date" name="'+opt.name+'" value="'+opt.value+'" style="'+style+'">';
@@ -122,7 +126,15 @@
 				html += '<input type="text" name="'+opt.name+'" style="'+style+'">';
 				break;
 			case 'increase':
-				html += '<input type="text" name="'+opt.name+'" style="'+style+'">';
+				var _value = '';
+				$.ajax({
+        			url: getProjectName() + opt.src,
+        			async: false,
+        			success: function(result){
+        				_value = result;
+        			}
+        		});
+				html += '<input type="text" increase=true name="'+opt.name+'" value="'+_value+'" src="'+opt.src+'" style="'+style+'">';
 				break;
 		}
 		if (opt['label-after']){
@@ -666,7 +678,11 @@
 				}
 				if (_ele_item.attr('type') == 'date'){
 					var now = new Date();
-		    		var _value = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
+		    		var mon = (now.getMonth() + 1);
+		    		var day = now.getDate();
+		    		if (mon < 10) mon = '0' + mon;
+		    		if (day < 10) day = '0' + day;
+		    		var _value = now.getFullYear() + '-' + mon + '-' + day;
 					_ele_item.val(_value);
 				}
 				if (_ele_item.attr('indentify')){
@@ -675,6 +691,15 @@
 	        			async: false,
 	        			success: function(result){
 	        				_ele_item.val(result.code);
+	        			}
+	        		});
+				}
+				if (_ele_item.attr('increase')){
+					$.ajax({
+	        			url: getProjectName() + _ele_item.attr('src'),
+	        			async: false,
+	        			success: function(result){
+	        				_ele_item.val(result);
 	        			}
 	        		});
 				}

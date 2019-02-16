@@ -46,7 +46,7 @@ public class MaterialInAction {
 	@Autowired
 	private ICategoryService ctgService;
 	
-	@Authorization("010201")
+	@Authorization("0201")
 	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getPageResult(MaterialFilter filter){
@@ -54,7 +54,7 @@ public class MaterialInAction {
 		return GsonUtil.toJson(pr, null);
 	}
 	
-	@Authorization("010201")
+	@Authorization("0203")
 	@RequestMapping(value ="/getById", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getById(String id){
@@ -62,7 +62,7 @@ public class MaterialInAction {
 		return GsonUtil.toJson(in, null);
 	}
 	
-	@Authorization("010202")
+	@Authorization("0203")
 	@RequestMapping(value ="/getBillCode", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getBillCode(){
@@ -88,7 +88,7 @@ public class MaterialInAction {
 		return GsonUtil.toJson(map);
 	}
 	
-	@Authorization("010202")
+	@Authorization("0201")
 	@RequestMapping(value="/newMaterialIn", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void newMaterialIn(MaterialInBill materialIn, String billItem){
@@ -104,7 +104,7 @@ public class MaterialInAction {
 		pservice.setParam("bill.materialin.code", materialIn.getNumber());
 	}
 	
-	@Authorization("010203")
+	@Authorization("0201")
 	@RequestMapping(value="/updateMaterialIn", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void updateMaterialIn(MaterialInBill materialIn, String billItem){
@@ -119,13 +119,14 @@ public class MaterialInAction {
 		service.updateMaterialIn(materialIn);
 	}
 	
-	@Authorization("010204")
+	@Authorization("0201")
 	@RequestMapping(value="/deleteMaterialIn", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void deleteMaterialIn(String id){
 		service.deleteMaterialIn(id);
 	}
 	
+	@Authorization("0203")
 	@RequestMapping(value = "exportMaterialIn", method = RequestMethod.GET)  
     @ResponseBody  
 	public void exportMaterialIn(HttpServletRequest request, HttpServletResponse response, MaterialFilter filter){
@@ -145,6 +146,7 @@ public class MaterialInAction {
 		int numberColumn = 1;
 		int billDateColumn = 2;
 		int supplierColumn = 3;
+		int totalAmountColumn = 4;
 		
 		List<CellRangeAddress> ranges = new ArrayList<>();
 		List<MaterialInTableRow> tableRows = new ArrayList<>();
@@ -158,7 +160,8 @@ public class MaterialInAction {
 			ranges.add(new CellRangeAddress(startRowNum, startRowNum + details.size() - 1, numberColumn, numberColumn));
 			ranges.add(new CellRangeAddress(startRowNum, startRowNum + details.size() - 1, billDateColumn, billDateColumn));
 			ranges.add(new CellRangeAddress(startRowNum, startRowNum + details.size() - 1, supplierColumn, supplierColumn));
-			startRowNum = startRowNum + details.size() - 1;
+			ranges.add(new CellRangeAddress(startRowNum, startRowNum + details.size() - 1, totalAmountColumn, totalAmountColumn));
+			startRowNum = startRowNum + details.size();
 		}
 		data.addDatas(tableRows);
 		data.setRanges(ranges);

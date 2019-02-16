@@ -1,6 +1,6 @@
 package com.douniu.imshh.order.domain;
 
-import com.douniu.imshh.busdata.product.domain.Product;
+import com.douniu.imshh.product.domain.Product;
 
 public class OrderItem {
 	private String id;

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.domain.Inventory;
@@ -46,6 +47,7 @@ public class InventoryAction {
 		return GsonUtil.toJson(pr);
 	}
 	
+	@Authorization("0205")
 	@RequestMapping(value="/inventory", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void inventory(){
@@ -54,18 +56,21 @@ public class InventoryAction {
 		service.inventory(inv);
 	}
 	
+	@Authorization("0205")
 	@RequestMapping(value="/reset", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void reset(){
 		service.initCashInventory();
 	}
 	
+	@Authorization("0205")
 	@RequestMapping(value="/saveInventoryItem", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void saveInventoryItem(String materialId, float quantity){
 		service.saveCacheItem(materialId, quantity);
 	}
 	
+	@Authorization("0206")
 	@RequestMapping(value ="/getHistroyInventory", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getHistroyInventory(MaterialFilter filter){
@@ -79,6 +84,7 @@ public class InventoryAction {
 		return GsonUtil.toJson(rs, "yyyy-MM-dd");
 	}
 	
+	@Authorization("0206")
 	@RequestMapping(value ="/getHistroyInventoryDetail", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getHistroyInventoryDetail(MaterialFilter filter){
@@ -92,6 +98,7 @@ public class InventoryAction {
 		return GsonUtil.toJson(rs, "yyyy-MM-dd");
 	}
 	
+	@Authorization("0205")
 	@RequestMapping(value = "exportInventory", method = RequestMethod.GET)  
     @ResponseBody  
 	public void exportInventory(HttpServletRequest request, HttpServletResponse response, MaterialFilter filter){
@@ -106,6 +113,7 @@ public class InventoryAction {
 		ImportAndExportUtil.export("材料系统盘点.xls", data, request, response);
 	}
 	
+	@Authorization("0205")
 	@RequestMapping(value="importInventory",method={RequestMethod.GET,RequestMethod.POST}, produces = "text/html; charset=utf-8")  
     @ResponseBody
 	public String importInventory(HttpServletRequest request) throws Exception{

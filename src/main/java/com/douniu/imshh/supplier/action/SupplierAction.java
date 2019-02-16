@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.supplier.domain.Supplier;
@@ -31,7 +32,7 @@ public class SupplierAction {
 	@Autowired
 	private ISupplierService service;
 	
-	
+	@Authorization("0503")
 	@RequestMapping(value="/getById", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getById(String id){
@@ -55,25 +56,28 @@ public class SupplierAction {
 		return GsonUtil.toJson(result);
 	}
 	
+	@Authorization("0503")
 	@RequestMapping(value="/newSupplier", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void newSupplier(Supplier supp){
 		service.newSupplier(supp);
 	}
 	
+	@Authorization("0503")
 	@RequestMapping(value="/updateSupplier", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void updateSupplier(Supplier supp){
 		service.updateSupplier(supp);
 	}
 	
+	@Authorization("0503")
 	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getPageResult(SupplierFilter filter){
 		PageResult pr = service.getPageResult(filter);
 		return GsonUtil.toJson(pr, null);
 	}
-	
+		
 	@RequestMapping(value ="/loadallsupp", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String loadAllSupplier(SupplierFilter supp){
@@ -83,12 +87,14 @@ public class SupplierAction {
         return gson.toJson(res);
 	}
 	
+	@Authorization("0503")
 	@RequestMapping("/delete")
 	@ResponseBody
 	public void delete(String id){
 		service.delete(id);
 	}
 	
+	@Authorization("0503")
     @ResponseBody  
     @RequestMapping(value="importSupplier",method={RequestMethod.GET,RequestMethod.POST})  
     public String importSupplier(HttpServletRequest request) throws Exception {  
@@ -111,6 +117,7 @@ public class SupplierAction {
         return "success";
     }  
     
+	@Authorization("0503")
     @RequestMapping(value = "exportSupplier", method = RequestMethod.GET)  
     @ResponseBody  
     public void exportSupplier(HttpServletRequest request,HttpServletResponse response, SupplierFilter filter){  

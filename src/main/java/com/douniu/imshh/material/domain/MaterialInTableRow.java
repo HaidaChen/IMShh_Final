@@ -9,6 +9,7 @@ public class MaterialInTableRow {
 	private String number;      /*单号*/
 	private Date billDate;      /*发生日期*/
 	private Supplier supplier;
+	private float totalAmount;
 	private Material material;
 	private float quantity;
 	private String remark;
@@ -45,6 +46,14 @@ public class MaterialInTableRow {
 		this.supplier = supplier;
 	}
 
+	public float getTotalAmount() {
+		return totalAmount;
+	}
+
+	public void setTotalAmount(float totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+
 	public Material getMaterial() {
 		return material;
 	}
@@ -67,12 +76,13 @@ public class MaterialInTableRow {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
-	}
+	}	
 
 	@Override
 	public String toString() {
 		return "MaterialInTableRow [id=" + id + ", number=" + number + ", billDate=" + billDate + ", supplier="
-				+ supplier + ", material=" + material + ", quantity=" + quantity + ", remark=" + remark + "]";
+				+ supplier + ", totalAmount=" + totalAmount + ", material=" + material + ", quantity=" + quantity
+				+ ", remark=" + remark + "]";
 	}
 
 	public MaterialInTableRow(){super();}
@@ -82,6 +92,7 @@ public class MaterialInTableRow {
 		this.number = bill.getNumber();
 		this.billDate = bill.getBillDate();
 		this.supplier = bill.getSupplier();
+		this.totalAmount = bill.getTotalAmount();
 		this.material = detail.getMaterial();
 		this.quantity = detail.getQuantity();
 		this.remark = detail.getRemark();

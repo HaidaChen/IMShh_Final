@@ -13,14 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.douniu.imshh.busdata.product.domain.Product;
-import com.douniu.imshh.busdata.product.service.IProductService;
+import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.product.domain.Inventory;
 import com.douniu.imshh.product.domain.InventoryDetail;
+import com.douniu.imshh.product.domain.Product;
 import com.douniu.imshh.product.domain.ProductFilter;
 import com.douniu.imshh.product.service.IInventoryService;
+import com.douniu.imshh.product.service.IProductService;
 import com.douniu.imshh.utils.DateUtil;
 import com.douniu.imshh.utils.GsonUtil;
 import com.douniu.imshh.utils.ImportAndExportUtil;
@@ -34,6 +35,7 @@ public class ProductInventoryAction {
 	@Autowired
 	private IProductService pdtService;
 	
+	@Authorization("0305")
 	@RequestMapping(value ="/loadSystemInventory", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String loadSystemInventory(ProductFilter filter){
@@ -41,6 +43,7 @@ public class ProductInventoryAction {
 		return GsonUtil.toJson(pr);
 	}
 	
+	@Authorization("0305")
 	@RequestMapping(value="/inventory", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void inventory(){
@@ -49,18 +52,21 @@ public class ProductInventoryAction {
 		service.inventory(inv);
 	}
 	
+	@Authorization("0305")
 	@RequestMapping(value="/reset", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void reset(){
 		service.initCashInventory();
 	}
 	
+	@Authorization("0305")
 	@RequestMapping(value="/saveInventoryItem", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void saveInventoryItem(String productId, float quantity){
 		service.saveCacheItem(productId, quantity);
 	}
 	
+	@Authorization("0306")
 	@RequestMapping(value ="/getHistroyInventory", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getHistroyInventory(ProductFilter filter){
@@ -74,6 +80,7 @@ public class ProductInventoryAction {
 		return GsonUtil.toJson(rs, "yyyy-MM-dd");
 	}
 	
+	@Authorization("0306")
 	@RequestMapping(value ="/getHistroyInventoryDetail", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getHistroyInventoryDetail(ProductFilter filter){
@@ -87,17 +94,19 @@ public class ProductInventoryAction {
 		return GsonUtil.toJson(rs, "yyyy-MM-dd");
 	}
 	
+	@Authorization("0305")
 	@RequestMapping(value = "exportInventory", method = RequestMethod.GET)  
     @ResponseBody  
 	public void exportInventory(HttpServletRequest request, HttpServletResponse response, ProductFilter filter){
 		SheetData data = new SheetData("成品盘点"+DateUtil.Date2String(new Date(), "yyyyMMdd"));
 		
 		data.put("pdtCode", filter.getCode());
-		List<Product> pdts = pdtService.queryNoPage(new Product());
+		List<Product> pdts = pdtService.query(new ProductFilter());
 		data.addDatas(pdts);
 		ImportAndExportUtil.export("成品系统盘点.xls", data, request, response);
 	}
 	
+	@Authorization("0305")
 	@RequestMapping(value="importInventory",method={RequestMethod.GET,RequestMethod.POST}, produces = "text/html; charset=utf-8")  
     @ResponseBody
 	public String importInventory(HttpServletRequest request) throws Exception{

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-	<settings>
+	<!-- <settings>
         <setting name="logImpl" value="STDOUT_LOGGING" />
-    </settings>
+    </settings> -->
 	<typeAliases>
 		<!-- 01 销售模块 -->
 		<typeAlias alias="OrderFilter" type="com.douniu.imshh.order.domain.OrderFilter"/>
@@ -25,6 +25,7 @@
         <typeAlias alias="MaterialInventoryDetail" type="com.douniu.imshh.material.domain.InventoryDetail"/>
         
         <!-- 03 成品仓库模块 -->
+        <typeAlias alias="Product" type="com.douniu.imshh.product.domain.Product"/>
         <typeAlias alias="ProductFilter" type="com.douniu.imshh.product.domain.ProductFilter"/>
         <typeAlias alias="ProductBill" type="com.douniu.imshh.product.domain.ProductBill"/>
         <typeAlias alias="ProductInBill" type="com.douniu.imshh.product.domain.ProductInBill"/>
@@ -45,28 +46,10 @@
         <typeAlias alias="SupplierFilter" type="com.douniu.imshh.supplier.domain.SupplierFilter"/>
         <typeAlias alias="Supplier" type="com.douniu.imshh.supplier.domain.Supplier"/>
         
-        <!-- 
-        <typeAlias alias="Order" type="com.douniu.imshh.finance.order.domain.Order"/>
-        <typeAlias alias="OrderDetail" type="com.douniu.imshh.finance.order.domain.OrderDetail"/>
-        <typeAlias alias="MaterialStorage" type="com.douniu.imshh.finance.storage.domain.MaterialStorage"/>
-        <typeAlias alias="ProductIn" type="com.douniu.imshh.finance.storage.domain.ProductIn"/>
-        <typeAlias alias="ProductOut" type="com.douniu.imshh.finance.storage.domain.ProductOut"/>
+        <typeAlias alias="CustomerFilter" type="com.douniu.imshh.customer.domain.CustomerFilter"/>
+        <typeAlias alias="Customer" type="com.douniu.imshh.customer.domain.Customer"/>
         
-        <typeAlias alias="Invoice" type="com.douniu.imshh.finance.invoice.domain.Invoice"/>
-                
-        <typeAlias alias="Reception" type="com.douniu.imshh.finance.reception.domain.Reception"/>
-        <typeAlias alias="Payment" type="com.douniu.imshh.finance.payment.domain.Payment"/>
-        <typeAlias alias="ProductView" type="com.douniu.imshh.finance.dashboard.domain.ProductStatistics"></typeAlias>
-        <typeAlias alias="ProductIndicators" type="com.douniu.imshh.finance.dashboard.domain.ProductIndicators"></typeAlias>
-        <typeAlias alias="MaterialView" type="com.douniu.imshh.finance.dashboard.domain.MaterialStatistics"></typeAlias>
-        <typeAlias alias="MaterialIndicators" type="com.douniu.imshh.finance.dashboard.domain.MaterialIndicators"></typeAlias>
         
-        <typeAlias alias="Account" type="com.douniu.imshh.finance.account.domain.Account"/>
-        <typeAlias alias="Transaction" type="com.douniu.imshh.finance.account.domain.Transaction"/>
-         -->
-        <typeAlias alias="Customer" type="com.douniu.imshh.busdata.customer.domain.Customer"/>
-        
-        <typeAlias alias="Product" type="com.douniu.imshh.busdata.product.domain.Product"/>
         
         <!-- 06 系统管理模块 -->
         <typeAlias alias="SystemFilter" type="com.douniu.imshh.sys.domain.SystemFilter"/>
@@ -88,6 +71,7 @@
     	<mapper resource="/com/douniu/imshh/material/dao/materialInOutMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/material/dao/inventoryMapper.xml"/>
     	
+    	<mapper resource="/com/douniu/imshh/product/dao/productMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/product/dao/productInMapper.xml"/>
     	<mapper resource="/com/douniu/imshh/product/dao/productOutMapper.xml"/>    
         <mapper resource="/com/douniu/imshh/product/dao/productInOutMapper.xml"/>
@@ -98,9 +82,8 @@
     	<mapper resource="/com/douniu/imshh/finance/dao/accountMapper.xml"/>
     	
     	<mapper resource="/com/douniu/imshh/supplier/dao/suppMapper.xml"/>
+        <mapper resource="/com/douniu/imshh/customer/dao/custMapper.xml"/>
         
-        <mapper resource="/com/douniu/imshh/busdata/customer/dao/custMapper.xml"/>
-        <mapper resource="/com/douniu/imshh/busdata/product/dao/pdtMapper.xml"/>
         
         
         <mapper resource="/com/douniu/imshh/sys/dao/userMapper.xml"/>

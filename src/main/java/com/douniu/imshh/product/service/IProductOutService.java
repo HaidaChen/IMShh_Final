@@ -9,6 +9,7 @@ import com.douniu.imshh.product.domain.ProductOutTableRow;
 
 public interface IProductOutService {
 	PageResult getPageResult(ProductFilter filter);
+	List<ProductOutBill> query(ProductFilter filter);
 	ProductOutBill getById(String id);
 	void newProductOut(ProductOutBill productOut);
 	void updateProductOut(ProductOutBill productOut);

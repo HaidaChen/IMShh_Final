@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.finance.domain.Account;
 import com.douniu.imshh.finance.domain.FinanceFilter;
 import com.douniu.imshh.finance.service.IAccountService;
@@ -34,10 +35,11 @@ public class SubsidiaryLedgerAction {
 	@RequestMapping(value ="/allBillPeriod", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String allBillPeriod(FinanceFilter filter){
-		Map<String, String> period = pservice.getDictionary("bill.account.period");
+		Map<String, String> period = pservice.getBillPeriod();
 		return GsonUtil.toJson(period, null);
 	}
 	
+	@Authorization("0405")
 	@RequestMapping(value ="/getAccount", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getAccount(String subjectId, String billPeriod){
@@ -45,6 +47,7 @@ public class SubsidiaryLedgerAction {
 		return GsonUtil.toJson(accounts, null);
 	}
 	
+	@Authorization("0405")
 	@RequestMapping(value = "exportAccount", method = RequestMethod.GET)  
     @ResponseBody  
 	public void exportAccount(HttpServletRequest request, HttpServletResponse response, String subjectId, String billPeriod){

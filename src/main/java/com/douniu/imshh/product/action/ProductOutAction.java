@@ -9,8 +9,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.product.domain.BillDetail;
 import com.douniu.imshh.product.domain.ProductFilter;
@@ -27,7 +28,7 @@ import com.douniu.imshh.product.service.IProductOutService;
 import com.douniu.imshh.sys.service.IParameterService;
 import com.douniu.imshh.utils.GsonUtil;
 import com.douniu.imshh.utils.ImportAndExportUtil;
-import com.douniu.imshh.utils.RequestParameterLoader;
+import com.douniu.imshh.utils.SheetData;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
@@ -40,6 +41,7 @@ public class ProductOutAction {
 	@Autowired
 	private IParameterService pservice;
 	
+	@Authorization("0304")
 	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getPageResult(ProductFilter filter){
@@ -47,6 +49,7 @@ public class ProductOutAction {
 		return GsonUtil.toJson(pr, null);
 	}
 	
+	@Authorization("0304")
 	@RequestMapping(value ="/getById", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getById(String id){
@@ -79,6 +82,7 @@ public class ProductOutAction {
 		return GsonUtil.toJson(map);
 	}
 	
+	@Authorization("0302")
 	@RequestMapping(value="/newProductOut", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void newProductOut(ProductOutBill productOut, String billItem){
@@ -94,6 +98,7 @@ public class ProductOutAction {
 		pservice.setParam("bill.productout.code", productOut.getNumber());
 	}
 	
+	@Authorization("0302")
 	@RequestMapping(value="/updateProductOut", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void updateProductOut(ProductOutBill productOut, String billItem){
@@ -108,28 +113,42 @@ public class ProductOutAction {
 		service.updateProductOut(productOut);
 	}
 	
+	@Authorization("0302")
 	@RequestMapping(value="/deleteProductOut", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void deleteProductOut(String id){
 		service.deleteProductOut(id);
 	}
 	
+	@Authorization("0304")
 	@RequestMapping(value = "exportProductOut", method = RequestMethod.GET, produces = "text/html; charset=utf-8")  
     @ResponseBody  
-	public void exportProductOut(HttpServletRequest request,HttpServletResponse response,HttpSession session){
-		ImportAndExportUtil.exportPreprocess(response, "原材料入库明细");
+	public void exportProductOut(HttpServletRequest request,HttpServletResponse response, ProductFilter filter){
+		SheetData data = new SheetData("成品出库单列表");
+		data.put("number", filter.getNumber());
+		data.put("startDate", filter.getStartDate());
+		data.put("endDate", filter.getEndDate());
+		List<ProductOutBill> bills = service.query(filter);
 		
-		String[] params = {"number", "billReason", "startDate", "endDate", "pdtId"};
-		ProductFilter filter = new ProductFilter();
-		RequestParameterLoader.loadParameter(request, filter, params);
-		List<ProductOutTableRow> productInList = service.exportBill(filter);
+		int startRowNum = 6;
+		int numberColumn = 1;
+		int billDateColumn = 2;
 		
-        /*Workbook workbook=null;  
-        try {
-        	workbook = POIExcelAdapter.toWorkBook(productInList, mapper, ProductInTableRow.class); 
-        } catch (Exception e) {  
-            e.printStackTrace();  
-        }  
-        ImportAndExportUtil.exportProcess(response, workbook);*/
+		List<CellRangeAddress> ranges = new ArrayList<>();
+		List<ProductOutTableRow> tableRows = new ArrayList<>();
+		
+		for (ProductOutBill bill : bills){
+			List<BillDetail> details = bill.getDetails();
+			for (BillDetail detail : details){
+				tableRows.add(new ProductOutTableRow(bill, detail));
+			}
+			
+			ranges.add(new CellRangeAddress(startRowNum, startRowNum + details.size() - 1, numberColumn, numberColumn));
+			ranges.add(new CellRangeAddress(startRowNum, startRowNum + details.size() - 1, billDateColumn, billDateColumn));
+			startRowNum = startRowNum + details.size();
+		}
+		data.addDatas(tableRows);
+		data.setRanges(ranges);
+		ImportAndExportUtil.export("成品出库单列表.xls", data, request, response);
 	}
 }

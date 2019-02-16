@@ -1,8 +1,8 @@
 package com.douniu.imshh.finance.action;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.finance.domain.FinanceFilter;
 import com.douniu.imshh.finance.domain.Voucher;
@@ -33,6 +34,7 @@ public class VoucherAction {
 	@Autowired
 	private IParameterService pservice;
 	
+	@Authorization("0404")
 	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getPageResult(HttpSession session ,FinanceFilter filter){
@@ -54,6 +56,7 @@ public class VoucherAction {
 		return GsonUtil.toJson(pr, null);
 	}
 	
+	@Authorization("0404")
 	@RequestMapping(value ="/getById", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getById(String id){
@@ -61,6 +64,7 @@ public class VoucherAction {
 		return GsonUtil.toJson(voc, null);
 	}
 	
+	@Authorization("0403")
 	@RequestMapping(value="/addVoucher", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void addVoucher(Voucher voucher, String billItem){
@@ -76,6 +80,7 @@ public class VoucherAction {
 		//pservice.setParam("bill.materialin.code", materialIn.getNumber());
 	}
 	
+	@Authorization("0403")
 	@RequestMapping(value="/updateVoucher", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void updateVoucher(Voucher voucher, String billItem){
@@ -91,16 +96,24 @@ public class VoucherAction {
 		//pservice.setParam("bill.materialin.code", materialIn.getNumber());
 	}
 	
+	@Authorization("0403")
 	@RequestMapping(value="/deleteVoucher", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void deleteVoucher(String id){
 		service.deleteVoucher(id);
 	}
 	
+	@RequestMapping(value ="/getNextNumber", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getNextNumber(Voucher voucher){
+		if (voucher.getWord() == 0){voucher.setWord(1);}
+		if (voucher.getBillDate() == null){voucher.setBillDate(new Date());}
+		return ""+service.getNexNumber(voucher);
+	}
+	
 	@RequestMapping(value ="/allBillPeriod", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String allBillPeriod(FinanceFilter filter){
-		Map<String, String> period = pservice.getDictionary("bill.account.period");
-		return GsonUtil.toJson(period, null);
+		return GsonUtil.toJson(pservice.getBillPeriod(), null);
 	}
 }

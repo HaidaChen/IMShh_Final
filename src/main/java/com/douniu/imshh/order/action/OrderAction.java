@@ -17,14 +17,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.douniu.imshh.busdata.customer.service.ICustomerService;
-import com.douniu.imshh.busdata.product.service.IProductService;
+import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.common.PageResult;
+import com.douniu.imshh.customer.service.ICustomerService;
 import com.douniu.imshh.order.domain.Order;
 import com.douniu.imshh.order.domain.OrderFilter;
 import com.douniu.imshh.order.domain.OrderItem;
 import com.douniu.imshh.order.domain.OrderProductDetail;
 import com.douniu.imshh.order.service.IOrderService;
+import com.douniu.imshh.product.service.IProductService;
 import com.douniu.imshh.sys.service.IParameterService;
 import com.douniu.imshh.utils.GsonUtil;
 import com.douniu.imshh.utils.ImportAndExportUtil;
@@ -44,6 +45,7 @@ public class OrderAction {
 	@Autowired
 	private IProductService pdtService;
 	
+	@Authorization("0102")
 	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getPageResult(OrderFilter filter){
@@ -58,13 +60,15 @@ public class OrderAction {
 		return GsonUtil.toJson(res, "yyyy-MM-dd");
 	}
 	
+	@Authorization("0102")
 	@RequestMapping(value ="/getById", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getById(String id){
 		Order order = service.getById(id);
 		return GsonUtil.toJson(order, "yyyy-MM-dd");
 	}
-		
+	
+	@Authorization("0103")
 	@RequestMapping(value ="/getOrderProductPageResult", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getOrderProductPageResult(OrderFilter filter){
@@ -97,6 +101,7 @@ public class OrderAction {
 		return GsonUtil.toJson(map);
 	}
 	
+	@Authorization("0101")
 	@RequestMapping(value="/newOrder", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void newOrder(Order order, String billItem){
@@ -112,6 +117,7 @@ public class OrderAction {
 		pservice.setParam("bill.order.code", order.getIdentify());
 	}
 	
+	@Authorization("0101")
 	@RequestMapping(value="/updateOrder", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void updateOrder(Order order, String billItem){
@@ -126,12 +132,14 @@ public class OrderAction {
 		service.updateOrder(order);
 	}
 	
+	@Authorization("0101")
 	@RequestMapping(value="/deleteOrder", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void deleteOrder(String id){
 		service.deleteOrder(id);
 	}
 	
+	@Authorization("0102")
 	@RequestMapping(value = "exportOrder", method = RequestMethod.GET)  
     @ResponseBody  
 	public void exportOrder(HttpServletRequest request, HttpServletResponse response, OrderFilter filter){
@@ -148,6 +156,7 @@ public class OrderAction {
 		ImportAndExportUtil.export("订单列表.xls", data, request, response);
 	}
 	
+	@Authorization("0103")
 	@RequestMapping(value = "exportProdcutOrder", method = RequestMethod.GET)  
     @ResponseBody  
 	public void exportProdcutOrder(HttpServletRequest request, HttpServletResponse response, OrderFilter filter){

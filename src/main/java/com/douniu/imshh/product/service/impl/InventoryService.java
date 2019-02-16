@@ -3,8 +3,6 @@ package com.douniu.imshh.product.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.douniu.imshh.busdata.product.domain.Product;
-import com.douniu.imshh.busdata.product.service.IProductService;
 import com.douniu.imshh.common.IDInjector;
 import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.common.PageResult;
@@ -12,8 +10,10 @@ import com.douniu.imshh.product.dao.IInventoryDao;
 import com.douniu.imshh.product.domain.Inventory;
 import com.douniu.imshh.product.domain.InventoryDetail;
 import com.douniu.imshh.product.domain.InventoryMap;
+import com.douniu.imshh.product.domain.Product;
 import com.douniu.imshh.product.domain.ProductFilter;
 import com.douniu.imshh.product.service.IInventoryService;
+import com.douniu.imshh.product.service.IProductService;
 import com.douniu.imshh.utils.LikeFlagUtil;
 
 public class InventoryService implements IInventoryService {
@@ -70,7 +70,7 @@ public class InventoryService implements IInventoryService {
 	
 	@Override
 	public void importCacheItem(List<InventoryDetail> inventoryDetails) {
-		List<Product> allProduct = pdtService.queryNoPage(new Product());
+		List<Product> allProduct = pdtService.query(new ProductFilter());
 		List<InventoryDetail> target = new ArrayList<>();
 		initCashInventory();
 		for (InventoryDetail detail : inventoryDetails){
@@ -86,7 +86,7 @@ public class InventoryService implements IInventoryService {
 	public List<ImportException> checkImport(List<InventoryDetail> inventoryDetails) {
 		List<ImportException> exceptions = new ArrayList<ImportException>();
 		String unassociation_pdt = "";
-		List<Product> allProduct = pdtService.queryNoPage(new Product());
+		List<Product> allProduct = pdtService.query(new ProductFilter());
 		for (int i = 0; i < inventoryDetails.size(); i++){
 			if(!allProduct.contains(inventoryDetails.get(i).getProduct())){
 				unassociation_pdt += "," + (i+2);

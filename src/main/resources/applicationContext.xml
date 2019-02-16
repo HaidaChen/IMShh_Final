@@ -84,6 +84,14 @@
       </bean>
       
       <!-- 03 成品仓库 --> 
+      <bean name="productService" class="com.douniu.imshh.product.service.impl.ProductService">
+          <property name="dao" ref="productDao"></property>
+      </bean>
+      <bean id="productDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+          <property name="mapperInterface" value="com.douniu.imshh.product.dao.IProductDao"/>
+          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+      </bean>
+      
       <bean name="productInService" class="com.douniu.imshh.product.service.impl.ProductInService">
           <property name="dao" ref="productInDao"></property>
           <property name="pdtService" ref="productService"></property>
@@ -165,23 +173,14 @@
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       
-      <bean name="customerService" class="com.douniu.imshh.busdata.customer.service.impl.CustomerService">
+      <bean name="customerService" class="com.douniu.imshh.customer.service.impl.CustomerService">
           <property name="dao" ref="customerDao"></property>
       </bean>
       <bean id="customerDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.busdata.customer.dao.ICustomerDao"/>
+          <property name="mapperInterface" value="com.douniu.imshh.customer.dao.ICustomerDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
       
-      
-      
-      <bean name="productService" class="com.douniu.imshh.busdata.product.service.impl.ProductService">
-          <property name="dao" ref="productDao"></property>
-      </bean>
-      <bean id="productDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-          <property name="mapperInterface" value="com.douniu.imshh.busdata.product.dao.IProductDao"/>
-          <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-      </bean>
       
       <!-- 06 系统设置 -->
       <bean name="userService" class="com.douniu.imshh.sys.service.impl.UserService">
@@ -215,7 +214,6 @@
           <property name="mapperInterface" value="com.douniu.imshh.sys.dao.IParameterDao"/>
           <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
       </bean>
-      
       
       
       

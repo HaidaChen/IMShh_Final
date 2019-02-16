@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.finance.domain.FinanceFilter;
 import com.douniu.imshh.finance.domain.Subject;
 import com.douniu.imshh.finance.service.ISubjectService;
@@ -26,6 +27,7 @@ public class SubjectAction {
 	@Autowired
 	private ISubjectService service;
 	
+	@Authorization("0401")
 	@RequestMapping(value ="/query", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String query(FinanceFilter filter, HttpSession session){
@@ -34,6 +36,7 @@ public class SubjectAction {
 		return GsonUtil.toJson(subjects);
 	}	
 	
+	@Authorization("0401")
 	@RequestMapping(value ="/getJSTree", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getJSTree(String categoryId, HttpSession session){
@@ -43,6 +46,7 @@ public class SubjectAction {
 		return GsonUtil.toJson(jsTree, null);
 	}
 	
+	@Authorization("0401")
 	@RequestMapping(value ="/getFullJSTree", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getFullJSTree(HttpSession session){
@@ -52,6 +56,7 @@ public class SubjectAction {
 		return GsonUtil.toJson(jsTree, null);
 	}	
 	
+	@Authorization("0402")
 	@RequestMapping(value ="/queryConfig", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String queryConfig(FinanceFilter filter){
@@ -59,6 +64,7 @@ public class SubjectAction {
 		return GsonUtil.toJson(subjects);
 	}
 	
+	@Authorization("0401")
 	@RequestMapping(value ="/getFirstSubject", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getFirstSubject(){
@@ -66,6 +72,7 @@ public class SubjectAction {
 		return GsonUtil.toJson(allSubjects.get(0), null);
 	}
 	
+	@Authorization("0401")
 	@RequestMapping(value ="/getById", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getById(String id){
@@ -73,6 +80,7 @@ public class SubjectAction {
 		return GsonUtil.toJson(subject);
 	}
 	
+	@Authorization("0401")
 	@RequestMapping(value="/addSubject", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void addSubject(Subject subject){
@@ -85,6 +93,7 @@ public class SubjectAction {
 		service.updateSubject(subject);
 	}
 	
+	@Authorization("0402")
 	@RequestMapping(value="/setInitBalance", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String setInitBalance(String subId, float initBalance){
@@ -92,6 +101,7 @@ public class SubjectAction {
 		return "success";
 	}
 	
+	@Authorization("0402")
 	@RequestMapping(value="/setPrivateSubject", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String setPrivateSubject(String subId, int privateSubject){
@@ -108,7 +118,7 @@ public class SubjectAction {
 		return GsonUtil.toJson(map);
 	}
 	
-	
+	@Authorization("0401")
 	@RequestMapping(value="/deleteSubject")
 	@ResponseBody
 	public void deleteSubject(String id){

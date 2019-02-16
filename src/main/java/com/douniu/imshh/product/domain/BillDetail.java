@@ -1,7 +1,5 @@
 package com.douniu.imshh.product.domain;
 
-import com.douniu.imshh.busdata.product.domain.Product;
-
 public class BillDetail {
 	private String id;
 	private String billId;

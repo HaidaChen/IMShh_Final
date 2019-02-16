@@ -25,15 +25,7 @@
 					"src": "/mtlout/getBillCode.do"
 				  }
 	          ]},
-	"top-columns": [{
-				"name": "billReason",
-				"type": "select",
-				"label": "出库类型",
-				"data-ref": "outReasonOption",
-				"option-value": "key",
-				"option-text": "value",
-				"length": "30%"
-			},
+	"top-columns": [
 			{
 				"name": "billDate",
 				"type": "date",

@@ -4,16 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.douniu.imshh.busdata.product.dao.IProductDao;
-import com.douniu.imshh.busdata.product.domain.Product;
 import com.douniu.imshh.common.IDInjector;
 import com.douniu.imshh.common.PageResult;
-import com.douniu.imshh.material.domain.MaterialFilter;
-import com.douniu.imshh.material.domain.MaterialInOut;
-import com.douniu.imshh.material.domain.MaterialInOutMap;
+import com.douniu.imshh.product.dao.IProductDao;
 import com.douniu.imshh.product.dao.IProductInOutDao;
 import com.douniu.imshh.product.domain.BillDetail;
 import com.douniu.imshh.product.domain.PeriodInOut;
+import com.douniu.imshh.product.domain.Product;
 import com.douniu.imshh.product.domain.ProductBill;
 import com.douniu.imshh.product.domain.ProductFilter;
 import com.douniu.imshh.product.domain.ProductInOut;

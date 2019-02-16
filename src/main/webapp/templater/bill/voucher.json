@@ -30,10 +30,10 @@
 		{
 			"name": "number",
 			"type": "increase",
-			"style": "width:25px",
+			"style": "width:38px",
 			"label": "第",
 			"label-after": "号",
-			"src": "",
+			"src": "/voc/getNextNumber.do",
 			"length": "38%"
 		},
 		{

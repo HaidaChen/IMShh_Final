@@ -3,7 +3,7 @@ package com.douniu.imshh.order.domain;
 import java.util.Date;
 import java.util.List;
 
-import com.douniu.imshh.busdata.customer.domain.Customer;
+import com.douniu.imshh.customer.domain.Customer;
 
 public class Order {
 	private String id;

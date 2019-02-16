@@ -66,6 +66,12 @@ $(function(){
 		var selectedAuthorites = [];
 		var tree = $('#authorityTree').jstree(true);
 		selectedAuthorites = tree.get_selected(false);
+		var parentSeleted = tree.get_undetermined(true);
+		$.each(parentSeleted, function(i, parent){
+			selectedAuthorites.push(parent.id);
+		});
+		
+		
 		$("#roleForm").ajaxSubmit({
 			type: "post",
 			url: opturl, 

@@ -227,7 +227,7 @@
     	select count(1) from TBL_FIN_VOUCHER where word = #{word} and number = #{number} and billDate = #{billDate}
     </select>
     <select id="getMaxNumber" parameterType="Voucher" resultType="int">
-    	select max(number) from TBL_FIN_VOUCHER where word = #{word} and billDate = #{billDate}
+    	select case when max(number) is null then 0 else max(number) end from TBL_FIN_VOUCHER where word = #{word} and billDate = date_format(#{billDate},'%y-%m-%d')
     </select>
     <insert id="insert" parameterType="Voucher">
         insert into TBL_FIN_VOUCHER(id, billDate, word, number, preparedBy, auditor, attachments, modifydate, remark, status)  

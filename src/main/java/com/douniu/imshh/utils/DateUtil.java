@@ -64,7 +64,7 @@ public class DateUtil {
         return cal.getTime();
 	}
 	
-	public static String getNexMonth(String dateString, String format){
+	public static String getNextMonth(String dateString, String format){
 		Date date = DateUtil.string2Date(dateString, format);
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
@@ -73,6 +73,34 @@ public class DateUtil {
         SimpleDateFormat dft = new SimpleDateFormat(format);
         String nextMonth = dft.format(cal.getTime());
         return nextMonth;
+	}
+	
+	public static Date addMonth(Date current, int month){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(current);
+		
+        cal.add(cal.MONTH, month);
+        //SimpleDateFormat dft = new SimpleDateFormat(format);
+        //String nextMonth = dft.format(cal.getTime());
+        return cal.getTime();
+	}
+	
+	public static Date getNextMonth(Date current){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(current);
+		
+        cal.add(cal.MONTH, 1);
+        return cal.getTime();
+	}
+	
+	public static Date getPreMonth(Date current){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(current);
+		
+        cal.add(cal.MONTH, -1);
+        //SimpleDateFormat dft = new SimpleDateFormat(format);
+        //String nextMonth = dft.format(cal.getTime());
+        return cal.getTime();
 	}
 	
 	public static Date preDay(String dateString, String format){

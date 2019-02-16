@@ -22,12 +22,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.douniu.imshh.busdata.product.service.IProductService;
+import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.product.domain.ProductFilter;
 import com.douniu.imshh.product.domain.ProductInOut;
 import com.douniu.imshh.product.domain.ProductInOutMap;
 import com.douniu.imshh.product.service.IProductInOutService;
+import com.douniu.imshh.product.service.IProductService;
 import com.douniu.imshh.utils.DateUtil;
 import com.douniu.imshh.utils.GsonUtil;
 import com.douniu.imshh.utils.ImportAndExportUtil;
@@ -41,6 +42,7 @@ public class ProductInOutAction {
 	@Autowired
 	private IProductService pdtService;
 	
+	@Authorization("0308")
 	@RequestMapping(value ="/getGlobalInOutPageResult", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getGlobalInOutPageResult(ProductFilter filter){
@@ -54,6 +56,7 @@ public class ProductInOutAction {
 		return GsonUtil.toJson(rs, null);
 	}
 	
+	@Authorization("0308")
 	@RequestMapping(value = "exportGlobalInOut", method = RequestMethod.GET)  
     @ResponseBody  
 	public void exportGlobalInOut(HttpServletRequest request, HttpServletResponse response, ProductFilter filter){
@@ -69,9 +72,9 @@ public class ProductInOutAction {
 		List<String> periodList = new ArrayList<>();
 		periodList.add(sPeriod);
 		String currentPeriod = sPeriod;
-		while(!DateUtil.getNexMonth(currentPeriod, "yyyy-MM").equals(ePeriod)){
-			periodList.add(DateUtil.getNexMonth(currentPeriod, "yyyy-MM"));
-			currentPeriod = DateUtil.getNexMonth(currentPeriod, "yyyy-MM");
+		while(!DateUtil.getNextMonth(currentPeriod, "yyyy-MM").equals(ePeriod)){
+			periodList.add(DateUtil.getNextMonth(currentPeriod, "yyyy-MM"));
+			currentPeriod = DateUtil.getNextMonth(currentPeriod, "yyyy-MM");
 		}
 		periodList.add(ePeriod);
 		
@@ -138,6 +141,7 @@ public class ProductInOutAction {
 		ImportAndExportUtil.export(wb, data, request, response);
 	}
 	
+	@Authorization("0307")
 	@RequestMapping(value ="/getInOutByProduct", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getInOutByProduct(String productId, String sPeriod, String ePeriod){
@@ -151,6 +155,7 @@ public class ProductInOutAction {
 		return GsonUtil.toJson(ios, "yyyy-MM-dd");
 	}
 	
+	@Authorization("0307")
 	@RequestMapping(value = "exportInOutByProduct", method = RequestMethod.GET)  
     @ResponseBody  
 	public void exportInOutByProduct(HttpServletRequest request, HttpServletResponse response, ProductFilter filter){

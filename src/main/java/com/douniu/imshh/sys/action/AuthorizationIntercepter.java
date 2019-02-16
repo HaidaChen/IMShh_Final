@@ -37,15 +37,18 @@ public class AuthorizationIntercepter implements HandlerInterceptor{
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		if (parameterService.getBoolean("debug")) return true;
 		
+		
 		if (handler instanceof HandlerMethod){
 			HandlerMethod hm = (HandlerMethod)handler;
 			Authorization a = hm.getMethodAnnotation(Authorization.class);
 			if (a != null){
 				String authCode = a.value();
 				List<Authority> authorities = (List<Authority>) request.getSession().getAttribute("userAuthority");
-				for (Authority authority : authorities){
-					if (authority.getId().equals(authCode))
-						return true;
+				if (authorities != null){
+					for (Authority authority : authorities){
+						if (authority.getId().equals(authCode))
+							return true;
+					}
 				}
 				throw new NoPermissionException();
 			}

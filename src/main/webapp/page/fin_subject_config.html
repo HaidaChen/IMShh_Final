@@ -18,7 +18,7 @@
             <span><i class="fa fa-book"></i> 会计科目设置</span>
         </div>
         
-        <div class="panel-toolbar">
+        <div class="panel-head">
             <div class="btn-group" role="group" aria-label="">
 			    <button name="btn_ctg" code="01" type="button" class="btn btn-default active btn-sm">01 资产类</button>
 			    <button name="btn_ctg" code="02" type="button" class="btn btn-default btn-sm">02 负债累</button>
@@ -28,11 +28,7 @@
 			    <button name="btn_ctg" code="06" type="button" class="btn btn-default btn-sm">06 损益</button>
 			    <input type="hidden" id="filter_subCtg" value="01">
 			</div>
-        	<div class="table-operation pull-right" style="margin-left: 20px">
-        		<button id="btn_save" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> 保存设置</button>	            	            
-	            <button id="btn_reset" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i> 清空设置</button>	            
-        	</div>
-        	<div class="table-search pull-right" role="search">
+        	<div class="table-search-nomore pull-right" role="search">
 				<input id="filter_name" class="form-control" type="text" placeholder="科目名称"/>
 				<a id="btn_search" class="search" title="查询"><i class="fa fa-search"></i></a>
 			</div>

@@ -1,7 +1,5 @@
 package com.douniu.imshh.product.domain;
 
-import com.douniu.imshh.busdata.product.domain.Product;
-
 public class InventoryDetail {
 	private String id;
 	private String inventoryId;

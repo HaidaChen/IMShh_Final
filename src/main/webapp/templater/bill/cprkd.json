@@ -23,20 +23,13 @@
 					"src": "/pdtin/getBillCode.do"
 				  }
 	          ]},
-	"top-columns": [{
-				"name": "billReason",
-				"type": "select",
-				"style": "width:160px",
-				"label": "入库说明",
-				"length": "45%",
-				"data-ref": "billReason",
-				"option-value": "key",
-				"option-text": "value"
-			},
+	"top-columns": [
 			{
 				"name": "order.id",
 				"type": "select",
 				"style": "width:160px",
+				"select2": true,
+				"placeholder": " ",
 				"label": "关联订单",
 				"length": "30%",
 				"data-ref": "orderRef",

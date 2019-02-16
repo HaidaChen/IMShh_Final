@@ -7,6 +7,7 @@
         <result property="billDate" column="billDate"/>        
         <result property="number" column="number"/>
         <result property="billReason" column="billReason"/>
+        <result property="orderId" column="orderId"/>
         <result property="totalQuantity" column="totalQuantity"/>
         <result property="preparedBy" column="preparedBy"/>
         <result property="auditor" column="auditor"/>

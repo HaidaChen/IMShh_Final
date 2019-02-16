@@ -1,3 +1,4 @@
+
 var App = function () {
 	var nthTabs;
 	var handleSidebar = function(){
@@ -311,7 +312,10 @@ var App = function () {
 				clickToSelect: true,
 				columns: [{
 		            field: 'identify',
-		            title: '订单号'
+		            title: '订单号',
+		            formatter: function(value, row, index){
+		        		return '<a opt="link" rowid="'+row.id+'">'+value+'</a>';
+		        	}
 		        }, {
 		            field: 'orderDate',
 		            title: '订购日期'
@@ -377,7 +381,7 @@ var App = function () {
 			$('#tbl_order').on('click', 'a', function(){
 				var opt = $(this).attr('opt');
 				var id = $(this).attr('rowId');
-				if (opt == 'update'){
+				if (opt == 'update' || opt == 'link'){
 					var nthTabs = window.parent.getTabs();
 			        nthTabs.addTab({
 			        	id:'0101',
@@ -446,7 +450,7 @@ var App = function () {
 	var initOrderProductList = function(){
 		var initFilter = function(){
 			$.getJSON(
-				getProjectName() + "/pdt/loadallpdt.do",
+				getProjectName() + "/pdt/query.do",
 				function(result){
 					$.each(result, function(index, pdt){
 						$('#filter_product').append('<option value="'+pdt.id+'">'+pdt.code+'</option>');
@@ -1099,7 +1103,7 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initMaterialInList = function(){
 		var initOption = function(){
-			$.getJSON(
+			/*$.getJSON(
 				getProjectName() + "/mtlCtgy/query.do",
 				function(result){
 					$.each(result, function(index, ctg){
@@ -1113,7 +1117,7 @@ var App = function () {
 						allowClear: true
 					});
 				}
-			);
+			);*/
 			$.getJSON(
 				getProjectName() + "/supp/loadallsupp.do",
 				function(result){
@@ -1122,7 +1126,8 @@ var App = function () {
 					});
 					$("#filter_supplier").select2({
 						placeholder: "请选择供应商",
-						allowClear: true
+						allowClear: true,
+						width: 180
 					});
 				}
 			);
@@ -1137,13 +1142,19 @@ var App = function () {
 				clickToSelect: true,
 				columns: [{
 		            field: 'number',
-		            title: '入库单号'
+		            title: '入库单号',
+		            formatter: function(value, row, index){
+		        		return '<a opt="link" rowid="'+row.id+'">'+value+'</a>';
+		        	}
 		        }, {
 		            field: 'billDate',
 		            title: '入库日期'
 		        }, {
 		            field: 'supplier.name',
 		            title: '供应商'
+		        }, {
+		            field: 'totalAmount',
+		            title: '合计金额'
 		        }, {
 		            field: 'material.name',
 		            title: '材料名称'
@@ -1200,7 +1211,7 @@ var App = function () {
 			$('#tbl_materialIn').on('click', 'a', function(){
 				var opt = $(this).attr('opt');
 				var id = $(this).attr('rowId');
-				if (opt == 'update'){
+				if (opt == 'update' || opt == 'link'){
 					var nthTabs = window.parent.getTabs();
 			        nthTabs.addTab({
 			        	id:'0201',
@@ -1253,20 +1264,23 @@ var App = function () {
 						$($(row).find('td')[0]).remove();
 						$($(row).find('td')[0]).remove();
 						$($(row).find('td')[0]).remove();
+						$($(row).find('td')[0]).remove();
 						$($(row).find('td')[3]).remove();
 						rowspan++;
 						if (i == rows.length - 1){
 							$($(_row).find('td')[0]).attr('rowspan', rowspan);
 							$($(_row).find('td')[1]).attr('rowspan', rowspan);
 							$($(_row).find('td')[2]).attr('rowspan', rowspan);
-							$($(_row).find('td')[6]).attr('rowspan', rowspan);
+							$($(_row).find('td')[3]).attr('rowspan', rowspan);
+							$($(_row).find('td')[7]).attr('rowspan', rowspan);
 						}
 					}else{
 						if (rowspan > 1){
 							$($(_row).find('td')[0]).attr('rowspan', rowspan);
 							$($(_row).find('td')[1]).attr('rowspan', rowspan);
 							$($(_row).find('td')[2]).attr('rowspan', rowspan);
-							$($(_row).find('td')[6]).attr('rowspan', rowspan);
+							$($(_row).find('td')[3]).attr('rowspan', rowspan);
+							$($(_row).find('td')[7]).attr('rowspan', rowspan);
 							rowspan = 1;
 						}
 						_row = row;
@@ -1313,7 +1327,10 @@ var App = function () {
 				clickToSelect: true,
 				columns: [{
 		            field: 'number',
-		            title: '出库单号'
+		            title: '出库单号',
+		            formatter: function(value, row, index){
+		        		return '<a opt="link" rowid="'+row.id+'">'+value+'</a>';
+		        	}
 		        }, {
 		            field: 'billDate',
 		            title: '出库日期'
@@ -1372,7 +1389,7 @@ var App = function () {
 			$('#tbl_materialOut').on('click', 'a', function(){
 				var opt = $(this).attr('opt');
 				var id = $(this).attr('rowId');
-				if (opt == 'update'){
+				if (opt == 'update' || opt == 'link'){
 					var nthTabs = window.parent.getTabs();
 			        nthTabs.addTab({
 			        	id:'0202',
@@ -2086,6 +2103,127 @@ var App = function () {
 		}
 	}
 	
+	/*-----------------------------------------------------------------------------------*/
+	/*	初始化成品列表模块
+	/*-----------------------------------------------------------------------------------*/	
+	var initProductList = function(){
+		var loadProductTable = function(){
+			$("#tbl_product").bootstrapTable({
+				url: getProjectName() + "/pdt/getPageResult.do",
+				method: "get",
+				pagination: true,
+				sidePagination: "server", 
+				clickToSelect: true,
+				columns: [{
+		            field: 'code',
+		            title: '货号'
+		        }, {
+		            field: 'name',
+		            title: '品名'
+		        }, {
+		            field: 'specification',
+		            title: '规格'
+		        }, {
+		            field: 'model',
+		            title: '含量'
+		        }, {
+		            field: 'storage',
+		            title: '库存'
+		        }, {
+		        	field: 'remark',
+		        	title: '备注'
+		        }, {
+		        	field: '',
+		        	title: '操作',
+		        	formatter: function(value, row, index){
+		        		return '<a opt="update" rowid="'+row.id+'">修改</a>&nbsp;<a opt="delete" rowid="'+row.id+'">删除</a>';
+		        	}
+		        }],
+		        queryParams: function(params){
+		        	return {
+		                pageSize: params.limit,
+		                pageOffset: params.offset,                    
+		                code: $("#filter_code").val()
+		            }
+		        }
+			});
+		}
+		
+		
+		var initProductFunction = function(){
+			$('#btn_search').click(function(){
+				$("#tbl_product").bootstrapTable("refresh", {url: getProjectName() + "/pdt/getPageResult.do", cache: false});
+			});
+			
+			$('#btn_add').click(function(){					
+				Ewin.load({id: 'pdt_edit', title: '新的成品', url: 'fragment/pdt_edit.html', callback: function(){
+					
+				}});
+			});
+			
+			initEditProduct();
+			
+			$('#btn_import').click(function(){
+				ImportData.show({url: getProjectName() + "/pdt/importProduct.do",
+					templaterName: getProjectName() + "/templater/import/成品列表.xls",
+					callback: function(){
+						$("#tbl_product").bootstrapTable("refresh", {url: getProjectName() + "/pdt/getPageResult.do", cache: false});
+					}
+				});
+			});
+			
+			$('#btn_export').click(function(){
+				var param = 'code=' + $("#filter_code").val();
+				window.open(getProjectName() + "/pdt/exportProduct.do?"+param);
+			});
+		}
+		
+		var initEditProduct = function(id){
+			$('#tbl_product').on('click', 'a', function(){
+				var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				if (opt == 'update'){
+					Ewin.load({id: 'pdt_edit', title: '修改成品', url: 'fragment/pdt_edit.html', callback: function(){
+						$.ajax({
+							url: getProjectName()+"/pdt/getProductById.do?id="+id, 
+							success: function(result){
+								fillForm($("#productForm"), {
+									id: result.id, 
+									code: result.code, 
+									name: result.name, 
+									specification: result.specification, 
+									model: result.model, 
+									storage: result.storage,
+									remark: result.remark});
+							}
+						});
+					}});
+				}
+				
+				if (opt == 'delete'){
+					Ewin.confirm({message: "确定要删除选中的成品吗？"}).on(function(e){
+						if (!e){
+							return;
+						}
+						
+						$.ajax({
+							url: getProjectName()+"/pdt/deleteProduct.do?id="+id,
+							type: "get",
+							success: function(){
+								$("#tbl_product").bootstrapTable("refresh", {url: getProjectName() + "/pdt/getPageResult.do", cache: false});
+							}
+						});
+					});
+				}
+			});
+		}
+		return {
+			init: function(){
+				loadProductTable();
+				initProductFunction();
+			}
+		}
+	}
 	
 	/*-----------------------------------------------------------------------------------*/
 	/*	初始化成品入库单
@@ -2143,7 +2281,7 @@ var App = function () {
 	var initProductInList = function(){
 		var initOption = function(){
 			$.getJSON(
-				getProjectName() + "/pdt/loadallpdt.do",
+				getProjectName() + "/pdt/query.do",
 				function(result){
 					$.each(result, function(index, pdt){
 						$('#filter_product').append('<option value="'+pdt.id+'">'+pdt.name+'</option>');
@@ -2165,19 +2303,13 @@ var App = function () {
 				clickToSelect: true,
 				columns: [{
 		            field: 'number',
-		            title: '入库单号'
+		            title: '入库单号',
+		            formatter: function(value, row, index){
+		        		return '<a opt="link" rowid="'+row.id+'">'+value+'</a>';
+		        	}
 		        }, {
 		            field: 'billDate',
 		            title: '入库日期'
-		        }, {
-		            field: 'billReason',
-		            title: '入库说明',
-		            formatter: function(value, row, index){
-		            	if (value == '1')
-		            		return '生产入库';
-		            	if (value == '2')
-		            		return '其他入库';
-		            }
 		        }, {
 		            field: 'product.code',
 		            title: '成品货号'
@@ -2199,8 +2331,8 @@ var App = function () {
 		                pageSize: params.limit,
 		                pageOffset: params.offset,                    
 		                number: $("#filter_number").val(),
-		                billReason: $("#filter_billReason").val(),
-		                pdtId: $("#filter_product").val(),
+		                //billReason: $("#filter_billReason").val(),
+		                //pdtId: $("#filter_product").val(),
 		                startDate: $("#filter_startDate").val(),
 		                endDate: $("#filter_endDate").val()
 		            }
@@ -2234,7 +2366,7 @@ var App = function () {
 			$('#tbl_productIn').on('click', 'a', function(){
 				var opt = $(this).attr('opt');
 				var id = $(this).attr('rowId');
-				if (opt == 'update'){
+				if (opt == 'update' || opt == 'link'){
 					var nthTabs = window.parent.getTabs();
 			        nthTabs.addTab({
 			        	id:'0301',
@@ -2286,21 +2418,18 @@ var App = function () {
 					if ($($(row).find('td')[0]).html() == $($(_row).find('td')[0]).html()){
 						$($(row).find('td')[0]).remove();
 						$($(row).find('td')[0]).remove();
-						$($(row).find('td')[0]).remove();
 						$($(row).find('td')[3]).remove();
 						rowspan++;
 						if (i == rows.length - 1){
 							$($(_row).find('td')[0]).attr('rowspan', rowspan);
 							$($(_row).find('td')[1]).attr('rowspan', rowspan);
-							$($(_row).find('td')[2]).attr('rowspan', rowspan);
-							$($(_row).find('td')[6]).attr('rowspan', rowspan);
+							$($(_row).find('td')[5]).attr('rowspan', rowspan);
 						}
 					}else{
 						if (rowspan > 1){
 							$($(_row).find('td')[0]).attr('rowspan', rowspan);
 							$($(_row).find('td')[1]).attr('rowspan', rowspan);
-							$($(_row).find('td')[2]).attr('rowspan', rowspan);
-							$($(_row).find('td')[6]).attr('rowspan', rowspan);
+							$($(_row).find('td')[5]).attr('rowspan', rowspan);
 							rowspan = 1;
 						}
 						_row = row;
@@ -2313,8 +2442,8 @@ var App = function () {
 		var doExport = function(){
 			$('#btn_export').click(function(){
 				var filterStr = "number=" + $("#filter_number").val() +
-                               "&billReason=" + $("#filter_billReason").val() +
-                               "&pdtId=" + $("#filter_product").val() +
+                               //"&billReason=" + $("#filter_billReason").val() +
+                               //"&pdtId=" + $("#filter_product").val() +
                                "&startDate=" + $("#filter_startDate").val() +
                                "&endDate=" + $("#filter_endDate").val();
 				window.open(getProjectName() + "/pdtin/exportProductIn.do?" + filterStr);
@@ -2389,7 +2518,7 @@ var App = function () {
 	var initProductOutList = function(){
 		var initOption = function(){
 			$.getJSON(
-				getProjectName() + "/pdt/loadallpdt.do",
+				getProjectName() + "/pdt/query.do",
 				function(result){
 					$.each(result, function(index, pdt){
 						$('#filter_product').append('<option value="'+pdt.id+'">'+pdt.name+'</option>');
@@ -2411,19 +2540,13 @@ var App = function () {
 				clickToSelect: true,
 				columns: [{
 		            field: 'number',
-		            title: '出库单号'
+		            title: '出库单号',
+		            formatter: function(value, row, index){
+		        		return '<a opt="link" rowid="'+row.id+'">'+value+'</a>';
+		        	}
 		        }, {
 		            field: 'billDate',
 		            title: '出库日期'
-		        }, {
-		            field: 'billReason',
-		            title: '出库说明',
-		            formatter: function(value, row, index){
-		            	if (value == '1')
-		            		return '发货出库';
-		            	if (value == '2')
-		            		return '其他出库';
-		            }
 		        }, {
 		            field: 'product.code',
 		            title: '成品货号'
@@ -2445,8 +2568,8 @@ var App = function () {
 		                pageSize: params.limit,
 		                pageOffset: params.offset,                    
 		                number: $("#filter_number").val(),
-		                billReason: $("#filter_billReason").val(),
-		                pdtId: $("#filter_product").val(),
+		                //billReason: $("#filter_billReason").val(),
+		                //pdtId: $("#filter_product").val(),
 		                startDate: $("#filter_startDate").val(),
 		                endDate: $("#filter_endDate").val()
 		            }
@@ -2480,7 +2603,7 @@ var App = function () {
 			$('#tbl_productOut').on('click', 'a', function(){
 				var opt = $(this).attr('opt');
 				var id = $(this).attr('rowId');
-				if (opt == 'update'){
+				if (opt == 'update' || opt == 'link'){
 					var nthTabs = window.parent.getTabs();
 			        nthTabs.addTab({
 			        	id:'0302',
@@ -2532,21 +2655,18 @@ var App = function () {
 					if ($($(row).find('td')[0]).html() == $($(_row).find('td')[0]).html()){
 						$($(row).find('td')[0]).remove();
 						$($(row).find('td')[0]).remove();
-						$($(row).find('td')[0]).remove();
 						$($(row).find('td')[3]).remove();
 						rowspan++;
 						if (i == rows.length - 1){
 							$($(_row).find('td')[0]).attr('rowspan', rowspan);
 							$($(_row).find('td')[1]).attr('rowspan', rowspan);
-							$($(_row).find('td')[2]).attr('rowspan', rowspan);
-							$($(_row).find('td')[6]).attr('rowspan', rowspan);
+							$($(_row).find('td')[5]).attr('rowspan', rowspan);
 						}
 					}else{
 						if (rowspan > 1){
 							$($(_row).find('td')[0]).attr('rowspan', rowspan);
 							$($(_row).find('td')[1]).attr('rowspan', rowspan);
-							$($(_row).find('td')[2]).attr('rowspan', rowspan);
-							$($(_row).find('td')[6]).attr('rowspan', rowspan);
+							$($(_row).find('td')[5]).attr('rowspan', rowspan);
 							rowspan = 1;
 						}
 						_row = row;
@@ -2559,8 +2679,8 @@ var App = function () {
 		var doExport = function(){
 			$('#btn_export').click(function(){
 				var filterStr = "number=" + $("#filter_number").val() +
-                               "&billReason=" + $("#filter_billReason").val() +
-                               "&pdtId=" + $("#filter_product").val() +
+                               //"&billReason=" + $("#filter_billReason").val() +
+                              // "&pdtId=" + $("#filter_product").val() +
                                "&startDate=" + $("#filter_startDate").val() +
                                "&endDate=" + $("#filter_endDate").val();
 				window.open(getProjectName() + "/pdtout/exportProductOut.do?" + filterStr);
@@ -2965,7 +3085,7 @@ var App = function () {
 		
 		var initOtherOpt = function(){
 			$.getJSON(
-				getProjectName() + "/pdt/loadallpdt.do",
+				getProjectName() + "/pdt/query.do",
 				function(result){
 					$.each(result, function(index, pdt){
 						$('#filter_product').append('<option value="'+pdt.id+'">'+pdt.name+'</option>');
@@ -3537,7 +3657,15 @@ var App = function () {
         		bill = $('#voucherBill').eBill(data);	
 			});
 			$.ajaxSettings.async = true;
+			getNextNumber();
+			$('select[name="word"]').change(function(){
+				getNextNumber();
+			});
+			$('input[name="billDate"]').change(function(){
+				getNextNumber();
+			});
 		}
+		
 		
 		var editBill = function(){
 			$('#btn_save').click(function(){
@@ -3563,6 +3691,17 @@ var App = function () {
 					manuallyCopyFormValues: true,
 					deferred: $.Deferred()
 				});
+			});
+		}
+		
+		var getNextNumber = function(){
+			$.ajax({
+				url: getProjectName()+'/voc/getNextNumber.do',
+				data: {word: $('select[name="word"]').val(), 
+					   billDate: $('input[name="billDate"]').val()},
+				success: function(result){
+					$('input[name="number"]').val(result);
+				}
 			});
 		}
 		
@@ -4214,6 +4353,158 @@ var App = function () {
 	}
 	
 	/*-----------------------------------------------------------------------------------*/
+	/*	初始客户列表模块
+	/*-----------------------------------------------------------------------------------*/	
+	var initCustomerList = function(){
+		var loadCustomerTable = function(){
+			$("#tbl_customer").bootstrapTable({
+				url: getProjectName() + "/cust/getPageResult.do",
+				method: "get",
+				pagination: true,
+				sidePagination: "server", 
+				clickToSelect: true,
+				columns: [{
+		            field: 'name',
+		            title: '公司名称'
+		        }, {
+		            field: 'address',
+		            title: '公司地址'
+		        }, {
+		            field: 'fax',
+		            title: '传真'
+		        }, {
+		            field: 'contacts',
+		            title: '联系人'
+		        }, {
+		            field: 'phone',
+		            title: '联系电话'
+		        }, {
+		        	field: 'remark',
+		        	title: '备注'
+		        }, {
+		        	field: '',
+		        	title: '操作',
+		        	formatter: function(value, row, index){
+		        		return '<a opt="update" rowid="'+row.id+'">修改</a>&nbsp;<a opt="delete" rowid="'+row.id+'">删除</a>';
+		        	}
+		        }],
+		        queryParams: function(params){
+		        	return {
+		                pageSize: params.limit,
+		                pageOffset: params.offset,                    
+		                custName: $("#filter_name").val(),
+		                custPhone: $("#filter_phone").val(),
+		                custContacts: $("#filter_contacts").val(),
+		                remark: $("#filter_remark").val()
+		            }
+		        }
+			});
+		}
+		
+		var filterWin;
+		var initQueryOpt = function(){
+			filterWin = Ewin.load({id: 'cust_filter', title: '更多查询', url: 'fragment/cust_filter.html', rmvWin: false, initShow: false, callback: function(){
+				$("#btn_query").click(function(){
+					queryCustomer();
+					$('#cust_filter').modal('hide');
+				});
+			}});
+			
+			$('#btn_more').click(function(){
+				filterWin.modal.modal('show');
+			});
+			
+			$('#btn_search').click(function(){
+				queryCustomer();
+			});
+			
+		}
+		
+		var queryCustomer = function(){
+			createFilterTip({
+				assWin: $('#cust_filter'), 
+				items: [{assId: 'filter_contacts', label: '联系人', rule: '包含'}, 
+					    {assId: 'filter_phone', label: '联系电话', rule: '包含'},
+				        {assId: 'filter_remark', label: '备注', rule: '包含'}],
+		        changeCall: function(){
+		        	$("#tbl_customer").bootstrapTable("refresh", {url: getProjectName() + "/cust/getPageResult.do", cache: false});
+	        }});
+			$("#tbl_customer").bootstrapTable("refresh", {url: getProjectName() + "/cust/getPageResult.do", cache: false});
+		}
+		
+		var doEditCustomer = function(id){
+			$('#btn_add').click(function(){					
+				Ewin.load({id: 'cust_edit', title: '新的客户', url: 'fragment/cust_edit.html'});					
+			});
+			
+			$('#tbl_customer').on('click', 'a', function(){
+				var opt = $(this).attr('opt');
+				var id = $(this).attr('rowId');
+				if (opt == 'update'){
+					Ewin.load({id: 'cust_edit', title: '修改客户', url: 'fragment/cust_edit.html', callback: function(){
+						$.ajax({
+							url: getProjectName()+"/cust/getById.do?id="+id, 
+							success: function(result){
+								fillForm($("#customerForm"), {
+									id: result.id, 
+									name: result.name, 
+									address: result.address, 
+									fax: result.fax, 
+									contacts: result.contacts, 
+									phone: result.phone, 
+									remark: result.remark});
+							}
+						});
+					}});
+				}
+				
+				if (opt == 'delete'){
+					Ewin.confirm({message: "确定要删除选中的客户吗？"}).on(function(e){
+						if (!e){
+							return;
+						}
+						$.ajax({
+							url: getProjectName()+"/cust/delete.do?id="+id,
+							type: "get",
+							success: function(){
+								$("#tbl_customer").bootstrapTable("refresh", {url: getProjectName() + "/cust/getPageResult.do", cache: false});
+							}
+						});
+					});
+				}
+			});
+		}
+		
+		var doExport = function(){
+			$('#btn_export').click(function(){
+				var url = getProjectName() + "/cust/exportCustomer.do?custName=" + $('#filter_name').val();
+            	window.open(url);
+			});
+		}
+		
+		var doImport = function(){
+			$('#btn_import').click(function(){
+				ImportData.show({url: getProjectName() + "/cust/importCustomer.do",
+					templaterName: getProjectName() + "/templater/import/客户列表.xls",
+					callback: function(){
+						$("#tbl_customer").bootstrapTable("refresh", {url: getProjectName() + "/cust/getPageResult.do", cache: false});
+					}
+				});
+			});
+		}
+		
+		return {
+			init: function(){
+				initQueryOpt();
+				loadCustomerTable();
+				doEditCustomer();
+				doExport();
+				doImport();
+			}
+		}
+	}
+	
+	/*-----------------------------------------------------------------------------------*/
 	/*	初始系统用户列表模块
 	/*-----------------------------------------------------------------------------------*/	
 	var initUserList = function(){
@@ -4288,7 +4579,31 @@ var App = function () {
 			$('#btn_search').click(function(){
 				queryUser();
 			});
-			
+		}
+		
+		var loadUserRole = function(user){
+			$.ajax({
+				url: getProjectName()+"/role/loadRoles.do", 
+				success: function(roles){
+					var div_roles = $('#div_roles');
+					$.each(roles, function(i, role){
+						var html = '<div class="checkbox">' +
+								     '<label>' +
+								       '<input name="rolestr" type="checkbox" value="' + role.id + '"> ' + role.name
+								     '</label>' +
+								   '</div>';
+						div_roles.append(html);
+					});
+					
+					if (user){
+						if (user.roles){
+							$.each(user.roles, function(i, role){
+								div_roles.find('input[name="rolestr"][value="'+role.id+'"]').attr("checked", 'checked');
+							});
+						}
+					}
+				}
+			});
 		}
 		
 		var queryUser = function(){
@@ -4297,7 +4612,9 @@ var App = function () {
 		
 		var doEditUser = function(id){
 			$('#btn_add').click(function(){					
-				Ewin.load({id: 'user_edit', title: '新的系统用户', url: 'fragment/user_edit.html'});					
+				Ewin.load({id: 'user_edit', title: '新的系统用户', url: 'fragment/user_edit.html', callback: function(){
+					loadUserRole();
+				}});					
 			});
 			
 			$('#tbl_user').on('click', 'a', function(){
@@ -4313,6 +4630,7 @@ var App = function () {
 									userName: result.userName, 
 									password: result.password, 
 									fullName: result.fullName});
+								loadUserRole(result);
 							}
 						});
 					}});
@@ -4602,6 +4920,10 @@ var App = function () {
         },        
         
         /****************成品仓库模块****************/
+        productList: function(){
+        	return initProductList().init();
+        },
+        
         productInBill: function(){
         	return initProductInBill().init();
         },
@@ -4660,12 +4982,16 @@ var App = function () {
         },
         
         /****************基础数据模块****************/
-        product: function(){
-        	initProduct().init();
+        productList: function(){
+        	initProductList().init();
         },
         
         supplierList: function(){
         	initSupplierList().init();
+        },
+        
+        customerList: function(){
+        	initCustomerList().init();
         },
         
         /****************系统管理模块****************/

@@ -32,7 +32,7 @@ public class MaterialAction {
 	@Autowired
 	private IMaterialService service;
 	
-	@Authorization("010101")
+	@Authorization("0501")
 	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getPageResult(MaterialFilter filter){
@@ -40,7 +40,7 @@ public class MaterialAction {
 		return GsonUtil.toJson(pr, null);
 	}
 	
-	@Authorization("010101")
+	@Authorization("0501")
 	@RequestMapping(value ="/query", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String query(MaterialFilter filter){
@@ -48,7 +48,7 @@ public class MaterialAction {
 		return GsonUtil.toJson(materials);
 	}
 	
-	@Authorization("010101")
+	@Authorization("0501")
 	@RequestMapping(value="/getMaterialById", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getMaterialById(String id){
@@ -56,7 +56,6 @@ public class MaterialAction {
 		return GsonUtil.toJson(material);
 	}
 	
-	@Authorization("010101")
 	@RequestMapping(value="/validateUnique", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String validateUnique(MaterialFilter filter){
@@ -66,28 +65,28 @@ public class MaterialAction {
 		return GsonUtil.toJson(map);
 	}
 	
-	@Authorization("010102")
+	@Authorization("0501")
 	@RequestMapping(value="/addMaterial", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void addMaterial(Material material){
 		service.newMaterial(material);
 	}
 		
-	@Authorization("010103")
+	@Authorization("0501")
 	@RequestMapping(value="/updateMaterial", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void updateMaterial(Material material){
 		service.updateMaterial(material);
 	}
 	
-	@Authorization("010104")
+	@Authorization("0501")
 	@RequestMapping(value="/deleteMaterial")
 	@ResponseBody
 	public void deleteMaterial(String id){
 		service.deleteMaterial(id);
 	}
 	
-	@Authorization("010102")
+	@Authorization("0501")
 	@RequestMapping(value="importMaterial",method={RequestMethod.GET,RequestMethod.POST}, produces = "text/html; charset=utf-8")  
     @ResponseBody
 	public String importMaterial(HttpServletRequest request) throws Exception{
@@ -112,7 +111,7 @@ public class MaterialAction {
         return "success";
 	}
 	
-	@Authorization("010105")
+	@Authorization("0501")
 	@RequestMapping(value = "exportMaterial", method = RequestMethod.GET, produces = "text/html; charset=utf-8")  
     @ResponseBody  
 	public void exportMaterial(HttpServletRequest request,HttpServletResponse response, MaterialFilter filter){

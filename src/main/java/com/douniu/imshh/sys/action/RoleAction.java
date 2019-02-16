@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.sys.domain.Authority;
 import com.douniu.imshh.sys.domain.JSTree;
 import com.douniu.imshh.sys.domain.Role;
@@ -28,6 +29,7 @@ public class RoleAction {
 	@Autowired
 	private IAuthorityService authorityService;
 	
+	@Authorization("0602")
 	@RequestMapping(value="/loadRoles", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String loadRoles(SystemFilter filter){
@@ -36,6 +38,7 @@ public class RoleAction {
 		return gson.toJson(roles);
 	}
 	
+	@Authorization("0602")
 	@RequestMapping(value="/findById", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String findById(String id){
@@ -43,7 +46,7 @@ public class RoleAction {
 		return GsonUtil.toJson(role);
 	}
 	
-
+	@Authorization("0602")
 	@RequestMapping(value="/newRole", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String newRole(Role role, String authorityIds){
@@ -51,6 +54,7 @@ public class RoleAction {
 		return "success";
 	}
 	
+	@Authorization("0602")
 	@RequestMapping(value="/updateRole", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String updateRole(Role role, String authorityIds){
@@ -74,13 +78,14 @@ public class RoleAction {
 		return GsonUtil.toJson(result);
 	}
 	
-	
+	@Authorization("0602")
 	@RequestMapping("/delete")
 	@ResponseBody
 	public void delete(String id){
 		service.delete(id);
 	}	
 	
+	@Authorization("0602")
 	@RequestMapping(value ="/roleAuthority", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String roleAuthority(String roleId){

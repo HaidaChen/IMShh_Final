@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.material.domain.BillDetail;
 import com.douniu.imshh.material.domain.MaterialFilter;
@@ -39,6 +40,7 @@ public class MaterialOutAction {
 	@Autowired
 	private IParameterService pservice;
 	
+	@Authorization("0204")
 	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getPageResult(MaterialFilter filter){
@@ -46,6 +48,7 @@ public class MaterialOutAction {
 		return GsonUtil.toJson(pr, null);
 	}
 	
+	@Authorization("0204")
 	@RequestMapping(value ="/getById", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getById(String id){
@@ -78,6 +81,7 @@ public class MaterialOutAction {
 		return GsonUtil.toJson(map);
 	}
 	
+	@Authorization("0202")
 	@RequestMapping(value="/newBill", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void newBill(MaterialOutBill bill, String billItem){
@@ -93,6 +97,7 @@ public class MaterialOutAction {
 		pservice.setParam("bill.materialout.code", bill.getNumber());
 	}
 	
+	@Authorization("0202")
 	@RequestMapping(value="/updateBill", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void updateBill(MaterialOutBill bill, String billItem){
@@ -107,12 +112,14 @@ public class MaterialOutAction {
 		service.updateBill(bill);
 	}
 	
+	@Authorization("0202")
 	@RequestMapping(value="/deleteBill", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void deleteBill(String id){
 		service.deleteBill(id);
 	}
 	
+	@Authorization("0204")
 	@RequestMapping(value = "exportMaterialOut", method = RequestMethod.GET)  
     @ResponseBody  
 	public void exportMaterialOut(HttpServletRequest request, HttpServletResponse response, MaterialFilter filter){
@@ -148,7 +155,7 @@ public class MaterialOutAction {
 			
 			ranges.add(new CellRangeAddress(startRowNum, startRowNum + details.size() - 1, numberColumn, numberColumn));
 			ranges.add(new CellRangeAddress(startRowNum, startRowNum + details.size() - 1, billDateColumn, billDateColumn));
-			startRowNum = startRowNum + details.size() - 1;
+			startRowNum = startRowNum + details.size();
 		}
 		data.addDatas(tableRows);
 		data.setRanges(ranges);

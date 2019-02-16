@@ -1,9 +1,11 @@
 package com.douniu.imshh.sys.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.sys.dao.IUserDao;
+import com.douniu.imshh.sys.domain.Role;
 import com.douniu.imshh.sys.domain.SystemFilter;
 import com.douniu.imshh.sys.domain.User;
 import com.douniu.imshh.sys.domain.UserRole;
@@ -45,16 +47,36 @@ public class UserService implements IUserService{
 	@Override
 	public void update(User user) {
 		dao.update(user);
+		
+		if (user.getRoles() != null){
+			this.deleteRoleRelation(user.getId());
+			List<UserRole> uRoles = new ArrayList<>();
+			for(Role role : user.getRoles()){
+				UserRole uRole = new UserRole(user.getId(), role.getId());
+				uRoles.add(uRole);
+			}
+			this.addRoleRelation(uRoles);
+		}
 	}
 	
 	@Override
 	public void add(User user) {
 		dao.insert(user);
+		
+		if (user.getRoles() != null){
+			List<UserRole> uRoles = new ArrayList<>();
+			for(Role role : user.getRoles()){
+				UserRole uRole = new UserRole(user.getId(), role.getId());
+				uRoles.add(uRole);
+			}
+			this.addRoleRelation(uRoles);
+		}
 	}
 
 	@Override
 	public void remove(String id) {
 		dao.delete(id);
+		this.deleteRoleRelation(id);
 	}
 
 	@Override

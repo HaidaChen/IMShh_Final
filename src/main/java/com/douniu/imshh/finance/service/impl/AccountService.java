@@ -160,11 +160,14 @@ public class AccountService implements IAccountService {
 	 */
 	private float calculateBalance(float pastBalance, float debitAmount, float creditAmount, String directionLending){
 		float balance = 0;
-		if (directionLending.equals("01")){
+		if (directionLending.equals("01") ||
+				directionLending.equals("05")){
 			balance = pastBalance + debitAmount - creditAmount;
 		}
 		
-		if (directionLending.equals("02")){
+		if (directionLending.equals("02") ||
+				directionLending.equals("04") ||
+				directionLending.equals("06")){
 			balance = pastBalance + creditAmount - debitAmount;
 		}
 		return balance;

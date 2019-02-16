@@ -3,7 +3,6 @@ package com.douniu.imshh.product.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.douniu.imshh.busdata.product.service.IProductService;
 import com.douniu.imshh.common.IDInjector;
 import com.douniu.imshh.common.PageResult;
 import com.douniu.imshh.product.dao.IProductOutDao;
@@ -13,6 +12,7 @@ import com.douniu.imshh.product.domain.ProductOutBill;
 import com.douniu.imshh.product.domain.ProductOutTableRow;
 import com.douniu.imshh.product.service.IProductInOutService;
 import com.douniu.imshh.product.service.IProductOutService;
+import com.douniu.imshh.product.service.IProductService;
 import com.douniu.imshh.utils.LikeFlagUtil;
 
 public class ProductOutService implements IProductOutService{
@@ -28,6 +28,12 @@ public class ProductOutService implements IProductOutService{
 		pr.setRows(change2TableRows(result));
 		pr.setTotal(dao.count(condition));
 		return pr;
+	}
+
+	@Override
+	public List<ProductOutBill> query(ProductFilter filter) {
+		ProductFilter condition = LikeFlagUtil.appendLikeFlag(filter, new String[]{"number"});
+		return dao.query(condition);
 	}
 
 	@Override

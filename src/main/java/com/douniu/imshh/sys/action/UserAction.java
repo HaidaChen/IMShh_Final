@@ -1,20 +1,21 @@
 package com.douniu.imshh.sys.action;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.common.IDInjector;
 import com.douniu.imshh.common.PageResult;
-import com.douniu.imshh.sys.domain.Menu;
+import com.douniu.imshh.sys.domain.Role;
 import com.douniu.imshh.sys.domain.SystemFilter;
 import com.douniu.imshh.sys.domain.User;
 import com.douniu.imshh.sys.service.IUserService;
@@ -29,7 +30,7 @@ public class UserAction {
 	@Autowired
 	private IUserService service;
 	
-	
+	@Authorization("0601")
 	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getPageResult(SystemFilter filter){
@@ -100,25 +101,49 @@ public class UserAction {
         return gson.toJson(oUser);
 	}
 	
+	@Authorization("0601")
 	@RequestMapping(value="/newUser", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String newUser(User user){
+	public String newUser(User user, String rolestr){
 		IDInjector.injector(user);
 		String pwd = EncryptUnit.encrypt(user.getPassword());
 		user.setPassword(pwd);
+		
+		if (!StringUtils.isEmpty(rolestr)){
+			List<Role> roleList = new ArrayList<>();
+			String[] roleIds = rolestr.split(",");
+			for (String roleId : roleIds){
+				Role role = new Role();
+				role.setId(roleId);
+				roleList.add(role);
+			}
+			user.setRoles(roleList);
+		}
 		service.add(user);
 		return "success";
 	}
 	
+	@Authorization("0601")
 	@RequestMapping(value="/updateUser", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String updateUser(User user){
+	public String updateUser(User user, String rolestr){
 		String pwd = EncryptUnit.encrypt(user.getPassword());
 		user.setPassword(pwd);
+		if (!StringUtils.isEmpty(rolestr)){
+			List<Role> roleList = new ArrayList<>();
+			String[] roleIds = rolestr.split(",");
+			for (String roleId : roleIds){
+				Role role = new Role();
+				role.setId(roleId);
+				roleList.add(role);
+			}
+			user.setRoles(roleList);
+		}
 		service.update(user);
 		return "success";
 	}
 		
+	@Authorization("0601")
 	@RequestMapping("/delete")
 	@ResponseBody
 	public String delete(String id){
@@ -142,6 +167,7 @@ public class UserAction {
 		return GsonUtil.toJson(result);
 	}
 	
+	@Authorization("0601")
 	@RequestMapping(value="/resetPassword", method=RequestMethod.GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String resetPassword(String id){

@@ -3,8 +3,6 @@ package com.douniu.imshh.product.domain;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.douniu.imshh.busdata.product.domain.Product;
-
 public class InventoryMap {
 	private String pdtId;
 	private String pdtName;

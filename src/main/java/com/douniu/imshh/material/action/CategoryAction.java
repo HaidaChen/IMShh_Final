@@ -24,7 +24,7 @@ public class CategoryAction {
 	@Autowired
 	private ICategoryService service;
 	
-	@Authorization("010101")
+	@Authorization("0501")
 	@RequestMapping(value ="/getPageResult", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getPageResult(MaterialFilter filter){
@@ -32,7 +32,7 @@ public class CategoryAction {
 		return GsonUtil.toJson(pr, null);
 	}
 	
-	@Authorization("010101")
+	@Authorization("0501")
 	@RequestMapping(value ="/getJSTree", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getJSTree(MaterialFilter filter){
@@ -53,7 +53,7 @@ public class CategoryAction {
 		return GsonUtil.toJson(jsTree, null);
 	}
 	
-	@Authorization("010101")
+	@Authorization("0501")
 	@RequestMapping(value ="/query", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String query(MaterialFilter filter){
@@ -61,7 +61,7 @@ public class CategoryAction {
 		return GsonUtil.toJson(categories, null);
 	}
 	
-	@Authorization("010101")
+	@Authorization("0501")
 	@RequestMapping(value="/getCategoryById", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getCategoryById(String id){
@@ -69,7 +69,6 @@ public class CategoryAction {
 		return GsonUtil.toJson(category);
 	}
 	
-	@Authorization("010102")
 	@RequestMapping(value="/validateCategory", produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String validateCategory(Category category){
@@ -85,7 +84,7 @@ public class CategoryAction {
 		return GsonUtil.toJson(map);
 	}
 	
-	@Authorization("010102")
+	@Authorization("0501")
 	@RequestMapping(value="/addCategory", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String addCategory(Category category){
@@ -93,7 +92,7 @@ public class CategoryAction {
 		return "success";
 	}
 	
-	@Authorization("010103")
+	@Authorization("0501")
 	@RequestMapping(value="/updateCategory", method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String updateCategory(Category category){
@@ -101,7 +100,7 @@ public class CategoryAction {
 		return "success";
 	}
 	
-	@Authorization("010104")
+	@Authorization("0501")
 	@RequestMapping(value="/deleteCategory")
 	@ResponseBody
 	public String deleteCategory(String id){
