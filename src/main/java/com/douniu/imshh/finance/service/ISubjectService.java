@@ -2,6 +2,7 @@ package com.douniu.imshh.finance.service;
 
 import java.util.List;
 
+import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.finance.domain.FinanceFilter;
 import com.douniu.imshh.finance.domain.Subject;
 
@@ -13,6 +14,9 @@ public interface ISubjectService {
 	
 	Subject getById(String id);
 	boolean exist(String code);
+	
+	List<ImportException> checkImport(List<Subject> subjects);
+	void importSubject(List<Subject> subjects);
 	
 	void newSubject(Subject subject);
 	void updateSubject(Subject subject);

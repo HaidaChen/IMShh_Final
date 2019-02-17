@@ -15,6 +15,7 @@ public interface ISubjectDao {
 	Subject getByCode(String code);
 	
 	void insert(Subject subject);
+	void batchInsert(List<Subject> subjects);
 	void update(Subject subject);
 	void delete(String id);
 	

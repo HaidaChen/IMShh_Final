@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,9 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.douniu.imshh.common.Authorization;
 import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.common.PageResult;
-import com.douniu.imshh.material.domain.Category;
-import com.douniu.imshh.material.domain.Material;
-import com.douniu.imshh.material.domain.MaterialFilter;
 import com.douniu.imshh.product.domain.Product;
 import com.douniu.imshh.product.domain.ProductFilter;
 import com.douniu.imshh.product.service.IProductService;
@@ -59,9 +57,18 @@ public class ProductAction {
 	
 	@RequestMapping(value="/validateUnique", produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String validateUnique(String code){
+	public String validateUnique(String id, String code){
 		boolean result = false;
-		if (service.getByCode(code) == null) result = true; 
+		if (StringUtils.isEmpty(id)){
+			if (service.getByCode(code) == null) result = true; 
+		}else{
+			if (service.getById(id).getCode().equals(code)){
+				result = true; 
+			}else{
+				if (service.getByCode(code) == null) result = true; 
+			}
+		}
+		
 		Map<String, Boolean> map = new HashMap<>();
 		map.put("valid", result);
 		return GsonUtil.toJson(map);
@@ -99,7 +106,8 @@ public class ProductAction {
 			pdt.setName(rowData.get(1).toString());
 			pdt.setSpecification(rowData.get(2).toString());
 			pdt.setModel(rowData.get(3).toString());
-			pdt.setStorage(new Integer(rowData.get(4).toString()));
+			if (StringUtils.isEmpty(rowData.get(4).toString()))pdt.setStorage(0);
+			else pdt.setStorage(new Integer(rowData.get(4).toString()));
 			pdt.setRemark(rowData.get(5).toString());
 			products.add(pdt);
 		}

@@ -131,6 +131,15 @@
           values(#{id}, #{code}, #{name}, #{fullName}, #{category}, #{parent.id}, #{initBalance}, sysdate(), #{remark}, #{status})
     </insert>
     
+    <insert id="batchInsert" parameterType="java.util.List">
+        
+        insert into tbl_fin_subject(id, code, name, fullName, category, parentId, initBalance, modifydate, remark, status) 
+             values
+             <foreach collection="list" item="sub" index="index" separator=",">
+                 (#{sub.id}, #{sub.code}, #{sub.name}, #{sub.fullName}, #{sub.category}, #{sub.parent.id}, #{sub.initBalance}, sysdate(), #{sub.remark}, '1')
+             </foreach>
+    </insert>
+    
     <update id="update" parameterType="FinanceSubject">
     	update tbl_fin_subject set
     	  code = #{code},

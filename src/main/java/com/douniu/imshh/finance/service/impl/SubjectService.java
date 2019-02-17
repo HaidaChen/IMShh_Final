@@ -1,10 +1,12 @@
 package com.douniu.imshh.finance.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.util.StringUtils;
 
 import com.douniu.imshh.common.IDInjector;
+import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.finance.dao.ISubjectDao;
 import com.douniu.imshh.finance.domain.FinanceFilter;
 import com.douniu.imshh.finance.domain.Subject;
@@ -55,14 +57,40 @@ public class SubjectService implements ISubjectService{
 	@Override
 	public void newSubject(Subject subject) {
 		IDInjector.injector(subject);
+		injectorFullName(subject);
 		dao.insert(subject);
 	}
 
 	@Override
 	public void updateSubject(Subject subject) {
+		injectorFullName(subject);
 		dao.update(subject);
 	}
+	
+	@Override
+	public List<ImportException> checkImport(List<Subject> subjects) {
+		List<ImportException> exceptions = new ArrayList<ImportException>();
+		String repeation = "";
+		List<Subject> fullSubject = dao.query(new FinanceFilter());
+		
+		for (int i = 0; i < subjects.size(); i++){
+			Subject sbj = subjects.get(i);
+			if (fullSubject.contains(sbj)){
+				repeation += "," + (i+2);
+			}
+		}
+		if (!repeation.equals("")){
+			exceptions.add(new ImportException("存在重复的会计科目", "会计科目重复的判断依据是，科目编号", repeation.substring(1), ""));
+		}
+		return exceptions;
+	}
 
+	@Override
+	public void importSubject(List<Subject> subjects) {
+		dao.batchInsert(subjects);
+	}
+
+	
 	@Override
 	public void setInitBalance(String id, float initBalance) {
 		dao.setInitBalance(id, initBalance);
@@ -80,5 +108,15 @@ public class SubjectService implements ISubjectService{
 
 	public void setDao(ISubjectDao dao) {
 		this.dao = dao;
+	}
+	
+	private void injectorFullName(Subject subject){
+		String pid = subject.getParent().getId();
+		Subject parent = dao.getById(pid);
+		if (parent == null){
+			subject.setFullName(subject.getCode() + " " + subject.getName());
+		}else {
+			subject.setFullName(parent.getFullName() + " " + subject.getCode() + " " + subject.getName());
+		}
 	}
 }

@@ -56,13 +56,18 @@
 	    	                      p.id, 
 	    	                      case when i.actualQuantity is null then 0 else i.actualQuantity end as actualQuantity, 
 	    	                      sysdate()
-	    	                 from t_product p
+	    	                 from tbl_product p
 	    	                 left join tbl_tmp_product_inventorydetail i
 	    	                   on p.id = i.productId) tbl
     </update>
     
+    <update id="resetStorage">
+    	update tbl_product p 
+    	   set storage = 0
+    </update>
+    
     <update id="updateStorage">
-    	update t_product p, tbl_tmp_product_inventorydetail t
+    	update tbl_product p, tbl_tmp_product_inventorydetail t
     	   set p.storage = t.actualQuantity
     	 where p.id = t.productId
     	   and t.actualQuantity is not null
@@ -114,7 +119,7 @@
 		              p.code as p_code,
 		              p.model as p_model,
 		              p.storage as expectQuantity
-			     from t_product p
+			     from tbl_product p
 			    where p.status = '1') pdt
 		   left join (select productId, 
 		                     actualQuantity
@@ -153,7 +158,7 @@
 		              p.code as p_code,
 		              p.model as p_model,
 		              p.storage as expectQuantity
-			     from t_product p
+			     from tbl_product p
 			    where p.status = '1') pdt
 		   left join (select productId, 
 		                     actualQuantity
@@ -189,7 +194,7 @@
               idtl.inventoryId, 
               case when idtl.actualQuantity is null then 0 else idtl.actualQuantity end as actualQuantity
          from (select id, name, code, model 
-                from t_product 
+                from tbl_product 
                where status = '1'
               <if test="code != null and code !=''">
 	             and code like #{code} 
@@ -212,7 +217,7 @@
     </select>
     
     <select id="countInventoryDetail" parameterType="ProductFilter" resultType="int">
-       select count(1) from t_product p
+       select count(1) from tbl_product p
         where p.status = '1'
         <if test="code != null and code !=''">
           and p.code like #{code} 
@@ -229,7 +234,7 @@
                p.code as p_code
           from tbl_product_inventory inv, 
                tbl_product_inventorydetail dtl, 
-               t_product p             
+               tbl_product p             
          where inv.id = #{id}
            and inv.id = dtl.inventoryId
            and dtl.productId = p.id

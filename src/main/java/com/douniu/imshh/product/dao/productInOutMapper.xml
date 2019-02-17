@@ -37,7 +37,7 @@
 				SELECT
 					*
 				FROM
-					t_product
+					tbl_product
 				WHERE
 					`status` = '1'
 				ORDER BY
@@ -77,7 +77,7 @@
     
     <select id="countTotalInOut" parameterType="ProductFilter" resultType="int">
         SELECT count(1) 
-          FROM t_product
+          FROM tbl_product
 		 WHERE `status` = '1'
     </select> 
     
@@ -96,7 +96,7 @@
 				SELECT
 					*
 				FROM
-					t_product
+					tbl_product
 				WHERE
 					`status` = '1'
 				ORDER BY code
@@ -144,7 +144,7 @@
 						p.model AS p_model
 					FROM
 						tbl_product_inout io,
-						t_product p
+						tbl_product p
 					WHERE
 						io.productId = #{0}
 					AND io.genDate &gt;= #{1}

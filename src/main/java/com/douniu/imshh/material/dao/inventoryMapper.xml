@@ -61,6 +61,11 @@
 	    	                   on m.id = i.materialId) tbl
     </update>
     
+    <update id="resetStorage">
+    	update tbl_material  
+    	   set storage = 0
+    </update>
+    
     <update id="updateStorage">
     	update tbl_material m, tbl_tmp_material_inventorydetail t
     	   set m.storage = t.actualQuantity

@@ -96,7 +96,7 @@ public class CustomerAction {
 	
 	@Authorization("0504")
     @ResponseBody  
-    @RequestMapping(value="importCustomer",method={RequestMethod.GET,RequestMethod.POST})  
+    @RequestMapping(value="importCustomer",method={RequestMethod.GET,RequestMethod.POST}, produces = "text/html; charset=utf-8")  
     public String importCustomer(HttpServletRequest request) throws Exception {  
     	List<List<Object>> data = ImportAndExportUtil.importPreprocess(request);
 		List<Customer> customers = new ArrayList<>();
@@ -118,7 +118,7 @@ public class CustomerAction {
     }  
     
 	@Authorization("0504")
-    @RequestMapping(value = "exportCustomer", method = RequestMethod.GET)  
+    @RequestMapping(value = "exportCustomer", method = RequestMethod.GET, produces = "text/html; charset=utf-8")  
     @ResponseBody  
     public void exportCustomer(HttpServletRequest request,HttpServletResponse response, CustomerFilter filter){  
     	SheetData data = new SheetData("客户列表");

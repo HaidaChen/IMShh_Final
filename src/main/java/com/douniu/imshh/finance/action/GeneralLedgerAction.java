@@ -34,7 +34,8 @@ public class GeneralLedgerAction {
 	@ResponseBody
 	public String allBillPeriod(FinanceFilter filter){
 		Map<String, String> period = pservice.getBillPeriod();
-		return GsonUtil.toJson(period, null);
+		String res = GsonUtil.toJson(period, null);
+		return res;
 	}
 	
 	@Authorization("0406")

@@ -64,7 +64,7 @@
         select o.*, a.*, c.id as c_id, c.name as c_name             
           from tbl_order o, 
                tbl_order_appointment a,
-               t_customer c             
+               tbl_customer c             
          where o.status = '1'
            and o.id = a.orderId
            and o.customerId = c.id
@@ -93,7 +93,7 @@
         select count(1)               
           from tbl_order o, 
                tbl_order_appointment a,
-               t_customer c             
+               tbl_customer c             
          where o.status = '1'
            and o.id = a.orderId
            and o.customerId = c.id
@@ -121,7 +121,7 @@
         select o.*, a.*, c.id as c_id, c.name as c_name            
           from tbl_order o, 
                tbl_order_appointment a,
-               t_customer c             
+               tbl_customer c             
          where o.status = '1'
            and o.id = a.orderId
            and o.customerId = c.id
@@ -168,8 +168,8 @@
           from tbl_order o, 
                tbl_order_appointment a,
                tbl_order_item i,
-               t_customer c,
-               t_product p      
+               tbl_customer c,
+               tbl_product p      
          where o.id = #{id}
            and o.id = a.orderId
            and o.customerId = c.id
@@ -178,7 +178,169 @@
     </select>
     
     <select id="queryOrderProduct" parameterType="OrderFilter" resultMap="opmap">
-	    select p.id, p.id as p_id, p.code, p.model, p.storage, op.* from t_product p,
+        select id, 
+               p_id, 
+               code, 
+               model, 
+               storage, 
+               case when orderQuantity is null then 0 else orderQuantity end as orderQuantity,
+               case when orderAmount is null then 0 else orderAmount end as orderAmount,
+               case when inQuantity is null then 0 else inQuantity end as inQuantity,
+               case when outQuantity is null then 0 else outQuantity end as outQuantity
+          from (
+            select * from
+	        (select id, id as p_id, code, model, storage from tbl_product 
+	         where status = '1'
+	          <if test="productId != null and productId !=''">
+		       and oi.productid = #{productId} 
+		      </if>) l
+	        left join
+		    (select productid, sum(orderquantity) as orderQuantity, sum(orderamount) as orderAmount, sum(inQuantity) as inQuantity, sum(outQuantity) as outQuantity
+			  from	
+				( 
+				select oi.productid, sum(oi.quantity) orderQuantity, sum(oi.amount) orderAmount , 0 as inQuantity, 0 as outQuantity
+					from tbl_order_item oi, tbl_order o
+				 where o.status = '1'
+		          and o.id = oi.orderid
+		          <if test="startDate != null and startDate !=''">
+		          and orderDate &gt;= #{startDate} 
+		          </if>
+		          <if test="endDate != null and endDate !=''">
+		          and orderDate &lt;= #{endDate} 
+		          </if>
+		          <if test="productId != null and productId !=''">
+		          and oi.productid = #{productId} 
+		          </if>
+				 group by oi.productid
+				 
+	            union all
+				
+				select d.productid, 0 as orderQuantity, 0 as orderAmount, sum(d.quantity) inQuantity, 0 as outQuantity
+					from tbl_bill_dtl_productin d, tbl_bill_productin i
+				 where d.status = '1'
+				   and d.billId = i.id
+				  <if test="startDate != null and startDate !=''">
+		          and billDate &gt;= #{startDate} 
+		          </if>
+		          <if test="endDate != null and endDate !=''">
+		          and billDate &lt;= #{endDate} 
+		          </if>
+		          <if test="productId != null and productId !=''">
+		          and oi.productid = #{productId} 
+		          </if>
+				 group by d.productid
+				
+	            union all
+				
+				select d.productid, 0 as orderQuantity, 0 as orderAmount, 0 as inQuantity, sum(d.quantity) outQuantity
+					from tbl_bill_dtl_productout d, tbl_bill_productout ot
+				 where d.status = '1'
+				   and d.billId = ot.id
+				  <if test="startDate != null and startDate !=''">
+		          and billDate &gt;= #{startDate} 
+		          </if>
+		          <if test="endDate != null and endDate !=''">
+		          and billDate &lt;= #{endDate} 
+		          </if>
+		          <if test="productId != null and productId !=''">
+		          and oi.productid = #{productId} 
+		          </if>
+				 group by d.productid
+				) un
+				group by productid)r
+			on l.p_id = r.productid	
+		)tbl 
+		order by orderQuantity desc
+    </select>
+    
+    <select id="getOrderProductPageResult" parameterType="OrderFilter" resultMap="opmap">
+        select id, 
+               p_id, 
+               code, 
+               model, 
+               storage, 
+               case when orderQuantity is null then 0 else orderQuantity end as orderQuantity,
+               case when orderAmount is null then 0 else orderAmount end as orderAmount,
+               case when inQuantity is null then 0 else inQuantity end as inQuantity,
+               case when outQuantity is null then 0 else outQuantity end as outQuantity
+          from (
+            select * from
+	        (select id, id as p_id, code, model, storage from tbl_product 
+	         where status = '1'
+	          <if test="productId != null and productId !=''">
+		       and oi.productid = #{productId} 
+		      </if>
+		      ) l
+	        left join
+		    (select productid, sum(orderquantity) as orderQuantity, sum(orderamount) as orderAmount, sum(inQuantity) as inQuantity, sum(outQuantity) as outQuantity
+			  from	
+				( 
+				select oi.productid, sum(oi.quantity) orderQuantity, sum(oi.amount) orderAmount , 0 as inQuantity, 0 as outQuantity
+					from tbl_order_item oi, tbl_order o
+				 where o.status = '1'
+		          and o.id = oi.orderid
+		          <if test="startDate != null and startDate !=''">
+		          and orderDate &gt;= #{startDate} 
+		          </if>
+		          <if test="endDate != null and endDate !=''">
+		          and orderDate &lt;= #{endDate} 
+		          </if>
+		          <if test="productId != null and productId !=''">
+		          and oi.productid = #{productId} 
+		          </if>
+				 group by oi.productid
+				 
+	            union all
+				
+				select d.productid, 0 as orderQuantity, 0 as orderAmount, sum(d.quantity) inQuantity, 0 as outQuantity
+					from tbl_bill_dtl_productin d, tbl_bill_productin i
+				 where d.status = '1'
+				   and d.billId = i.id
+				  <if test="startDate != null and startDate !=''">
+		          and billDate &gt;= #{startDate} 
+		          </if>
+		          <if test="endDate != null and endDate !=''">
+		          and billDate &lt;= #{endDate} 
+		          </if>
+		          <if test="productId != null and productId !=''">
+		          and oi.productid = #{productId} 
+		          </if>
+				 group by d.productid
+				
+	            union all
+				
+				select d.productid, 0 as orderQuantity, 0 as orderAmount, 0 as inQuantity, sum(d.quantity) outQuantity
+					from tbl_bill_dtl_productout d, tbl_bill_productout ot
+				 where d.status = '1'
+				   and d.billId = ot.id
+				  <if test="startDate != null and startDate !=''">
+		          and billDate &gt;= #{startDate} 
+		          </if>
+		          <if test="endDate != null and endDate !=''">
+		          and billDate &lt;= #{endDate} 
+		          </if>
+		          <if test="productId != null and productId !=''">
+		          and oi.productid = #{productId} 
+		          </if>
+				 group by d.productid
+				) un
+				group by productid)r
+			on l.p_id = r.productid	
+		)tbl
+		order by orderQuantity desc
+		limit #{pageOffset},#{pageSize}
+    </select>
+    
+    <select id="countOrderProduct" parameterType="OrderFilter" resultType="int">
+    	select count(1) from tbl_product 
+         where status = '1'
+          <if test="productId != null and productId !=''">
+	       and oi.productid = #{productId} 
+	      </if>
+    </select>
+    
+    <!-- <select id="queryOrderProduct" parameterType="OrderFilter" resultMap="opmap">
+	    select p.id, p.id as p_id, p.code, p.model, p.storage, op.* from tbl_product p,
 			(select productid, sum(orderquantity) orderQuantity, sum(orderamount) orderAmount, sum(inquantity) inQuantity, sum(outquantity) outQuantity from(
 			  select odr.productId, orderquantity, orderamount, inquantity, outquantity from
 						( 
@@ -223,7 +385,7 @@
     </select>
     
     <select id="getOrderProductPageResult" parameterType="OrderFilter" resultMap="opmap">
-	    select p.id, p.id as p_id, p.code, p.model, p.storage, op.* from t_product p,
+	    select p.id, p.id as p_id, p.code, p.model, p.storage, op.* from tbl_product p,
 			(select productid, sum(orderquantity) orderQuantity, sum(orderamount) orderAmount, sum(inquantity) inQuantity, sum(outquantity) outQuantity from(
 			  select odr.productId, orderquantity, orderamount, inquantity, outquantity from
 						( 
@@ -308,7 +470,7 @@
 						)pout
 			      on odr.oid = pout.oid and odr.productid = pout.productid 
 			)tbl group by productid)op
-    </select>
+    </select> -->
     
     <insert id="insert" parameterType="Order">
         insert into tbl_order(id, identify, orderType, orderDate, amountRMB, totalAmount, billStatus, customerId, modifydate, remark, status)  

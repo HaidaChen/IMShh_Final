@@ -58,7 +58,7 @@ $(function(){
 								var res;
 								$.ajax({
 									url: getProjectName()+'/pdt/validateUnique.do',
-									data: {code: $("#input_code").val()},
+									data: {id: $('#hid_id').val(), code: $("#input_code").val()},
 									async: false, 
 									success: function(result){
 										res = result.valid;

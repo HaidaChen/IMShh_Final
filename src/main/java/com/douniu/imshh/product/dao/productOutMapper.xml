@@ -44,7 +44,7 @@
 	                p.code as p_code, 
 	                p.name as p_name,
 	                p.model as p_model
-	           from tbl_bill_dtl_productout d, t_product p
+	           from tbl_bill_dtl_productout d, tbl_product p
 	          where d.status = '1'
 	            and d.productId = p.id)pdo
 	        on po.id = pdo.dtl_billId
@@ -105,7 +105,7 @@
 	                p.code as p_code,
 	                p.name as p_name,
 	                p.model as p_model
-	           from tbl_bill_dtl_productout d, t_product p
+	           from tbl_bill_dtl_productout d, tbl_product p
 	          where d.status = '1'
 	            and d.productId = p.id)pdo
 	        on po.id = pdo.dtl_billId
@@ -138,7 +138,7 @@
                p.model as p_model
           from tbl_bill_productout po, 
                tbl_bill_dtl_productout d, 
-               t_product p         
+               tbl_product p         
          where po.id = #{id}
            and d.status = '1'
            and po.id = d.billId

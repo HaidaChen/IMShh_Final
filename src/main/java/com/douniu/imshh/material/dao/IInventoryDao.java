@@ -9,6 +9,7 @@ import com.douniu.imshh.material.domain.MaterialFilter;
 public interface IInventoryDao {
 	void saveInventory(Inventory inventory);
 	void saveInventoryDetail(String inventoryId);
+	void resetStorage();
 	void updateStorage();
 	void markInventory();
 	void removeCash();

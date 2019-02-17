@@ -96,7 +96,7 @@ public class SupplierAction {
 	
 	@Authorization("0503")
     @ResponseBody  
-    @RequestMapping(value="importSupplier",method={RequestMethod.GET,RequestMethod.POST})  
+    @RequestMapping(value="importSupplier",method={RequestMethod.GET,RequestMethod.POST}, produces = "text/html; charset=utf-8")  
     public String importSupplier(HttpServletRequest request) throws Exception {  
     	List<List<Object>> data = ImportAndExportUtil.importPreprocess(request);
 		List<Supplier> suppliers = new ArrayList<>();
@@ -118,7 +118,7 @@ public class SupplierAction {
     }  
     
 	@Authorization("0503")
-    @RequestMapping(value = "exportSupplier", method = RequestMethod.GET)  
+    @RequestMapping(value = "exportSupplier", method = RequestMethod.GET, produces = "text/html; charset=utf-8")  
     @ResponseBody  
     public void exportSupplier(HttpServletRequest request,HttpServletResponse response, SupplierFilter filter){  
     	SheetData data = new SheetData("供应商列表");

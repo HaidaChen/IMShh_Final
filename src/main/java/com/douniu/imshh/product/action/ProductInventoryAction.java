@@ -115,7 +115,7 @@ public class ProductInventoryAction {
 		for (List<Object> rowData : data){
 			InventoryDetail invDetail = new InventoryDetail();
 			Product p = new Product();
-			p.setName(rowData.get(0).toString());
+			p.setCode(rowData.get(0).toString());
 			p.setModel(rowData.get(1).toString());
 			invDetail.setProduct(p);
 			invDetail.setActualQuantity(new Integer(rowData.get(2).toString()));

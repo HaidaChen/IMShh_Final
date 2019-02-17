@@ -1,6 +1,7 @@
 package com.douniu.imshh.sys.service.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
@@ -40,7 +41,12 @@ public class ParameterService implements IParameterService {
 	
 	@Override
 	public Map<String, String> getBillPeriod() {
-		Map<String, String> period = new TreeMap<>();
+		Map<String, String> period = new TreeMap<>(new Comparator<String>() {
+            public int compare(String obj1, String obj2) {
+                // 降序排序
+                return obj2.compareTo(obj1);
+            }
+        });
 		
 		Date date = new Date();
 		for (int i = 0; i < 13; i++){

@@ -122,6 +122,17 @@
         		});
 		        html += '<input type="text" indentify=true name="'+opt.name+'" value="'+_value+'" src="'+opt.src+'" readonly="readonly" style="width: 150px; font-weight:bold; color: #FF7F50; border: none">';
 			    break;
+		    case 'server':
+		        var _value = '';
+		        $.ajax({
+        			url: getProjectName() + opt.src,
+        			async: false,
+        			success: function(result){
+        				_value = result;
+        			}
+        		});
+		        html += '<input type="text" server=true name="'+opt.name+'" value="'+_value+'" src="'+opt.src+'" readonly="readonly">';
+			    break;
 			case 'text':
 				html += '<input type="text" name="'+opt.name+'" style="'+style+'">';
 				break;
@@ -686,6 +697,15 @@
 					_ele_item.val(_value);
 				}
 				if (_ele_item.attr('indentify')){
+					$.ajax({
+	        			url: getProjectName() + _ele_item.attr('src'),
+	        			async: false,
+	        			success: function(result){
+	        				_ele_item.val(result.code);
+	        			}
+	        		});
+				}
+				if (_ele_item.attr('server')){
 					$.ajax({
 	        			url: getProjectName() + _ele_item.attr('src'),
 	        			async: false,

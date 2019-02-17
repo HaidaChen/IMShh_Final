@@ -1,5 +1,7 @@
 package com.douniu.imshh.finance.domain;
 
+import com.douniu.imshh.product.domain.Product;
+
 /**
  * 会计科目，科目为树形结构。允许增删改
  * @author Administrator
@@ -90,5 +92,11 @@ public class Subject {
 				+ category + ", parent=" + parent + ", initBalance=" + initBalance + ", privateSubject="
 				+ privateSubject + ", remark=" + remark + ", status=" + status + "]";
 	}
-	
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Subject subject = (Subject) o;
+        return this.code.equals(subject.code);
+    }
 }

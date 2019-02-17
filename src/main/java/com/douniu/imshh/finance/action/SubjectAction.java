@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +16,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.douniu.imshh.common.Authorization;
+import com.douniu.imshh.common.ImportException;
 import com.douniu.imshh.finance.domain.FinanceFilter;
 import com.douniu.imshh.finance.domain.Subject;
 import com.douniu.imshh.finance.service.ISubjectService;
 import com.douniu.imshh.sys.domain.Role;
 import com.douniu.imshh.sys.domain.User;
 import com.douniu.imshh.utils.GsonUtil;
+import com.douniu.imshh.utils.ImportAndExportUtil;
+import com.douniu.imshh.utils.SheetData;
 
 @Controller
 @RequestMapping("/finsub")
@@ -123,6 +128,55 @@ public class SubjectAction {
 	@ResponseBody
 	public void deleteSubject(String id){
 		service.deleteSubject(id);
+	}
+	
+	@Authorization("0401")
+	@RequestMapping(value="importSubject",method={RequestMethod.GET,RequestMethod.POST}, produces = "text/html; charset=utf-8")  
+    @ResponseBody
+	public String importSubject(HttpServletRequest request) throws Exception{
+		List<List<Object>> data = ImportAndExportUtil.importPreprocess(request);
+        List<Subject> subjects = new ArrayList<>();
+		for (List<Object> rowData : data){
+			Subject sub = new Subject();
+			sub.setId(rowData.get(0).toString());
+			sub.setCode(rowData.get(0).toString());
+			sub.setName(rowData.get(1).toString());
+			sub.setFullName(rowData.get(2).toString());
+			Subject parent = new Subject();
+			parent.setId(rowData.get(3).toString());
+			sub.setParent(parent);
+			sub.setCategory(rowData.get(4).toString());
+			sub.setRemark(rowData.get(5).toString());
+			subjects.add(sub);
+		}
+		List<ImportException> checkResults = service.checkImport(subjects);
+        if (!checkResults.isEmpty())
+        	return GsonUtil.toJson(checkResults);
+        service.importSubject(subjects);
+        return "success";
+	}
+	
+	@Authorization("0401")
+	@RequestMapping(value = "exportSubject", method = RequestMethod.GET, produces = "text/html; charset=utf-8")  
+    @ResponseBody  
+	public void exportSubject(HttpServletRequest request,HttpServletResponse response, FinanceFilter filter){
+		SheetData data = new SheetData("会计科目列表");
+		
+		Map<String, String> ctgMap = new HashMap<>();
+		ctgMap.put("01", "01 资产类");
+		ctgMap.put("02", "02 负债类");
+		ctgMap.put("03", "03 共同类");
+		ctgMap.put("04", "04 所有者权益");
+		ctgMap.put("05", "05 成本");
+		ctgMap.put("06", "06 损益");
+		
+		List<Subject> subjects = service.query(filter);
+		for (Subject subject : subjects){
+			subject.setCode(subject.getCode()+".");
+			subject.setCategory(ctgMap.get(subject.getCategory()));			
+		}
+		data.addDatas(subjects);
+		ImportAndExportUtil.export("会计科目列表.xls", data, request, response);
 	}
 	
 	private void filterPrivate(HttpSession session, List<Subject> src){

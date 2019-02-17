@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -100,7 +101,9 @@ public class MaterialAction {
 			ctg.setCode(rowData.get(2).toString());
 			mtl.setCtg(ctg);
 			mtl.setUnit(rowData.get(3).toString());
-			mtl.setStorage(new Float(rowData.get(4).toString()));
+			if (StringUtils.isEmpty(rowData.get(4).toString()))
+				mtl.setStorage(0f);
+			else mtl.setStorage(new Float(rowData.get(4).toString()));
 			mtl.setRemark(rowData.get(5).toString());
 			materials.add(mtl);
 		}

@@ -38,6 +38,7 @@ public class InventoryService implements IInventoryService {
 		dao.saveInventoryDetail(inventory.getId());
 		
 		//2、更新库存
+		dao.resetStorage();
 		dao.updateStorage();
 		
 		//3、为出入库明细记录打标签

@@ -2,7 +2,7 @@ $(function(){
 	$.ajaxSetup({
 		dataFilter:function() {
 			if (arguments[0] == 'has no permission'){
-				window.top.location.href = "http://localhost:8080/FinalIMShh/";
+				window.top.location.href = getProjectName();
 			}else{
 				return arguments[0];
 			}
@@ -3483,13 +3483,31 @@ var App = function () {
 			});
 		}
 		
+		var doExport = function(){
+			$('#btn_export').click(function(){
+				var url = getProjectName() + "/finsub/exportSubject.do?subName="+$("#filter_name").val();
+            	window.open(url);
+			});
+		}
 		
+		var doImport = function(){
+			$('#btn_import').click(function(){
+				ImportData.show({url: getProjectName() + "/finsub/importSubject.do",
+					templaterName: getProjectName() + "/templater/import/会计科目列表.xls",
+					callback: function(){
+						$("#tbl_subject").bootstrapTable("refresh", {url: getProjectName() + "/finsub/query.do", cache: false});
+					}
+				});
+			});
+		}
 		
 		return {
 			init: function(){
 				loadSubjectTable();
 				doQuery();
 				initEdit();
+				doExport();
+				doImport();
 			}
 		}
 	}
@@ -3734,15 +3752,15 @@ var App = function () {
 					getProjectName() + "/voc/allBillPeriod.do",
 					function(result){
 						$.each(result, function(key, value){
-							$('#filter_sDate').append('<option value="'+key+'">'+value+'</option>');
-							$('#filter_eDate').append('<option value="'+key+'">'+value+'</option>');
+							$('#filter_sDate').prepend('<option value="'+key+'">'+value+'</option>');
+							$('#filter_eDate').prepend('<option value="'+key+'">'+value+'</option>');
 						});
 						$("#filter_sDate").select2({
-							placeholder: "开始账期",
+							placeholder: "",
 							allowClear: true
 						});
 						$("#filter_eDate").select2({
-							placeholder: "结束账期",
+							placeholder: "",
 							allowClear: true
 						});
 					}
@@ -3989,11 +4007,13 @@ var App = function () {
 				async:false,
 				success: function(result){
 					$.each(result, function(key, value){
-						$('#filter_billPeriod').append('<option value="'+key+'">'+value+'</option>');
+						$('#filter_billPeriod').prepend('<option value="'+key+'">'+value+'</option>');
 					});
+					$('#filter_billPeriod').find('option:eq(0)').attr('selected','selected');
 					$("#filter_billPeriod").select2({
 						placeholder: "选择账期",
-						allowClear: false
+						allowClear: false,
+						width: 150
 					});
 				}
 			});
@@ -4131,11 +4151,13 @@ var App = function () {
 				async:false,
 				success: function(result){
 					$.each(result, function(key, value){
-						$('#filter_billPeriod').append('<option value="'+key+'">'+value+'</option>');
+						$('#filter_billPeriod').prepend('<option value="'+key+'">'+value+'</option>');
 					});
+					$('#filter_billPeriod').find('option:eq(0)').attr('selected','selected');
 					$("#filter_billPeriod").select2({
 						placeholder: "选择账期",
-						allowClear: false
+						allowClear: false,
+						width: 150
 					});
 				}
 			});

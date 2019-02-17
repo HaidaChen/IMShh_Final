@@ -44,7 +44,7 @@
     <select id="getPageResult" parameterType="MaterialFilter" resultMap="mibwdmap">
         select mi.id as mib_id, mi.number as mib_number, mi.billDate as mib_billDate, mi.s_id, mi.s_name, mi.totalAmount as mib_totalAmount, mdi.* 
 	      from    
-	        (select mti.*, s.id as s_id, s.name as s_name from tbl_bill_materialin mti, t_supplier s 
+	        (select mti.*, s.id as s_id, s.name as s_name from tbl_bill_materialin mti, tbl_supplier s 
 	          where mti.status = '1'
 	            and mti.supplierId = s.id
 	          order by mti.billDate desc
@@ -100,7 +100,7 @@
     <select id="query" parameterType="MaterialFilter" resultMap="mibwdmap">
         select mi.id as mib_id, mi.number as mib_number, mi.billDate as mib_billDate, mi.s_id, mi.s_name, mi.totalAmount as mib_totalAmount, mdi.* 
 	      from    
-	        (select mti.*, s.id as s_id, s.name as s_name from tbl_bill_materialin mti, t_supplier s 
+	        (select mti.*, s.id as s_id, s.name as s_name from tbl_bill_materialin mti, tbl_supplier s 
 	          where mti.status = '1'
 	            and mti.supplierId = s.id
 	          order by mti.billDate desc)mi
@@ -165,7 +165,7 @@
                m.name as m_name
           from tbl_bill_materialin mib, 
                tbl_bill_dtl_materialin dtl, 
-               t_supplier s,
+               tbl_supplier s,
                tbl_material m             
          where mib.id = #{id}
            and mib.supplierId = s.id

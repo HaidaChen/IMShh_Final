@@ -154,6 +154,13 @@ public class LoginAction {
 		return GsonUtil.toJson(menus);
 	}
 	
+	@RequestMapping(value="/getSessionUserName", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getSessionUserName(HttpSession session){
+		User user = getSessionUser(session);
+		return GsonUtil.toJson(user.getUserName());
+	}
+	
 	private User getSessionUser(HttpSession session){
 		Object obj = session.getAttribute("user");
 		if (obj == null)
