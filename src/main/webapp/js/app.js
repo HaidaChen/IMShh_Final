@@ -17,8 +17,8 @@ var App = function () {
 			height: "100%",
 			color: '#54667a'
 		});
-		var menuContainer = $("#side-menu");		
-		$.ajax({url:getProjectName()+"/login/getUserMemu.do",
+		var menuContainer = $("#side-menu");	
+		$.ajax({url:getProjectName()+"/login/getUserMemu.do?timestamp="+new Date().getTime(),
 			success:function(menus){
 				$.each(menus, function(index, obj) {
 					var item = $("<li>");
@@ -203,7 +203,7 @@ var App = function () {
 		
 		var options = {
 			url: getProjectName()+"/login/login.do",
-			type: 'get',
+			type: 'post',
 			success: function(result){
 				$("#loginform .alert").remove();
 				if (result == 1) {
@@ -230,7 +230,7 @@ var App = function () {
 	/*-----------------------------------------------------------------------------------*/	
 	var initFrameModule = function(){
 		nthTabs = $("#editor-tabs").nthTabs();
-		$.getJSON(getProjectName() + "/login/getHomePage.do",
+		$.getJSON(getProjectName() + "/login/getHomePage.do?timestamp="+new Date().getTime(),
 				function(result){
 					if (result == "")
 						return;

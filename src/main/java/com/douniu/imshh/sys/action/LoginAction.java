@@ -33,12 +33,12 @@ public class LoginAction {
 	@Autowired
 	private IParameterService parameterService;
 	
-	@RequestMapping("/login")
+	@RequestMapping(value="/login", method=RequestMethod.POST)
 	@ResponseBody
 	public int login(User user, HttpServletRequest request, HttpServletResponse response, HttpSession httpSession) throws Exception{
 		// 判断是否存在当前用户
 		if (!service.existUserName(user.getUserName())) return 0;
-		
+		//System.out.println("===========================[name:"+user.getUserName()+"]");
 		String pwd = EncryptUnit.encrypt(user.getPassword());
 		user.setPassword(pwd);
 		// 判断用户名密码是否正确
@@ -110,6 +110,7 @@ public class LoginAction {
 	@ResponseBody
 	public String getUserMemu(HttpSession httpSession){
 		Object obj = httpSession.getAttribute("userMenu");
+		//System.out.println("menu::::"+obj.toString());
 		if (obj != null){
 			return obj.toString();
 		}else{
